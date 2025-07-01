@@ -12,6 +12,7 @@ using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -70,6 +71,9 @@ public partial class App : Application
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
+
+        // TMP:
+        Properties.Resources.Culture = new CultureInfo("en-US");
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

@@ -78,7 +78,7 @@ class Program
 
     // Log file.
     private static readonly StringBuilder _errortxt = new();
-    private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "MPDCtrlX_exception.txt";
+    private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "MPDCtrlX_crash.txt";
 
     private static void AppendErrorLog(string errorTxt, string kindTxt)
     {

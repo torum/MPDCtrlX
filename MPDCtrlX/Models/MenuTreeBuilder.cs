@@ -51,7 +51,7 @@ public class NodeMenuFiles : NodeMenu
 
 public class NodeMenuAlbum : NodeMenu
 {
-    public bool IsAcquired { get; set; }
+    //public bool IsAcquired { get; set; }
 
     public NodeMenuAlbum(string name) : base(name)
     {
@@ -62,7 +62,7 @@ public class NodeMenuAlbum : NodeMenu
 
 public class NodeMenuArtist : NodeMenu
 {
-    public bool IsAcquired { get; set; }
+    //public bool IsAcquired { get; set; }
 
     public NodeMenuArtist(string name) : base(name)
     {

@@ -1317,11 +1317,12 @@ public partial class MpcService : IMpcService
                             DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
                             Debug.WriteLine(string.Format("Reconnecting Success.  @IOExceptionOfWriteAsync"));
 
-                        ConnectionState = ConnectionStatus.Connected;
 
                         ret = await MpdCommandSendCommand(cmd, isAutoIdling, reTryCount++);
                         //}
                     }
+
+                    ConnectionState = ConnectionStatus.Connected;
                 }
                 else
                 {
@@ -1558,7 +1559,7 @@ public partial class MpcService : IMpcService
 
             DebugCommandOutput?.Invoke(this, string.Format("################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "ReadLineAsync@MpdSendCommand", "InvalidOperationException (Most likely the connection is overloaded)", cmd.Trim(), Environment.NewLine, e.Message, Environment.NewLine + Environment.NewLine));
 
-            //ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
+            ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
 
             //ConnectionError?.Invoke(this, "The connection (command) has been terminated. Most likely the connection has been overloaded.");
 
@@ -1628,6 +1629,8 @@ public partial class MpcService : IMpcService
                         ret = await MpdCommandSendCommand(cmd, isAutoIdling, reTryCount++);
                         //}
                     }
+
+                    ConnectionState = ConnectionStatus.Connected;
                 }
                 else
                 {

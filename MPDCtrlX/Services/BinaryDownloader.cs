@@ -682,7 +682,7 @@ public class BinaryDownloader : IBinaryDownloader
 
         //if (MpdStop) return r;
 
-        if (data.Length > 2000000) //2000000000
+        if (data.Length > 10000000) //2000000000
         {
             Debug.WriteLine("**ParseAlbumImageData: binary file size too big: " + data.Length.ToString());
             r.IsSuccess = false;
@@ -813,9 +813,9 @@ public class BinaryDownloader : IBinaryDownloader
 
             gabEnd++;
 
-            if (binSize > 1000000)
+            if (binSize > 10000000)
             {
-                Debug.WriteLine("binary file too big: " + binSize.ToString());
+                Debug.WriteLine("binary file too big: " + binSize.ToString() + " " + _albumCover.SongFilePath);
 
                 _albumCover.IsDownloading = false;
 
