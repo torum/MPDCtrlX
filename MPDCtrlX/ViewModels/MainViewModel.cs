@@ -3841,6 +3841,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         AlbumsItemInvokedCommand = new GenericRelayCommand<object>(param => AlbumsItemInvokedCommand_Execute(param), param => AlbumsItemInvokedCommand_CanExecute());
         AlbumsCloseAlbumContentPanelCommand = new RelayCommand(AlbumsCloseAlbumContentPanelCommand_Execute, AlbumsCloseAlbumContentPanelCommand_CanExecute);
 
+        AlbumsCoverOverlayPanelCloseCommand = new RelayCommand(AlbumsCoverOverlayPanelCloseCommand_Execute, AlbumsCoverOverlayPanelCloseCommand_CanExecute);
+
         #endregion
 
         #region == Themes ==
@@ -3892,8 +3894,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         _elapsedTimer.Elapsed += new System.Timers.ElapsedEventHandler(ElapsedTimer);
 
         #endregion
-
-
 
         #region == Load settings ==
 
@@ -6543,7 +6543,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         string unixTime = dto.ToUnixTimeSeconds().ToString();
 
                         // Write the string to a file.
-                        System.IO.StreamWriter file = new(fileTempPath);
+                        using StreamWriter file = new(fileTempPath);
                         file.WriteLine(unixTime);
                         file.Close();
                     }
@@ -6745,6 +6745,30 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 AlbumArtBitmapSource = AlbumCover?.AlbumImageSource;
                 //IsAlbumArtVisible = true;
+
+                // save album cover to cache.
+                var strAlbum = CurrentSong?.Album ?? string.Empty;
+                if (!string.IsNullOrEmpty(strAlbum.Trim()))
+                {
+                    var aat = CurrentSong?.Artist.Trim();
+                    if (string.IsNullOrEmpty(aat))
+                    {
+                        aat = CurrentSong?.AlbumArtist;
+                    }
+                    var strArtist = aat;
+                    if (string.IsNullOrEmpty(strArtist))
+                    {
+                        strArtist = "Unknown Artist";
+                    }
+                    strArtist = EscapeFilePathNames(strArtist).Trim();
+                    strAlbum = EscapeFilePathNames(strAlbum).Trim();
+
+                    string strDirPath = Path.Combine(AppDataCacheFolder, strArtist);
+                    string filePath = Path.Combine(AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp";
+
+                    Directory.CreateDirectory(strDirPath);
+                    AlbumCover?.AlbumImageSource?.Save(filePath, 100);
+                }
             }
             else
             {
@@ -8095,8 +8119,29 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 if (r.IsSuccess)
                 {
+                    if (r.SearchResult is null)
+                    {
+                        Debug.WriteLine("AlbumsItemInvokedCommand: SearchResult is null, returning.");
+                        return;
+                    }
 
+                    foreach (var song in r.SearchResult)
+                    {
+                        if ((song.AlbumArtist == album.AlbumArtist) || (song.Artist == album.AlbumArtist))
+                        {
+                            if (song.Album.Trim() == album.Name.Trim())
+                            {
+                                album.Songs.Add(song);
+                            }
+                        }
+                    }
+                    album.IsSongsAcquired = true;
 
+                    //InvokedAlbum = album;
+                    SelectedAlbum = album;
+                    await Task.Delay(50);
+                    IsAlbumContentPanelVisible = true;
+                    /*
                     Dispatcher.UIThread.Post(() =>
                     {
                         if (r.SearchResult is null)
@@ -8121,6 +8166,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         SelectedAlbum = album;
                         IsAlbumContentPanelVisible = true;
                     });
+                    */
                 }
                 else
                 {
@@ -8137,26 +8183,29 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     var r = await SearchAlbumSongs(album.Name); // no trim() here.
                     if (r.IsSuccess)
                     {
+                        if (r.SearchResult is null)
+                        {
+                            Debug.WriteLine("GetAlbumArtistSongs: SearchResult is null, returning.");
+                            return;
+                        }
 
+                        foreach (var song in r.SearchResult)
+                        {
+
+                            album.Songs.Add(song);
+                        }
+                        album.IsSongsAcquired = true;
+
+                        //InvokedAlbum = album;
+                        SelectedAlbum = album;
+                        await Task.Delay(50);
+                        IsAlbumContentPanelVisible = true;
+                        /*
                         Dispatcher.UIThread.Post(() =>
                         {
-                            if (r.SearchResult is null)
-                            {
-                                Debug.WriteLine("GetAlbumArtistSongs: SearchResult is null, returning.");
-                                return;
-                            }
 
-                            foreach (var song in r.SearchResult)
-                            {
-
-                                album.Songs.Add(song);
-                            }
-                            album.IsSongsAcquired = true;
-
-                            //InvokedAlbum = album;
-                            SelectedAlbum = album;
-                            IsAlbumContentPanelVisible = true;
                         });
+                        */
                     }
                     else
                     {
@@ -8175,6 +8224,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             //InvokedAlbum = album;
             SelectedAlbum = album;
+            await Task.Delay(50);
             IsAlbumContentPanelVisible = true;
         }
 
@@ -9662,10 +9712,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsSearchResultSelectedSaveToPopupVisible) { IsSearchResultSelectedSaveToPopupVisible = false; }
         if (IsSongFilesSelectedSaveAsPopupVisible) { IsSongFilesSelectedSaveAsPopupVisible = false; }
         if (IsSongFilesSelectedSaveToPopupVisible) { IsSongFilesSelectedSaveToPopupVisible = false; }
+
+        IsAlbumArtPanelIsOpen = false;
+        IsAlbumContentPanelVisible = false;
     }
 
     #endregion
 
+
+    public IRelayCommand AlbumsCoverOverlayPanelCloseCommand { get; set; }
+    public static bool AlbumsCoverOverlayPanelCloseCommand_CanExecute()
+    {
+        return true;
+    }
+    public void AlbumsCoverOverlayPanelCloseCommand_Execute()
+    {
+        IsAlbumArtPanelIsOpen = false;
+    }
 
     #endregion
 }

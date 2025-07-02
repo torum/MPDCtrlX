@@ -108,7 +108,7 @@
 				<StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 0">
 
 					<Button Width="24" Height="24" Margin="6,0,6,0" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Padding="3" Command="{Binding ShowDebugWindowCommand}" Opacity="0.7" Focusable="False">
-						<Viewbox Width="16" Height="16">
+						<Viewbox Width="14" Height="14">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="">
 								<Interaction.Behaviors>
@@ -122,6 +122,14 @@
 							</PathIcon>
 						</Viewbox>
 					</Button>
+
+					<ToggleButton Padding="2" Margin="6,0,2,0" HorizontalAlignment="Right" Name="OverLayShowHideToggleButton" Focusable="False" Background="Transparent" BorderThickness="0" IsChecked="{Binding IsAlbumArtPanelIsOpen, Mode=TwoWay}">
+						<Viewbox Width="20" Height="20">
+							<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="2" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"
+			Data="M6.82097 10.5L7.81949 11.3737C8.0273 11.5556 8.04836 11.8714 7.86652 12.0793C7.68468 12.2871 7.3688 12.3081 7.16098 12.1263L5.16098 10.3763C5.05247 10.2814 4.99023 10.1442 4.99023 10C4.99023 9.85583 5.05247 9.71866 5.16098 9.62372L7.16098 7.87372C7.3688 7.69188 7.68468 7.71294 7.86652 7.92075C8.04836 8.12857 8.0273 8.44445 7.81949 8.62629L6.82095 9.50001L10.5 9.50001C10.7761 9.50001 11 9.72387 11 10C11 10.2762 10.7761 10.5 10.5 10.5L6.82097 10.5ZM18 14C18 15.1046 17.1046 16 16 16L4 16C2.89543 16 2 15.1046 2 14V6C2 4.89543 2.89543 4 4 4H16C17.1046 4 18 4.89543 18 6V14ZM16 15C16.5523 15 17 14.5523 17 14L17 6C17 5.44772 16.5523 5 16 5L13 5L13 15H16ZM12 15L12 5L4 5C3.44772 5 3 5.44771 3 6L3 14C3 14.5523 3.44772 15 4 15L12 15Z">
+							</PathIcon>
+						</Viewbox>
+					</ToggleButton>
 
 				</StackPanel>
 

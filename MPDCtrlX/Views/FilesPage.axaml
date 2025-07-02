@@ -17,8 +17,7 @@
 		<vm:MainDummyViewModel />
 	</Design.DataContext>
 
-	<!-- Directories and files -->
-	<Grid Margin="16,0,0,0">
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
@@ -29,45 +28,30 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+		<!-- Files page title and menus -->
+		<Grid Grid.Row="0" Margin="0,0,0,6" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="48"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<StackPanel Grid.Column="0" Spacing="24" Margin="32 6 24 0" Orientation="Horizontal" HorizontalAlignment="Left">
-				<TextBlock Text="Files" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="3,0,0,0"/>
-
-				<!-- <TextBlock Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom">
-					<Run Text="Search Key"/><Run Text="{Binding SelectedSearchTag.Label,Mode=OneWay}"/><Run Text=": "/><Run Text="{Binding SearchQuery, Mode=OneWay}"/></TextBlock> -->
-				<!--
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4">
-					<Run Text="Directories"/>
-					<Run Text=": "/>
-					<Run Text="{Binding MusicDirectoriesCount, Mode=OneWay}"/>
-				</TextBlock>
-				-->
-
-				<!--
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4">
-					<Run Text="Files"/>
-					<Run Text=": "/>
-					<Run Text="{Binding MusicEntriesFiltered.Count, Mode=OneWay}"/>
-				</TextBlock>
-				-->
-			</StackPanel>
-			<StackPanel Grid.Column="1" Spacing="24" Margin="32 6 24 0" Orientation="Horizontal" HorizontalAlignment="Right">
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,0" Opacity="0.7">
+			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
+				<TextBlock Text="Files" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Total Files"/>
 					<Run Text=": "/>
 					<Run Text="{Binding MusicEntries.Count, Mode=OneWay}"/>
 				</TextBlock>
 			</StackPanel>
-		</Grid>
+			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 
+			</StackPanel>
+		</Grid>
+		
 		<!--
 		<TreeDataGrid Grid.Row="0" Grid.Column="0" BorderThickness="0 0 0 0" Source="{Binding MusicDirectoriesSource, Mode=TwoWay}" />
 		-->
-		<TreeView Grid.Row="1" Grid.Column="0" BorderThickness="8 12 0 0" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+		<TreeView Grid.Row="1" Grid.Column="0" BorderThickness="8 0 0 0" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.ItemTemplate>
 				<TreeDataTemplate ItemsSource="{Binding Path=Children}">
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -89,7 +73,7 @@
 		</TreeView>
 
 		<!-- Song list of selected directory -->
-		<Grid Grid.Row="1" Grid.Column="2" Margin="8,12,0,0">
+		<Grid Grid.Row="1" Grid.Column="2" Margin="8,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
@@ -123,7 +107,7 @@
 
 				</Grid>
 				<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
 					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
