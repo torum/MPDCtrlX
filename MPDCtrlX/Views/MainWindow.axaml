@@ -14,8 +14,8 @@
         Title="MPDCtrlX"
 		Background="{DynamicResource ThemeBackgroundBrush}"
 		x:Name="ThisMainWindow"
-             x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="680" MinHeight="180">
-	<!--   -->
+        x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="680" MinHeight="180">
+
 	<!-- <views:MainView/> -->
 	<Window.Resources>
 
@@ -121,7 +121,7 @@
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
-			<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeBorderBrush}" Opacity="0.9"></Border>
+			<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource CardStrokeBorderBrush}" Opacity="0.9"></Border>
 
 			<!-- Album cover -->
 			<Border Grid.Row="0" Grid.Column="0" Margin="16,16,20,0" Width="128" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="0" ClipToBounds="True" CornerRadius="6" IsVisible="{Binding IsAlbumArtVisible, Mode=TwoWay}">
@@ -261,32 +261,33 @@
 
 			<SplitView.Content>
 
-
 				<!-- Navigation menu -->
-		<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
-			<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" Loaded="NavigationView_Loaded" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="260" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
-				
-				<ui:NavigationView.Resources>
-					<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
-						<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
+				<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
+					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" Loaded="NavigationView_Loaded" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="260" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 
-							<ui:NavigationViewItem.Content>
-								<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="-1,0,0,0">
-									<Viewbox Width="16" Height="16" Opacity="0.9" HorizontalAlignment="Left">
-										<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Padding="0"
-											Data="{Binding PathIcon}">
-										</PathIcon>
-									</Viewbox>
-									<TextBlock Text="{Binding Name}" Margin="16,0,0,0"></TextBlock>
-								</StackPanel>
-							</ui:NavigationViewItem.Content>
+						<ui:NavigationView.Resources>
+							<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
+								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
 
-						</ui:NavigationViewItem>
-					</DataTemplate>
-				</ui:NavigationView.Resources>
+									<ui:NavigationViewItem.Content>
+										<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+											<Viewbox Width="16" Height="16" Opacity="0.9" HorizontalAlignment="Left" Margin="0,0,0,0">
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Padding="0"
+													Data="{Binding PathIcon}">
+												</PathIcon>
+											</Viewbox>
+											<TextBlock Text="{Binding Name}" Margin="16,0,0,0"></TextBlock>
+										</StackPanel>
+									</ui:NavigationViewItem.Content>
 
-			</ui:NavigationView>	
-		</Border>
+								</ui:NavigationViewItem>
+							</DataTemplate>
+						</ui:NavigationView.Resources>
+
+						<ui:Frame />
+
+					</ui:NavigationView>
+				</Border>
 				
 			</SplitView.Content>
 		</SplitView>

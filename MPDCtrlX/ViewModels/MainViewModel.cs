@@ -5491,7 +5491,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 // The simplest way, but all the selections and listview position will be cleared. Kind of annoying when moving items.
 
                 UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
-                
+
                 Dispatcher.UIThread.Post(() =>
                 {
                     Queue = new ObservableCollection<SongInfoEx>(_mpc.CurrentQueue);
@@ -5526,6 +5526,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                     }
                                 }
                                 */
+
                             }
                             else
                             {
@@ -5549,8 +5550,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     UpdateProgress?.Invoke(this, "");
 
                     IsWorking = false;
+
+                    UpdateProgress?.Invoke(this, "");
+
                 });
-                UpdateProgress?.Invoke(this, "");
 
                 /*
                 
@@ -5783,7 +5786,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                     /*
                                     // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
                                     _mpc.MpdCurrentSong.IsPlaying = true;
-                                    
+
                                     // just in case. < no. don't override.
                                     //CurrentSong.IsPlaying = true;
 
@@ -5849,7 +5852,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
                     //collectionView.Refresh();
                     UpdateProgress?.Invoke(this, "");
-
 
                     UpdateProgress?.Invoke(this, "");
                 });

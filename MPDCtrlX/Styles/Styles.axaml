@@ -4,13 +4,15 @@
     <Styles.Resources>
         <ResourceDictionary>
 
-			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">6,0,0,0</CornerRadius>
-
+			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
+			
 			<StaticResource x:Key="CardStrokeBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
 			
-            <ResourceDictionary.MergedDictionaries>
-				<MergeResourceInclude Source="avares://MPDCtrlX/Styles/AppWindowStyles.axaml" />
-            </ResourceDictionary.MergedDictionaries>
+			<ResourceDictionary.MergedDictionaries>
+				<!-- <ResourceInclude Source="avares://MPDCtrlX/Styles/AppWindowStyles.axaml" /> -->
+				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemStyles.axaml" />
+			</ResourceDictionary.MergedDictionaries>
+
         </ResourceDictionary>
     </Styles.Resources>
 </Styles>

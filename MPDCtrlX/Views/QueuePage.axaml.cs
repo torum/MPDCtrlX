@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.ViewModels;
@@ -8,6 +10,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
@@ -148,28 +151,64 @@ public partial class QueuePage : UserControl
 
     }
 
-    private void OnScrollIntoView(int ind) 
+    private async void OnScrollIntoView(int ind)
     {
-        if (this.QueueListBox is ListBox lb)
+        await Task.Delay(100); // Wait for UI to update
+        Dispatcher.UIThread.Post(() =>
         {
-            //lb.AutoScrollToSelectedItem = true;
-            lb.ScrollIntoView(ind);
-        }
-    }
-    private void OnScrollIntoViewAndSelect(int ind)
-    {
-        if (this.QueueListBox is ListBox lb)
-        {
-            lb.ScrollIntoView(ind);
-
-            var test = _viewModel?.Queue.FirstOrDefault(x => x.IsPlaying == true);
-            if (test != null)
+            if (this.QueueListBox is ListBox lb)
             {
-                //lb.ScrollIntoView(test.Index);
-                test.IsSelected = true;
+                //lb.AutoScrollToSelectedItem = true;
+                lb.ScrollIntoView(ind);
             }
+        });
+    }
 
-            //lb.AutoScrollToSelectedItem = true;
+    private async void OnScrollIntoViewAndSelect(int ind)
+    {
+        await Task.Delay(1000); // Wait for UI to update
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (this.QueueListBox is ListBox lb)
+            {
+                lb.ScrollIntoView(ind);
+
+                var test = _viewModel?.Queue.FirstOrDefault(x => x.IsPlaying == true);
+                if (test != null)
+                {
+                    //lb.ScrollIntoView(test.Index);
+                    test.IsSelected = true;
+                }
+
+                //lb.AutoScrollToSelectedItem = true;
+            }
+        });
+    }
+
+    private void ContentPresenter_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        var ctl = sender as Control;
+
+        if (ctl != null)
+        {
+
+            var properties = e.GetCurrentPoint(ctl).Properties;
+            if (properties.IsLeftButtonPressed)
+            {
+                // Left button pressed
+            }
+            else if (properties.IsRightButtonPressed)
+            {
+                FlyoutBase.ShowAttachedFlyout(ctl);
+
+                //var point = args.GetCurrentPoint(this);
+
+                //args.Handled = true; // Don't handle (let the right click select item)
+            }
+        }
+        else
+        {
+            Debug.WriteLine("ContentPresenter_PointerPressed: sender is not a ListBoxItem> " + ctl?.Name);
         }
     }
 }
