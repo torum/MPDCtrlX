@@ -6285,7 +6285,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         });
     }
 
-    private void GetArtistSongs(AlbumArtist? artist)
+    private async void GetArtistSongs(AlbumArtist? artist)
     {
         if (artist is null)
         {
@@ -6294,8 +6294,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         //var res = Task.Run(async () => { await SearchArtistSongs(artist);});
-        Task.Run(async () =>
-        {
+        //Task.Run(async () =>
+        //{
             if (artist is null)
             {
                 Debug.WriteLine("GetArtistSongs: artist is null, returning.");
@@ -6361,7 +6361,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             });
 
-        });
+            //});
     }
 
     private async Task<CommandSearchResult> SearchArtistSongs(string name)
@@ -6422,6 +6422,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             return;
         }
+
+        UpdateProgress?.Invoke(this, "[UI] Library album covers loading...");
+        //IsBusy = true;
+        IsWorking = true;
 
         IsAlbumArtsDownLoaded = true;
 
@@ -6559,9 +6563,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     Debug.WriteLine("GetAlbumPictures: ret.SearchResult is null, skipping.");
                 }
             }
-
         }
         Debug.WriteLine("Done loading AlbumCovers.");
+
+        UpdateProgress?.Invoke(this, "");
+        //IsBusy = false;
+        IsWorking = false;
     }
 
     private static string EscapeFilePathNames(string str)
