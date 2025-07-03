@@ -17,13 +17,38 @@
 		<StyleInclude Source="avares://MPDCtrlX/Styles/Styles.axaml" />
 		
 	</Application.Styles>
-	<!--
+
 	<Application.Resources>
 		<ResourceDictionary>
+
+			<ControlTheme x:Key="{x:Type ContextMenu}" TargetType="ContextMenu">
+				<Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}"/>
+				<Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}"/>
+				<Setter Property="BorderThickness" Value="1"/>
+				<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+				<Setter Property="Focusable" Value="True" />
+				<Setter Property="Padding" Value="3" />
+				<Setter Property="Template">
+					<ControlTemplate>
+						<Border Padding="{TemplateBinding Padding}"
+								Background="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}"
+								CornerRadius="{TemplateBinding CornerRadius}">
+							<ScrollViewer >
+								<ItemsPresenter Name="PART_ItemsPresenter"
+												ItemsPanel="{TemplateBinding ItemsPanel}"
+												KeyboardNavigation.TabNavigation="Continue" />
+							</ScrollViewer>
+						</Border>
+					</ControlTemplate>
+				</Setter>
+			</ControlTheme>
+		
 			<ResourceDictionary.MergedDictionaries>
 
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
-	-->
+
 </Application>

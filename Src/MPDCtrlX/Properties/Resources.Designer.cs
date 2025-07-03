@@ -1078,7 +1078,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Remove (Ctrl+Delete) に類似しているローカライズされた文字列を検索します。
+        ///   Remove selected (Ctrl+Delete) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string QueueItemContextMenu_Remove {
             get {

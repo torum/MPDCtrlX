@@ -463,7 +463,7 @@ SOFTWARE.</value>
     <value>Save As</value>
   </data>
   <data name="QueueItemContextMenu_Remove" xml:space="preserve">
-    <value>Remove (Ctrl+Delete)</value>
+    <value>Remove selected (Ctrl+Delete)</value>
   </data>
   <data name="QueueItemContextMenu_SaveSelectedAs" xml:space="preserve">
     <value>Save Selected As</value>

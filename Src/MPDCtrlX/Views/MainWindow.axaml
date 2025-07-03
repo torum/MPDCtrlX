@@ -271,12 +271,12 @@
 
 									<ui:NavigationViewItem.Content>
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-											<Viewbox Width="16" Height="16" Opacity="0.9" HorizontalAlignment="Left" Margin="0,0,0,0">
+											<Viewbox Width="14" Height="14" Opacity="0.9" HorizontalAlignment="Left" Margin="0,0,0,0">
 												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Padding="0"
 													Data="{Binding PathIcon}">
 												</PathIcon>
 											</Viewbox>
-											<TextBlock Text="{Binding Name}" Margin="16,0,0,0"></TextBlock>
+											<TextBlock Text="{Binding Name}" Margin="18,0,0,0"></TextBlock>
 										</StackPanel>
 									</ui:NavigationViewItem.Content>
 

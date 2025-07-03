@@ -3752,11 +3752,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         QueueListviewEnterKeyCommand = new RelayCommand(QueueListviewEnterKeyCommand_ExecuteAsync, QueueListviewEnterKeyCommand_CanExecute);
         QueueListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfoEx>(param => QueueListviewLeftDoubleClickCommand_ExecuteAsync(param), param => QueueListviewLeftDoubleClickCommand_CanExecute());
-        QueueListviewDeleteCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteCommand_Execute(param), param => QueueListviewDeleteCommand_CanExecute());
-        QueueListviewConfirmDeletePopupCommand = new RelayCommand(QueueListviewConfirmDeletePopupCommand_Execute, QueueListviewConfirmDeletePopupCommand_CanExecute);
 
-        QueueListviewClearCommand = new RelayCommand(QueueListviewClearCommand_ExecuteAsync, QueueListviewClearCommand_CanExecute);
-        QueueListviewConfirmClearPopupCommand = new RelayCommand(QueueListviewConfirmClearPopupCommand_Execute, QueueListviewConfirmClearPopupCommand_CanExecute);
+        QueueListviewDeleteWithoutPromptCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteWithoutPromptCommand_Execute(param), param => QueueListviewDeleteWithoutPromptCommand_CanExecute());
+        //QueueListviewDeleteCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteCommand_Execute(param), param => QueueListviewDeleteCommand_CanExecute());
+        //QueueListviewConfirmDeletePopupCommand = new RelayCommand(QueueListviewConfirmDeletePopupCommand_Execute, QueueListviewConfirmDeletePopupCommand_CanExecute);
+
+        QueueListviewClearWithoutPromptCommand = new RelayCommand(QueueListviewClearWithoutPromptCommand_ExecuteAsync, QueueListviewClearWithoutPromptCommand_CanExecute);
+        //QueueListviewClearCommand = new RelayCommand(QueueListviewClearCommand_ExecuteAsync, QueueListviewClearCommand_CanExecute);
+        //QueueListviewConfirmClearPopupCommand = new RelayCommand(QueueListviewConfirmClearPopupCommand_Execute, QueueListviewConfirmClearPopupCommand_CanExecute);
+
         QueueListviewSaveAsCommand = new RelayCommand(QueueListviewSaveAsCommand_ExecuteAsync, QueueListviewSaveAsCommand_CanExecute);
         QueueListviewSaveAsPopupCommand = new GenericRelayCommand<String>(param => QueueListviewSaveAsPopupCommand_Execute(param), param => QueueListviewSaveAsPopupCommand_CanExecute());
         QueueListviewMoveUpCommand = new GenericRelayCommand<object>(param => QueueListviewMoveUpCommand_Execute(param), param => QueueListviewMoveUpCommand_CanExecute());
@@ -7288,6 +7292,22 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), song.Id);
     }
 
+    // Command to clear the queue listview.
+    public IRelayCommand QueueListviewClearWithoutPromptCommand { get; }
+    public bool QueueListviewClearWithoutPromptCommand_CanExecute()
+    {
+        if (IsBusy) return false;
+        if (IsWorking) return false;
+        if (Queue.Count == 0) { return false; }
+        return true;
+    }
+    public async void QueueListviewClearWithoutPromptCommand_ExecuteAsync()
+    {
+        if (Queue.Count == 0) { return; }
+
+        await _mpc.MpdClear();
+    }
+    /*
     public IRelayCommand QueueListviewClearCommand { get; }
     public bool QueueListviewClearCommand_CanExecute()
     {
@@ -7315,7 +7335,38 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         IsConfirmClearQueuePopupVisible = false;
     }
+    */
 
+    // Command to delete selected songs from the queue listview.
+    public ICommand QueueListviewDeleteWithoutPromptCommand { get; }
+    public bool QueueListviewDeleteWithoutPromptCommand_CanExecute()
+    {
+        if (IsBusy) return false;
+        if (IsWorking) return false;
+        //if (SelectedQueueSong is null) return false;
+        return true;
+    }
+    public async void QueueListviewDeleteWithoutPromptCommand_Execute(object obj)
+    {
+        if (obj is null) return;
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        var collection = items.Cast<SongInfoEx>();
+
+        List<string> deleteIdList = [];
+        foreach (var item in collection)
+        {
+            deleteIdList.Add((item as SongInfoEx).Id);
+        }
+
+        if (deleteIdList.Count == 1)
+            await _mpc.MpdDeleteId(deleteIdList[0]);
+        else if (deleteIdList.Count >= 1)
+            await _mpc.MpdDeleteId(deleteIdList);
+
+    }
+    /*
+    // not used for now.
     public IRelayCommand QueueListviewDeleteCommand { get; }
     public bool QueueListviewDeleteCommand_CanExecute()
     {
@@ -7354,6 +7405,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsConfirmDeleteQueuePopupVisible = true;
     }
 
+    // not used for now.
     public IRelayCommand QueueListviewConfirmDeletePopupCommand { get; }
     public bool QueueListviewConfirmDeletePopupCommand_CanExecute()
     {
@@ -7377,7 +7429,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         IsConfirmDeleteQueuePopupVisible = false;
     }
+    */
 
+    // Command to move selected songs up in the queue listview.
     public IRelayCommand QueueListviewMoveUpCommand { get; }
     public bool QueueListviewMoveUpCommand_CanExecute()
     {
@@ -8275,7 +8329,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdChangePlaylist(_selectedPlaylist.Name);
     }
 
-    public IRelayCommand PlaylistListviewLeftDoubleClickCommand { get; set; }
+    public ICommand PlaylistListviewLeftDoubleClickCommand { get; set; }
     public bool PlaylistListviewLeftDoubleClickCommand_CanExecute()
     {
         if (IsBusy) return false;

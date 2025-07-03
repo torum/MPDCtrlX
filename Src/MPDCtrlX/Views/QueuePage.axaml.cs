@@ -185,30 +185,4 @@ public partial class QueuePage : UserControl
         });
     }
 
-    private void ContentPresenter_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
-    {
-        var ctl = sender as Control;
-
-        if (ctl != null)
-        {
-
-            var properties = e.GetCurrentPoint(ctl).Properties;
-            if (properties.IsLeftButtonPressed)
-            {
-                // Left button pressed
-            }
-            else if (properties.IsRightButtonPressed)
-            {
-                FlyoutBase.ShowAttachedFlyout(ctl);
-
-                //var point = args.GetCurrentPoint(this);
-
-                //args.Handled = true; // Don't handle (let the right click select item)
-            }
-        }
-        else
-        {
-            Debug.WriteLine("ContentPresenter_PointerPressed: sender is not a ListBoxItem> " + ctl?.Name);
-        }
-    }
 }
