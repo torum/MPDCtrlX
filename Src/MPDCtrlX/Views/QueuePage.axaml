@@ -28,8 +28,8 @@
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
-				<TextBlock Text="Queue" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
+				<TextBlock Text="Queue" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Songs"/>
 					<Run Text=": "/>
 					<Run Text="{Binding Queue.Count, Mode=OneWay}"/>
@@ -80,58 +80,58 @@
 					<ColumnDefinition Width="*"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 
-				<Grid Grid.Column="0" Name="test1" IsVisible="False">
-					<Label Name="test1x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test1}">#</Label>
+				<Grid Grid.Column="0" Name="Column1" IsVisible="False">
+					<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">#</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
-				<Grid Grid.Column="2" Name="test2">
-					<Label Name="test2x" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test2}"></Label>
+				<Grid Grid.Column="2" Name="Column2">
+					<Label Name="Column2X" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column2}"></Label>
 				</Grid>
 
 				<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
 				<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="False"/>
-				<Grid Grid.Column="4" Name="test3">
-					<Label Name="test3x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.QueueListviewColumnHeader_Title}" Width="{Binding Bounds.Size.Width, ElementName=test3}"></Label>
+				<Grid Grid.Column="4" Name="Column3">
+					<Label Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.QueueListviewColumnHeader_Title}" Width="{Binding Bounds.Size.Width, ElementName=Column3}"></Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-				<Grid Grid.Column="6" Name="test4">
-					<Label Name="test4x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test4}">Time</Label>
+				<Grid Grid.Column="6" Name="Column4">
+					<Label Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column4}">Time</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="8" Name="test5">
-					<Label Name="test5x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test5}">Artist</Label>
+				<Grid Grid.Column="8" Name="Column5">
+					<Label Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column5}">Artist</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="10" Name="test6">
-					<Label Name="test6x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test6}">Album</Label>
+				<Grid Grid.Column="10" Name="Column6">
+					<Label Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column6}">Album</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="12" Name="test7">
-					<Label Name="test7x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test7}">Disc</Label>
+				<Grid Grid.Column="12" Name="Column7">
+					<Label Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column7}">Disc</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="14" Name="test8">
-					<Label Name="test8x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test8}">Track</Label>
+				<Grid Grid.Column="14" Name="Column8">
+					<Label Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column8}">Track</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="16" Name="test9">
-					<Label Name="test9x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test9}">Genre</Label>
+				<Grid Grid.Column="16" Name="Column9">
+					<Label Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column9}">Genre</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="18" Name="test10">
-					<Label Name="test10x" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test10}">LastModified</Label>
+				<Grid Grid.Column="18" Name="Column10">
+					<Label Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column10}">LastModified</Label>
 				</Grid>
 
 				<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="20" Name="test11" MinWidth="24">
+				<Grid Grid.Column="20" Name="Column11" MinWidth="24">
 
 				</Grid>
 
@@ -173,7 +173,7 @@
 								<ColumnDefinition Width="*"></ColumnDefinition>
 								<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 							</Grid.ColumnDefinitions>
-							<TextBlock Grid.Column="0" Width="{Binding Bounds.Size.Width, ElementName=test1}" Text="{Binding IndexPlusOne}" HorizontalAlignment="Left" Margin="0" Padding="0,0,0,0" Opacity="0.9" IsVisible="False"></TextBlock>
+							<TextBlock Grid.Column="0" Width="{Binding Bounds.Size.Width, ElementName=Column1}" Text="{Binding IndexPlusOne}" HorizontalAlignment="Left" Margin="0" Padding="0,0,0,0" Opacity="0.9" IsVisible="False"></TextBlock>
 							<Viewbox Grid.Column="2" Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
 								<PathIcon Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Foreground="{DynamicResource AccentFillColorDefaultBrush}" Margin="0" Padding="0">
 									<Interaction.Behaviors>
@@ -186,7 +186,7 @@
 									</Interaction.Behaviors>
 								</PathIcon>
 							</Viewbox>
-							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=test3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=Column3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -196,7 +196,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=test4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=Column4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -206,7 +206,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=test5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=Column5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -216,7 +216,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=test6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=Column6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -226,7 +226,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="12" Width="{Binding Bounds.Size.Width, ElementName=test7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="12" Width="{Binding Bounds.Size.Width, ElementName=Column7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -236,7 +236,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="14" Width="{Binding Bounds.Size.Width, ElementName=test8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="14" Width="{Binding Bounds.Size.Width, ElementName=Column8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -246,7 +246,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=test9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -256,7 +256,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="18" Width="{Binding Bounds.Size.Width, ElementName=test10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="18" Width="{Binding Bounds.Size.Width, ElementName=Column10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -281,13 +281,13 @@
 							<Setter.Value>
 
 								<ContextMenu>
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_ScrollIntoNowPlaying}" Command="{Binding Path=$parent[ListBox].DataContext.ScrollIntoNowPlayingCommand}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_ScrollIntoNowPlaying}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).ScrollIntoNowPlayingCommand}"/>
 
 									<Separator/>
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" Command="{Binding Path=$parent[ListBox].DataContext.QueueListviewDeleteWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 									<Separator/>
 									<MenuItem Header="_Queue">
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_QueueClear}" Command="{Binding Path=$parent[ListBox].DataContext.QueueListviewClearWithoutPromptCommand}"/>
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_QueueClear}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewClearWithoutPromptCommand}"/>
 									</MenuItem>
 								</ContextMenu>
 

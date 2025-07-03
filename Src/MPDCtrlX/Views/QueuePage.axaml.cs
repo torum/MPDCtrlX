@@ -1,14 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using FluentAvalonia.UI.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.ViewModels;
-using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +12,7 @@ public partial class QueuePage : UserControl
 
     public QueuePage()
     {
-        _viewModel = (App.Current as App)?.AppHost.Services.GetRequiredService<MainViewModel>();
+        _viewModel = App.GetService<MainViewModel>();
 
         DataContext = _viewModel;
 
@@ -37,17 +29,17 @@ public partial class QueuePage : UserControl
     {
         if (_viewModel != null)
         {
-            // This is a dirty work around for AvaloniaUI.
-            _viewModel.QueueColumnHeaderPositionWidth = this.test1x.Width;
-            _viewModel.QueueColumnHeaderNowPlayingWidth = this.test2x.Width;
-            _viewModel.QueueColumnHeaderTitleWidth = this.test3x.Width;
-            _viewModel.QueueColumnHeaderTimeWidth = this.test4x.Width;
-            _viewModel.QueueColumnHeaderArtistWidth = this.test5x.Width;
-            _viewModel.QueueColumnHeaderAlbumWidth = this.test6x.Width;
-            _viewModel.QueueColumnHeaderDiscWidth = this.test7x.Width;
-            _viewModel.QueueColumnHeaderTrackWidth = this.test8x.Width;
-            _viewModel.QueueColumnHeaderGenreWidth = this.test9x.Width;
-            _viewModel.QueueColumnHeaderLastModifiedWidth = this.test10x.Width;
+            // This is a dirty workaround for AvaloniaUI.
+            _viewModel.QueueColumnHeaderPositionWidth = this.Column1X.Width;
+            _viewModel.QueueColumnHeaderNowPlayingWidth = this.Column2X.Width;
+            _viewModel.QueueColumnHeaderTitleWidth = this.Column3X.Width;
+            _viewModel.QueueColumnHeaderTimeWidth = this.Column4X.Width;
+            _viewModel.QueueColumnHeaderArtistWidth = this.Column5X.Width;
+            _viewModel.QueueColumnHeaderAlbumWidth = this.Column6X.Width;
+            _viewModel.QueueColumnHeaderDiscWidth = this.Column7X.Width;
+            _viewModel.QueueColumnHeaderTrackWidth = this.Column8X.Width;
+            _viewModel.QueueColumnHeaderGenreWidth = this.Column9X.Width;
+            _viewModel.QueueColumnHeaderLastModifiedWidth = this.Column10X.Width;
         }
     }
 
@@ -58,95 +50,95 @@ public partial class QueuePage : UserControl
             return;
         }
 
-        // This is a dirty work around for AvaloniaUI.
+        // This is a dirty workaround for AvaloniaUI.
         if (_viewModel.QueueColumnHeaderPositionWidth > 10)
         {
-            this.test1x.Width = _viewModel.QueueColumnHeaderPositionWidth;
+            this.Column1X.Width = _viewModel.QueueColumnHeaderPositionWidth;
         }
         else
         {
-            this.test1x.Width = 50; // Default width if not set
+            this.Column1X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderNowPlayingWidth > 10)
         {
-            //this.test2x.Width = _viewModel.QueueColumnHeaderNowPlayingWidth;
+            //this.Column2X.Width = _viewModel.QueueColumnHeaderNowPlayingWidth;
         }
         else
         {
-            //this.test2x.Width = 50; // Default width if not set
+            //this.Column2X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderTitleWidth > 10)
         {
-            this.test3x.Width = _viewModel.QueueColumnHeaderTitleWidth;
+            this.Column3.Width = _viewModel.QueueColumnHeaderTitleWidth;
         }
         else
         {
-            this.test3x.Width = 50; // Default width if not set
+            this.Column3X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderTimeWidth > 10)
         {
-            this.test4x.Width = _viewModel.QueueColumnHeaderTimeWidth;
+            this.Column4X.Width = _viewModel.QueueColumnHeaderTimeWidth;
         }
         else
         {
-            this.test4x.Width = 50; // Default width if not set
+            this.Column4X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderArtistWidth > 10)
         {
-            this.test5x.Width = _viewModel.QueueColumnHeaderArtistWidth;
+            this.Column5X.Width = _viewModel.QueueColumnHeaderArtistWidth;
         }
         else
         {
-            this.test5x.Width = 50; // Default width if not set
+            this.Column5X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderAlbumWidth > 10)
         {
-            this.test6x.Width = _viewModel.QueueColumnHeaderAlbumWidth;
+            this.Column6X.Width = _viewModel.QueueColumnHeaderAlbumWidth;
         }
         else
         {
-            this.test6x.Width = 50; // Default width if not set
+            this.Column6X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderDiscWidth > 10)
         {
-            this.test7x.Width = _viewModel.QueueColumnHeaderDiscWidth;
+            this.Column7X.Width = _viewModel.QueueColumnHeaderDiscWidth;
         }
         else
         {
-            this.test7x.Width = 50; // Default width if not set
+            this.Column7X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderTrackWidth > 10)
         {
-            this.test8x.Width = _viewModel.QueueColumnHeaderTrackWidth;
+            this.Column8X.Width = _viewModel.QueueColumnHeaderTrackWidth;
         }
         else
         {
-            this.test8x.Width = 50; // Default width if not set
+            this.Column8X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderGenreWidth > 10)
         {
-            this.test9x.Width = _viewModel.QueueColumnHeaderGenreWidth;
+            this.Column9X.Width = _viewModel.QueueColumnHeaderGenreWidth;
         }
         else
         {
-            this.test9x.Width = 50; // Default width if not set
+            this.Column9X.Width = 50; // Default width if not set
         }
 
         if (_viewModel.QueueColumnHeaderLastModifiedWidth > 10)
         {
-            this.test10x.Width = _viewModel.QueueColumnHeaderLastModifiedWidth;
+            this.Column10X.Width = _viewModel.QueueColumnHeaderLastModifiedWidth;
         }
         else
         {
-            this.test10x.Width = 50; // Default width if not set
+            this.Column10X.Width = 50; // Default width if not set
         }
 
     }

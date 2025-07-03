@@ -27,8 +27,8 @@
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
-				<TextBlock Text="Albums" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
+				<TextBlock Text="Albums" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Albums"/>
 					<Run Text=": "/>
 					<Run Text="{Binding Albums.Count, Mode=OneWay}"/>
@@ -87,14 +87,14 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								</Grid.RowDefinitions>
 
 								<StackPanel Grid.Row="0" Margin="16,16,16,16">
-									<TextBlock  Grid.Column="1" Text="{Binding SelectedAlbum.Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
+									<TextBlock Text="{Binding SelectedAlbum.Name}" Theme="{DynamicResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
 										<Interaction.Behaviors>
 											<DataTriggerBehavior Binding="{Binding SelectedAlbum.Name}" ComparisonCondition="Equal" Value="">
 												<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
 											</DataTriggerBehavior>
 										</Interaction.Behaviors>
 									</TextBlock>
-									<TextBlock Text="{Binding SelectedAlbum.AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
+									<TextBlock Text="{Binding SelectedAlbum.AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
 										<Interaction.Behaviors>
 											<DataTriggerBehavior Binding="{Binding SelectedAlbum.AlbumArtist}" ComparisonCondition="Equal" Value="">
 												<ChangePropertyAction PropertyName="Text" Value="Unknown Artist" />
@@ -153,7 +153,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 					<ListBox.Resources>
 
-						<!-- Edit: sets selection indicater to visible=false  -->
+						<!-- Edit: sets selection indicator to visible=false  -->
 						<ControlTheme TargetType="ListBoxItem" x:Key="{x:Type ListBoxItem}">
 							<Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
 							<Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -312,7 +312,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											</TransitioningContentControl.ContentTemplate>
 										</TransitioningContentControl>
 										
-										<Button Command="{Binding $parent[ItemsControl].DataContext.AlbumsItemInvokedCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+										<Button Command="{Binding $parent[ItemsControl].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center"></Viewbox>
 										</Button>
 
@@ -326,14 +326,14 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<Grid Grid.Row="1">
 
 									<StackPanel Margin="4">
-										<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
+										<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
 											<Interaction.Behaviors>
 												<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
 													<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
 												</DataTriggerBehavior>
 											</Interaction.Behaviors>
 										</TextBlock>
-										<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
+										<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
 											<Interaction.Behaviors>
 												<DataTriggerBehavior Binding="{Binding AlbumArtist}" ComparisonCondition="Equal" Value="">
 													<ChangePropertyAction PropertyName="Text" Value="Unknown Artist" />

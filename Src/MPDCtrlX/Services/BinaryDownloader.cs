@@ -980,7 +980,8 @@ public class BinaryDownloader : IBinaryDownloader
                             }
                             else
                             {
-                                Debug.WriteLine("_albumCover.IsSuccess = false; @MpdQueryAlbumArt");
+                                result.ErrorMessage = "BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.";
+                                Debug.WriteLine("BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.");
                                 _albumCover.IsSuccess = false;
                             }
                             _albumCover.IsDownloading = false;
