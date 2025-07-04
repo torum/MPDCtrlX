@@ -41,6 +41,7 @@ public partial class QueuePage : UserControl
                 _viewModel.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
             }
         };
+
     }
 
     private async void QueueSaveAsDialogShowAsync(object? sender, System.EventArgs e)
@@ -287,6 +288,15 @@ public partial class QueuePage : UserControl
             {
                 vm.QueueListviewEnterKeyCommand_ExecuteAsync();
             }
+        }
+    }
+
+    // This is a workaround to keep the header in sync with the ListBox scrolling.
+    private void ScrollViewer_ScrollChanged(object? sender, Avalonia.Controls.ScrollChangedEventArgs e)
+    {
+        if (sender is Avalonia.Controls.ScrollViewer sv)
+        {
+            this.QueueListViewHeaderScrollViewer.Offset = sv.Offset;
         }
     }
 

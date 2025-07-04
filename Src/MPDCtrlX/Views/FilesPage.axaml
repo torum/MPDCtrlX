@@ -85,30 +85,72 @@
 
 			<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,Auto,1,*" Margin="8,0,0,0">
 				<Border Grid.Row="0" BorderThickness="1,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-				<Grid Grid.Row="1" DockPanel.Dock="Top" Height="34" Margin="1,0,0,0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
-					</Grid.ColumnDefinitions>
+				<ScrollViewer Grid.Row="1" x:Name="FilesListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
+					<Grid Height="34" Margin="1,0,0,0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="4"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="4"></ColumnDefinition>
+							<ColumnDefinition Width="*"></ColumnDefinition>
+						</Grid.ColumnDefinitions>
 
-					<Grid Grid.Column="0" Name="Library1">
-						<Label Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Name</Label>
+						<Grid Grid.Column="0" Name="Library1">
+							<Label Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Name</Label>
+						</Grid>
+
+						<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
+						<Grid Grid.Column="2" Name="Library2">
+							<Label Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Path</Label>
+						</Grid>
+
+						<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+
 					</Grid>
-
-					<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-					<Grid Grid.Column="2" Name="Library2">
-						<Label Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Path</Label>
-					</Grid>
-
-					<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-
-				</Grid>
+					</ScrollViewer>
 				<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
 				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
 					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
+					<ListBox.Resources>
+						<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
+						<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+							<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+							<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+							<Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+							<Setter Property="BorderThickness" Value="{DynamicResource ListBoxBorderThemeThickness}" />
+							<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+							<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+							<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+							<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+							<Setter Property="Template">
+								<ControlTemplate>
+									<Border Name="border"
+											ClipToBounds="{TemplateBinding ClipToBounds}"
+											Background="{TemplateBinding Background}"
+											BorderBrush="{TemplateBinding BorderBrush}"
+											BorderThickness="{TemplateBinding BorderThickness}"
+											CornerRadius="{TemplateBinding CornerRadius}">
+										<ScrollViewer Name="PART_ScrollViewer"
+													  ScrollChanged="ScrollViewer_ScrollChanged"
+													  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+													  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+													  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+													  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+													  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+													  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+													  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+													  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+													  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+											<ItemsPresenter Name="PART_ItemsPresenter"
+															ItemsPanel="{TemplateBinding ItemsPanel}"
+															Margin="{TemplateBinding Padding}"/>
+										</ScrollViewer>
+									</Border>
+								</ControlTemplate>
+							</Setter>
+						</ControlTheme>
+					</ListBox.Resources>
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
 							<VirtualizingStackPanel />

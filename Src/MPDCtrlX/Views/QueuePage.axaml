@@ -102,90 +102,132 @@
 		<!-- Queue ListBox  Margin="16,4,0,0"-->
 		<Grid Grid.Row="1" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-			<Grid Grid.Row="1" DockPanel.Dock="Top" Height="34" Margin="1,0,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="28"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
+			<ScrollViewer Grid.Row="1" x:Name="QueueListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
+				<Grid Height="34" Margin="1,0,0,0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="28"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
 
-					<ColumnDefinition Width="4"></ColumnDefinition>
-					<ColumnDefinition Width="*"></ColumnDefinition>
-				</Grid.ColumnDefinitions>
+						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
 
-				<Grid Grid.Column="0" Name="Column1" IsVisible="False">
-					<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">#</Label>
+					<Grid Grid.Column="0" Name="Column1" IsVisible="False">
+						<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">#</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
+					<Grid Grid.Column="2" Name="Column2">
+						<Label Name="Column2X" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column2}"></Label>
+					</Grid>
+
+					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
+					<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="False"/>
+					<Grid Grid.Column="4" Name="Column3">
+						<Label Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.QueueListviewColumnHeader_Title}" Width="{Binding Bounds.Size.Width, ElementName=Column3}"></Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
+					<Grid Grid.Column="6" Name="Column4">
+						<Label Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column4}">Time</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="8" Name="Column5">
+						<Label Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column5}">Artist</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="10" Name="Column6">
+						<Label Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column6}">Album</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="12" Name="Column7">
+						<Label Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column7}">Disc</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="14" Name="Column8">
+						<Label Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column8}">Track</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="16" Name="Column9">
+						<Label Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column9}">Genre</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="18" Name="Column10">
+						<Label Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column10}">LastModified</Label>
+					</Grid>
+
+					<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Grid Grid.Column="20" Name="Column11" MinWidth="24">
+
+					</Grid>
+
 				</Grid>
-
-				<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
-				<Grid Grid.Column="2" Name="Column2">
-					<Label Name="Column2X" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column2}"></Label>
-				</Grid>
-
-				<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
-				<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="False"/>
-				<Grid Grid.Column="4" Name="Column3">
-					<Label Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.QueueListviewColumnHeader_Title}" Width="{Binding Bounds.Size.Width, ElementName=Column3}"></Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-				<Grid Grid.Column="6" Name="Column4">
-					<Label Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column4}">Time</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="8" Name="Column5">
-					<Label Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column5}">Artist</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="10" Name="Column6">
-					<Label Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column6}">Album</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="12" Name="Column7">
-					<Label Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column7}">Disc</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="14" Name="Column8">
-					<Label Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column8}">Track</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="16" Name="Column9">
-					<Label Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column9}">Genre</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="18" Name="Column10">
-					<Label Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column10}">LastModified</Label>
-				</Grid>
-
-				<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-				<Grid Grid.Column="20" Name="Column11" MinWidth="24">
-
-				</Grid>
-
-			</Grid>
+			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
 			<ListBox Grid.Row="3" Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="AlwaysSelected,Multiple" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+				<ListBox.Resources>
+					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
+					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+						<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+						<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+						<Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+						<Setter Property="BorderThickness" Value="{DynamicResource ListBoxBorderThemeThickness}" />
+						<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+						<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+						<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+						<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+						<Setter Property="Template">
+							<ControlTemplate>
+								<Border Name="border"
+										ClipToBounds="{TemplateBinding ClipToBounds}"
+										Background="{TemplateBinding Background}"
+										BorderBrush="{TemplateBinding BorderBrush}"
+										BorderThickness="{TemplateBinding BorderThickness}"
+										CornerRadius="{TemplateBinding CornerRadius}">
+									<ScrollViewer Name="PART_ScrollViewer"
+												  ScrollChanged="ScrollViewer_ScrollChanged"
+												  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+												  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+												  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+												  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+												  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+												  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+												  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+												  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+												  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+										<ItemsPresenter Name="PART_ItemsPresenter"
+														ItemsPanel="{TemplateBinding ItemsPanel}"
+														Margin="{TemplateBinding Padding}"/>
+									</ScrollViewer>
+								</Border>
+							</ControlTemplate>
+						</Setter>
+					</ControlTheme>
+				</ListBox.Resources>
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.KeyBindings>
 					<!--  Enter  -->

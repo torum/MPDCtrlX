@@ -36,4 +36,13 @@ public partial class SearchPage : UserControl
         this.test10x.Width = _viewModel.QueueColumnHeaderLastModifiedWidth;
 
     }
+
+    // This is a workaround to keep the header in sync with the ListBox scrolling.
+    private void ScrollViewer_ScrollChanged(object? sender, Avalonia.Controls.ScrollChangedEventArgs e)
+    {
+        if (sender is Avalonia.Controls.ScrollViewer sv)
+        {
+            this.SearchListViewHeaderScrollViewer.Offset = sv.Offset;
+        }
+    }
 }
