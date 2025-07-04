@@ -351,7 +351,7 @@ SOFTWARE.</value>
   <data name="PlaylistItemContextMenu_Load" xml:space="preserve">
     <value>キューに追加する (Enter)</value>
   </data>
-  <data name="PlaylistItemContextMenu_Remove" xml:space="preserve">
+  <data name="PlaylistItemMenu_Remove" xml:space="preserve">
     <value>プレイリストを削除する</value>
   </data>
   <data name="PlaylistItemContextMenu_Rename" xml:space="preserve">
@@ -399,8 +399,8 @@ SOFTWARE.</value>
   <data name="Popup_ConfirmRemoveSelectedQuestion" xml:space="preserve">
     <value>削除しますか？</value>
   </data>
-  <data name="Popup_InputNewPlaylistName" xml:space="preserve">
-    <value>新規プレイリスト名の入力：</value>
+  <data name="Dialog_Title_NewPlaylistName" xml:space="preserve">
+    <value>新規プレイリスト名の入力</value>
   </data>
   <data name="Popup_MultipleDeletionNotSupported" xml:space="preserve">
     <value>プレイリストの複数削除未対応</value>
@@ -454,17 +454,14 @@ SOFTWARE.</value>
   <data name="QueueItemContextMenu_MoveUp" xml:space="preserve">
     <value>上へ (Ctrl+U)</value>
   </data>
-  <data name="QueueItemContextMenu_Queue" xml:space="preserve">
-    <value>キュー</value>
-  </data>
-  <data name="QueueItemContextMenu_QueueClear" xml:space="preserve">
+  <data name="QueueMenu_QueueClear" xml:space="preserve">
     <value>クリアする</value>
   </data>
-  <data name="QueueItemContextMenu_QueueSaveAsPlaylist" xml:space="preserve">
+  <data name="QueueMenu_QueueSaveAsPlaylist" xml:space="preserve">
     <value>プレイリストとして保存する</value>
   </data>
   <data name="QueueItemContextMenu_Remove" xml:space="preserve">
-    <value>キューから削除 (Ctrl+Delete)</value>
+    <value>キューから削除</value>
   </data>
   <data name="QueueItemContextMenu_SaveSelectedAs" xml:space="preserve">
     <value>プレイリストとして保存する</value>
@@ -472,11 +469,8 @@ SOFTWARE.</value>
   <data name="QueueItemContextMenu_SaveSelectedTo" xml:space="preserve">
     <value>プレイリストに保存する</value>
   </data>
-  <data name="QueueItemContextMenu_ScrollIntoNowPlaying" xml:space="preserve">
-    <value>現在の曲へジャンプ (Ctrl+J)</value>
-  </data>
-  <data name="QueueItemContextMenu_SelectedItems" xml:space="preserve">
-    <value>選択項目</value>
+  <data name="QueueMenu_ScrollIntoNowPlaying" xml:space="preserve">
+    <value>現在の曲へスクロール</value>
   </data>
   <data name="QueueListviewColumnHeader_Album" xml:space="preserve">
     <value>アルバム</value>
@@ -612,5 +606,17 @@ SOFTWARE.</value>
   </data>
   <data name="MenuTreeItem_Library" xml:space="preserve">
     <value>ライブラリ</value>
+  </data>
+  <data name="QueueItemContextMenu_Play" xml:space="preserve">
+    <value>再生</value>
+  </data>
+  <data name="QueueMenu_QueueSaveToPlaylist" xml:space="preserve">
+    <value>プレイリストに保存する</value>
+  </data>
+  <data name="Dialog_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Dialog_Title_SelectPlaylist" xml:space="preserve">
+    <value>プレイリストを選択</value>
   </data>
 </root>

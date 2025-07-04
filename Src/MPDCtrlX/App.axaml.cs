@@ -85,7 +85,7 @@ public partial class App : Application
             */
 
             desktop.MainWindow = App.GetService<MainWindow>();
-            desktop.MainWindow.Show();
+            //desktop.MainWindow.Show();
         }
 
         base.OnFrameworkInitializationCompleted();

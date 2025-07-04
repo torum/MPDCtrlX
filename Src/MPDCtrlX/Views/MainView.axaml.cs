@@ -49,6 +49,19 @@ public partial class MainView : UserControl
 
         }
 
+        Unloaded += (sender, e) =>
+        {
+            if (vm is not null)
+            {
+                // Unsubscribe from ViewModel events.
+                vm.DebugWindowShowHide -= () => OnDebugWindowShowHide();
+                vm.DebugCommandOutput -= (sender, arg) => { this.OnDebugCommandOutput(arg); };
+                vm.DebugIdleOutput -= (sender, arg) => { this.OnDebugIdleOutput(arg); };
+                vm.AckWindowOutput -= (sender, arg) => { this.OnAckWindowOutput(arg); };
+                vm.AckWindowClear -= () => OnAckWindowClear();
+            }
+        };
+
         /*
         var os = Environment.OSVersion;
         if (os.Platform.ToString().StartsWith("Win"))
@@ -169,14 +182,5 @@ public partial class MainView : UserControl
         */
     }
     
-    public void WindowDeactivated()
-    {
-        //this.Header.Opacity = 0.3;
-        //this.AppTitleBar.Opacity = 0.3;
-    }
-    public void WindowActivated()
-    {
-        //this.Header.Opacity = 1;
-        //this.AppTitleBar.Opacity = 1;
-    }
+
 }

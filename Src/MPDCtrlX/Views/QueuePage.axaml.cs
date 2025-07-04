@@ -1,6 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using FluentAvalonia.UI.Controls;
 using MPDCtrlX.ViewModels;
+using MPDCtrlX.ViewModels.Dialogs;
+using MPDCtrlX.Views.Dialogs;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,13 +21,110 @@ public partial class QueuePage : UserControl
 
         DataContext = _viewModel;
 
+        InitializeComponent();
+
         if (_viewModel != null)
         {
             _viewModel.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
             _viewModel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+            _viewModel.QueueSaveAsDialogShow += this.QueueSaveAsDialogShowAsync;
+            _viewModel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
         }
 
-        InitializeComponent();
+        Unloaded += (sender, e) =>
+        {
+            if (_viewModel != null)
+            {
+                _viewModel.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
+                _viewModel.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+                _viewModel.QueueSaveAsDialogShow -= this.QueueSaveAsDialogShowAsync;
+                _viewModel.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
+            }
+        };
+    }
+
+    private async void QueueSaveAsDialogShowAsync(object? sender, System.EventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_NewPlaylistName,
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.QueueSaveAsDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        /* Esc doesn't close... >> turns out MainWindow's keybinding is stealing it. No need for this.
+        if ((dialog.Content as Views.Dialogs.QueueSaveAsDialog)?.DataContext is DialogViewModel dv)
+        {
+            dv.CloseDialogEvent += (s, args) =>
+            {
+                dialog.Hide();
+            };
+        }
+        */
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            if (dialog.Content is Views.Dialogs.QueueSaveAsDialog dlg)
+            {
+                var plname = dlg.TextBoxPlaylistName.Text;
+
+                if (string.IsNullOrWhiteSpace(plname))
+                {
+                    return;
+                }
+                _viewModel?.QueueSaveAsDialogCommand_Execute(plname.Trim());
+            }
+        }
+    }
+
+    private async void QueueSaveToDialogShowAsync(object? sender, System.EventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.QueueSaveToDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        if (dialog.Content is QueueSaveToDialog asdf)
+        {
+            asdf.PlaylistListBox.ItemsSource = _viewModel?.Playlists;
+        }
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            if (dialog.Content is Views.Dialogs.QueueSaveToDialog dlg)
+            {
+                var plselitem = dlg.PlaylistListBox.SelectedItem;
+                
+                if (plselitem is Models.Playlist pl)
+                {
+                    if (string.IsNullOrWhiteSpace(pl.Name))
+                    {
+                        return;
+                    }
+                    _viewModel?.QueueSaveToDialogCommand_Execute(pl.Name.Trim());
+                }
+            }
+        }
     }
 
     public void UpdateHeaderWidth()
@@ -175,6 +277,17 @@ public partial class QueuePage : UserControl
                 //lb.AutoScrollToSelectedItem = true;
             }
         });
+    }
+
+    private void QueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+        {
+            if (MainViewModel.QueueListviewEnterKeyCommand_CanExecute())
+            {
+                vm.QueueListviewEnterKeyCommand_ExecuteAsync();
+            }
+        }
     }
 
 }

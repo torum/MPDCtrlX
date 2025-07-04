@@ -2026,6 +2026,11 @@ public partial class MpcService : IMpcService
             cmd = "playid " + songId;
         }
 
+        if ((MpdStatus.MpdState == Status.MpdPlayState.Play) || (MpdStatus.MpdState == Status.MpdPlayState.Pause))
+        {
+            // stop
+        }
+
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand(cmd, true);
@@ -2035,8 +2040,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmdList = "command_list_begin" + "\n";
-            cmdList = cmdList + cmd + "\n";
             cmdList = cmdList + "setvol " + volume.ToString() + "\n";
+            cmdList = cmdList + cmd + "\n";
             cmdList = cmdList + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmdList, true);
@@ -2063,8 +2068,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd += "pause 0\n";
             cmd = cmd + "setvol " + volume.ToString() + "\n";
+            cmd += "pause 0\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd, true);
@@ -2091,8 +2096,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd += "next\n";
             cmd = cmd + "setvol " + volume.ToString() + "\n";
+            cmd += "next\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd, true);
@@ -2112,8 +2117,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd += "previous\n";
             cmd = cmd + "setvol " + volume.ToString() + "\n";
+            cmd += "previous\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd, true);
@@ -2682,9 +2687,12 @@ public partial class MpcService : IMpcService
                 {
                     try
                     {
-                        MpdStatus.MpdVolume = Int32.Parse(valueVolume);
+                        if (string.IsNullOrEmpty(valueVolume))
+                        {
+                            MpdStatus.MpdVolume = Int32.Parse(valueVolume);
 
-                        MpdStatus.MpdVolumeIsSet = true;
+                            MpdStatus.MpdVolumeIsSet = true;
+                        }
                     }
                     catch (FormatException e)
                     {

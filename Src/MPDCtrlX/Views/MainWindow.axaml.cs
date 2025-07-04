@@ -66,6 +66,12 @@ public partial class MainWindow : Window//AppWindow//
         //this.ContentRendered += vm.OnContentRendered;
         //vm.CurrentSongChanged += (sender, arg) => OnCurrentSongChanged(arg);
 
+        Unloaded += (sender, e) =>
+        {
+            this.Loaded -= vm.OnWindowLoaded;
+            this.Closing -= vm.OnWindowClosing;
+        };
+
         var os = Environment.OSVersion;
         /*
         Debug.WriteLine("Current OS Information:");
@@ -102,10 +108,6 @@ public partial class MainWindow : Window//AppWindow//
             // Not currently supported on Linux due to X11.
             //ExtendClientAreaToDecorationsHint = false;
         }
-
-        this.Activated += (sender, e) => { shellPage?.WindowActivated();  };
-        this.Deactivated += (sender, e) => { shellPage?.WindowDeactivated(); };
-
 
     }
 
@@ -169,7 +171,7 @@ public partial class MainWindow : Window//AppWindow//
         */
         if (this.DataContext is MainViewModel vm)
         {
-            if (e.SelectedItem is NodeMenuPlaylists pl)
+            if (e.SelectedItem is NodeMenuPlaylists)
             {
                 // don't change page here.
                 //pl.Selected = false;
@@ -178,7 +180,7 @@ public partial class MainWindow : Window//AppWindow//
                     //vm.SelectedNodeMenu.Selected = true;
                 }
             }
-            else if (e.SelectedItem is NodeMenuLibrary lb)
+            else if (e.SelectedItem is NodeMenuLibrary)
             {
                 // don't change page here.
                 //lb.Selected = false;
@@ -217,13 +219,13 @@ public partial class MainWindow : Window//AppWindow//
             }
 
 
-            if (nv.SelectedItem is NodeMenuPlaylists pl)
+            if (nv.SelectedItem is NodeMenuPlaylists)
             {
                 // don't change page here.
                 //nv.SelectedItem = _navigationViewSelectedItem;
                 return;
             }
-            else if (nv.SelectedItem is NodeMenuLibrary lb)
+            else if (nv.SelectedItem is NodeMenuLibrary)
             {
                 // don't change page here.
                 //nv.SelectedItem = _navigationViewSelectedItem;

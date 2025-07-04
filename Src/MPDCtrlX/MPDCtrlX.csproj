@@ -64,6 +64,12 @@
     <Compile Update="Views\AlbumPage.axaml.cs">
       <DependentUpon>AlbumPage.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\Dialogs\QueueSaveToDialog.axaml.cs">
+      <DependentUpon>QueueSaveToDialog.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Dialogs\QueueSaveAsDialog.axaml.cs">
+      <DependentUpon>QueueSaveAsDialog.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\PlaylistItemPage.axaml.cs">
       <DependentUpon>PlaylistItemPage.axaml</DependentUpon>
     </Compile>

@@ -27,27 +27,75 @@
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
+			
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
+				<!-- page title-->
 				<TextBlock Text="Queue" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<!-- song count -->
 				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Songs"/>
 					<Run Text=": "/>
 					<Run Text="{Binding Queue.Count, Mode=OneWay}"/>
 				</TextBlock>
-			</StackPanel>
-			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 
-				<!-- Filter box -->
+			</StackPanel>
+
+			<!-- Page command menu buttons (filter, more) -->
+			<StackPanel Grid.Column="2" Height="48" Spacing="6" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+
+				<!-- Search query input box -->
 				<StackPanel Orientation="Horizontal">
-					<TextBox MinWidth="100" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
+					<TextBox MinWidth="100" Width="145" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
 					<ToggleButton Name="TglButtonQueueFilter" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-								Data="M7.5 13H12.5C12.7761 13 13 13.2239 13 13.5C13 13.7455 12.8231 13.9496 12.5899 13.9919L12.5 14H7.5C7.22386 14 7 13.7761 7 13.5C7 13.2545 7.17688 13.0504 7.41012 13.0081L7.5 13H12.5H7.5ZM5.5 9H14.5C14.7761 9 15 9.22386 15 9.5C15 9.74546 14.8231 9.94961 14.5899 9.99194L14.5 10H5.5C5.22386 10 5 9.77614 5 9.5C5 9.25454 5.17688 9.05039 5.41012 9.00806L5.5 9H14.5H5.5ZM3.5 5H16.5C16.7761 5 17 5.22386 17 5.5C17 5.74546 16.8231 5.94961 16.5899 5.99194L16.5 6H3.5C3.22386 6 3 5.77614 3 5.5C3 5.25454 3.17688 5.05039 3.41012 5.00806L3.5 5H16.5H3.5Z">
+								Data="M10.0195 10.7266C9.06578 11.5217 7.83875 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5C12 7.83875 11.5217 9.06578 10.7266 10.0195L13.8535 13.1464C14.0488 13.3417 14.0488 13.6583 13.8535 13.8536C13.6583 14.0488 13.3417 14.0488 13.1464 13.8536L10.0195 10.7266ZM11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11C8.98528 11 11 8.98528 11 6.5Z">
 							</PathIcon>
 						</Viewbox>
 					</ToggleButton>
 				</StackPanel>
+
+				<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
+						</PathIcon>
+					</Viewbox>
+					<SplitButton.Flyout>
+						<MenuFlyout Placement="Bottom">
+							<MenuItem Header="Title" IsChecked="True">
+								<MenuItem.Icon>
+									<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+										IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+								</MenuItem.Icon>
+							</MenuItem>
+							<MenuItem Header="Album" />
+							<MenuItem Header="Artist" />
+							<MenuItem Header="Genre" />
+							<MenuItem Header="Last modified" />
+						</MenuFlyout>
+					</SplitButton.Flyout>
+				</SplitButton>
+
+				<!-- More options button -->
+				<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							Data="M10 6C9.30964 6 8.75 5.44036 8.75 4.75C8.75 4.05964 9.30964 3.5 10 3.5C10.6904 3.5 11.25 4.05964 11.25 4.75C11.25 5.44036 10.6904 6 10 6ZM10 11.25C9.30964 11.25 8.75 10.6904 8.75 10C8.75 9.30964 9.30964 8.75 10 8.75C10.6904 8.75 11.25 9.30964 11.25 10C11.25 10.6904 10.6904 11.25 10 11.25ZM8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14C9.30964 14 8.75 14.5596 8.75 15.25Z">
+						</PathIcon>
+					</Viewbox>
+					<Button.Flyout>
+						<MenuFlyout>
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}" InputGesture="Ctrl+J"/>
+							<Separator/>
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveAsPlaylist}" Command="{Binding QueueSaveAsCommand}"/>
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveToPlaylist}" Command="{Binding QueueSaveToCommand}"/>
+							<Separator/>
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueClear}" Command="{Binding QueueClearWithoutPromptCommand}"/>
+						</MenuFlyout>
+					</Button.Flyout>
+				</Button>
+
 			</StackPanel>
 		</Grid>
 
@@ -137,9 +185,12 @@
 
 			</Grid>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="AlwaysSelected,Multiple" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+			<ListBox Grid.Row="3" Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="AlwaysSelected,Multiple" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
-
+				<ListBox.KeyBindings>
+					<!--  Enter  -->
+					<KeyBinding Command="{Binding QueueListviewEnterKeyCommand}" Gesture="Enter" />
+				</ListBox.KeyBindings>
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
 						<VirtualizingStackPanel />
@@ -279,16 +330,15 @@
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
 						<Setter Property="ContextMenu">
 							<Setter.Value>
-
 								<ContextMenu>
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_ScrollIntoNowPlaying}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).ScrollIntoNowPlayingCommand}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Play}" InputGesture="Enter" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewLeftDoubleClickCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}"/>
+									<Separator/>
+									<!-- Save -->
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}"/>
 
 									<Separator/>
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
-									<Separator/>
-									<MenuItem Header="_Queue">
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_QueueClear}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewClearWithoutPromptCommand}"/>
-									</MenuItem>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" InputGesture="Ctrl+Delete" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 								</ContextMenu>
 
 							</Setter.Value>
@@ -296,6 +346,13 @@
 					</Style>
 				</ListBox.Styles>
 				<!--
+				<ListBox.ItemContainerTheme>
+					<ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+						<EventSetter Event="DoubleTapped" Handler="ListBox_DoubleTapped"/>
+					</ControlTheme>
+				</ListBox.ItemContainerTheme>
+				-->
+				<!--  
 				<ListBox.ItemContainerTheme>
 					<ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
 						<Setter Property="ContextMenu">

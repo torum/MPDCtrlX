@@ -56,7 +56,10 @@
 		<KeyBinding Command="{Binding VolumeUpCommand}" Gesture="VolumeUp" />
 		<KeyBinding Command="{Binding VolumeUpCommand}" Gesture="Ctrl+OemPlus" />
 		<KeyBinding Command="{Binding VolumeUpCommand}" Gesture="Ctrl+Add" />
+		<!--
+		 Not good for contentdialogs. this steals escape key.
 		<KeyBinding Command="{Binding EscapeCommand}" Gesture="Escape" />
+		-->
 		<KeyBinding Command="{Binding ShowSettingsCommand}" Gesture="Ctrl+S"/>
 		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
 		<!--
@@ -183,7 +186,7 @@
 
 			<!-- Volume and other options -->
 			<Grid Grid.Row="0" Grid.Column="2" ColumnDefinitions="*,Auto" VerticalAlignment="Top" Margin="0,16,0,16" Height="130" MinWidth="50">
-				<WrapPanel Name="stpnlOptions" Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12,0,0,0">
+				<WrapPanel Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="12,0,0,0">
 					<ToggleButton x:Name="RepeatButton" ToolTip.Tip="Repeat" Width="24" Height="24" Padding="0" Margin="10,1,0,0" IsChecked="{Binding Repeat, Mode=TwoWay}" BorderThickness="0" Background="Transparent">
 						<Viewbox Width="14" Height="14">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
