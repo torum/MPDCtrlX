@@ -149,6 +149,8 @@ public class BinaryDownloader : IBinaryDownloader
 
     private async Task<CommandResult> MpdBinarySendCommand(string cmd, bool isAutoIdling = false)
     {
+        isAutoIdling = false;
+
         CommandResult ret = new();
 
         if (_binaryConnection.Client is null)

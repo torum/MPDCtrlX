@@ -20,8 +20,9 @@
 
 	<Grid RowDefinitions="Auto,*">
 
+		<Border Grid.Row="0" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Queue page title and menus -->
-		<Grid Grid.Row="0" Margin="0,0,0,6">
+		<Grid Grid.Row="0" Margin="0,0,0,12">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="48"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -45,8 +46,8 @@
 
 				<!-- Search query input box -->
 				<StackPanel Orientation="Horizontal">
-					<TextBox MinWidth="100" Width="145" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
-					<ToggleButton Name="TglButtonQueueFilter" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34">
+					<!-- Filter -->
+					<ToggleButton x:Name="TglButtonQueueFilter" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsQueueFindVisible, Mode=TwoWay}" Click="ToggleButton_Click_1">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="M10.0195 10.7266C9.06578 11.5217 7.83875 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5C12 7.83875 11.5217 9.06578 10.7266 10.0195L13.8535 13.1464C14.0488 13.3417 14.0488 13.6583 13.8535 13.8536C13.6583 14.0488 13.3417 14.0488 13.1464 13.8536L10.0195 10.7266ZM11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11C8.98528 11 11 8.98528 11 6.5Z">
@@ -55,7 +56,7 @@
 					</ToggleButton>
 				</StackPanel>
 
-				<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34">
+				<ToggleSplitButton x:Name="SortToggleSplitButton" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 							Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
@@ -63,19 +64,25 @@
 					</Viewbox>
 					<SplitButton.Flyout>
 						<MenuFlyout Placement="Bottom">
+							<!-- 
 							<MenuItem Header="Title" IsChecked="True">
 								<MenuItem.Icon>
 									<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
 										IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
 								</MenuItem.Icon>
 							</MenuItem>
-							<MenuItem Header="Album" />
-							<MenuItem Header="Artist" />
-							<MenuItem Header="Genre" />
-							<MenuItem Header="Last modified" />
+							-->
+							<MenuItem Header="Title" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="title"/>
+							<MenuItem Header="Time" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="time" />
+							<MenuItem Header="Artist" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="artist" />
+							<MenuItem Header="Album" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="album" />
+							<MenuItem Header="Genre" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="genre" />
+							<MenuItem Header="Last modified" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="lastmodified" />
+							<Separator/>
+							<MenuItem Header="Reverse order" Command="{Binding QueueListviewSortReverseCommand}" />
 						</MenuFlyout>
 					</SplitButton.Flyout>
-				</SplitButton>
+				</ToggleSplitButton>
 
 				<!-- More options button -->
 				<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom">
@@ -86,10 +93,61 @@
 					</Viewbox>
 					<Button.Flyout>
 						<MenuFlyout>
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}" InputGesture="Ctrl+J"/>
-							<Separator/>
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveAsPlaylist}" Command="{Binding QueueSaveAsCommand}"/>
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveToPlaylist}" Command="{Binding QueueSaveToCommand}"/>
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
+							<MenuItem Header="Headers">
+								<MenuItem Header="Title">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Time">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Artist">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Album">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Disk">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Track">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Genre" IsChecked="{Binding IsQueueColumnHeaderGenreVisible}" Command="{Binding QueueColumnHeaderGenreShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="Last modified" IsChecked="{Binding IsQueueColumnHeaderLastModifiedVisible}" Command="{Binding QueueColumnHeaderLastModifiedShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+							</MenuItem>
+							<MenuItem Header="Save">
+								<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveAsPlaylist}" Command="{Binding QueueSaveAsCommand}"/>
+								<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveToPlaylist}" Command="{Binding QueueSaveToCommand}"/>
+							</MenuItem>
 							<Separator/>
 							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueClear}" Command="{Binding QueueClearWithoutPromptCommand}"/>
 						</MenuFlyout>
@@ -102,9 +160,10 @@
 		<!-- Queue ListBox  Margin="16,4,0,0"-->
 		<Grid Grid.Row="1" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 			<ScrollViewer Grid.Row="1" x:Name="QueueListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
 				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
-				<Grid Height="34" Margin="1,0,0,0">
+				<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="4"></ColumnDefinition>
@@ -122,18 +181,28 @@
 						<ColumnDefinition Width="4"></ColumnDefinition>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="4"></ColumnDefinition>
+						<!-- 16 -->
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="4"></ColumnDefinition>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 
-						<ColumnDefinition Width="4"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-
+					<!--
 					<Grid Grid.Column="0" Name="Column1" IsVisible="False">
 						<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">#</Label>
 					</Grid>
-
+					-->
+					<Grid Grid.Column="0" Name="Column1" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
+						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
+							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+								Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
+							</PathIcon>
+						</Viewbox>
+						<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}"></Label>
+					</Grid>
+					
 					<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
 					<Grid Grid.Column="2" Name="Column2">
 						<Label Name="Column2X" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column2}"></Label>
@@ -167,17 +236,19 @@
 
 					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
 					<Grid Grid.Column="14" Name="Column8">
-						<Label Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column8}">Track</Label>
+						<Label Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">Track</Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsQueueColumnHeaderGenreVisible}"/>
 					<Grid Grid.Column="16" Name="Column9">
-						<Label Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column9}">Genre</Label>
+						<Label Name="Column9X" Content="Genre" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0"></Label>
 					</Grid>
 
 					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
 					<Grid Grid.Column="18" Name="Column10">
-						<Label Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column10}">LastModified</Label>
+						<Label Name="Column10X" Content="LastModified" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">
+
+						</Label>
 					</Grid>
 
 					<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
@@ -188,7 +259,7 @@
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="AlwaysSelected,Multiple" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+			<ListBox Grid.Row="3" x:Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="AlwaysSelected,Multiple" AutoScrollToSelectedItem="False" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
 				<ListBox.Resources>
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
@@ -266,7 +337,24 @@
 								<ColumnDefinition Width="*"></ColumnDefinition>
 								<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 							</Grid.ColumnDefinitions>
+							
 							<TextBlock Grid.Column="0" Width="{Binding Bounds.Size.Width, ElementName=Column1}" Text="{Binding IndexPlusOne}" HorizontalAlignment="Left" Margin="0" Padding="0,0,0,0" Opacity="0.9" IsVisible="False"></TextBlock>
+
+							<StackPanel Grid.Column="0" Orientation="Horizontal" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
+								<Button Margin="1,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveUpCommand}" CommandParameter="{Binding}">
+									<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+										<PathIcon Data="M7.5 13.5C7.5 13.7761 7.72386 14 8 14C8.27614 14 8.5 13.7761 8.5 13.5V3.80298L12.1283 7.83448C12.3131 8.03974 12.6292 8.05638 12.8345 7.87165C13.0397 7.68692 13.0564 7.37077 12.8716 7.16552L8.37165 2.16552C8.27683 2.06016 8.14174 2 8 2C7.85826 2 7.72317 2.06016 7.62835 2.16552L3.12836 7.16552C2.94363 7.37077 2.96027 7.68692 3.16552 7.87165C3.37078 8.05638 3.68692 8.03974 3.87165 7.83448L7.5 3.80298V13.5Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
+										</PathIcon>
+									</Viewbox>
+								</Button>
+								<Button Margin="1,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveDownCommand}" CommandParameter="{Binding}">
+									<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+										<PathIcon Data="M8.5 2.5C8.5 2.22386 8.27615 2 8 2C7.72386 2 7.5 2.22386 7.5 2.5V12.197L3.87165 8.16552C3.68692 7.96026 3.37078 7.94362 3.16552 8.12835C2.96027 8.31308 2.94363 8.62923 3.12836 8.83448L7.62836 13.8345C7.72318 13.9398 7.85826 14 8 14C8.14175 14 8.27683 13.9398 8.37165 13.8345L12.8717 8.83448C13.0564 8.62923 13.0397 8.31308 12.8345 8.12835C12.6292 7.94362 12.3131 7.96026 12.1284 8.16552L8.5 12.197V2.5Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
+										</PathIcon>
+									</Viewbox>
+								</Button>
+							</StackPanel>
+							
 							<Viewbox Grid.Column="2" Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
 								<PathIcon Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Foreground="{DynamicResource AccentFillColorDefaultBrush}" Margin="0" Padding="0">
 									<Interaction.Behaviors>
@@ -339,7 +427,7 @@
 									</DataTriggerBehavior>
 								</Interaction.Behaviors>
 							</TextBlock>
-							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="16" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderGenreVisible}" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								<Interaction.Behaviors>
 									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
 										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
@@ -408,6 +496,55 @@
 				</ListBox.ItemContainerTheme>
 				-->
 			</ListBox>
+
+			<!-- Filtered  -->
+			<Border Grid.Row="3" Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="350" MinWidth="280" CornerRadius="3" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
+				<StackPanel>
+
+					<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0"></TextBox>
+
+					<ListBox ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" MaxHeight="240" BorderThickness="0">
+
+						<!-- <ListBox.InputBindings>
+							<KeyBinding Key="Return" Command="{Binding QueueFilterSelectCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}" />
+						</ListBox.InputBindings>
+						-->
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<VirtualizingStackPanel />
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="sng:SongInfo">
+								<StackPanel>
+									<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="0" Padding="12 0 3 0" />
+									<!--
+									<TextBlock x:Name="filterListBoxArtist" Text="{Binding Path=Artist, Mode=OneWay}" TextWrapping="Wrap" Margin="0" Padding="3 0 3 0"/>
+									<TextBlock x:Name="fitterListBoxAlbum" Text="{Binding Path=Album, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
+
+									<StackPanel Orientation="Horizontal">
+										<TextBlock x:Name="fitterListBoxGenre" Text="{Binding Path=Genre, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
+									</StackPanel>
+									<TextBlock x:Name="fitterListBoxNewsTimeStamp" Text="{Binding Path=LastModifiedFormated, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right"/>
+									-->
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+						<ListBox.Styles>
+							<Style Selector="ListBoxItem" x:DataType="sng:SongInfoEx">
+								<Setter Property="Height" Value="36"/>
+								<Setter Property="MinHeight" Value="32"/>
+								<Setter Property="Padding" Value="0,0,0,0"/>
+								<Setter Property="VerticalAlignment" Value="Top"/>
+
+							</Style>
+						</ListBox.Styles>
+					</ListBox>
+
+
+				</StackPanel>
+
+			</Border>
 		</Grid>
 
 	</Grid>

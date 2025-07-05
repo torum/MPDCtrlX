@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
 using System.Text;
+using System.Threading.Tasks;
 
 
 namespace MPDCtrlX.Views;
@@ -63,15 +64,16 @@ public partial class MainWindow : Window//AppWindow//
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
+
         //this.ContentRendered += vm.OnContentRendered;
         //vm.CurrentSongChanged += (sender, arg) => OnCurrentSongChanged(arg);
-
+        /*
         Unloaded += (sender, e) =>
         {
             this.Loaded -= vm.OnWindowLoaded;
             this.Closing -= vm.OnWindowClosing;
         };
-
+        */
         var os = Environment.OSVersion;
         /*
         Debug.WriteLine("Current OS Information:");
@@ -236,8 +238,4 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    private void CurrentSongMoreMenuButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-
-    }
 }

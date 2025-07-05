@@ -211,7 +211,7 @@
     <value>Developer Mode</value>
   </data>
   <data name="Dialog_CancelClose" xml:space="preserve">
-    <value>Close</value>
+    <value>Cancel</value>
   </data>
   <data name="Dialog_Comfirmation" xml:space="preserve">
     <value>Comfirmation</value>
@@ -469,7 +469,7 @@ SOFTWARE.</value>
     <value>Save selected to...</value>
   </data>
   <data name="QueueMenu_ScrollIntoNowPlaying" xml:space="preserve">
-    <value>Scroll to current song</value>
+    <value>Scroll to current track</value>
   </data>
   <data name="QueueListviewColumnHeader_Album" xml:space="preserve">
     <value>Album</value>

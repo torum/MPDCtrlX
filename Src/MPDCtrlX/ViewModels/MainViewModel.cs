@@ -6,7 +6,9 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.Core;
 using FluentAvalonia.Styling;
+using FluentAvalonia.UI.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting.Internal;
 using MPDCtrlX.Common;
@@ -20,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -102,6 +105,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #endregion
 
     #region == Layout ==
+
+    #region == Layout general ==
 
     public int WindowTop = 0;
     public int WindowLeft = 0;
@@ -207,23 +212,26 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    #endregion
+
     #region == Queue column headers ==
 
-    private bool _queueColumnHeaderPositionVisibility = true;
-    public bool QueueColumnHeaderPositionVisibility
+    // Posiotion header
+    private bool _isQueueColumnHeaderPositionVisible = true;
+    public bool IsQueueColumnHeaderPositionVisible
     {
         get
         {
-            return _queueColumnHeaderPositionVisibility;
+            return _isQueueColumnHeaderPositionVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderPositionVisibility)
+            if (value == _isQueueColumnHeaderPositionVisible)
                 return;
 
-            _queueColumnHeaderPositionVisibility = value;
+            _isQueueColumnHeaderPositionVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderPositionVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderPositionVisible));
         }
     }
 
@@ -266,21 +274,22 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private bool _queueColumnHeaderNowPlayingVisibility = true;
-    public bool QueueColumnHeaderNowPlayingVisibility
+    // NowPlaying header
+    private bool _isQueueColumnHeaderNowPlayingVisible = true;
+    public bool IsQueueColumnHeaderNowPlayingVisible
     {
         get
         {
-            return _queueColumnHeaderNowPlayingVisibility;
+            return _isQueueColumnHeaderNowPlayingVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderNowPlayingVisibility)
+            if (value == _isQueueColumnHeaderNowPlayingVisible)
                 return;
 
-            _queueColumnHeaderNowPlayingVisibility = value;
+            _isQueueColumnHeaderNowPlayingVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderNowPlayingVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderNowPlayingVisible));
         }
     }
 
@@ -323,6 +332,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    // Title header
     private double _queueColumnHeaderTitleWidth = 180;
     public double QueueColumnHeaderTitleWidth
     {
@@ -647,21 +657,22 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private bool _queueColumnHeaderGenreVisibility = true;
-    public bool QueueColumnHeaderGenreVisibility
+    // Genre header
+    private bool _isQueueColumnHeaderGenreVisible = true;
+    public bool IsQueueColumnHeaderGenreVisible
     {
         get
         {
-            return _queueColumnHeaderGenreVisibility;
+            return _isQueueColumnHeaderGenreVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderGenreVisibility)
+            if (value == _isQueueColumnHeaderGenreVisible)
                 return;
 
-            _queueColumnHeaderGenreVisibility = value;
+            _isQueueColumnHeaderGenreVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderGenreVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderGenreVisible));
         }
     }
 
@@ -704,21 +715,21 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private bool _queueColumnHeaderLastModifiedVisibility = true;
-    public bool QueueColumnHeaderLastModifiedVisibility
+    private bool _isQueueColumnHeaderLastModifiedVisible = true;
+    public bool IsQueueColumnHeaderLastModifiedVisible
     {
         get
         {
-            return _queueColumnHeaderLastModifiedVisibility;
+            return _isQueueColumnHeaderLastModifiedVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderLastModifiedVisibility)
+            if (value == _isQueueColumnHeaderLastModifiedVisible)
                 return;
 
-            _queueColumnHeaderLastModifiedVisibility = value;
+            _isQueueColumnHeaderLastModifiedVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderLastModifiedVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderLastModifiedVisible));
         }
     }
 
@@ -1137,6 +1148,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 });
                 */
             }
+        }
+    }
+
+
+    private bool _isEnableDebugWindow;
+    public bool IsEnableDebugWindow
+
+    {
+        get { return _isEnableDebugWindow; }
+        set
+        {
+            if (_isEnableDebugWindow == value)
+                return;
+
+            _isEnableDebugWindow = value;
+
+            NotifyPropertyChanged(nameof(IsEnableDebugWindow));
         }
     }
 
@@ -1614,91 +1642,52 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (value is null)
             {
-                //Debug.WriteLine("selectedNodeMenu is null");
                 SelectedPlaylistName = string.Empty;
                 return;
             }
 
             if (value is NodeMenuQueue)
             {
-                /*
-                IsQueueVisible = true;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = false;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
                 CurrentPage = App.GetService<QueuePage>();
             }
-            else if (value is NodeMenuPlaylists)
+            else if (value is NodeMenuSearch)
             {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = true;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = false;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
-                //CurrentPage = App.GetService<PlaylistsPage>();
-            }
-            else if (value is NodeMenuPlaylistItem nmpli)
-            {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = true;
-                IsLibraryVisible = false;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
-                //Application.Current.Dispatcher.Invoke(() =>
-                Dispatcher.UIThread.Post(() =>
-                {
-                    SelectedPlaylistSong = null;
-                    //PlaylistSongs.Clear();
-                    //PlaylistSongs = new ObservableCollection<SongInfo>(); // Don't Clear();
-                    PlaylistSongs = nmpli.PlaylistSongs;
-                    //PlaylistSongs = new ObservableCollection<SongInfo>((value as NodeMenuPlaylistItem).PlaylistSongs); 
-
-                });
-                SelectedPlaylistName = nmpli.Name;
-                CurrentPage = App.GetService<PlaylistItemPage>();
-
-                if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
-                {
-                    GetPlaylistSongs(nmpli);
-                }
+                CurrentPage = App.GetService<SearchPage>();
             }
             else if (value is NodeMenuLibrary)
             {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = true;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
-                //CurrentPage = App.GetService<LibraryPage>();
+                // Do nothing.
+            }
 
+            else if (value is NodeMenuArtist nma)
+            {
+                CurrentPage = App.GetService<ArtistPage>();
+
+                if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
+                {
+                    SelectedAlbumArtist = Artists[0];
+                }
+
+                // Get album pictures.
+                if (!IsAlbumArtsDownLoaded)
+                {
+                    GetAlbumPictures(_albums);
+                }
+            }
+            else if (value is NodeMenuAlbum nmb)
+            {
+                //IsWorking = true;
+                CurrentPage = App.GetService<AlbumPage>();
+                //IsWorking = false;
+
+                // Get album pictures.
+                if (!IsAlbumArtsDownLoaded)
+                {
+                    GetAlbumPictures(_albums);
+                }
             }
             else if (value is NodeMenuFiles nml)
             {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = true;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
                 CurrentPage = App.GetService<FilesPage>();
 
                 if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
@@ -1706,85 +1695,36 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     GetFiles(nml);
                 }
             }
-            else if (value is NodeMenuSearch)
+            else if (value is NodeMenuPlaylists)
             {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = false;
-                IsSearchVisible = true;
-                IsArtistVisible = false;
-                IsAlbumVisible = false;
-                */
-                CurrentPage = App.GetService<SearchPage>();
+                // Do nothing
+                //CurrentPage = App.GetService<PlaylistsPage>();
             }
-            else if (value is NodeMenuAlbum nmb)
+            else if (value is NodeMenuPlaylistItem nmpli)
             {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = false;
-                IsSearchVisible = false;
-                IsArtistVisible = false;
-                IsAlbumVisible = true;
-                */
-                //IsWorking = true;
-                CurrentPage = App.GetService<AlbumPage>();
-                //IsWorking = false;
-                /*
-                if (!nmb.IsAcquired && (Albums.Count < 1))
+                Dispatcher.UIThread.Post(() =>
                 {
-                    GetAlbums(nmb);
-                }
-                */
+                    SelectedPlaylistSong = null;
+                    PlaylistSongs = nmpli.PlaylistSongs;
+                });
 
-                // Get album pictures.
-                if (!IsAlbumArtsDownLoaded)
-                {
-                    GetAlbumPictures(_albums);
-                }
-            }
-            else if (value is NodeMenuArtist nma)
-            {
-                /*
-                IsQueueVisible = false;
-                IsPlaylistsVisible = false;
-                IsPlaylistItemVisible = false;
-                IsLibraryVisible = false;
-                IsSearchVisible = false;
-                IsArtistVisible = true;
-                IsAlbumVisible = false;
-                */
-                CurrentPage = App.GetService<ArtistPage>();
+                SelectedPlaylistName = nmpli.Name;
+                
+                // Transient??
+                CurrentPage = App.GetService<PlaylistItemPage>();
 
-                /*
-                if (!nma.IsAcquired && (Artists.Count < 1))
+                if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
                 {
-                    GetArtists(nma);
-                }
-                */
-
-                // Get album pictures.
-                if (!IsAlbumArtsDownLoaded)
-                {
-                    GetAlbumPictures(_albums);
+                    GetPlaylistSongs(nmpli);
                 }
             }
             else if (value is NodeMenu)
             {
-                //Debug.WriteLine("selectedNodeMenu is NodeMenu ...unknown:" + _selectedNodeMenu.Name);
-
                 if (value.Name != "root")
                     throw new NotImplementedException();
-
-                //IsQueueVisible = true;
             }
             else
             {
-                //Debug.WriteLine(value.Name);
-
                 throw new NotImplementedException();
             }
 
@@ -1991,8 +1931,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isQueueFindVisible = value;
+
+            QueueForFilter.Clear();
+            /*
+            var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
+            collectionView.Filter = x =>
+            {
+                return false;
+            };
+            */
+            FilterQueueQuery = "";
+
             NotifyPropertyChanged(nameof(IsQueueFindVisible));
         }
+    }
+
+    private bool Filter(SongInfoEx song)
+    {
+        return song.Title.Contains(FilterQueueQuery, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private ObservableCollection<SongInfoEx> _queueForFilter = [];
@@ -2074,6 +2030,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _filterQueueQuery = value;
             NotifyPropertyChanged(nameof(FilterQueueQuery));
+
+            if (_filterQueueQuery == "")
+            {
+                return;
+            }
+
+            var filtered = Queue.Where(song => Filter(song));
+            QueueForFilter = new ObservableCollection<SongInfoEx>(filtered);
             /*
             var collectionView = CollectionViewSource.GetDefaultView(_queueForFilter);
             collectionView.Filter = x =>
@@ -3389,7 +3353,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         get
         {
             if (_mpdVersion != "")
-                return "MPD protocol v" + _mpdVersion;
+                return "MPD Protocol v" + _mpdVersion;
             else
                 return _mpdVersion;
 
@@ -3662,6 +3626,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler? QueueSaveAsDialogShow;
     public event EventHandler? QueueSaveToDialogShow;
 
+    public event EventHandler? QueueHeaderVisivilityChanged;
+
     #endregion
 
     #region == Lock objects ==
@@ -3826,6 +3792,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         AlbumsCoverOverlayPanelCloseCommand = new RelayCommand(AlbumsCoverOverlayPanelCloseCommand_Execute, AlbumsCoverOverlayPanelCloseCommand_CanExecute);
 
+        JumpToAlbumPageCommand = new RelayCommand(JumpToAlbumPageCommand_Execute, JumpToAlbumPageCommand_CanExecute);
+        JumpToArtistPageCommand = new RelayCommand(JumpToArtistPageCommand_Execute, JumpToArtistPageCommand_CanExecute);
+
+        QueueListviewSortReverseCommand = new RelayCommand(QueueListviewSortReverseCommand_Execute, QueueListviewSortReverseCommand_CanExecute);
+
+        QueueListviewSortByCommand = new GenericRelayCommand<string>(param => QueueListviewSortByCommand_Execute(param), param => QueueListviewSortByCommand_CanExecute());
         #endregion
 
         #region == Themes ==
@@ -3865,7 +3837,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
 
         // [Background][UI] etc
-        //_mpc.MpcProgress += new MpcService.MpcProgressEvent(OnMpcProgress);
+        _mpc.MpcProgress += new MpcService.MpcProgressEvent(OnMpcProgress);
         this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
 
         #endregion
@@ -3894,15 +3866,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         Start("localhost", 6600);
         Volume = 20; // needs this until implement profiles.
         IsWorking = false;
-        IsSaveLog = true;
+        
 
         FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
         _faTheme!.PreferSystemTheme = true;
-        //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
-        //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
+
+            //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
+            //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
 
 
+#if DEBUG
+            IsSaveLog = true;
+        IsEnableDebugWindow = true;
 
+#else
+        IsSaveLog = false;
+        IsEnableDebugWindow = false;
+#endif
     }
 
     #region == Startup and Shutdown ==
@@ -4246,11 +4226,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         {
                                             if (s == "True")
                                             {
-                                                QueueColumnHeaderPositionVisibility = true;
+                                                IsQueueColumnHeaderPositionVisible = true;
                                             }
                                             else
                                             {
-                                                QueueColumnHeaderPositionVisibility = false;
+                                                IsQueueColumnHeaderPositionVisible = false;
                                             }
                                         }
                                     }
@@ -4281,9 +4261,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderNowPlayingVisibility = true;
+                                                IsQueueColumnHeaderNowPlayingVisible = true;
                                             else
-                                                QueueColumnHeaderNowPlayingVisibility = false;
+                                                IsQueueColumnHeaderNowPlayingVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4496,9 +4476,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderGenreVisibility = true;
+                                                IsQueueColumnHeaderGenreVisible = true;
                                             else
-                                                QueueColumnHeaderGenreVisibility = false;
+                                                IsQueueColumnHeaderGenreVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4512,7 +4492,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                             catch
                                             {
-                                                QueueColumnHeaderGenreWidth = 53;
+                                                QueueColumnHeaderGenreWidth = 100;
                                             }
                                         }
                                     }
@@ -4528,9 +4508,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderLastModifiedVisibility = true;
+                                                IsQueueColumnHeaderLastModifiedVisible = true;
                                             else
-                                                QueueColumnHeaderLastModifiedVisibility = false;
+                                                IsQueueColumnHeaderLastModifiedVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4803,7 +4783,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderPositionVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderPositionVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
@@ -4819,7 +4799,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "NowPlaying", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderNowPlayingVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderNowPlayingVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
@@ -4927,7 +4907,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderGenreVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderGenreVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
@@ -4943,7 +4923,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderLastModifiedVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderLastModifiedVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
@@ -5452,8 +5432,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsSwitchingProfile)
             return;
 
-        //bool isAlbumArtChanged = false;
-
         IsQueueFindVisible = false;
 
         if (Queue.Count > 0)
@@ -5472,7 +5450,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             try
             {
                 // The simplest way, but all the selections and listview position will be cleared. Kind of annoying when moving items.
-
+                #region == simple & fast == 
+                /*
                 UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
 
                 Dispatcher.UIThread.Post(() =>
@@ -5497,18 +5476,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                     ScrollIntoView?.Invoke(this, CurrentSong.Index);
 
                                 // AlbumArt
-                                /*
-                                if (_mpc.AlbumCover.SongFilePath != curitem.File)
-                                {
-                                    //IsAlbumArtVisible = false;
-                                    //AlbumArt = _albumArtDefault;
 
-                                    if (!String.IsNullOrEmpty(CurrentSong.File))
-                                    {
-                                        //isAlbumArtChanged = true;
-                                    }
-                                }
-                                */
 
                             }
                             else
@@ -5537,10 +5505,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     UpdateProgress?.Invoke(this, "");
 
                 });
+                */
+                #endregion
 
-                /*
-                
-                Application.Current.Dispatcher.Invoke(() =>
+                #region == better way ==
+
+                Dispatcher.UIThread.Post(() =>
                 {
                     IsWorking = true;
 
@@ -5584,10 +5554,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         var fuga = Queue.FirstOrDefault(i => i.Id == sng.Id);
                         if (fuga is not null)
                         {
+                            // this cuase strange selection problem.
+                            //sng.IsSelected = fuga.IsSelected;
+                            fuga.IsSelected = false; // so clear it for now.
+                            fuga.IsPlaying = false;
+
+                            // Just update.
+                            //fuga = sng; // < sort won't work. why...
+                            
                             fuga.Pos = sng.Pos;
                             //fuga.Id = sng.Id;
                             fuga.LastModified = sng.LastModified;
-                            //fuga.Time = sng.Time; // format exception が煩い。
+                            //fuga.Time = sng.Time; // format exception
                             fuga.Title = sng.Title;
                             fuga.Artist = sng.Artist;
                             fuga.Album = sng.Album;
@@ -5600,6 +5578,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                             fuga.Track = sng.Track;
 
                             fuga.Index = sng.Index;
+                            
                         }
                         else
                         {
@@ -5607,69 +5586,50 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         }
                     }
 
-                    UpdateProgress?.Invoke(this, "");
-
                     // Sorting.
                     // Sort here because Queue list may have been re-ordered.
                     UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
-                    var collectionView = CollectionViewSource.GetDefaultView(Queue);
+
+                    // AvaloniaUI doesn't have this.
+                    //var collectionView = CollectionViewSource.GetDefaultView(Queue);
                     // no need to add because It's been added when "loading".
                     //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
-                    collectionView.Refresh();
-                    UpdateProgress?.Invoke(this, "");
-                    
-                    // Sorting.
-                    // This is not good because all the selections will be cleared.
-                    //
-                    //UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
-                    //Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
+                    //collectionView.Refresh();
+
+                    // This is not good, all the selections will be cleared, but no problem?.
+                    Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
                     //UpdateProgress?.Invoke(this, "");
-                    
+
                     UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
 
                     // Set Current and NowPlaying.
                     var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
                     if (curitem is not null)
                     {
-                        if (CurrentSong is not null)
-                        {
-                            if (CurrentSong.Id != curitem.Id)
-                            {
-                                CurrentSong = curitem;
-                                CurrentSong.IsPlaying = true;
-
-                                if (IsAutoScrollToNowPlaying)
-                                    // ScrollIntoView while don't change the selection 
-                                    ScrollIntoView?.Invoke(this, CurrentSong.Index);
-
-                                // AlbumArt
-                                if (_mpc.AlbumCover.SongFilePath != curitem.File)
-                                {
-                                    IsAlbumArtVisible = false;
-                                    AlbumArt = _albumArtDefault;
-
-                                    if (!String.IsNullOrEmpty(CurrentSong.File))
-                                    {
-                                        //_mpc.MpdQueryAlbumArt(CurrentSong.file, CurrentSong.Id);
-                                        isAlbumArtChanged = true;
-                                    }
-                                }
-                            }
-                        }
+                        CurrentSong = curitem;
+                        CurrentSong.IsPlaying = true;
+                        
+                        // Don't. because it's not like song is changed.
+                        /*
+                        if (IsAutoScrollToNowPlaying)
+                            // ScrollIntoView while don't change the selection 
+                            ScrollIntoView?.Invoke(this, CurrentSong.Index);
+                        */
                     }
                     else
                     {
                         CurrentSong = null;
 
                         IsAlbumArtVisible = false;
-                        AlbumArt = _albumArtDefault;
+                        AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
                     }
 
                     UpdateProgress?.Invoke(this, "");
 
                     IsWorking = false;
                 });
-                */
+
+                #endregion
             }
             catch (Exception e)
             {
@@ -5691,6 +5651,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 {
                     IsWorking = false;
                 });
+                UpdateProgress?.Invoke(this, "");
             }
 
             Dispatcher.UIThread.Post(() =>
@@ -5860,6 +5821,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 {
                     IsWorking = false;
                 });
+                UpdateProgress?.Invoke(this, "");
             }
 
             
@@ -5898,9 +5860,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     
     private void UpdateAlbumsAndArtists()
     {
+        UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
         Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY.
+
+        UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
         Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
 
+        UpdateProgress?.Invoke(this, "");
         /* 
          * little bit too much to check all albums every time app starts.
         // Get album pictures.
@@ -6592,6 +6558,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
 
         MpdVersion = _mpc.MpdVerText;
+        
+        //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
 
         MpdStatusButton = _pathMpdOkButton;
 
@@ -7210,11 +7178,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         return true;
     }
-    public async void VolumeDownCommand_Execute()
+    public void VolumeDownCommand_Execute()
     {
         if (_volume >= 10)
         {
-            await _mpc.MpdSetVolume(Convert.ToInt32(_volume - 10));
+            Volume -= 10; 
+            //await _mpc.MpdSetVolume(Convert.ToInt32(_volume - 10));
         }
     }
 
@@ -7224,11 +7193,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         return true;
     }
-    public async void VolumeUpCommand_Execute()
+    public void VolumeUpCommand_Execute()
     {
         if (_volume <= 90)
         {
-            await _mpc.MpdSetVolume(Convert.ToInt32(_volume + 10));
+            Volume += 10;
+            //await _mpc.MpdSetVolume(Convert.ToInt32(_volume + 10));
         }
     }
 
@@ -7509,7 +7479,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
+        //if (SelectedQueueSong is null) return false;
         return true;
     }
     public async void QueueListviewMoveUpCommand_Execute(object obj)
@@ -7518,7 +7488,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (Queue.Count <= 1)
             return;
-
+        /*
         List<SongInfoEx> selectedList = [];
 
         
@@ -7553,8 +7523,30 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
             }
         }
+        */
 
-        await _mpc.MpdMoveId(IdToNewPos);
+        if (obj is SongInfoEx song)
+        {
+            Dictionary<string, string> IdToNewPos = [];
+            int i = 0;
+            try
+            {
+                i = Int32.Parse(song.Pos);
+
+                if (i == 0) return;
+
+                i -= 1;
+
+                IdToNewPos.Add(song.Id, i.ToString());
+            }
+            catch
+            {
+                return;
+            }
+
+            await _mpc.MpdMoveId(IdToNewPos);
+        }
+
     }
 
     public IRelayCommand QueueListviewMoveDownCommand { get; }
@@ -7563,7 +7555,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
+        //if (SelectedQueueSong is null) return false;
         return true;
     }
     public async void QueueListviewMoveDownCommand_Execute(object obj)
@@ -7572,7 +7564,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (Queue.Count <= 1)
             return;
-
+        /*
         List<SongInfoEx> selectedList = [];
 
         
@@ -7606,6 +7598,113 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 return;
             }
+        }
+        */
+
+        if (obj is SongInfoEx song)
+        {
+            Dictionary<string, string> IdToNewPos = [];
+
+            int i = 0;
+            try
+            {
+                i = Int32.Parse(song.Pos);
+
+                if (i >= Queue.Count - 1) return;
+
+                i += 1;
+
+                IdToNewPos.Add(song.Id, i.ToString());
+            }
+            catch
+            {
+                return;
+            }
+
+            await _mpc.MpdMoveId(IdToNewPos);
+        }
+    }
+
+    public IRelayCommand QueueListviewSortReverseCommand { get; }
+    public bool QueueListviewSortReverseCommand_CanExecute()
+    {
+        if (IsBusy) return false;
+        if (IsWorking) return false;
+        if (Queue.Count == 0) { return false; }
+        //if (CurrentSong is null) { return false; }
+        return true;
+    }
+    public async void QueueListviewSortReverseCommand_Execute()
+    {
+        if (Queue.Count <= 1) return;
+
+        var sorted = new ObservableCollection<SongInfoEx>(Queue.OrderByDescending(x => x.Index));
+
+        Dictionary<string, string> IdToNewPos = [];
+        int i = 0;
+        foreach (var item in sorted)
+        {
+            IdToNewPos.Add(item.Id, i.ToString());
+            i++;
+        }
+
+        await _mpc.MpdMoveId(IdToNewPos);
+    }
+
+    public IRelayCommand QueueListviewSortByCommand { get; }
+    public bool QueueListviewSortByCommand_CanExecute()
+    {
+        if (IsBusy) return false;
+        if (IsWorking) return false;
+        if (Queue.Count == 0) return false;
+        return true;
+    }
+    public async void QueueListviewSortByCommand_Execute(string key)
+    {
+        if (string.IsNullOrEmpty(key))
+            return;
+
+        if (Queue.Count <= 1) return;
+
+        CultureInfo ci = CultureInfo.CurrentCulture;
+        StringComparer comp = StringComparer.Create(ci, true);
+
+        ObservableCollection<SongInfoEx>? sorted;
+        if (key == "title")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Title, comp));
+        }
+        else if (key == "time")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.TimeSort));
+        }
+        else if (key == "artist")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Artist, comp));
+        }
+        else if (key == "album")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Album, comp));
+        }
+        else if (key == "genre")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Genre, comp));
+        }
+        else if (key == "lastmodified")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.LastModified));
+        }
+        else
+        {
+            return;
+        }
+
+        Dictionary<string, string> IdToNewPos = new();
+        int i = 0;
+        foreach (var item in sorted)
+        {
+            IdToNewPos.Add(item.Id, i.ToString());
+            i++;
         }
 
         await _mpc.MpdMoveId(IdToNewPos);
@@ -9500,14 +9599,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderPositionShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderPositionVisibility)
+        if (IsQueueColumnHeaderPositionVisible)
         {
-            QueueColumnHeaderPositionVisibility = false;
+            IsQueueColumnHeaderPositionVisible = false;
             QueueColumnHeaderPositionWidth = 0;
         }
         else
         {
-            QueueColumnHeaderPositionVisibility = true;
+            IsQueueColumnHeaderPositionVisible = true;
             QueueColumnHeaderPositionWidth = QueueColumnHeaderPositionWidthRestore;
         }
     }
@@ -9519,14 +9618,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderNowPlayingShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderNowPlayingVisibility)
+        if (IsQueueColumnHeaderNowPlayingVisible)
         {
-            QueueColumnHeaderNowPlayingVisibility = false;
+            IsQueueColumnHeaderNowPlayingVisible = false;
             QueueColumnHeaderNowPlayingWidth = 0;
         }
         else
         {
-            QueueColumnHeaderNowPlayingVisibility = true;
+            IsQueueColumnHeaderNowPlayingVisible = true;
             QueueColumnHeaderNowPlayingWidth = QueueColumnHeaderNowPlayingWidthRestore;
         }
     }
@@ -9634,16 +9733,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderGenreShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderGenreVisibility)
+        if (IsQueueColumnHeaderGenreVisible)
         {
-            QueueColumnHeaderGenreVisibility = false;
+            IsQueueColumnHeaderGenreVisible = false;
             QueueColumnHeaderGenreWidth = 0;
         }
         else
         {
-            QueueColumnHeaderGenreVisibility = true;
+            IsQueueColumnHeaderGenreVisible = true;
             QueueColumnHeaderGenreWidth = QueueColumnHeaderGenreWidthRestore;
         }
+
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderLastModifiedShowHideCommand { get; }
@@ -9653,14 +9754,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderLastModifiedShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderLastModifiedVisibility)
+        if (IsQueueColumnHeaderLastModifiedVisible)
         {
-            QueueColumnHeaderLastModifiedVisibility = false;
+            IsQueueColumnHeaderLastModifiedVisible = false;
             QueueColumnHeaderLastModifiedWidth = 0;
         }
         else
         {
-            QueueColumnHeaderLastModifiedVisibility = true;
+            IsQueueColumnHeaderLastModifiedVisible = true;
             QueueColumnHeaderLastModifiedWidth = QueueColumnHeaderLastModifiedWidthRestore;
         }
     }
@@ -9893,6 +9994,132 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public void AlbumsCoverOverlayPanelCloseCommand_Execute()
     {
         IsAlbumArtPanelIsOpen = false;
+    }
+
+    // CurrentSong
+    public IRelayCommand JumpToAlbumPageCommand { get; set; }
+    public static bool JumpToAlbumPageCommand_CanExecute()
+    {
+        return true;
+    }
+    public void JumpToAlbumPageCommand_Execute()
+    {
+        if (CurrentSong is null)
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(CurrentSong.Album.Trim()))
+        {
+            return;
+        }
+
+        var items = Albums.Where(i => i.Name == CurrentSong.Album);
+        if (items is not null)
+        {
+            var asdf = CurrentSong.Artist;
+            if (string.IsNullOrEmpty(asdf.Trim()))
+            {
+                asdf = CurrentSong.AlbumArtist;
+            }
+            // no artist name
+            if (string.IsNullOrEmpty(asdf.Trim()))
+            {
+                var hoge = items.FirstOrDefault(x => x.Name == CurrentSong.Album);
+                // found it
+                SelectedAlbum = hoge;
+                if (SelectedAlbum is not null)
+                {
+                    //GoToAlbumsPageAndScrollTo?.Invoke(this, Albums.IndexOf(SelectedAlbum));
+                    GoToAlbumPage();
+                }
+            }
+            else
+            {
+                foreach (var item in items)
+                {
+                    if (item.AlbumArtist == asdf)
+                    {
+                        // found it
+                        SelectedAlbum = item;
+                        if (SelectedAlbum is not null)
+                        {
+                            //GoToAlbumsPageAndScrollTo?.Invoke(this, Albums.IndexOf(SelectedAlbum));
+                            GoToAlbumPage();
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void GoToAlbumPage()
+    {
+        foreach (var hoge in MainMenuItems)
+        {
+            if (hoge is NodeMenuLibrary)
+            {
+                foreach (var fuga in hoge.Children)
+                {
+                    if (fuga is NodeMenuAlbum)
+                    {
+                        IsNavigationViewMenuOpen = true;
+                        fuga.Selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void GoToArtistPage()
+    {
+        foreach (var hoge in MainMenuItems)
+        {
+            if (hoge is NodeMenuLibrary)
+            {
+                foreach (var fuga in hoge.Children)
+                {
+                    if (fuga is NodeMenuArtist)
+                    {
+                        IsNavigationViewMenuOpen = true;
+                        fuga.Selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public IRelayCommand JumpToArtistPageCommand { get; set; }
+    public static bool JumpToArtistPageCommand_CanExecute()
+    {
+        return true;
+    }
+    public void JumpToArtistPageCommand_Execute()
+    {
+        if (CurrentSong is null)
+        {
+            return;
+        }
+
+        var asdf = CurrentSong.Artist;
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            asdf = CurrentSong.AlbumArtist;
+        }
+
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            return;
+        }
+
+        var item = Artists.FirstOrDefault(i => i.Name == asdf);
+        if (item is not null)
+        {
+            SelectedAlbumArtist = item;
+            GoToArtistPage();
+        }
     }
 
     #endregion

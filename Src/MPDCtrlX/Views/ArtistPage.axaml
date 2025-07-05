@@ -28,13 +28,15 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
+		<Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Artists page title and menus -->
-		<Grid Grid.Row="0" Margin="0,0,0,6" Grid.ColumnSpan="3">
+		<Grid Grid.Row="0" Margin="0,0,0,12" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="48"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
+
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<TextBlock Text="Artists" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
 
@@ -46,7 +48,7 @@
 
         <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="8,0,0,0">
 			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="1" MinWidth="230" ItemsSource="{Binding Artists}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+			<ListBox Grid.Row="1" MinWidth="230" ItemsSource="{Binding Artists}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>

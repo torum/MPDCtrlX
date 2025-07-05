@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using MPDCtrlX.ViewModels;
@@ -29,8 +30,9 @@ public partial class QueuePage : UserControl
             _viewModel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
             _viewModel.QueueSaveAsDialogShow += this.QueueSaveAsDialogShowAsync;
             _viewModel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
+            _viewModel.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
         }
-
+        /*
         Unloaded += (sender, e) =>
         {
             if (_viewModel != null)
@@ -41,7 +43,28 @@ public partial class QueuePage : UserControl
                 _viewModel.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
             }
         };
+        */
+    }
 
+    private void OnQueueHeaderVisivilityChanged(object? sender, System.EventArgs e)
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        if (_viewModel.IsQueueColumnHeaderGenreVisible)
+        {
+            this.Column9.IsVisible = true;
+            this.Column9X.Width = 100;
+            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+        }
+        else
+        {
+            this.Column9.IsVisible = false;
+            this.Column9X.Width = 0;
+            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+        }
     }
 
     private async void QueueSaveAsDialogShowAsync(object? sender, System.EventArgs e)
@@ -141,8 +164,9 @@ public partial class QueuePage : UserControl
             _viewModel.QueueColumnHeaderAlbumWidth = this.Column6X.Width;
             _viewModel.QueueColumnHeaderDiscWidth = this.Column7X.Width;
             _viewModel.QueueColumnHeaderTrackWidth = this.Column8X.Width;
-            _viewModel.QueueColumnHeaderGenreWidth = this.Column9X.Width;
+            _viewModel.QueueColumnHeaderGenreWidth = this.Column9.Bounds.Size.Width;//.Width;
             _viewModel.QueueColumnHeaderLastModifiedWidth = this.Column10X.Width;
+            Debug.WriteLine(_viewModel.QueueColumnHeaderGenreWidth.ToString() + " @UpdateHeaderWidth");
         }
     }
 
@@ -181,7 +205,7 @@ public partial class QueuePage : UserControl
             this.Column3X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderTimeWidth > 10)
+        if (_viewModel.QueueColumnHeaderTimeWidth > 0)
         {
             this.Column4X.Width = _viewModel.QueueColumnHeaderTimeWidth;
         }
@@ -190,7 +214,7 @@ public partial class QueuePage : UserControl
             this.Column4X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderArtistWidth > 10)
+        if (_viewModel.QueueColumnHeaderArtistWidth > 0)
         {
             this.Column5X.Width = _viewModel.QueueColumnHeaderArtistWidth;
         }
@@ -199,7 +223,7 @@ public partial class QueuePage : UserControl
             this.Column5X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderAlbumWidth > 10)
+        if (_viewModel.QueueColumnHeaderAlbumWidth > 0)
         {
             this.Column6X.Width = _viewModel.QueueColumnHeaderAlbumWidth;
         }
@@ -208,7 +232,7 @@ public partial class QueuePage : UserControl
             this.Column6X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderDiscWidth > 10)
+        if (_viewModel.QueueColumnHeaderDiscWidth > 0)
         {
             this.Column7X.Width = _viewModel.QueueColumnHeaderDiscWidth;
         }
@@ -217,7 +241,7 @@ public partial class QueuePage : UserControl
             this.Column7X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderTrackWidth > 10)
+        if (_viewModel.QueueColumnHeaderTrackWidth > 0)
         {
             this.Column8X.Width = _viewModel.QueueColumnHeaderTrackWidth;
         }
@@ -226,7 +250,7 @@ public partial class QueuePage : UserControl
             this.Column8X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderGenreWidth > 10)
+        if (_viewModel.QueueColumnHeaderGenreWidth > 0)
         {
             this.Column9X.Width = _viewModel.QueueColumnHeaderGenreWidth;
         }
@@ -235,7 +259,7 @@ public partial class QueuePage : UserControl
             this.Column9X.Width = 50; // Default width if not set
         }
 
-        if (_viewModel.QueueColumnHeaderLastModifiedWidth > 10)
+        if (_viewModel.QueueColumnHeaderLastModifiedWidth > 0)
         {
             this.Column10X.Width = _viewModel.QueueColumnHeaderLastModifiedWidth;
         }
@@ -244,10 +268,24 @@ public partial class QueuePage : UserControl
             this.Column10X.Width = 50; // Default width if not set
         }
 
+        if (_viewModel.IsQueueColumnHeaderGenreVisible)
+        {
+            this.Column9.IsVisible = true;
+            this.Column9X.Width = _viewModel.QueueColumnHeaderGenreWidth;
+            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+        }
+        else
+        {
+            this.Column9.IsVisible = false;
+            this.Column9X.Width = 0;
+            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+        }
+
     }
 
     private async void OnScrollIntoView(int ind)
     {
+        await Task.Yield();
         await Task.Delay(100); // Wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
@@ -261,7 +299,8 @@ public partial class QueuePage : UserControl
 
     private async void OnScrollIntoViewAndSelect(int ind)
     {
-        await Task.Delay(1000); // Wait for UI to update
+        await Task.Yield();
+        await Task.Delay(800); // Wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
             if (this.QueueListBox is ListBox lb)
@@ -297,6 +336,17 @@ public partial class QueuePage : UserControl
         if (sender is Avalonia.Controls.ScrollViewer sv)
         {
             this.QueueListViewHeaderScrollViewer.Offset = sv.Offset;
+        }
+    }
+
+    private void ToggleButton_Click_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is ToggleButton tb)
+        {
+            if (tb.IsChecked == true)
+            {
+                this.FilterQueueQueryTextBox.Focus();
+            }
         }
     }
 

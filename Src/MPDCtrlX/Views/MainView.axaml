@@ -41,7 +41,7 @@
 		</Grid>
 
 		<!-- StatusBar -->
-		<Border Grid.Row="3" Grid.Column="0" Height="32" Margin="0 0 0 0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource CardStrokeBorderBrush}" Background="{DynamicResource NavigationViewDefaultPaneBackground}">
+		<Border Grid.Row="3" Grid.Column="0" Height="32" Margin="0 0 0 0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.6">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -53,7 +53,7 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 
-				<StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 0 0">
+				<StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="24 0 0 0">
 
 
 					<!-- ConnectionStatusMessage  -->
@@ -91,7 +91,7 @@
 					</Viewbox>
 					-->
 					<!-- Status Error Message -->
-					<TextBlock Text="{Binding MpdStatusMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap"></TextBlock>
+					<TextBlock Text="{Binding MpdStatusMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" Opacity="0.5"></TextBlock>
 
 				</StackPanel>
 
@@ -99,7 +99,7 @@
 
 				<StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="6 0 6 2">
 
-					<TextBlock Text="{Binding StatusBarMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap"></TextBlock>
+					<TextBlock Text="{Binding StatusBarMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" Opacity="0.5"></TextBlock>
 
 				</StackPanel>
 
@@ -107,7 +107,7 @@
 
 				<StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 0 0">
 
-					<Button Width="24" Height="24" Margin="6,0,6,0" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Padding="3" Command="{Binding ShowDebugWindowCommand}" Opacity="0.7" Focusable="False">
+					<Button Width="24" Height="24" Margin="6,0,6,0" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Padding="3" Command="{Binding ShowDebugWindowCommand}" Opacity="0.7" Focusable="False" IsVisible="{Binding IsEnableDebugWindow}">
 						<Viewbox Width="14" Height="14">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="">

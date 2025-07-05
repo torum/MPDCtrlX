@@ -18,9 +18,10 @@
 
 	<!-- Album -->
 	<Grid RowDefinitions="Auto,*">
-		
+
+		<Border Grid.Row="0" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Albums page title and menus -->
-		<Grid Grid.Row="0" Margin="0,0,0,6">
+		<Grid Grid.Row="0" Margin="0,0,0,12">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="48"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -39,14 +40,13 @@
 			</StackPanel>
 		</Grid>
 
-		<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="8,0,0,0">
-			<Border Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-
-			<SplitView Grid.Row="1" PanePlacement="Right" IsPaneOpen="{Binding IsAlbumContentPanelVisible, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=LbAlbums}">
+		<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="0,0,0,0">
+			<Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+			<SplitView Grid.Row="1" PanePlacement="Right" Background="Transparent" IsPaneOpen="{Binding IsAlbumContentPanelVisible, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=LbAlbums}">
 				
 				<!-- Selected Album (Its Cover and Songs)  -->
 				<SplitView.Pane>
-					<Grid Background="{DynamicResource LayerFillColorDefaultBrush}">
+					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="*"></ColumnDefinition>
@@ -111,6 +111,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<StackPanel Orientation="Horizontal" Spacing="24" Grid.Row="1" Margin="16,16,16,16">
 									<Button Content="Play"></Button>
 									<Button Content="Add to queue"></Button>
+									<Button Content="Add to playlist"></Button>
 								</StackPanel>
 
 							</Grid>
@@ -127,7 +128,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 							<!-- Song ListBox -->
 							<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
 								<StackPanel>
-									<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
+									<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
 									<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->
 									<!--  Content="{Binding CurrentAlbumSongs}" -->
 									<!-- " SelectedItem="{Binding SelectedSong}" -->
@@ -159,204 +160,203 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 					</Grid>
 
 				</SplitView.Pane>
-				
-			<ScrollViewer>
-				
+
 				<!-- Album view ListBox -->
-				<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="AlwaysSelected" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
-					<ListBox.Resources>
+			<ScrollViewer>
+					<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True">
+						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
+						<ListBox.Resources>
 
-						<!-- Edit: sets selection indicator to visible=false  -->
-						<ControlTheme TargetType="ListBoxItem" x:Key="{x:Type ListBoxItem}">
-							<Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-							<Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-							<Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
-							<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
-							<Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
-							<Setter Property="Padding" Value="16,0,12,0" />
-							<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-							<Setter Property="VerticalContentAlignment" Value="Center" />
-							<Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
-							<Setter Property="MinHeight" Value="{DynamicResource ListViewItemMinHeight}" />
-							<Setter Property="Template">
-								<ControlTemplate>
-									<Panel>
-										<ContentPresenter Name="PART_ContentPresenter"
-														  Background="{TemplateBinding Background}"
-														  BorderBrush="{TemplateBinding BorderBrush}"
-														  BorderThickness="{TemplateBinding BorderThickness}"
-														  ContentTemplate="{TemplateBinding ContentTemplate}"
-														  Content="{TemplateBinding Content}"
-														  Padding="{TemplateBinding Padding}"
-														  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-														  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-														  CornerRadius="{TemplateBinding CornerRadius}"
-														  Margin="2"/>
+							<!-- Edit: sets selection indicator to visible=false  -->
+							<ControlTheme TargetType="ListBoxItem" x:Key="{x:Type ListBoxItem}">
+								<Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+								<Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+								<Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
+								<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+								<Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
+								<Setter Property="Padding" Value="16,0,12,0" />
+								<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+								<Setter Property="VerticalContentAlignment" Value="Center" />
+								<Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
+								<Setter Property="MinHeight" Value="{DynamicResource ListViewItemMinHeight}" />
+								<Setter Property="Template">
+									<ControlTemplate>
+										<Panel>
+											<ContentPresenter Name="PART_ContentPresenter"
+															  Background="{TemplateBinding Background}"
+															  BorderBrush="{TemplateBinding BorderBrush}"
+															  BorderThickness="{TemplateBinding BorderThickness}"
+															  ContentTemplate="{TemplateBinding ContentTemplate}"
+															  Content="{TemplateBinding Content}"
+															  Padding="{TemplateBinding Padding}"
+															  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+															  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+															  CornerRadius="{TemplateBinding CornerRadius}"
+															  Margin="2"/>
 
-										<!-- added 1px left margin, otherwise we can get strange artifacts while
+											<!-- added 1px left margin, otherwise we can get strange artifacts while
                          animating, I'm guessing from bad invalidation rects? -->
-										<Rectangle Name="SelectionIndicator"
-									   HorizontalAlignment="Center"
-									   VerticalAlignment="Bottom"
-									   Width="16" Height="3"
-									   Margin="0 2 0 0"
-									   UseLayoutRounding="False"
-									   RadiusX="2" RadiusY="2"
-									   IsVisible="False"
-												   RenderTransform="scaleY(0)"
-												   Fill="{DynamicResource AccentFillColorDefaultBrush}">
-											<Rectangle.Transitions>
-												<Transitions>
-													<TransformOperationsTransition Duration="00:00:00.167"
-																				   Property="RenderTransform"
-																				   Easing="0,0 0,1"/>
-												</Transitions>
-											</Rectangle.Transitions>
-										</Rectangle>
-									</Panel>
-								</ControlTemplate>
-							</Setter>
+											<Rectangle Name="SelectionIndicator"
+										   HorizontalAlignment="Center"
+										   VerticalAlignment="Bottom"
+										   Width="16" Height="3"
+										   Margin="0 2 0 0"
+										   UseLayoutRounding="False"
+										   RadiusX="2" RadiusY="2"
+										   IsVisible="False"
+													   RenderTransform="scaleY(0)"
+													   Fill="{DynamicResource AccentFillColorDefaultBrush}">
+												<Rectangle.Transitions>
+													<Transitions>
+														<TransformOperationsTransition Duration="00:00:00.167"
+																					   Property="RenderTransform"
+																					   Easing="0,0 0,1"/>
+													</Transitions>
+												</Rectangle.Transitions>
+											</Rectangle>
+										</Panel>
+									</ControlTemplate>
+								</Setter>
 
 
-							<Style Selector="^:disabled">
-								<!-- There's no Disabled brush for LVI, so just dim opacity -->
-								<Setter Property="Opacity" Value="0.5" />
-							</Style>
-
-							<Style Selector="^:pointerover">
-								<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+								<Style Selector="^:disabled">
+									<!-- There's no Disabled brush for LVI, so just dim opacity -->
+									<Setter Property="Opacity" Value="0.5" />
 								</Style>
-								<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundPointerOver}" />
-								</Style>
-							</Style>
-
-							<Style Selector="^:pressed">
-								<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundPressed}" />
-								</Style>
-								<Style Selector="^ /template/ ContentPresenter">
-									<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundPressed}" />
-								</Style>
-							</Style>
-
-							<Style Selector="^:selected">
-								<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
-								</Style>
-								<Style Selector="^ /template/ ContentPresenter">
-									<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
-								</Style>
-								<Style Selector="^ /template/ Rectangle#SelectionIndicator">
-									<Setter Property="IsVisible" Value="False" />
-									<!-- sets False -->
-									<Setter Property="RenderTransform" Value="scaleY(1)" />
-								</Style>
-								<Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
-								</Style>
-								<Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
-									<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
-								</Style>
-
 
 								<Style Selector="^:pointerover">
 									<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
+										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
 									</Style>
-									<Style Selector="^ /template/ ContentPresenter">
-										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPointerOver}" />
-									</Style>
-									<Style Selector="^ /template/ Rectangle#SelectionIndicator">
-										<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPointerOverBrush}" />
+									<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundPointerOver}" />
 									</Style>
 								</Style>
 
 								<Style Selector="^:pressed">
 									<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPressed}" />
+										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundPressed}" />
 									</Style>
+									<Style Selector="^ /template/ ContentPresenter">
+										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundPressed}" />
+									</Style>
+								</Style>
+
+								<Style Selector="^:selected">
 									<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPressed}" />
+										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
+									</Style>
+									<Style Selector="^ /template/ ContentPresenter">
+										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
 									</Style>
 									<Style Selector="^ /template/ Rectangle#SelectionIndicator">
-										<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPressedBrush}" />
-										<!-- TODO: Uncomment when Avalonia fixes selection to work on pointer up -->
-										<!--<Setter Property="RenderTransform" Value="scaleY(0.5)" />-->
+										<Setter Property="IsVisible" Value="False" />
+										<!-- sets False -->
+										<Setter Property="RenderTransform" Value="scaleY(1)" />
+									</Style>
+									<Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
+									</Style>
+									<Style Selector="^:not(:focus) /template/ ContentPresenter#PART_ContentPresenter">
+										<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
+									</Style>
+
+
+									<Style Selector="^:pointerover">
+										<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+											<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
+										</Style>
+										<Style Selector="^ /template/ ContentPresenter">
+											<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPointerOver}" />
+										</Style>
+										<Style Selector="^ /template/ Rectangle#SelectionIndicator">
+											<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPointerOverBrush}" />
+										</Style>
+									</Style>
+
+									<Style Selector="^:pressed">
+										<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+											<Setter Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPressed}" />
+										</Style>
+										<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+											<Setter Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPressed}" />
+										</Style>
+										<Style Selector="^ /template/ Rectangle#SelectionIndicator">
+											<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPressedBrush}" />
+											<!-- TODO: Uncomment when Avalonia fixes selection to work on pointer up -->
+											<!--<Setter Property="RenderTransform" Value="scaleY(0.5)" />-->
+										</Style>
+									</Style>
+
+									<Style Selector="^:disabled /template/ Rectangle#SelectionIndicator">
+										<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorDisabledBrush}" />
 									</Style>
 								</Style>
+							</ControlTheme>
 
-								<Style Selector="^:disabled /template/ Rectangle#SelectionIndicator">
-									<Setter Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorDisabledBrush}" />
-								</Style>
-							</Style>
-						</ControlTheme>
+						</ListBox.Resources>
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel/>
+								<!--<VirtualizingStackPanel />-->
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListBox.ItemTemplate>
+							<DataTemplate x:DataType="mod:AlbumEx">
+								<Grid Width="196" Margin="12,12,12,12">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="200"/>
+										<RowDefinition Height="42"/>
+									</Grid.RowDefinitions>
 
-					</ListBox.Resources>
-					<ListBox.ItemsPanel>
-						<ItemsPanelTemplate>
-							<WrapPanel/>
-							<!--<VirtualizingStackPanel />-->
-						</ItemsPanelTemplate>
-					</ListBox.ItemsPanel>
-					<ListBox.ItemTemplate>
-						<DataTemplate x:DataType="mod:AlbumEx">
-							<Grid Width="196" Margin="12,12,12,12">
-								<Grid.RowDefinitions>
-									<RowDefinition Height="200"/>
-									<RowDefinition Height="42"/>
-								</Grid.RowDefinitions>
+									<Border Grid.Row="0" Grid.Column="0" Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True" CornerRadius="6">
 
-								<Border Grid.Row="0" Grid.Column="0" Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True" CornerRadius="6">
+										<Grid>
+											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center">
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
+													Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 9.515T8.5 12t1.015 2.486T12 15.5m0-2.5q-.425 0-.712-.288T11 12t.288-.712T12 11t.713.288T13 12t-.288.713T12 13m.003 8q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8">
+												</PathIcon>
+											</Viewbox>
 
-									<Grid>
-										<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center">
-											<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
-												Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 9.515T8.5 12t1.015 2.486T12 15.5m0-2.5q-.425 0-.712-.288T11 12t.288-.712T12 11t.713.288T13 12t-.288.713T12 13m.003 8q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8">
-											</PathIcon>
-										</Viewbox>
-										
-										<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}" >
-											<TransitioningContentControl.ContentTemplate>
-												<DataTemplate DataType="Bitmap">
-													<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
-												</DataTemplate>
-											</TransitioningContentControl.ContentTemplate>
-										</TransitioningContentControl>
-										
-										<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center"></Viewbox>
-										</Button>
+											<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}" >
+												<TransitioningContentControl.ContentTemplate>
+													<DataTemplate DataType="Bitmap">
+														<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
+													</DataTemplate>
+												</TransitioningContentControl.ContentTemplate>
+											</TransitioningContentControl>
 
-									</Grid>
-								</Border>
-								<!--
+											<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+												<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center"></Viewbox>
+											</Button>
+
+										</Grid>
+									</Border>
+									<!--
 								<Grid Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0">
 									<Button Content="Play"></Button>
 								</Grid>
 								-->
-								<Grid Grid.Row="1">
+									<Grid Grid.Row="1">
 
-									<StackPanel Margin="4">
-										<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
-											<Interaction.Behaviors>
-												<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
-													<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
-												</DataTriggerBehavior>
-											</Interaction.Behaviors>
-										</TextBlock>
-										<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
-											<Interaction.Behaviors>
-												<DataTriggerBehavior Binding="{Binding AlbumArtist}" ComparisonCondition="Equal" Value="">
-													<ChangePropertyAction PropertyName="Text" Value="Unknown Artist" />
-												</DataTriggerBehavior>
-											</Interaction.Behaviors>
-										</TextBlock>
-									</StackPanel>
+										<StackPanel Margin="4">
+											<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
+												<Interaction.Behaviors>
+													<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
+														<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
+													</DataTriggerBehavior>
+												</Interaction.Behaviors>
+											</TextBlock>
+											<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
+												<Interaction.Behaviors>
+													<DataTriggerBehavior Binding="{Binding AlbumArtist}" ComparisonCondition="Equal" Value="">
+														<ChangePropertyAction PropertyName="Text" Value="Unknown Artist" />
+													</DataTriggerBehavior>
+												</Interaction.Behaviors>
+											</TextBlock>
+										</StackPanel>
 
-									<!--
+										<!--
 										<ListBox ItemsSource="{Binding Songs}" SelectionMode="Single" BorderThickness="0" Margin="0,3,0,0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
 											<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
@@ -370,13 +370,12 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											</ListBox.ItemTemplate>
 										</ListBox>
 -->
+									</Grid>
+
 								</Grid>
-
-							</Grid>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 			</ScrollViewer>
 		</SplitView>
 			

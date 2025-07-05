@@ -340,7 +340,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Close に類似しているローカライズされた文字列を検索します。
+        ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Dialog_CancelClose {
             get {
@@ -1195,7 +1195,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Scroll to current song に類似しているローカライズされた文字列を検索します。
+        ///   Scroll to current track に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string QueueMenu_ScrollIntoNowPlaying {
             get {

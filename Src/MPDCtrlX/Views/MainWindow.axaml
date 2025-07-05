@@ -96,16 +96,12 @@
 				<TextBlock Grid.Column="2" Opacity="0.8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongArtist" Text="{Binding CurrentSongArtist, Mode=OneWay}"></TextBlock>
 				<TextBlock Grid.Column="3" Opacity="0.4" Text=" from " IsVisible="{Binding IsCurrentSongAlbumNotNull}"></TextBlock>
 				<TextBlock Grid.Column="4" Opacity="0.6" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongAlbum" Text="{Binding CurrentSongAlbum, Mode=OneWay}"></TextBlock>
-				<Button Grid.Column="5" Name="CurrentSongMoreMenuButton" Opacity="0.6" Background="Transparent" Margin="6,0,0,0" Width="24" Height="20" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="CurrentSongMoreMenuButton_Click">
+				<Button Grid.Column="5" Name="CurrentSongMoreMenuButton" Opacity="0.6" Background="Transparent" Margin="6,0,0,0" Width="24" Height="20" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 					<Button.Flyout>
 						<MenuFlyout>
-							<MenuItem Header="Item 1">
-								<MenuItem Header="Subitem 1" />
-								<MenuItem Header="Subitem 2" />
-								<MenuItem Header="Subitem 3" />
-							</MenuItem>
-							<MenuItem Header="Go to Artist" InputGesture="Ctrl+A" />
-							<MenuItem Header="Go to Album" />
+							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
+							<MenuItem Header="Go to Artist" Command="{Binding JumpToArtistPageCommand}"/>
+							<MenuItem Header="Go to Album" Command="{Binding JumpToAlbumPageCommand}" />
 						</MenuFlyout>
 					</Button.Flyout>
 					<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -115,7 +111,6 @@
 			</Grid>
 		</Grid>
 		
-
 		<!-- Header -->
 		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*" x:Name="Header">
 			<Grid.ColumnDefinitions>
@@ -151,15 +146,19 @@
 				<Grid Grid.Row="1" Grid.Column="1" Width="280" RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto,*" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
 
 					<!-- "Play" should be top so that it gets the first keyboard focus -->
-					<Button x:Name="PlayButton" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="62" Width="62" Background="Transparent" Command="{Binding PlayCommand}" BorderThickness="0" Focusable="False">
-						<Viewbox Width="46" Height="46">
-							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-								Data="{Binding PlayButton, Mode=OneWay}">
-							</PathIcon>
-						</Viewbox>
-					</Button>
+					<Border Grid.Column="1" CornerRadius="31" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Grid>
+							<Button x:Name="PlayButton" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="62" Width="62" Background="Transparent" Command="{Binding PlayCommand}" BorderThickness="0" Focusable="False">
+								<Viewbox Width="46" Height="46">
+									<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+										Data="{Binding PlayButton, Mode=OneWay}">
+									</PathIcon>
+								</Viewbox>
+							</Button>
+						</Grid>
+					</Border>
 
-					<Button x:Name="BackButton" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" Grid.Column="0" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayPrevCommand}" BorderThickness="0" Focusable="False">
+					<Button x:Name="BackButton" Grid.Column="0" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayPrevCommand}" BorderThickness="0" Focusable="False">
 						<Viewbox Width="18" Height="18">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="M3 20.25a.75.75 0 0 0 1.5 0V3.75a.75.75 0 1 0-1.5 0v16.5ZM18.23 20.475c1.158.83 2.77.002 2.77-1.422V4.83c0-1.384-1.53-2.22-2.695-1.473l-10.47 6.716a1.75 1.75 0 0 0-.074 2.895l10.47 7.507Zm1.27-1.422a.25.25 0 0 1-.396.203l-10.47-7.507a.25.25 0 0 1 .011-.413l10.47-6.717a.25.25 0 0 1 .385.21v14.224Z">
@@ -267,7 +266,12 @@
 				<!-- Navigation menu -->
 				<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
 					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" Loaded="NavigationView_Loaded" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="260" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
-
+						<ui:NavigationView.PaneHeader>
+						</ui:NavigationView.PaneHeader>
+						<ui:NavigationView.PaneCustomContent>
+						</ui:NavigationView.PaneCustomContent>
+						<ui:NavigationView.PaneFooter>
+						</ui:NavigationView.PaneFooter>
 						<ui:NavigationView.Resources>
 							<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
 								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
@@ -288,6 +292,7 @@
 						</ui:NavigationView.Resources>
 
 						<ui:Frame />
+
 
 					</ui:NavigationView>
 				</Border>

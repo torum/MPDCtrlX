@@ -48,7 +48,7 @@ public partial class MainView : UserControl
             vm.AckWindowClear += () => OnAckWindowClear();
 
         }
-
+        /*
         Unloaded += (sender, e) =>
         {
             if (vm is not null)
@@ -61,6 +61,7 @@ public partial class MainView : UserControl
                 vm.AckWindowClear -= () => OnAckWindowClear();
             }
         };
+        */
 
         /*
         var os = Environment.OSVersion;
