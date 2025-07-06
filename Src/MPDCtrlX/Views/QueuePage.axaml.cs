@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
+using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.ViewModels.Dialogs;
 using MPDCtrlX.Views.Dialogs;
@@ -31,6 +32,8 @@ public partial class QueuePage : UserControl
             _viewModel.QueueSaveAsDialogShow += this.QueueSaveAsDialogShowAsync;
             _viewModel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
             _viewModel.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
+            _viewModel.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
+            //
         }
         /*
         Unloaded += (sender, e) =>
@@ -271,11 +274,17 @@ public partial class QueuePage : UserControl
             if (this.QueueListBox is ListBox lb)
             {
                 lb.ScrollIntoView(ind);
-
+                /* 
                 var test = _viewModel?.Queue.FirstOrDefault(x => x.IsPlaying == true);
                 if (test != null)
                 {
                     //lb.ScrollIntoView(test.Index);
+                    test.IsSelected = true;
+                }
+                */
+                var test = _viewModel?.Queue.FirstOrDefault(x => x.Index == ind);
+                if (test != null)
+                {
                     test.IsSelected = true;
                 }
 
@@ -295,6 +304,47 @@ public partial class QueuePage : UserControl
         }
     }
 
+
+    private void FilterQueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (this.FilterQueueListBox.SelectedItem is SongInfoEx song)
+        {
+            if (this.QueueListBox is ListBox lb)
+            {
+                lb.ScrollIntoView(song.Index);
+
+                song.IsSelected = true;
+
+            }
+        }
+    }
+
+    // Sets focus in textbox
+    private async void OnQueueFindWindowVisivilityChanged_SetFocus(object? sender, System.EventArgs e)
+    {
+        await Task.Yield();
+        await Task.Delay(50); // Need to wait for UI to update
+        if (this.TglButtonQueueFilter is ToggleButton tb)
+        {
+            if (tb.IsChecked == true)
+            {
+                this.FilterQueueQueryTextBox.Focus();
+            }
+        }
+    }
+
+    // Sets focus in textbox when clicked.
+    private void TglButtonQueueFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (this.TglButtonQueueFilter is ToggleButton tb)
+        {
+            if (tb.IsChecked == true)
+            {
+                this.FilterQueueQueryTextBox.Focus();
+            }
+        }
+    }
+
     // This is a workaround to keep the header in sync with the ListBox scrolling.
     private void ScrollViewer_ScrollChanged(object? sender, Avalonia.Controls.ScrollChangedEventArgs e)
     {
@@ -304,17 +354,6 @@ public partial class QueuePage : UserControl
         }
     }
 
-    // Sets focus in textbox when needed.
-    private void TglButtonQueueFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (sender is ToggleButton tb)
-        {
-            if (tb.IsChecked == true)
-            {
-                this.FilterQueueQueryTextBox.Focus();
-            }
-        }
-    }
 
     private async void QueueSaveAsDialogShowAsync(object? sender, System.EventArgs e)
     {

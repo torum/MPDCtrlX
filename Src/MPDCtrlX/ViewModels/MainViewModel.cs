@@ -3355,6 +3355,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     public event EventHandler? QueueHeaderVisivilityChanged;
 
+
+    public event EventHandler? QueueFindWindowVisivilityChanged_SetFocus;
+
     #endregion
 
     #region == Services == 
@@ -3498,8 +3501,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         PlaylistListviewDeletePosPopupCommand = new RelayCommand(PlaylistListviewDeletePosPopupCommand_Execute, PlaylistListviewDeletePosPopupCommand_CanExecute);
         PlaylistListviewConfirmDeletePosNotSupportedPopupCommand = new RelayCommand(PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_Execute, PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_CanExecute);
 
-        QueueFilterSelectCommand = new GenericRelayCommand<object>(param => QueueFilterSelectCommand_Execute(param), param => QueueFilterSelectCommand_CanExecute());
-
+        //QueueFilterSelectCommand = new GenericRelayCommand<object>(param => QueueFilterSelectCommand_Execute(param), param => QueueFilterSelectCommand_CanExecute());
+        QueueFilterSelectCommand = new RelayCommand(QueueFilterSelectCommand_Execute, QueueFilterSelectCommand_CanExecute);
 
         PlaylistItemLoadPlaylistCommand = new RelayCommand(PlaylistItemLoadPlaylistCommand_Execute, PlaylistItemLoadPlaylistCommand_CanExecute);
         PlaylistItemClearLoadPlaylistCommand = new RelayCommand(PlaylistItemClearLoadPlaylistCommand_Execute, PlaylistItemClearLoadPlaylistCommand_CanExecute);
@@ -7397,25 +7400,69 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsQueueFindVisible)
         {
             IsQueueFindVisible = false;
+            return;
         }
-        else
-        {
-            QueueForFilter.Clear();
-            if (Queue is not null)
-            {
-                QueueForFilter = new ObservableCollection<SongInfoEx>(Queue);
-                /*
-                var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
-                collectionView.Filter = x =>
-                {
-                    return false;
-                };
-                */
-                FilterQueueQuery = "";
 
-                IsQueueFindVisible = true;
-            }
+        if (Queue is null)
+        {
+            return;
         }
+
+        SelectedQueueFilterSong = null;
+        QueueForFilter.Clear();
+
+        QueueForFilter = new ObservableCollection<SongInfoEx>(Queue);
+        /*
+        var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
+        collectionView.Filter = x =>
+        {
+            return false;
+        };
+        */
+        FilterQueueQuery = "";
+
+        IsQueueFindVisible = true;
+
+        // Set focus textbox in code behind.
+        QueueFindWindowVisivilityChanged_SetFocus?.Invoke(this, EventArgs.Empty);
+    }
+
+
+    public IRelayCommand QueueFilterSelectCommand { get; set; }
+    public static bool QueueFilterSelectCommand_CanExecute()
+    {
+        return true;
+    }
+    public void QueueFilterSelectCommand_Execute()//object obj
+    {
+        if (Queue.Count <= 1)
+            return;
+        if (SelectedQueueFilterSong is null)
+        {
+            return;
+        }
+
+        //IsQueueFindVisible = false;
+
+        ScrollIntoViewAndSelect?.Invoke(this, SelectedQueueFilterSong.Index);
+        
+        /*
+        if (obj is null)
+            return;
+
+        if (obj is null) return;
+
+        if (Queue.Count <= 1)
+            return;
+
+        
+        if (obj is SongInfoEx song)
+        {
+            //IsQueueFindVisible = false;
+
+            ScrollIntoViewAndSelect?.Invoke(this, song.Index);
+        }
+        */
     }
 
     #endregion
@@ -9385,26 +9432,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    public IRelayCommand QueueFilterSelectCommand { get; set; }
-    public static bool QueueFilterSelectCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueFilterSelectCommand_Execute(object obj)
-    {
-        if (obj is null)
-            return;
-
-        if (obj != _selectedQueueFilterSong)
-            return;
-
-        IsQueueFindVisible = false;
-
-        if (_selectedQueueFilterSong is not null)
-        {
-            ScrollIntoViewAndSelect?.Invoke(this, _selectedQueueFilterSong.Index);
-        }
-    }
 
     #endregion
 

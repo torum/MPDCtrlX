@@ -23,8 +23,8 @@
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*" MinWidth="230"/>
-			<ColumnDefinition Width="8"/>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="1"/>
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
@@ -46,9 +46,11 @@
 			</StackPanel>
 		</Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="8,0,0,0">
-			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="1" MinWidth="230" ItemsSource="{Binding Artists}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
+        <Grid Grid.Row="1" Grid.Column="0">
+			<!-- 
+			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border> -->
+			<Border Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+			<ListBox Margin="3,0,3,4" ItemsSource="{Binding Artists}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
@@ -83,6 +85,7 @@
 			</ListBox>
         </Grid>
 
+		<Border Grid.Row="1" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected artists -->
 		<Grid Grid.Row="1" Grid.Column="2" Margin="8,0,0,0">
 			<Grid.RowDefinitions>

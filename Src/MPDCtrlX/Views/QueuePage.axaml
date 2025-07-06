@@ -494,19 +494,21 @@
 
 					<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0"></TextBox>
 
-					<ListBox ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" MaxHeight="240" BorderThickness="0">
+					<ListBox Name="FilterQueueListBox" ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" SelectionMode="AlwaysSelected,Single" DoubleTapped="FilterQueueListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
+						<ListBox.KeyBindings>
+							<!--  Enter TODO not working  CommandParameter="{Binding $parent[ListBox].SelectedItem}" -->
+							<KeyBinding Command="{Binding QueueFilterSelectCommand}" Gesture="Enter" />
+						</ListBox.KeyBindings>
+						<ListBox.ItemContainerTheme>
 
-						<!-- <ListBox.InputBindings>
-							<KeyBinding Key="Return" Command="{Binding QueueFilterSelectCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}" />
-						</ListBox.InputBindings>
-						-->
+						</ListBox.ItemContainerTheme>
 						<ListBox.ItemsPanel>
 							<ItemsPanelTemplate>
 								<VirtualizingStackPanel />
 							</ItemsPanelTemplate>
 						</ListBox.ItemsPanel>
 						<ListBox.ItemTemplate>
-							<DataTemplate x:DataType="sng:SongInfo">
+							<DataTemplate x:DataType="sng:SongInfoEx">
 								<StackPanel>
 									<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="0" Padding="12 0 3 0" />
 									<!--
@@ -526,7 +528,7 @@
 								<Setter Property="Height" Value="36"/>
 								<Setter Property="MinHeight" Value="32"/>
 								<Setter Property="Padding" Value="0,0,0,0"/>
-								<Setter Property="VerticalAlignment" Value="Top"/>
+								<Setter Property="VerticalAlignment" Value="Center"/>
 
 							</Style>
 						</ListBox.Styles>

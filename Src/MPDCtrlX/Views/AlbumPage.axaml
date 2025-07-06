@@ -163,7 +163,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 
 				<!-- Album view ListBox -->
 			<ScrollViewer>
-					<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True">
+					<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="3,3,3,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
 
