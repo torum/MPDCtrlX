@@ -15,6 +15,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -74,8 +75,12 @@ public partial class MainWindow : Window//AppWindow//
             this.Closing -= vm.OnWindowClosing;
         };
         */
-        var os = Environment.OSVersion;
+
+
+
+        //
         /*
+        var os = Environment.OSVersion;
         Debug.WriteLine("Current OS Information:");
         Debug.WriteLine("Platform: {0:G}", os.Platform);
         Debug.WriteLine("Version String: {0}", os.VersionString);
@@ -85,7 +90,8 @@ public partial class MainWindow : Window//AppWindow//
         Debug.WriteLine("Service Pack: '{0}'", os.ServicePack);
         */
 
-        if (os.Platform.ToString().StartsWith("Win"))
+        //if (os.Platform.ToString().StartsWith("Win"))
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             //TitleBar.ExtendsContentIntoTitleBar = true;
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
@@ -97,11 +103,11 @@ public partial class MainWindow : Window//AppWindow//
             // Only on Windows
             //ExtendClientAreaToDecorationsHint = true;
         }
-        else
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             //TitleBar.ExtendsContentIntoTitleBar = true;
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
-            
+
             //TransparencyLevelHint = [WindowTransparencyLevel.None];
             //TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
             //Background = Brushes.Transparent;
@@ -109,6 +115,10 @@ public partial class MainWindow : Window//AppWindow//
 
             // Not currently supported on Linux due to X11.
             //ExtendClientAreaToDecorationsHint = false;
+        }
+        else
+        {
+            //
         }
 
     }

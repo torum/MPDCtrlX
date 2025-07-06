@@ -8,6 +8,10 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
+
+<!-- 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>   -->
+	  
+	  
   </PropertyGroup>
 
   <ItemGroup>

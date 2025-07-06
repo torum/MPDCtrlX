@@ -22,6 +22,14 @@ public partial class App : Application
 {
 
     public static readonly string AppName = "MPDCtrlX";
+    private static readonly string _appDeveloper = "torum";
+
+    // Data folder and Config file path.
+    private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+    public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, _appDeveloper)), AppName);
+    public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
+    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(AppDataFolder, "Cache");
+
 
     public IHost AppHost { get; private set; }
 

@@ -49,64 +49,9 @@ public class MainDummyViewModel
 
 public partial class MainViewModel : ViewModelBase //ObservableObject
 {
-    #region == Basic ==  
-
-    private static readonly string _appName = App.AppName;
-    private static readonly string _appDeveloper = "torum";
-    private const string _appVer = "v3.1.2.0";
-
-    // Data folder and Config file path.
-    private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-    public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, _appDeveloper)), _appName);
-    public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, _appName + ".config");
-    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(AppDataFolder, "Cache");
-
-    // Application version
-
-    public static string AppVer
-    {
-        get
-        {
-            return _appVer;
-        }
-    }
-
-    // Application Title (for system)
-    public static string AppTitle
-    {
-        get
-        {
-            return _appName;
-        }
-    }
-
-    // Application Window Title (for display)
-    public static string AppTitleVer
-    {
-        get
-        {
-            return _appName + " " + _appVer;
-        }
-    }
-
-    // TODO: no longer used.
-    public static bool DeveloperMode
-    {
-        get
-        {
-#if DEBUG
-            return true;
-#else
-            return false; 
-#endif
-        }
-    }
-
-    #endregion
-
     #region == Layout ==
 
-    #region == Layout general ==
+    #region == Window and loading flag ==
 
     public int WindowTop = 0;
     public int WindowLeft = 0;
@@ -235,7 +180,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private double _queueColumnHeaderPositionWidth = 53;
+    private double _queueColumnHeaderPositionWidth = 60;
     public double QueueColumnHeaderPositionWidth
     {
         get
@@ -249,28 +194,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderPositionWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderPositionWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderPositionWidth));
-        }
-    }
-
-    private double _queueColumnHeaderPositionWidthUser = 53;
-    public double QueueColumnHeaderPositionWidthRestore
-    {
-        get
-        {
-            return _queueColumnHeaderPositionWidthUser;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderPositionWidthUser)
-                return;
-
-            _queueColumnHeaderPositionWidthUser = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderPositionWidthRestore));
         }
     }
 
@@ -307,32 +231,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderNowPlayingWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderNowPlayingWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderNowPlayingWidth));
         }
     }
 
-    private double _queueColumnHeaderNowPlayingWidthUser = 32;
-    public double QueueColumnHeaderNowPlayingWidthRestore
-    {
-        get
-        {
-            return _queueColumnHeaderNowPlayingWidthUser;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderNowPlayingWidthUser)
-                return;
-
-            _queueColumnHeaderNowPlayingWidthUser = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderNowPlayingWidthRestore));
-        }
-    }
-
-    // Title header
+    // Title header (not user customizable)
     private double _queueColumnHeaderTitleWidth = 180;
     public double QueueColumnHeaderTitleWidth
     {
@@ -347,46 +250,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTitleWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderTitleWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderTitleWidth));
         }
     }
 
-    private double _queueColumnHeaderTitleWidthUser = 180;
-    public double QueueColumnHeaderTitleWidthRestore
+    private bool _isQueueColumnHeaderTimeVisible = true;
+    public bool IsQueueColumnHeaderTimeVisible
     {
         get
         {
-            return _queueColumnHeaderTitleWidthUser;
+            return _isQueueColumnHeaderTimeVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderTitleWidthUser)
+            if (value == _isQueueColumnHeaderTimeVisible)
                 return;
 
-            _queueColumnHeaderTitleWidthUser = value;
+            _isQueueColumnHeaderTimeVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTitleWidthRestore));
-        }
-    }
-
-    private bool _queueColumnHeaderTimeVisibility = true;
-    public bool QueueColumnHeaderTimeVisibility
-    {
-        get
-        {
-            return _queueColumnHeaderTimeVisibility;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderTimeVisibility)
-                return;
-
-            _queueColumnHeaderTimeVisibility = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTimeVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderTimeVisible));
         }
     }
 
@@ -404,46 +286,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTimeWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderTitleWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderTimeWidth));
         }
     }
 
-    private double _queueColumnHeaderTimeWidthUser = 62;
-    public double QueueColumnHeaderTimeWidthRestore
+    private bool _isQueueColumnHeaderArtistVisible = true;
+    public bool IsQueueColumnHeaderArtistVisible
     {
         get
         {
-            return _queueColumnHeaderTimeWidthUser;
+            return _isQueueColumnHeaderArtistVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderTimeWidthUser)
+            if (value == _isQueueColumnHeaderArtistVisible)
                 return;
 
-            _queueColumnHeaderTimeWidthUser = value;
+            _isQueueColumnHeaderArtistVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTimeWidthRestore));
-        }
-    }
-
-    private bool _queueColumnHeaderArtistVisibility = true;
-    public bool QueueColumnHeaderArtistVisibility
-    {
-        get
-        {
-            return _queueColumnHeaderArtistVisibility;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderArtistVisibility)
-                return;
-
-            _queueColumnHeaderArtistVisibility = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderArtistVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderArtistVisible));
         }
     }
 
@@ -461,46 +322,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderArtistWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderArtistWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderArtistWidth));
         }
     }
 
-    private double _queueColumnHeaderArtistWidthUser = 120;
-    public double QueueColumnHeaderArtistWidthRestore
+    private bool _isQueueColumnHeaderAlbumVisible = true;
+    public bool IsQueueColumnHeaderAlbumVisible
     {
         get
         {
-            return _queueColumnHeaderArtistWidthUser;
+            return _isQueueColumnHeaderAlbumVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderArtistWidthUser)
+            if (value == _isQueueColumnHeaderAlbumVisible)
                 return;
 
-            _queueColumnHeaderArtistWidthUser = value;
+            _isQueueColumnHeaderAlbumVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderArtistWidthRestore));
-        }
-    }
-
-    private bool _queueColumnHeaderAlbumVisibility = true;
-    public bool QueueColumnHeaderAlbumVisibility
-    {
-        get
-        {
-            return _queueColumnHeaderAlbumVisibility;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderAlbumVisibility)
-                return;
-
-            _queueColumnHeaderAlbumVisibility = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderAlbumVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderAlbumVisible));
         }
     }
 
@@ -518,46 +358,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderAlbumWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderAlbumWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderAlbumWidth));
         }
     }
 
-    private double _queueColumnHeaderAlbumWidthUser = 120;
-    public double QueueColumnHeaderAlbumWidthRestore
+    private bool _isQueueColumnHeaderDiscVisible = true;
+    public bool IsQueueColumnHeaderDiscVisible
     {
         get
         {
-            return _queueColumnHeaderAlbumWidthUser;
+            return _isQueueColumnHeaderDiscVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderAlbumWidthUser)
+            if (value == _isQueueColumnHeaderDiscVisible)
                 return;
 
-            _queueColumnHeaderAlbumWidthUser = value;
+            _isQueueColumnHeaderDiscVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderAlbumWidthRestore));
-        }
-    }
-
-    private bool _queueColumnHeaderDiscVisibility = true;
-    public bool QueueColumnHeaderDiscVisibility
-    {
-        get
-        {
-            return _queueColumnHeaderDiscVisibility;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderDiscVisibility)
-                return;
-
-            _queueColumnHeaderDiscVisibility = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderDiscVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderDiscVisible));
         }
     }
 
@@ -575,46 +394,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderDiscWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderDiscWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderDiscWidth));
         }
     }
 
-    private double _queueColumnHeaderDiscWidthUser = 62;
-    public double QueueColumnHeaderDiscWidthRestore
+    private bool _isQueueColumnHeaderTrackVisible = true;
+    public bool IsQueueColumnHeaderTrackVisible
     {
         get
         {
-            return _queueColumnHeaderDiscWidthUser;
+            return _isQueueColumnHeaderTrackVisible;
         }
         set
         {
-            if (value == _queueColumnHeaderDiscWidthUser)
+            if (value == _isQueueColumnHeaderTrackVisible)
                 return;
 
-            _queueColumnHeaderDiscWidthUser = value;
+            _isQueueColumnHeaderTrackVisible = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderDiscWidthRestore));
-        }
-    }
-
-    private bool _queueColumnHeaderTrackVisibility = true;
-    public bool QueueColumnHeaderTrackVisibility
-    {
-        get
-        {
-            return _queueColumnHeaderTrackVisibility;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderTrackVisibility)
-                return;
-
-            _queueColumnHeaderTrackVisibility = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTrackVisibility));
+            NotifyPropertyChanged(nameof(IsQueueColumnHeaderTrackVisible));
         }
     }
 
@@ -632,28 +430,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTrackWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderTrackWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderTrackWidth));
-        }
-    }
-
-    private double _queueColumnHeaderTrackWidthUser = 62;
-    public double QueueColumnHeaderTrackWidthRestore
-    {
-        get
-        {
-            return _queueColumnHeaderTrackWidthUser;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderTrackWidthUser)
-                return;
-
-            _queueColumnHeaderTrackWidthUser = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTrackWidthRestore));
         }
     }
 
@@ -690,28 +467,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderGenreWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderGenreWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderGenreWidth));
-        }
-    }
-
-    private double _queueColumnHeaderGenreWidthUser = 100;
-    public double QueueColumnHeaderGenreWidthRestore
-    {
-        get
-        {
-            return _queueColumnHeaderGenreWidthUser;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderGenreWidthUser)
-                return;
-
-            _queueColumnHeaderGenreWidthUser = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderGenreWidthRestore));
         }
     }
 
@@ -747,30 +503,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderLastModifiedWidth = value;
 
-            if (value > 0)
-                QueueColumnHeaderLastModifiedWidthRestore = value;
-
             NotifyPropertyChanged(nameof(QueueColumnHeaderLastModifiedWidth));
         }
     }
 
-    private double _queueColumnHeaderLastModifiedWidthUser = 180;
-    public double QueueColumnHeaderLastModifiedWidthRestore
-    {
-        get
-        {
-            return _queueColumnHeaderLastModifiedWidthUser;
-        }
-        set
-        {
-            if (value == _queueColumnHeaderLastModifiedWidthUser)
-                return;
-
-            _queueColumnHeaderLastModifiedWidthUser = value;
-
-            NotifyPropertyChanged(nameof(QueueColumnHeaderLastModifiedWidthRestore));
-        }
-    }
 
     #endregion
 
@@ -3588,8 +3324,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public delegate void DebugWindowShowHideEventHandler();
     public event DebugWindowShowHideEventHandler? DebugWindowShowHide;
 
-    //public event EventHandler<bool>? DebugWindowShowHide2;
-
     public event EventHandler<string>? DebugCommandOutput;
 
     public event EventHandler<string>? DebugIdleOutput;
@@ -3612,30 +3346,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     // Queue listview ScrollIntoView and select (for filter and first time loading the queue)
     public event EventHandler<int>? ScrollIntoViewAndSelect;
 
-    // PlaylistSongsListview ScrollIntoView
-    //public event EventHandler<int> ScrollIntoViewPlaylistSongs;
-
-    //public delegate void QueueSelectionClearEventHandler();
-    //public event QueueSelectionClearEventHandler QueueSelectionClear;
-
     public event EventHandler<string>? UpdateProgress;
 
     public event EventHandler<string>? CurrentSongChanged;
-
 
     public event EventHandler? QueueSaveAsDialogShow;
     public event EventHandler? QueueSaveToDialogShow;
 
     public event EventHandler? QueueHeaderVisivilityChanged;
-
-    #endregion
-
-    #region == Lock objects ==
-
-    // TODO: not used
-
-    private readonly object lockQueueObject = new();
-    private readonly object lockCurrentQueueObject = new();
 
     #endregion
 
@@ -3647,6 +3365,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     public MainViewModel(IMpcService mpcService)
     {
+        // MPD Service dependency injection.
         _mpc = mpcService;
 
         #region == Init commands ==
@@ -3852,16 +3571,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         #region == Load settings ==
 
-        System.IO.Directory.CreateDirectory(AppDataFolder);
+        System.IO.Directory.CreateDirectory(App.AppDataFolder);
 
         LoadSettings();
 
         #endregion
 
-
         // start the connection
         IsShowDebugWindow = false;
-        //IsUpdateOnStartup = false;
         IsAutoScrollToNowPlaying = true;
         Start("localhost", 6600);
         Volume = 20; // needs this until implement profiles.
@@ -3871,12 +3588,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
         _faTheme!.PreferSystemTheme = true;
 
-            //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
-            //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
-
+        //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
+        //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
 
 #if DEBUG
-            IsSaveLog = true;
+        IsSaveLog = true;
         IsEnableDebugWindow = true;
 
 #else
@@ -3893,9 +3609,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         try
         {
             // Load config file.
-            if (File.Exists(AppConfigFilePath))
+            if (File.Exists(App.AppConfigFilePath))
             {
-                XDocument xdoc = XDocument.Load(AppConfigFilePath);
+                XDocument xdoc = XDocument.Load(App.AppConfigFilePath);
                 if (xdoc.Root is not null)
                 {
                     #region == Window setting ==
@@ -4245,12 +3961,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                             catch
                                             {
-                                                QueueColumnHeaderPositionWidth = 53;
+                                                QueueColumnHeaderPositionWidth = 60;
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderPositionWidth > 0)
-                                        QueueColumnHeaderPositionWidthRestore = QueueColumnHeaderPositionWidth;
                                 }
                                 column = Que.Element("NowPlaying");
                                 if (column is not null)
@@ -4281,8 +3995,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderNowPlayingWidth > 0)
-                                        QueueColumnHeaderNowPlayingWidthRestore = QueueColumnHeaderNowPlayingWidth;
                                 }
                                 column = Que.Element("Title");
                                 if (column is not null)
@@ -4304,8 +4016,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderTitleWidth > 0)
-                                        QueueColumnHeaderTitleWidthRestore = QueueColumnHeaderTitleWidth;
                                 }
                                 column = Que.Element("Time");
                                 if (column is not null)
@@ -4316,9 +4026,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderTimeVisibility = true;
+                                                IsQueueColumnHeaderTimeVisible = true;
                                             else
-                                                QueueColumnHeaderTimeVisibility = false;
+                                                IsQueueColumnHeaderTimeVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4336,8 +4046,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderTimeWidth > 0)
-                                        QueueColumnHeaderTimeWidthRestore = QueueColumnHeaderTimeWidth;
                                 }
                                 column = Que.Element("Artist");
                                 if (column is not null)
@@ -4348,9 +4056,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderArtistVisibility = true;
+                                                IsQueueColumnHeaderArtistVisible = true;
                                             else
-                                                QueueColumnHeaderArtistVisibility = false;
+                                                IsQueueColumnHeaderArtistVisible= false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4368,8 +4076,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderArtistWidth > 0)
-                                        QueueColumnHeaderArtistWidthRestore = QueueColumnHeaderArtistWidth;
                                 }
                                 column = Que.Element("Album");
                                 if (column is not null)
@@ -4380,9 +4086,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderAlbumVisibility = true;
+                                                IsQueueColumnHeaderAlbumVisible = true;
                                             else
-                                                QueueColumnHeaderAlbumVisibility = false;
+                                                IsQueueColumnHeaderAlbumVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4400,8 +4106,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderAlbumWidth > 0)
-                                        QueueColumnHeaderAlbumWidthRestore = QueueColumnHeaderAlbumWidth;
                                 }
                                 column = Que.Element("Disc");
                                 if (column is not null)
@@ -4412,9 +4116,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderDiscVisibility = true;
+                                                IsQueueColumnHeaderDiscVisible = true;
                                             else
-                                                QueueColumnHeaderDiscVisibility = false;
+                                                IsQueueColumnHeaderDiscVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4432,8 +4136,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderDiscWidth > 0)
-                                        QueueColumnHeaderDiscWidthRestore = QueueColumnHeaderDiscWidth;
                                 }
                                 column = Que.Element("Track");
                                 if (column is not null)
@@ -4444,9 +4146,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         if (!string.IsNullOrEmpty(s))
                                         {
                                             if (s == "True")
-                                                QueueColumnHeaderTrackVisibility = true;
+                                                IsQueueColumnHeaderTrackVisible = true;
                                             else
-                                                QueueColumnHeaderTrackVisibility = false;
+                                                IsQueueColumnHeaderTrackVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4464,8 +4166,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderTrackWidth > 0)
-                                        QueueColumnHeaderTrackWidthRestore = QueueColumnHeaderTrackWidth;
                                 }
                                 column = Que.Element("Genre");
                                 if (column is not null)
@@ -4496,8 +4196,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderGenreWidth > 0)
-                                        QueueColumnHeaderGenreWidthRestore = QueueColumnHeaderGenreWidth;
                                 }
                                 column = Que.Element("LastModified");
                                 if (column is not null)
@@ -4528,8 +4226,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                         }
                                     }
-                                    if (QueueColumnHeaderLastModifiedWidth > 0)
-                                        QueueColumnHeaderLastModifiedWidthRestore = QueueColumnHeaderLastModifiedWidth;
                                 }
                             }
                         }
@@ -4625,7 +4321,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         // This is a dirty work around for AvaloniaUI.
         QueuePage? qp = App.GetService<QueuePage>();
-        qp?.UpdateHeaderWidth();
+        qp?.SaveHeaderWidth();
 
         double windowWidth = 780;
 
@@ -4640,9 +4336,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         XmlElement root = doc.CreateElement(string.Empty, "App", string.Empty);
         doc.AppendChild(root);
 
-        XmlAttribute attrs = doc.CreateAttribute("Version");
-        attrs.Value = _appVer;
-        root.SetAttributeNode(attrs);
+        XmlAttribute attrs;
 
         // MainWindow
         if (sender is Window w)
@@ -4787,10 +4481,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderPositionWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderPositionWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderPositionWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4803,10 +4494,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderNowPlayingWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderNowPlayingWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderNowPlayingWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4815,10 +4503,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Title", string.Empty);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderTitleWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderTitleWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderTitleWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4827,14 +4512,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderTimeVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderTimeVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderTimeWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderTimeWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderTimeWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4843,14 +4525,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderArtistVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderArtistVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderArtistWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderArtistWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderArtistWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4859,14 +4538,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderAlbumVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderAlbumVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderAlbumWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderAlbumWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderAlbumWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4875,14 +4551,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderDiscVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderDiscVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderDiscWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderDiscWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderDiscWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4891,14 +4564,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
 
             qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = QueueColumnHeaderTrackVisibility.ToString();
+            qAttrs.Value = IsQueueColumnHeaderTrackVisible.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderTrackWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderTrackWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderTrackWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4911,10 +4581,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderGenreWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderGenreWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderGenreWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -4927,10 +4594,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             qAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered)
-                qAttrs.Value = QueueColumnHeaderLastModifiedWidth.ToString();
-            else
-                qAttrs.Value = _queueColumnHeaderLastModifiedWidthUser.ToString();
+            qAttrs.Value = QueueColumnHeaderLastModifiedWidth.ToString();
             queueHeaderColumn.SetAttributeNode(qAttrs);
 
             queueHeader.AppendChild(queueHeaderColumn);
@@ -5100,12 +4764,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         try
         {
-            if (!Directory.Exists(AppDataFolder))
+            if (!Directory.Exists(App.AppDataFolder))
             {
-                Directory.CreateDirectory(AppDataFolder);
+                Directory.CreateDirectory(App.AppDataFolder);
             }
 
-            doc.Save(AppConfigFilePath);
+            doc.Save(App.AppConfigFilePath);
         }
         //catch (System.IO.FileNotFoundException) { }
         catch (Exception ex)
@@ -5177,83 +4841,101 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         _ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
     }
 
-    private void UpdateButtonStatus()
+    private void OnMpdIdleConnected(MpcService sender)
     {
-        
-        Dispatcher.UIThread.Post(() =>
+        Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
+
+        MpdVersion = _mpc.MpdVerText;
+
+        //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
+
+        MpdStatusButton = _pathMpdOkButton;
+
+        // Need this to show CurrentSong.
+        IsConnected = true;
+
+        // Run in a background thread.
+        Task.Run(() => LoadInitialData());
+    }
+
+    private async void LoadInitialData()
+    {
+        IsBusy = true;
+
+        await Task.Delay(5);
+
+        CommandResult result = await _mpc.MpdIdleSendPassword(_password);
+
+        if (result.IsSuccess)
         {
-            try
+            bool r = await _mpc.MpdCommandConnectionStart(_mpc.MpdHost, _mpc.MpdPort, _mpc.MpdPassword);
+
+            if (r)
             {
-                //Play button
-                switch (_mpc.MpdStatus.MpdState)
+                if (IsUpdateOnStartup)
                 {
-                    case Status.MpdPlayState.Play:
-                        {
-                            PlayButton = _pathPauseButton;
-                            break;
-                        }
-                    case Status.MpdPlayState.Pause:
-                        {
-                            PlayButton = _pathPlayButton;
-                            break;
-                        }
-                    case Status.MpdPlayState.Stop:
-                        {
-                            PlayButton = _pathPlayButton;
-                            break;
-                        }
-
-                        //_pathStopButton
+                    await _mpc.MpdSendUpdate();
                 }
 
-                if (_mpc.MpdStatus.MpdVolumeIsSet)
+                result = await _mpc.MpdIdleQueryStatus();
+
+                if (result.IsSuccess)
                 {
-                    double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
-                    if (_volume != tmpVol)
-                    {
-                        // "quietly" update.
-                        _volume = tmpVol;
-                        NotifyPropertyChanged(nameof(Volume));
-                    }
+                    await Task.Delay(5);
+                    UpdateStatus();
+
+                    await Task.Delay(50);
+                    await _mpc.MpdIdleQueryCurrentSong();
+
+                    await Task.Delay(50);
+                    UpdateCurrentSong();
+
+                    await Task.Delay(50);
+                    await _mpc.MpdIdleQueryPlaylists();
+
+                    await Task.Delay(50);
+                    UpdatePlaylists();
+
+                    await Task.Delay(50);
+                    await _mpc.MpdIdleQueryCurrentQueue();
+
+                    await Task.Delay(50);
+                    UpdateCurrentQueue();
+
+                    await Task.Delay(300);
+                    await _mpc.MpdQueryListAlbumArtists();
+                    UpdateAlbumsAndArtists();
+
+                    await Task.Delay(50);
+
+                    // This no longer needed since it is aquired as needed basis.
+                    //await _mpc.MpdIdleQueryListAll();
+                    //await Task.Delay(5);
+                    //UpdateLibrary();
+
+                    //UpdateProgress?.Invoke(this, "");
+
+                    // IdleConnection
+                    _mpc.MpdIdleStart();
                 }
 
-                _random = _mpc.MpdStatus.MpdRandom;
-                NotifyPropertyChanged(nameof(Random));
-
-                _repeat = _mpc.MpdStatus.MpdRepeat;
-                NotifyPropertyChanged(nameof(Repeat));
-
-                _consume = _mpc.MpdStatus.MpdConsume;
-                NotifyPropertyChanged(nameof(Consume));
-
-                _single = _mpc.MpdStatus.MpdSingle;
-                NotifyPropertyChanged(nameof(Single));
-
-                // no need to care about "double" updates for time.
-                Time = _mpc.MpdStatus.MpdSongTime;
-
-                _elapsed = _mpc.MpdStatus.MpdSongElapsed;
-                //NotifyPropertyChanged("Elapsed");
-
-                //start elapsed timer.
-                if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
-                {
-                    if (!_elapsedTimer.Enabled)
-                        _elapsedTimer.Start();
-                }
-                else
-                {
-                    _elapsedTimer.Stop();
-                }
-
-                //
-                //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
             }
-            catch
+        }
+
+        IsBusy = false;
+
+        await Task.Delay(500);
+
+        // MPD protocol ver check.
+        if (_mpc.MpdVerText != "")
+        {
+            if (CompareVersionString(_mpc.MpdVerText, "0.20.0") == -1)
             {
-                Debug.WriteLine("Error@UpdateButtonStatus");
+                MpdStatusButton = _pathMpdAckErrorButton;
+                //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+                MpdStatusMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
             }
-        });
+        }
     }
 
     private void UpdateStatus()
@@ -5261,7 +4943,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         UpdateButtonStatus();
 
         UpdateProgress?.Invoke(this, "[UI] Status updating...");
-        
+
         Dispatcher.UIThread.Post(async () =>
         {
             bool isSongChanged = false;
@@ -5353,6 +5035,85 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         });
 
         UpdateProgress?.Invoke(this, "");
+    }
+
+    private void UpdateButtonStatus()
+    {
+        
+        Dispatcher.UIThread.Post(() =>
+        {
+            try
+            {
+                //Play button
+                switch (_mpc.MpdStatus.MpdState)
+                {
+                    case Status.MpdPlayState.Play:
+                        {
+                            PlayButton = _pathPauseButton;
+                            break;
+                        }
+                    case Status.MpdPlayState.Pause:
+                        {
+                            PlayButton = _pathPlayButton;
+                            break;
+                        }
+                    case Status.MpdPlayState.Stop:
+                        {
+                            PlayButton = _pathPlayButton;
+                            break;
+                        }
+
+                        //_pathStopButton
+                }
+
+                if (_mpc.MpdStatus.MpdVolumeIsSet)
+                {
+                    double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
+                    if (_volume != tmpVol)
+                    {
+                        // "quietly" update.
+                        _volume = tmpVol;
+                        NotifyPropertyChanged(nameof(Volume));
+                    }
+                }
+
+                _random = _mpc.MpdStatus.MpdRandom;
+                NotifyPropertyChanged(nameof(Random));
+
+                _repeat = _mpc.MpdStatus.MpdRepeat;
+                NotifyPropertyChanged(nameof(Repeat));
+
+                _consume = _mpc.MpdStatus.MpdConsume;
+                NotifyPropertyChanged(nameof(Consume));
+
+                _single = _mpc.MpdStatus.MpdSingle;
+                NotifyPropertyChanged(nameof(Single));
+
+                // no need to care about "double" updates for time.
+                Time = _mpc.MpdStatus.MpdSongTime;
+
+                _elapsed = _mpc.MpdStatus.MpdSongElapsed;
+                //NotifyPropertyChanged("Elapsed");
+
+                //start elapsed timer.
+                if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
+                {
+                    if (!_elapsedTimer.Enabled)
+                        _elapsedTimer.Start();
+                }
+                else
+                {
+                    _elapsedTimer.Stop();
+                }
+
+                //
+                //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
+            }
+            catch
+            {
+                Debug.WriteLine("Error@UpdateButtonStatus");
+            }
+        });
     }
 
     private void UpdateCurrentSong()
@@ -5517,7 +5278,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
 
                     // tmp list of deletion
-                    List<SongInfoEx> _tmpQueue = new();
+                    List<SongInfoEx> _tmpQueue = [];
 
                     // deletes items that does not exists in the new queue. 
                     foreach (var sng in Queue)
@@ -6403,9 +6164,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 strArtist = "Unknown Artist";
             }
 
-            string strDirPath = Path.Combine(AppDataCacheFolder, strArtist);
-            string filePath = Path.Combine(AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp";
-            string fileTempPath = Path.Combine(AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".tmp";
+            string strDirPath = Path.Combine(App.AppDataCacheFolder, strArtist);
+            string filePath = Path.Combine(App.AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp";
+            string fileTempPath = Path.Combine(App.AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".tmp";
 
             if (File.Exists(filePath))
             {
@@ -6420,6 +6181,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     Debug.WriteLine("GetAlbumPictures: Exception while loading: " + filePath + Environment.NewLine + e.Message);
                     continue;
                 }
+
+                // Testing
+                await Task.Delay(5);
+                await Task.Yield();
 
                 //Debug.WriteLine($"GetAlbumPictures: Successfully loaded album art from cache {filePath}");
             }
@@ -6487,6 +6252,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                                         isCoverExists = true;
 
+                                        // Testing
+                                        await Task.Delay(10);
+                                        await Task.Yield();
+
                                         break; // Break after first successful album art retrieval.
                                     }
                                 }
@@ -6509,6 +6278,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         await using StreamWriter file = new(fileTempPath);
                         await file.WriteLineAsync(unixTime);
                         file.Close();
+
+                        // Testing
+                        await Task.Delay(10);
+                        await Task.Yield();
                     }
                     catch (Exception e)
                     {
@@ -6549,106 +6322,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         return (new System.Version(a)).CompareTo(new System.Version(b));
     }
 
-    #endregion
-
-    #region == Events ==
-
-    private void OnMpdIdleConnected(MpcService sender)
-    {
-        Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
-
-        MpdVersion = _mpc.MpdVerText;
-        
-        //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
-
-        MpdStatusButton = _pathMpdOkButton;
-
-        // Need this to show CurrentSong.
-        IsConnected = true;
-
-        // Run in a background thread.
-        Task.Run(() => LoadInitialData());
-    }
-
-    private async void LoadInitialData()
-    {
-        IsBusy = true;
-
-        await Task.Delay(5);
-
-        CommandResult result = await _mpc.MpdIdleSendPassword(_password);
-
-        if (result.IsSuccess)
-        {
-            bool r = await _mpc.MpdCommandConnectionStart(_mpc.MpdHost, _mpc.MpdPort, _mpc.MpdPassword);
-
-            if (r)
-            {
-                if (IsUpdateOnStartup)
-                {
-                    await _mpc.MpdSendUpdate();
-                }
-
-                result = await _mpc.MpdIdleQueryStatus();
-
-                if (result.IsSuccess)
-                {
-                    await Task.Delay(5);
-                    UpdateStatus();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryCurrentSong();
-
-                    await Task.Delay(50);
-                    UpdateCurrentSong();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryPlaylists();
-
-                    await Task.Delay(50);
-                    UpdatePlaylists();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryCurrentQueue();
-
-                    await Task.Delay(50);
-                    UpdateCurrentQueue();
-
-                    await Task.Delay(300);
-                    await _mpc.MpdQueryListAlbumArtists();
-                    UpdateAlbumsAndArtists();
-
-                    await Task.Delay(50);
-
-                    // This no longer needed since it is aquired as needed basis.
-                    //await _mpc.MpdIdleQueryListAll();
-                    //await Task.Delay(5);
-                    //UpdateLibrary();
-
-                    //UpdateProgress?.Invoke(this, "");
-
-                    // IdleConnection
-                    _mpc.MpdIdleStart();
-                }
-
-            }
-        }
-
-        IsBusy = false;
-
-        await Task.Delay(500);
-
-        // MPD protocol ver check.
-        if (_mpc.MpdVerText != "")
-        {
-            if (CompareVersionString(_mpc.MpdVerText, "0.20.0") == -1)
-            {
-                MpdStatusButton = _pathMpdAckErrorButton;
-                //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
-                MpdStatusMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
-            }
-        }
-    }
+    #region == MPD event callback == 
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
     {
@@ -6735,8 +6409,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     strArtist = EscapeFilePathNames(strArtist).Trim();
                     strAlbum = EscapeFilePathNames(strAlbum).Trim();
 
-                    string strDirPath = Path.Combine(AppDataCacheFolder, strArtist);
-                    string filePath = Path.Combine(AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp";
+                    string strDirPath = Path.Combine(App.AppDataCacheFolder, strArtist);
+                    string filePath = Path.Combine(App.AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp";
                     try
                     {
                         Directory.CreateDirectory(strDirPath);
@@ -6970,6 +6644,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         //this.IsBusy = on;
     }
+
+    #endregion
 
     #endregion
 
@@ -7286,7 +6962,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.Id).ToList());
     }
 
-
     // Enter and double click from code behind.
     public IRelayCommand QueueListviewEnterKeyCommand { get; set; }
     public static bool QueueListviewEnterKeyCommand_CanExecute()
@@ -7348,35 +7023,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdPlaybackStop();
         await _mpc.MpdClear();
     }
-    /*
-    public IRelayCommand QueueListviewClearCommand { get; }
-    public bool QueueListviewClearCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) { return false; }
-        return true;
-    }
-    public void QueueListviewClearCommand_ExecuteAsync()
-    {
-        IsConfirmClearQueuePopupVisible = true;
-    }
-
-    public IRelayCommand QueueListviewConfirmClearPopupCommand { get; }
-    public bool QueueListviewConfirmClearPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        return true;
-    }
-    public async void QueueListviewConfirmClearPopupCommand_Execute()
-    {
-        await _mpc.MpdClear();
-
-        IsConfirmClearQueuePopupVisible = false;
-    }
-    */
 
     // Command to delete selected songs from the queue listview.
     public ICommand QueueListviewDeleteWithoutPromptCommand { get; }
@@ -7406,71 +7052,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             await _mpc.MpdDeleteId(deleteIdList);
 
     }
-    /*
-    // not used for now.
-    public IRelayCommand QueueListviewDeleteCommand { get; }
-    public bool QueueListviewDeleteCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (SelectedQueueSong is null) return false;
-        return true;
-    }
-    public void QueueListviewDeleteCommand_Execute(object obj)
-    {
-        if (obj is null) return;
-
-        List<SongInfoEx> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() => {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfoEx>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfoEx);
-            }
-        });
-
-        List<string> deleteIdList = [];
-
-        foreach (var item in selectedList)
-        {
-            deleteIdList.Add(item.Id);
-        }
-
-        queueListviewSelectedQueueSongIdsForPopup = deleteIdList;
-
-        IsConfirmDeleteQueuePopupVisible = true;
-    }
-
-    // not used for now.
-    public IRelayCommand QueueListviewConfirmDeletePopupCommand { get; }
-    public bool QueueListviewConfirmDeletePopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (SelectedQueueSong is null) return false;
-        if (Queue.Count == 0) return false;
-        return true;
-    }
-    public async void QueueListviewConfirmDeletePopupCommand_Execute()
-    {
-        if (queueListviewSelectedQueueSongIdsForPopup.Count < 1)
-            return;
-
-        if (queueListviewSelectedQueueSongIdsForPopup.Count == 1)
-            await _mpc.MpdDeleteId(queueListviewSelectedQueueSongIdsForPopup[0]);
-        else if (queueListviewSelectedQueueSongIdsForPopup.Count >= 1)
-            await _mpc.MpdDeleteId(queueListviewSelectedQueueSongIdsForPopup);
-
-        queueListviewSelectedQueueSongIdsForPopup.Clear();
-
-        IsConfirmDeleteQueuePopupVisible = false;
-    }
-    */
 
     // Command to move selected songs up in the queue listview.
     public IRelayCommand QueueListviewMoveUpCommand { get; }
@@ -7479,7 +7060,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
-        //if (SelectedQueueSong is null) return false;
         return true;
     }
     public async void QueueListviewMoveUpCommand_Execute(object obj)
@@ -7488,50 +7068,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (Queue.Count <= 1)
             return;
-        /*
-        List<SongInfoEx> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() => {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfoEx>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfoEx);
-            }
-        });
-
-        Dictionary<string, string> IdToNewPos = [];
-
-        foreach (var item in selectedList)
-        {
-            int i = 0;
-            try
-            {
-                i = Int32.Parse(item.Pos);
-
-                if (i == 0) return;
-
-                i -= 1;
-
-                IdToNewPos.Add(item.Id, i.ToString());
-            }
-            catch
-            {
-                return;
-            }
-        }
-        */
 
         if (obj is SongInfoEx song)
         {
             Dictionary<string, string> IdToNewPos = [];
-            int i = 0;
+
             try
             {
-                i = Int32.Parse(song.Pos);
+                int i = Int32.Parse(song.Pos);
 
                 if (i == 0) return;
 
@@ -7546,7 +7090,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             await _mpc.MpdMoveId(IdToNewPos);
         }
-
     }
 
     public IRelayCommand QueueListviewMoveDownCommand { get; }
@@ -7555,7 +7098,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
-        //if (SelectedQueueSong is null) return false;
         return true;
     }
     public async void QueueListviewMoveDownCommand_Execute(object obj)
@@ -7564,51 +7106,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (Queue.Count <= 1)
             return;
-        /*
-        List<SongInfoEx> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() => {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfoEx>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfoEx);
-            }
-        });
-
-        Dictionary<string, string> IdToNewPos = [];
-
-        foreach (var item in selectedList)
-        {
-            int i = 0;
-            try
-            {
-                i = Int32.Parse(item.Pos);
-
-                if (i >= Queue.Count - 1) return;
-
-                i += 1;
-
-                IdToNewPos.Add(item.Id, i.ToString());
-            }
-            catch
-            {
-                return;
-            }
-        }
-        */
 
         if (obj is SongInfoEx song)
         {
             Dictionary<string, string> IdToNewPos = [];
 
-            int i = 0;
             try
             {
-                i = Int32.Parse(song.Pos);
+                int i = Int32.Parse(song.Pos);
 
                 if (i >= Queue.Count - 1) return;
 
@@ -7699,7 +7204,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        Dictionary<string, string> IdToNewPos = new();
+        Dictionary<string, string> IdToNewPos = [];
         int i = 0;
         foreach (var item in sorted)
         {
@@ -9607,8 +9112,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         else
         {
             IsQueueColumnHeaderPositionVisible = true;
-            QueueColumnHeaderPositionWidth = QueueColumnHeaderPositionWidthRestore;
+            QueueColumnHeaderPositionWidth = 60;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderNowPlayingShowHideCommand { get; }
@@ -9626,8 +9134,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         else
         {
             IsQueueColumnHeaderNowPlayingVisible = true;
-            QueueColumnHeaderNowPlayingWidth = QueueColumnHeaderNowPlayingWidthRestore;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderTimeShowHideCommand { get; }
@@ -9637,17 +9147,19 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderTimeShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderTimeVisibility)
+        if (IsQueueColumnHeaderTimeVisible)
         {
 
-            QueueColumnHeaderTimeVisibility = false;
+            IsQueueColumnHeaderTimeVisible = false;
             QueueColumnHeaderTimeWidth = 0;
         }
         else
         {
-            QueueColumnHeaderTimeVisibility = true;
-            QueueColumnHeaderTimeWidth = QueueColumnHeaderTimeWidthRestore;
+            IsQueueColumnHeaderTimeVisible = true;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderArtistShowHideCommand { get; }
@@ -9657,16 +9169,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderArtistShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderArtistVisibility)
+        if (IsQueueColumnHeaderArtistVisible)
         {
-            QueueColumnHeaderArtistVisibility = false;
+            IsQueueColumnHeaderArtistVisible = false;
             QueueColumnHeaderArtistWidth = 0;
         }
         else
         {
-            QueueColumnHeaderArtistVisibility = true;
-            QueueColumnHeaderArtistWidth = QueueColumnHeaderArtistWidthRestore;
+            IsQueueColumnHeaderArtistVisible = true;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderAlbumShowHideCommand { get; }
@@ -9676,16 +9190,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderAlbumShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderAlbumVisibility)
+        if (IsQueueColumnHeaderAlbumVisible)
         {
-            QueueColumnHeaderAlbumVisibility = false;
+            IsQueueColumnHeaderAlbumVisible = false;
             QueueColumnHeaderAlbumWidth = 0;
         }
         else
         {
-            QueueColumnHeaderAlbumVisibility = true;
-            QueueColumnHeaderAlbumWidth = QueueColumnHeaderAlbumWidthRestore;
+            IsQueueColumnHeaderAlbumVisible = true;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderDiscShowHideCommand { get; }
@@ -9695,16 +9211,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderDiscShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderDiscVisibility)
+        if (IsQueueColumnHeaderDiscVisible)
         {
-            QueueColumnHeaderDiscVisibility = false;
+            IsQueueColumnHeaderDiscVisible = false;
             QueueColumnHeaderDiscWidth = 0;
         }
         else
         {
-            QueueColumnHeaderDiscVisibility = true;
-            QueueColumnHeaderDiscWidth = QueueColumnHeaderDiscWidthRestore;
+            IsQueueColumnHeaderDiscVisible = true;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderTrackShowHideCommand { get; }
@@ -9714,16 +9232,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueColumnHeaderTrackShowHideCommand_Execute()
     {
-        if (QueueColumnHeaderTrackVisibility)
+        if (IsQueueColumnHeaderTrackVisible)
         {
-            QueueColumnHeaderTrackVisibility = false;
+            IsQueueColumnHeaderTrackVisible = false;
             QueueColumnHeaderTrackWidth = 0;
         }
         else
         {
-            QueueColumnHeaderTrackVisibility = true;
-            QueueColumnHeaderTrackWidth = QueueColumnHeaderTrackWidthRestore;
+            IsQueueColumnHeaderTrackVisible = true;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderGenreShowHideCommand { get; }
@@ -9741,9 +9261,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         else
         {
             IsQueueColumnHeaderGenreVisible = true;
-            QueueColumnHeaderGenreWidth = QueueColumnHeaderGenreWidthRestore;
         }
 
+        // Notify code behind to do some work around ...
         QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -9762,8 +9282,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         else
         {
             IsQueueColumnHeaderLastModifiedVisible = true;
-            QueueColumnHeaderLastModifiedWidth = QueueColumnHeaderLastModifiedWidthRestore;
         }
+
+        // Notify code behind to do some work around ...
+        QueueHeaderVisivilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -9983,9 +9505,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsAlbumContentPanelVisible = false;
     }
 
-    #endregion
-
-
     public IRelayCommand AlbumsCoverOverlayPanelCloseCommand { get; set; }
     public static bool AlbumsCoverOverlayPanelCloseCommand_CanExecute()
     {
@@ -9996,7 +9515,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsAlbumArtPanelIsOpen = false;
     }
 
-    // CurrentSong
+
+    // Jump menu from CurrentSong
     public IRelayCommand JumpToAlbumPageCommand { get; set; }
     public static bool JumpToAlbumPageCommand_CanExecute()
     {
@@ -10072,25 +9592,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private void GoToArtistPage()
-    {
-        foreach (var hoge in MainMenuItems)
-        {
-            if (hoge is NodeMenuLibrary)
-            {
-                foreach (var fuga in hoge.Children)
-                {
-                    if (fuga is NodeMenuArtist)
-                    {
-                        IsNavigationViewMenuOpen = true;
-                        fuga.Selected = true;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     public IRelayCommand JumpToArtistPageCommand { get; set; }
     public static bool JumpToArtistPageCommand_CanExecute()
     {
@@ -10121,6 +9622,28 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             GoToArtistPage();
         }
     }
+
+    private void GoToArtistPage()
+    {
+        foreach (var hoge in MainMenuItems)
+        {
+            if (hoge is NodeMenuLibrary)
+            {
+                foreach (var fuga in hoge.Children)
+                {
+                    if (fuga is NodeMenuArtist)
+                    {
+                        IsNavigationViewMenuOpen = true;
+                        fuga.Selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    #endregion
 
     #endregion
 }
