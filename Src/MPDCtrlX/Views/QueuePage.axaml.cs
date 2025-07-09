@@ -314,7 +314,6 @@ public partial class QueuePage : UserControl
                 lb.ScrollIntoView(song.Index);
 
                 song.IsSelected = true;
-
             }
         }
     }
@@ -353,7 +352,6 @@ public partial class QueuePage : UserControl
             this.QueueListViewHeaderScrollViewer.Offset = sv.Offset;
         }
     }
-
 
     private async void QueueSaveAsDialogShowAsync(object? sender, System.EventArgs e)
     {

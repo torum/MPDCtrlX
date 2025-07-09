@@ -42,7 +42,7 @@
 
 		<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="0,0,0,0">
 			<Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-			<SplitView Grid.Row="1" PanePlacement="Right" Background="Transparent" IsPaneOpen="{Binding IsAlbumContentPanelVisible, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=LbAlbums}">
+			<SplitView Grid.Row="1" PanePlacement="Right" Background="Transparent" IsPaneOpen="{Binding IsAlbumContentPanelVisible, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=LbAlbumsGrid}">
 				
 				<!-- Selected Album (Its Cover and Songs)  -->
 				<SplitView.Pane>
@@ -120,39 +120,40 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 							<Button Grid.Row="0" Grid.Column="1" Command="{Binding AlbumsCloseAlbumContentPanelCommand}" ToolTip.Tip="Close (ESC)" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="24" Width="34" Height="34">
 								<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
 									<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-										Data="M12.5 17C12.7761 17 13 16.7761 13 16.5C13 16.2239 12.7761 16 12.5 16H6C4.89543 16 4 15.1046 4 14V6C4 4.89543 4.89543 4 6 4H12.5C12.7761 4 13 3.77614 13 3.5C13 3.22386 12.7761 3 12.5 3H6C4.34315 3 3 4.34315 3 6V14C3 15.6569 4.34315 17 6 17H12.5ZM13.6464 6.14645C13.8417 5.95118 14.1583 5.95118 14.3536 6.14645L17.8536 9.64645C18.0488 9.84171 18.0488 10.1583 17.8536 10.3536L14.3536 13.8536C14.1583 14.0488 13.8417 14.0488 13.6464 13.8536C13.4512 13.6583 13.4512 13.3417 13.6464 13.1464L16.2929 10.5H7.5C7.22386 10.5 7 10.2761 7 10C7 9.72386 7.22386 9.5 7.5 9.5H16.2929L13.6464 6.85355C13.4512 6.65829 13.4512 6.34171 13.6464 6.14645Z">
+										Data="M9.17903 10.5L8.18051 11.3737C7.9727 11.5555 7.95164 11.8714 8.13348 12.0792C8.31532 12.2871 8.6312 12.3081 8.83902 12.1263L10.839 10.3763C10.9475 10.2813 11.0098 10.1442 11.0098 9.99999C11.0098 9.85581 10.9475 9.71865 10.839 9.62371L8.83902 7.87371C8.6312 7.69186 8.31532 7.71292 8.13348 7.92074C7.95164 8.12856 7.9727 8.44444 8.18051 8.62628L9.17905 9.5L5.5 9.5C5.22386 9.5 5 9.72386 5 10C5 10.2761 5.22386 10.5 5.5 10.5L9.17903 10.5ZM16 16C17.1046 16 18 15.1046 18 14V6C18 4.89543 17.1046 4 16 4H4C2.89543 4 2 4.89543 2 6V14C2 15.1046 2.89543 16 4 16L16 16ZM17 14C17 14.5523 16.5523 15 16 15H13L13 5L16 5C16.5523 5 17 5.44772 17 6L17 14ZM12 5L12 15L4 15C3.44772 15 3 14.5523 3 14L3 6C3 5.44771 3.44772 5 4 5L12 5Z">
 									</PathIcon>
 								</Viewbox>
 							</Button>
 
 							<!-- Song ListBox -->
 							<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
-								<StackPanel>
-									<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-									<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->
-									<!--  Content="{Binding CurrentAlbumSongs}" -->
-									<!-- " SelectedItem="{Binding SelectedSong}" -->
-									<ListBox ItemsSource="{Binding SelectedAlbumSongs, Mode=TwoWay}" SelectionMode="Single" BorderThickness="0" Margin="24,24,0,0">
-										<!--<ListBox.ItemsPanel>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto"></RowDefinition>
+									<RowDefinition Height="*"></RowDefinition>
+								</Grid.RowDefinitions>
+								<Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
+								<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->
+								<!--  Content="{Binding CurrentAlbumSongs}" -->
+								<!-- " SelectedItem="{Binding SelectedSong}" -->
+								<ListBox Grid.Row="1" ItemsSource="{Binding SelectedAlbumSongs, Mode=TwoWay}" SelectionMode="Single" BorderThickness="0" Margin="24,24,0,0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+									<!--<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
 													<VirtualizingStackPanel />
 												</ItemsPanelTemplate>
 											</ListBox.ItemsPanel>-->
-										<ListBox.ItemTemplate>
-											<DataTemplate x:DataType="mod:SongInfo">
-												<TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
-											</DataTemplate>
-										</ListBox.ItemTemplate>
-										<ListBox.Styles>
-											<Style Selector="ListBoxItem">
-												<Setter Property="Height" Value="36"/>
-												<Setter Property="MinHeight" Value="32"/>
-												<Setter Property="Padding" Value="0" />
-											</Style>
-										</ListBox.Styles>
-									</ListBox>
-								</StackPanel>
-
+									<ListBox.ItemTemplate>
+										<DataTemplate x:DataType="mod:SongInfo">
+											<TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.Styles>
+										<Style Selector="ListBoxItem">
+											<Setter Property="Height" Value="36"/>
+											<Setter Property="MinHeight" Value="32"/>
+											<Setter Property="Padding" Value="0" />
+										</Style>
+									</ListBox.Styles>
+								</ListBox>
 							</Grid>
 							
 						</Grid>
@@ -162,19 +163,21 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 				</SplitView.Pane>
 
 				<!-- Album view ListBox -->
-			<ScrollViewer>
-					<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="3,3,3,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True">
+				<Grid Name="LbAlbumsGrid" Margin="-3,3,3,4">
+
+					<ListBox Name="LbAlbums" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" BorderThickness="0" Margin="6,3,3,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
 
-							<!-- Edit: sets selection indicator to visible=false  -->
+							<!-- Edit: sets selection indicator to visible=false. -->
+							<!-- Edit: padding changed. -->
 							<ControlTheme TargetType="ListBoxItem" x:Key="{x:Type ListBoxItem}">
 								<Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
 								<Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
 								<Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
 								<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
 								<Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
-								<Setter Property="Padding" Value="16,0,12,0" />
+								<Setter Property="Padding" Value="16,8,16,4" />
 								<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 								<Setter Property="VerticalContentAlignment" Value="Center" />
 								<Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
@@ -303,9 +306,9 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 						</ListBox.ItemsPanel>
 						<ListBox.ItemTemplate>
 							<DataTemplate x:DataType="mod:AlbumEx">
-								<Grid Width="196" Margin="12,12,12,12">
+								<Grid Width="190" Margin="6,12,6,12">
 									<Grid.RowDefinitions>
-										<RowDefinition Height="200"/>
+										<RowDefinition Height="184"/>
 										<RowDefinition Height="42"/>
 									</Grid.RowDefinitions>
 
@@ -376,8 +379,9 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
-			</ScrollViewer>
-		</SplitView>
+
+				</Grid>
+			</SplitView>
 			
 		</Grid>
 

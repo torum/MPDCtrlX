@@ -29,4 +29,10 @@ public partial class ArtistPage : UserControl
         //this.Artist2x.Width = _viewModel.LibraryColumnHeaderFilePathWidth;
 
     }
+
+    private void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
+        //DetailsPaneScrollViewer.ChangeView(0,0,1);
+    }
 }

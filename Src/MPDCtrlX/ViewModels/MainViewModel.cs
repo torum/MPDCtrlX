@@ -6965,7 +6965,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.Id).ToList());
     }
 
-    // Enter and double click from code behind.
+    // Enter or double click from code behind.
     public IRelayCommand QueueListviewEnterKeyCommand { get; set; }
     public static bool QueueListviewEnterKeyCommand_CanExecute()
     {
@@ -7060,9 +7060,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public IRelayCommand QueueListviewMoveUpCommand { get; }
     public bool QueueListviewMoveUpCommand_CanExecute()
     {
+        /*
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
+        */
         return true;
     }
     public async void QueueListviewMoveUpCommand_Execute(object obj)
@@ -7098,9 +7100,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public IRelayCommand QueueListviewMoveDownCommand { get; }
     public bool QueueListviewMoveDownCommand_CanExecute()
     {
+        /*
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
+        */
         return true;
     }
     public async void QueueListviewMoveDownCommand_Execute(object obj)
@@ -9512,7 +9516,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         //IsSettingsShow = false; //Don't.
 
-        IsQueueFindVisible = false;
+        IsQueueFindVisible = false; // not working?
 
         // Popups
         if (IsConfirmClearQueuePopupVisible) { IsConfirmClearQueuePopupVisible = false; }

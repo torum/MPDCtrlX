@@ -4,7 +4,10 @@
     <Styles.Resources>
         <ResourceDictionary>
 
-			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
+			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">2,0,0,0</CornerRadius>
+			<Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
+			<Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
+			<Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,1,0,0</Thickness>
 
 			<StaticResource x:Key="CardStrokeBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
 			
@@ -12,6 +15,37 @@
 				<!-- <ResourceInclude Source="avares://MPDCtrlX/Styles/AppWindowStyles.axaml" /> -->
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemStyles.axaml" />
+
+
+
+				<ResourceDictionary>
+					<ControlTheme x:Key="{x:Type ContextMenu}" TargetType="ContextMenu">
+						<Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}"/>
+						<Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}"/>
+						<Setter Property="BorderThickness" Value="1"/>
+						<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+						<Setter Property="Focusable" Value="True" />
+						<Setter Property="Padding" Value="3" />
+						<Setter Property="Template">
+							<ControlTemplate>
+								<Border Padding="{TemplateBinding Padding}"
+										Background="{TemplateBinding Background}"
+										BorderBrush="{TemplateBinding BorderBrush}"
+										BorderThickness="{TemplateBinding BorderThickness}"
+										CornerRadius="{TemplateBinding CornerRadius}">
+									<ScrollViewer >
+										<ItemsPresenter Name="PART_ItemsPresenter"
+														ItemsPanel="{TemplateBinding ItemsPanel}"
+														KeyboardNavigation.TabNavigation="Continue" />
+									</ScrollViewer>
+								</Border>
+							</ControlTemplate>
+						</Setter>
+					</ControlTheme>
+				</ResourceDictionary>
+
+
+
 			</ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
