@@ -265,16 +265,13 @@
 						<Setter Property="ContextMenu">
 							<Setter.Value>
 								<ContextMenu>
-									<!--
-									<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewLeftDoubleClickCommand}" CommandParameter="{Binding $self}"/>
-									-->
-									<Separator/>
+									<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 									<!-- Save -->
-									<!--
+									<Separator/>
 									<MenuItem Header="Save">
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}"/>
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}"/>
-									</MenuItem> -->
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SearchListviewSaveSelectedAsCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SearchListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+									</MenuItem>
 								</ContextMenu>
 
 							</Setter.Value>

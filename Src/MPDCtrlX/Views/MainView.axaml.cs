@@ -12,14 +12,14 @@ namespace MPDCtrlX.Views;
 
 public partial class MainView : UserControl
 {
-    //private readonly MainViewModel? _viewModel;
     public MainView() { }
 
     public MainView(MainViewModel? vm)
     {
+        DataContext = vm;//App.GetService<MainViewModel>();//new MainViewModel();
+
         InitializeComponent();
 
-        DataContext = vm;//App.GetService<MainViewModel>();//new MainViewModel();
 
         if (vm is not null)
         {

@@ -4,20 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels.Dialogs"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
              x:DataType="vm:DialogViewModel"
-             x:Class="MPDCtrlX.Views.Dialogs.QueueSaveAsDialog">
-	<!--
-	<UserControl.KeyBindings>
-		<KeyBinding Gesture="Escape" Command="{Binding CloseCommand}"/>
-	</UserControl.KeyBindings>
-	-->
+             x:Class="MPDCtrlX.Views.Dialogs.SaveToDialog">
 	<Grid>
 		<StackPanel Margin="10">
-			<TextBox Name="TextBoxPlaylistName" Text=""
-			 Margin="10"
-			 HorizontalAlignment="Stretch"
-			 VerticalAlignment="Top"
-			 Watermark="Enter playlist name" AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+			<ListBox x:Name="PlaylistListBox" SelectionMode="Single" MaxHeight="200">
+				<ListBox.ItemTemplate>
+					<DataTemplate x:DataType="mod:Playlist">
+						<TextBlock Text="{Binding Name}"></TextBlock>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+				
+			</ListBox>
 		</StackPanel>
 
 	</Grid>

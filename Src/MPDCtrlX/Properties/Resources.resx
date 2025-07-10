@@ -337,7 +337,7 @@ SOFTWARE.</value>
     <value>Next (Ctrl+N/Ctrl+Right/MediaKey)</value>
   </data>
   <data name="Playback_PlayPauseButton" xml:space="preserve">
-    <value>Play/Pause (Space/Ctrl+P/MediaKeys)</value>
+    <value>Play/Pause (Ctrl+Space/Ctrl+P/MediaKeys)</value>
   </data>
   <data name="Playback_SliderSeek" xml:space="preserve">
     <value>Seek</value>
@@ -617,5 +617,14 @@ SOFTWARE.</value>
   </data>
   <data name="Dialog_Title_SelectPlaylist" xml:space="preserve">
     <value>Select playlist</value>
+  </data>
+  <data name="PlaylistItemMenu_Clear" xml:space="preserve">
+    <value>Clear playlist</value>
+  </data>
+  <data name="PlaylistItemContextMenu_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="PlaylistItemMenu_Rename" xml:space="preserve">
+    <value>Rename playlist</value>
   </data>
 </root>

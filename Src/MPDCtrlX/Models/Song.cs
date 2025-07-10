@@ -19,7 +19,33 @@ public partial class SongInfo : SongFile
 {
     public string Title { get; set; } = "";
     public string Track { get; set; } = "";
+    public double TrackSort
+    {
+        get
+        {
+            int iTrack = 0;
+            try
+            {
+                iTrack = int.Parse(Track);
+            }
+            catch { }
+            return iTrack;
+        }
+    }
     public string Disc { get; set; } = "";
+    public double DiscSort
+    {
+        get
+        {
+            int iDisc = 0;
+            try
+            {
+                iDisc = int.Parse(Disc);
+            }
+            catch { }
+            return iDisc;
+        }
+    }
     public string Time { get; set; } = "";
     public string TimeFormated
     {

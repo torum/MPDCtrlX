@@ -78,17 +78,11 @@
 					</Viewbox>
 					<Button.Flyout>
 						<MenuFlyout>
+							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Rename}" Command="{Binding PlaylistRenamePlaylistCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+							<Separator/>
+							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Clear}" Command="{Binding PlaylistClearPlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+							<Separator/>
 							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Remove}" Command="{Binding PlaylistRemovePlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
-							<!--
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}" InputGesture="Ctrl+J"/>
-							<Separator/>
-							
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveAsPlaylist}" Command="{Binding QueueListviewSaveAsCommand}"/>
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueSaveToPlaylist}"/>
-
-							<Separator/>
-							<MenuItem Header="{x:Static prop:Resources.QueueMenu_QueueClear}" Command="{Binding QueueListviewClearWithoutPromptCommand}"/>
-							-->
 						</MenuFlyout>
 					</Button.Flyout>
 				</Button>
@@ -184,7 +178,7 @@
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Multiple" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
@@ -297,6 +291,24 @@
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+						<Setter Property="ContextMenu">
+							<Setter.Value>
+								<ContextMenu>
+									<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+									
+									<!-- Save -->
+									<!--<Separator/>
+									<MenuItem Header="Save">
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}"/>
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}"/>
+									</MenuItem> -->
+									<Separator/>
+									<!-- Remove -->
+									<MenuItem Header="{x:Static prop:Resources.PlaylistItemContextMenu_Remove}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).PlaylistListviewDeleteSelectedWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}"/>
+								</ContextMenu>
+
+							</Setter.Value>
+						</Setter>
 					</Style>
 				</ListBox.Styles>
 

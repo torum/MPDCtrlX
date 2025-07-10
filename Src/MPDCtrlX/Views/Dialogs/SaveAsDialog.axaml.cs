@@ -6,9 +6,9 @@ using Avalonia.Threading;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class QueueSaveAsDialog : UserControl
+public partial class SaveAsDialog : UserControl
 {
-    public QueueSaveAsDialog()
+    public SaveAsDialog()
     {
         InitializeComponent();
     }

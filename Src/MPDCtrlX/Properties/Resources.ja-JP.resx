@@ -337,7 +337,7 @@ SOFTWARE.</value>
     <value>次へ (Ctrl+N/Ctrl+Right/MediaKey)</value>
   </data>
   <data name="Playback_PlayPauseButton" xml:space="preserve">
-    <value>再生・一時停止 (Space/Ctrl+P/MediaKeys)</value>
+    <value>再生・一時停止 (Ctrl+Space/Ctrl+P/MediaKeys)</value>
   </data>
   <data name="Playback_SliderSeek" xml:space="preserve">
     <value>シーク</value>
@@ -618,5 +618,14 @@ SOFTWARE.</value>
   </data>
   <data name="Dialog_Title_SelectPlaylist" xml:space="preserve">
     <value>プレイリストを選択</value>
+  </data>
+  <data name="PlaylistItemMenu_Clear" xml:space="preserve">
+    <value>プレイリストをクリアする</value>
+  </data>
+  <data name="PlaylistItemContextMenu_Remove" xml:space="preserve">
+    <value>プレイリストから削除する</value>
+  </data>
+  <data name="PlaylistItemMenu_Rename" xml:space="preserve">
+    <value>プレイリストの名前を変更する</value>
   </data>
 </root>

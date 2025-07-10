@@ -36,10 +36,12 @@
 	</Interaction.Behaviors>
 	<Window.KeyBindings>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Play" />
-		<!-- 
+		 
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Ctrl+Space" />
-		 -->
+		 
+		<!--
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Space"/>
+		-->
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Ctrl+P"/>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="MediaPlayPause" />
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="MediaStop" />
@@ -96,7 +98,7 @@
 				<TextBlock Grid.Column="2" Opacity="0.8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongArtist" Text="{Binding CurrentSongArtist, Mode=OneWay}"></TextBlock>
 				<TextBlock Grid.Column="3" Opacity="0.4" Text=" from " IsVisible="{Binding IsCurrentSongAlbumNotNull}"></TextBlock>
 				<TextBlock Grid.Column="4" Opacity="0.6" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongAlbum" Text="{Binding CurrentSongAlbum, Mode=OneWay}"></TextBlock>
-				<Button Grid.Column="5" Name="CurrentSongMoreMenuButton" Opacity="0.6" Background="Transparent" Margin="6,0,0,0" Width="24" Height="20" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Button Grid.Column="5" Name="CurrentSongMoreMenuButton" Opacity="0.6" Background="Transparent" Margin="6,0,0,0" Width="24" Height="20" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsCurrentSongNotNull,Mode=OneWay}">
 					<Button.Flyout>
 						<MenuFlyout>
 							<MenuItem Header="{x:Static prop:Resources.QueueMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>

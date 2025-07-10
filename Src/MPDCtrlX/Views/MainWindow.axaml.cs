@@ -178,9 +178,7 @@ public partial class MainWindow : Window//AppWindow//
         {
             return;
         }
-        /*
 
-        */
         if (this.DataContext is MainViewModel vm)
         {
             if (e.SelectedItem is NodeMenuPlaylists)

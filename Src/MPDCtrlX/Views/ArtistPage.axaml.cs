@@ -32,6 +32,11 @@ public partial class ArtistPage : UserControl
 
     private void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
     {
+        if (SelectedArtistAlbumsScrollViewer is null)
+        {
+            return;
+        }
+
         this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
         //DetailsPaneScrollViewer.ChangeView(0,0,1);
     }

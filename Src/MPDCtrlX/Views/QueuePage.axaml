@@ -69,6 +69,8 @@
 							<MenuItem Header="Time" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="time" />
 							<MenuItem Header="Artist" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="artist" />
 							<MenuItem Header="Album" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="album" />
+							<MenuItem Header="Disc" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="disc" />
+							<MenuItem Header="Track" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="track" />
 							<MenuItem Header="Genre" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="genre" />
 							<MenuItem Header="Last modified" Command="{Binding QueueListviewSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="lastmodified" />
 							<Separator/>
@@ -450,17 +452,16 @@
 						<Setter Property="ContextMenu">
 							<Setter.Value>
 								<ContextMenu>
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Play}" InputGesture="Enter" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewLeftDoubleClickCommand}" CommandParameter="{Binding $self}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Play}" InputGesture="Enter" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewLeftDoubleClickCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}"/>
 									<!-- {Binding $parent[ListBox].SelectedItem} -->
-									<Separator/>
 									<!-- Save -->
 									<MenuItem Header="Save">
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}"/>
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}"/>
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewSaveSelectedAsCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 									</MenuItem>
 									<Separator/>
 									<!-- Remove -->
-									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" InputGesture="Ctrl+Delete" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" InputGesture="Ctrl+Delete" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteSelectedWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 								</ContextMenu>
 
 							</Setter.Value>

@@ -7,6 +7,7 @@ using MPDCtrlX.ViewModels;
 using MPDCtrlX.ViewModels.Dialogs;
 using MPDCtrlX.Views.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,36 +16,37 @@ namespace MPDCtrlX.Views;
 
 public partial class QueuePage : UserControl
 {
-    private readonly MainViewModel? _viewModel;
+    private readonly MainViewModel? vm;
 
-    public QueuePage()
+    public QueuePage() { }
+
+    public QueuePage(MainViewModel viewmodel)
     {
-        _viewModel = App.GetService<MainViewModel>();
+        //vm = App.GetService<MainViewModel>();
+        vm = viewmodel;
 
-        DataContext = _viewModel;
+        DataContext = vm;
 
         InitializeComponent();
 
-        if (_viewModel != null)
-        {
-            _viewModel.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
-            _viewModel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-            _viewModel.QueueSaveAsDialogShow += this.QueueSaveAsDialogShowAsync;
-            _viewModel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
-            _viewModel.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
-            _viewModel.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
-            //
-        }
+        vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
+        vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+        vm.QueueSaveAsDialogShow += this.QueueSaveAsDialogShowAsync;
+        vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
+        vm.QueueListviewSaveAsDialogShow += this.QueueListviewSaveAsDialogShowAsync;
+        vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
+        vm.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
+        vm.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
         /*
         Unloaded += (sender, e) =>
         {
-            if (_viewModel != null)
+            if (vm != null)
             {
-                _viewModel.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
-                _viewModel.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-                _viewModel.QueueSaveAsDialogShow -= this.QueueSaveAsDialogShowAsync;
-                _viewModel.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
-                _viewModel.QueueHeaderVisivilityChanged -= this.OnQueueHeaderVisivilityChanged;
+                vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
+                vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+                vm.QueueSaveAsDialogShow -= this.QueueSaveAsDialogShowAsync;
+                vm.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
+                vm.QueueHeaderVisivilityChanged -= this.OnQueueHeaderVisivilityChanged;
             }
         };
         */
@@ -52,7 +54,7 @@ public partial class QueuePage : UserControl
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (_viewModel == null)
+        if (vm == null)
         {
             return;
         }
@@ -60,15 +62,15 @@ public partial class QueuePage : UserControl
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
         // Position - hidden up/down
-        this.DummyHeader.ColumnDefinitions[0].Width = new GridLength(80);//_viewModel.QueueColumnHeaderPositionWidth
+        this.DummyHeader.ColumnDefinitions[0].Width = new GridLength(80);//vm.QueueColumnHeaderPositionWidth
         //this.Column1.IsVisible = true;
-        this.Column1X.Width = 80;//_viewModel.QueueColumnHeaderPositionWidth
+        this.Column1X.Width = 80;//vm.QueueColumnHeaderPositionWidth
         this.DummyHeader.ColumnDefinitions[0].Width = GridLength.Auto;
 
         // Title
-        this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(_viewModel.QueueColumnHeaderTitleWidth);
+        this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(vm.QueueColumnHeaderTitleWidth);
         this.Column3.IsVisible = true;
-        this.Column3X.Width = _viewModel.QueueColumnHeaderTitleWidth;
+        this.Column3X.Width = vm.QueueColumnHeaderTitleWidth;
         this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Auto;
 
         UpdateColumHeaders();
@@ -82,7 +84,7 @@ public partial class QueuePage : UserControl
 
     private void UpdateColumHeaders()
     {
-        if (_viewModel is null)
+        if (vm is null)
         {
             return;
         }
@@ -90,15 +92,15 @@ public partial class QueuePage : UserControl
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
         // Time
-        if (_viewModel.IsQueueColumnHeaderTimeVisible)
+        if (vm.IsQueueColumnHeaderTimeVisible)
         {
-            if (_viewModel.QueueColumnHeaderTimeWidth <= 0)
+            if (vm.QueueColumnHeaderTimeWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderTimeWidth = 80; // Default width if not set
+                vm.QueueColumnHeaderTimeWidth = 80; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(_viewModel.QueueColumnHeaderTimeWidth);
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(vm.QueueColumnHeaderTimeWidth);
             this.Column4.IsVisible = true;
-            this.Column4X.Width = _viewModel.QueueColumnHeaderTimeWidth;
+            this.Column4X.Width = vm.QueueColumnHeaderTimeWidth;
             this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
         }
         else
@@ -110,15 +112,15 @@ public partial class QueuePage : UserControl
         }
 
         // Artist
-        if (_viewModel.IsQueueColumnHeaderArtistVisible)
+        if (vm.IsQueueColumnHeaderArtistVisible)
         {
-            if (_viewModel.QueueColumnHeaderArtistWidth <= 0)
+            if (vm.QueueColumnHeaderArtistWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderArtistWidth = 120; // Default width if not set
+                vm.QueueColumnHeaderArtistWidth = 120; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(_viewModel.QueueColumnHeaderArtistWidth);
+            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(vm.QueueColumnHeaderArtistWidth);
             this.Column5.IsVisible = true;
-            this.Column5X.Width = _viewModel.QueueColumnHeaderArtistWidth;
+            this.Column5X.Width = vm.QueueColumnHeaderArtistWidth;
             this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
         }
         else
@@ -130,15 +132,15 @@ public partial class QueuePage : UserControl
         }
 
         // Album
-        if (_viewModel.IsQueueColumnHeaderAlbumVisible)
+        if (vm.IsQueueColumnHeaderAlbumVisible)
         {
-            if (_viewModel.QueueColumnHeaderAlbumWidth <= 0)
+            if (vm.QueueColumnHeaderAlbumWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderAlbumWidth = 120; // Default width if not set
+                vm.QueueColumnHeaderAlbumWidth = 120; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(_viewModel.QueueColumnHeaderAlbumWidth);
+            this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(vm.QueueColumnHeaderAlbumWidth);
             this.Column6.IsVisible = true;
-            this.Column6X.Width = _viewModel.QueueColumnHeaderAlbumWidth;
+            this.Column6X.Width = vm.QueueColumnHeaderAlbumWidth;
             this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
         }
         else
@@ -150,15 +152,15 @@ public partial class QueuePage : UserControl
         }
 
         // Disc
-        if (_viewModel.IsQueueColumnHeaderDiscVisible)
+        if (vm.IsQueueColumnHeaderDiscVisible)
         {
-            if (_viewModel.QueueColumnHeaderDiscWidth <= 0)
+            if (vm.QueueColumnHeaderDiscWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderDiscWidth = 50; // Default width if not set
+                vm.QueueColumnHeaderDiscWidth = 50; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(_viewModel.QueueColumnHeaderDiscWidth);
+            this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.QueueColumnHeaderDiscWidth);
             this.Column7.IsVisible = true;
-            this.Column7X.Width = _viewModel.QueueColumnHeaderDiscWidth;
+            this.Column7X.Width = vm.QueueColumnHeaderDiscWidth;
             this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
         }
         else
@@ -170,15 +172,15 @@ public partial class QueuePage : UserControl
         }
 
         // Track
-        if (_viewModel.IsQueueColumnHeaderTrackVisible)
+        if (vm.IsQueueColumnHeaderTrackVisible)
         {
-            if (_viewModel.QueueColumnHeaderTrackWidth <= 0)
+            if (vm.QueueColumnHeaderTrackWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderTrackWidth = 50; // Default width if not set
+                vm.QueueColumnHeaderTrackWidth = 50; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(_viewModel.QueueColumnHeaderTrackWidth);
+            this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.QueueColumnHeaderTrackWidth);
             this.Column8.IsVisible = true;
-            this.Column8X.Width = _viewModel.QueueColumnHeaderTrackWidth;
+            this.Column8X.Width = vm.QueueColumnHeaderTrackWidth;
             this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
         }
         else
@@ -190,15 +192,15 @@ public partial class QueuePage : UserControl
         }
 
         // Genre
-        if (_viewModel.IsQueueColumnHeaderGenreVisible)
+        if (vm.IsQueueColumnHeaderGenreVisible)
         {
-            if (_viewModel.QueueColumnHeaderGenreWidth <= 0)
+            if (vm.QueueColumnHeaderGenreWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderGenreWidth = 80; // Default width if not set
+                vm.QueueColumnHeaderGenreWidth = 80; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(_viewModel.QueueColumnHeaderGenreWidth);//
+            this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(vm.QueueColumnHeaderGenreWidth);//
             this.Column9.IsVisible = true;
-            this.Column9X.Width = _viewModel.QueueColumnHeaderGenreWidth;
+            this.Column9X.Width = vm.QueueColumnHeaderGenreWidth;
             this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
         }
         else
@@ -210,15 +212,15 @@ public partial class QueuePage : UserControl
         }
 
         // Last modified
-        if (_viewModel.IsQueueColumnHeaderLastModifiedVisible)
+        if (vm.IsQueueColumnHeaderLastModifiedVisible)
         {
-            if (_viewModel.QueueColumnHeaderLastModifiedWidth <= 0)
+            if (vm.QueueColumnHeaderLastModifiedWidth <= 0)
             {
-                _viewModel.QueueColumnHeaderLastModifiedWidth = 120; // Default width if not set
+                vm.QueueColumnHeaderLastModifiedWidth = 120; // Default width if not set
             }
-            this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(_viewModel.QueueColumnHeaderLastModifiedWidth);
+            this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(vm.QueueColumnHeaderLastModifiedWidth);
             this.Column10.IsVisible = true;
-            this.Column10X.Width = _viewModel.QueueColumnHeaderLastModifiedWidth;
+            this.Column10X.Width = vm.QueueColumnHeaderLastModifiedWidth;
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
         }
         else
@@ -233,22 +235,22 @@ public partial class QueuePage : UserControl
     // Called on window closing to save dummy header sizes.
     public void SaveHeaderWidth()
     {
-        if (_viewModel is null)
+        if (vm is null)
         {
             return;
         }
 
         // This is a dirty workaround for AvaloniaUI.
-        _viewModel.QueueColumnHeaderPositionWidth = this.Column1.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderNowPlayingWidth = this.Column2.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderTitleWidth = this.Column3.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderTimeWidth = this.Column4.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderArtistWidth = this.Column5.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderAlbumWidth = this.Column6.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderDiscWidth = this.Column7.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderTrackWidth = this.Column8.Bounds.Size.Width;
-        _viewModel.QueueColumnHeaderGenreWidth = this.Column9.Bounds.Size.Width;//.Width;
-        _viewModel.QueueColumnHeaderLastModifiedWidth = this.Column10.Bounds.Size.Width;//.Width;
+        vm.QueueColumnHeaderPositionWidth = this.Column1.Bounds.Size.Width;
+        vm.QueueColumnHeaderNowPlayingWidth = this.Column2.Bounds.Size.Width;
+        vm.QueueColumnHeaderTitleWidth = this.Column3.Bounds.Size.Width;
+        vm.QueueColumnHeaderTimeWidth = this.Column4.Bounds.Size.Width;
+        vm.QueueColumnHeaderArtistWidth = this.Column5.Bounds.Size.Width;
+        vm.QueueColumnHeaderAlbumWidth = this.Column6.Bounds.Size.Width;
+        vm.QueueColumnHeaderDiscWidth = this.Column7.Bounds.Size.Width;
+        vm.QueueColumnHeaderTrackWidth = this.Column8.Bounds.Size.Width;
+        vm.QueueColumnHeaderGenreWidth = this.Column9.Bounds.Size.Width;//.Width;
+        vm.QueueColumnHeaderLastModifiedWidth = this.Column10.Bounds.Size.Width;//.Width;
     }
 
     private async void OnScrollIntoView(int ind)
@@ -275,14 +277,14 @@ public partial class QueuePage : UserControl
             {
                 lb.ScrollIntoView(ind);
                 /* 
-                var test = _viewModel?.Queue.FirstOrDefault(x => x.IsPlaying == true);
+                var test = vm?.Queue.FirstOrDefault(x => x.IsPlaying == true);
                 if (test != null)
                 {
                     //lb.ScrollIntoView(test.Index);
                     test.IsSelected = true;
                 }
                 */
-                var test = _viewModel?.Queue.FirstOrDefault(x => x.Index == ind);
+                var test = vm?.Queue.FirstOrDefault(x => x.Index == ind);
                 if (test != null)
                 {
                     test.IsSelected = true;
@@ -363,7 +365,7 @@ public partial class QueuePage : UserControl
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.QueueSaveAsDialog()
+            Content = new Views.Dialogs.SaveAsDialog()
             {
                 //DataContext = new DialogViewModel()
             }
@@ -383,7 +385,7 @@ public partial class QueuePage : UserControl
 
         if (result == ContentDialogResult.Primary)
         {
-            if (dialog.Content is Views.Dialogs.QueueSaveAsDialog dlg)
+            if (dialog.Content is Views.Dialogs.SaveAsDialog dlg)
             {
                 var plname = dlg.TextBoxPlaylistName.Text;
 
@@ -391,7 +393,7 @@ public partial class QueuePage : UserControl
                 {
                     return;
                 }
-                _viewModel?.QueueSaveAsDialogCommand_Execute(plname.Trim());
+                vm?.QueueSaveAsDialog_Execute(plname.Trim());
             }
         }
     }
@@ -406,22 +408,22 @@ public partial class QueuePage : UserControl
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.QueueSaveToDialog()
+            Content = new Views.Dialogs.SaveToDialog()
             {
                 //DataContext = new DialogViewModel()
             }
         };
 
-        if (dialog.Content is QueueSaveToDialog asdf)
+        if (dialog.Content is SaveToDialog asdf)
         {
-            asdf.PlaylistListBox.ItemsSource = _viewModel?.Playlists;
+            asdf.PlaylistListBox.ItemsSource = vm?.Playlists;
         }
 
         var result = await dialog.ShowAsync();
 
         if (result == ContentDialogResult.Primary)
         {
-            if (dialog.Content is Views.Dialogs.QueueSaveToDialog dlg)
+            if (dialog.Content is Views.Dialogs.SaveToDialog dlg)
             {
                 var plselitem = dlg.PlaylistListBox.SelectedItem;
 
@@ -431,10 +433,86 @@ public partial class QueuePage : UserControl
                     {
                         return;
                     }
-                    _viewModel?.QueueSaveToDialogCommand_Execute(pl.Name.Trim());
+
+                    vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
                 }
             }
         }
     }
 
+    private async void QueueListviewSaveAsDialogShowAsync(object? sender, List<string> list)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_NewPlaylistName,
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.SaveAsDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            if (dialog.Content is Views.Dialogs.SaveAsDialog dlg)
+            {
+                var plname = dlg.TextBoxPlaylistName.Text;
+
+                if (string.IsNullOrWhiteSpace(plname))
+                {
+                    return;
+                }
+
+                vm?.QueueListviewSaveAsDialog_Execute(plname.Trim(), list);
+            }
+        }
+    }
+
+    private async void QueueListviewSaveToDialogShowAsync(object? sender, List<string> list)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.SaveToDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        if (dialog.Content is SaveToDialog asdf)
+        {
+            asdf.PlaylistListBox.ItemsSource = vm?.Playlists;
+        }
+
+        var result = await dialog.ShowAsync();
+
+        if (result == ContentDialogResult.Primary)
+        {
+            if (dialog.Content is Views.Dialogs.SaveToDialog dlg)
+            {
+                var plselitem = dlg.PlaylistListBox.SelectedItem;
+
+                if (plselitem is Models.Playlist pl)
+                {
+                    if (string.IsNullOrWhiteSpace(pl.Name))
+                    {
+                        return;
+                    }
+
+                    vm?.QueueListviewSaveToDialog_Execute(pl.Name.Trim(), list);
+                }
+            }
+        }
+    }
 }

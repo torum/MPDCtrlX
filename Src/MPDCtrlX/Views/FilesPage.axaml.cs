@@ -8,25 +8,29 @@ namespace MPDCtrlX.Views;
 
 public partial class FilesPage : UserControl
 {
-    private readonly MainViewModel? _viewModel;
+    private readonly MainViewModel? vm;
 
-    public FilesPage()
+    public FilesPage() { }
+
+    public FilesPage(MainViewModel viewmodel)
     {
-        _viewModel = App.GetService<MainViewModel>();
-        DataContext = _viewModel;
+        vm = viewmodel;
+        //_viewModel = App.GetService<MainViewModel>();
+
+        DataContext = vm;
 
         InitializeComponent();
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (_viewModel == null)
+        if (vm == null)
         {
             return;
         }
 
-        this.Library1x.Width = _viewModel.LibraryColumnHeaderTitleWidth;
-        this.Library2x.Width = _viewModel.LibraryColumnHeaderFilePathWidth;
+        this.Library1x.Width = vm.LibraryColumnHeaderTitleWidth;
+        this.Library2x.Width = vm.LibraryColumnHeaderFilePathWidth;
 
     }
 

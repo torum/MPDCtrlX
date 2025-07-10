@@ -1734,6 +1734,7 @@ public partial class MpcService : IMpcService
             MpcProgress?.Invoke(this, "[Background] Files and directories updated.");
         }
 
+        MpcProgress?.Invoke(this, "");
         return result;
     }
     
@@ -1748,6 +1749,7 @@ public partial class MpcService : IMpcService
             result.IsSuccess = await ParseListAlbumGroupAlbumArtist(result.ResultText);
             MpcProgress?.Invoke(this, "[Background] Artists updated.");
         }
+        MpcProgress?.Invoke(this, "");
 
         return result;
     }
@@ -3542,7 +3544,6 @@ public partial class MpcService : IMpcService
             AlbumArtist? arts = null;
             foreach (string value in resultLines)
             {
-                //Debug.WriteLine("LocalDirectories: " + value);
                 if (value.StartsWith("AlbumArtist:"))
                 {
                     if (arts is not null)
@@ -3584,7 +3585,13 @@ public partial class MpcService : IMpcService
                 }
                 else if ((value.StartsWith("OK")))
                 {
-                    // Ignoring.
+                    if (arts is not null)
+                    {
+                        if (!string.IsNullOrEmpty(arts.Name))
+                        {
+                            AlbumArtists.Add(arts);
+                        }
+                    }
                 }
                 else
                 {

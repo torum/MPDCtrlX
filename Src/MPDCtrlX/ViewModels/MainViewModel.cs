@@ -18,6 +18,7 @@ using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.Views;
 using SkiaSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -26,6 +27,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -931,9 +933,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //NotifyPropertyChanged(nameof(CurrentSongStringForWindowTitle));
             CurrentSongChanged?.Invoke(this, CurrentSongStringForWindowTitle);
 
-
             if (value is null)
+            {
                 _elapsedTimer.Stop();
+                IsCurrentSongNotNull = false;
+            }
+            else
+            {
+                IsCurrentSongNotNull = true;
+            }
         }
     }
 
@@ -1021,6 +1029,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 return false;
             }
+        }
+    }
+
+    private bool _isCurrentSongNotNull;
+    public bool IsCurrentSongNotNull
+    {
+        get
+        {
+            return _isCurrentSongNotNull;
+        }
+        set
+        {
+            if (_isCurrentSongNotNull == value)
+                return;
+
+            _isCurrentSongNotNull = value;
+            NotifyPropertyChanged(nameof(IsCurrentSongNotNull));
         }
     }
 
@@ -1378,7 +1403,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (value is null)
             {
-                SelectedPlaylistName = string.Empty;
+                Dispatcher.UIThread.Post(() =>
+                {
+                    SelectedPlaylistName = string.Empty;
+                    RenamedSelectPendingPlaylistName = string.Empty;
+                });
                 return;
             }
 
@@ -1401,7 +1430,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
                 {
-                    SelectedAlbumArtist = Artists[0];
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        SelectedAlbumArtist = Artists[0];
+                    });
                 }
 
                 // Get album pictures.
@@ -1442,10 +1474,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 {
                     SelectedPlaylistSong = null;
                     PlaylistSongs = nmpli.PlaylistSongs;
+                    SelectedPlaylistName = nmpli.Name;
                 });
 
-                SelectedPlaylistName = nmpli.Name;
-                
                 // Transient??
                 CurrentPage = App.GetService<PlaylistItemPage>();
 
@@ -1504,6 +1535,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _selectedPlaylistName = value;
             NotifyPropertyChanged(nameof(SelectedPlaylistName));
+        }
+    }
+
+    private string _renamedSelectPendingPlaylistName = "";
+    public string RenamedSelectPendingPlaylistName
+    {
+        get
+        {
+            return _renamedSelectPendingPlaylistName;
+        }
+        set
+        {
+            if (_renamedSelectPendingPlaylistName == value)
+                return;
+
+            _renamedSelectPendingPlaylistName = value;
+            NotifyPropertyChanged(nameof(RenamedSelectPendingPlaylistName));
         }
     }
 
@@ -3352,11 +3400,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     public event EventHandler? QueueSaveAsDialogShow;
     public event EventHandler? QueueSaveToDialogShow;
-
+    public event EventHandler<List<string>>? QueueListviewSaveToDialogShow;
+    public event EventHandler<List<string>>? QueueListviewSaveAsDialogShow;
     public event EventHandler? QueueHeaderVisivilityChanged;
-
-
     public event EventHandler? QueueFindWindowVisivilityChanged_SetFocus;
+
+    public event EventHandler<List<string>>? SearchListviewSaveToDialogShow;
+    public event EventHandler<List<string>>? SearchListviewSaveAsDialogShow;
+
+
+    public event EventHandler<string>? PlaylistRenameToDialogShow;
 
     #endregion
 
@@ -3396,48 +3449,38 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         PlaylistListviewLoadPlaylistCommand = new RelayCommand(PlaylistListviewLoadPlaylistCommand_ExecuteAsync, PlaylistListviewLoadPlaylistCommand_CanExecute);
         PlaylistListviewClearLoadPlaylistCommand = new RelayCommand(PlaylistListviewClearLoadPlaylistCommand_ExecuteAsync, PlaylistListviewClearLoadPlaylistCommand_CanExecute);
         PlaylistListviewLeftDoubleClickCommand = new GenericRelayCommand<Playlist>(param => PlaylistListviewLeftDoubleClickCommand_ExecuteAsync(param), param => PlaylistListviewLeftDoubleClickCommand_CanExecute());
-        PlaylistListviewRenamePlaylistCommand = new GenericRelayCommand<Playlist>(param => PlaylistListviewRenamePlaylistCommand_Execute(param), param => PlaylistListviewRenamePlaylistCommand_CanExecute());
         ChangePlaylistCommand = new RelayCommand(ChangePlaylistCommand_ExecuteAsync, ChangePlaylistCommand_CanExecute);
         */
+        PlaylistRenamePlaylistCommand = new GenericRelayCommand<string>(param => PlaylistRenamePlaylistCommand_Execute(param), param => PlaylistRenamePlaylistCommand_CanExecute());
+
+
         PlaylistRemovePlaylistWithoutPromptCommand = new GenericRelayCommand<string>(param => PlaylistRemovePlaylistWithoutPromptCommand_Execute(param), param => PlaylistRemovePlaylistWithoutPromptCommand_CanExecute());
         //PlaylistListviewRemovePlaylistCommand = new GenericRelayCommand<Playlist>(param => PlaylistListviewRemovePlaylistCommand_Execute(param), param => PlaylistListviewRemovePlaylistCommand_CanExecute());
         //PlaylistListviewConfirmRemovePlaylistPopupCommand = new RelayCommand(PlaylistListviewConfirmRemovePlaylistPopupCommand_Execute, PlaylistListviewConfirmRemovePlaylistPopupCommand_CanExecute);
-
-
-        PlaylistListviewConfirmUpdatePopupCommand = new RelayCommand(PlaylistListviewConfirmUpdatePopupCommand_Execute, PlaylistListviewConfirmUpdatePopupCommand_CanExecute);
-        PlaylistListviewClearCommand = new RelayCommand(PlaylistListviewClearCommand_Execute, PlaylistListviewClearCommand_CanExecute);
-        PlaylistListviewClearPopupCommand = new RelayCommand(PlaylistListviewClearPopupCommand_Execute, PlaylistListviewClearPopupCommand_CanExecute);
+        PlaylistClearPlaylistWithoutPromptCommand = new GenericRelayCommand<string>(param => PlaylistClearPlaylistWithoutPromptCommand_Execute(param), param => PlaylistClearPlaylistWithoutPromptCommand_CanExecute());
+        //PlaylistListviewClearCommand = new RelayCommand(PlaylistListviewClearCommand_Execute, PlaylistListviewClearCommand_CanExecute);
+        //PlaylistListviewClearPopupCommand = new RelayCommand(PlaylistListviewClearPopupCommand_Execute, PlaylistListviewClearPopupCommand_CanExecute);
 
         //
         PlaylistSongsListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfo>(param => PlaylistSongsListviewLeftDoubleClickCommand_ExecuteAsync(param), param => PlaylistSongsListviewLeftDoubleClickCommand_CanExecute());
         SongFilesListviewLeftDoubleClickCommand = new GenericRelayCommand<NodeFile>(param => SongFilesListviewLeftDoubleClickCommand_ExecuteAsync(param), param => SongFilesListviewLeftDoubleClickCommand_CanExecute());
 
-
-        QueueListviewEnterKeyCommand = new RelayCommand(QueueListviewEnterKeyCommand_ExecuteAsync, QueueListviewEnterKeyCommand_CanExecute);
-        QueueListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfoEx>(param => QueueListviewLeftDoubleClickCommand_ExecuteAsync(param), param => QueueListviewLeftDoubleClickCommand_CanExecute());
-
-        QueueListviewDeleteWithoutPromptCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteWithoutPromptCommand_Execute(param), param => QueueListviewDeleteWithoutPromptCommand_CanExecute());
-        //QueueListviewDeleteCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteCommand_Execute(param), param => QueueListviewDeleteCommand_CanExecute());
-        //QueueListviewConfirmDeletePopupCommand = new RelayCommand(QueueListviewConfirmDeletePopupCommand_Execute, QueueListviewConfirmDeletePopupCommand_CanExecute);
-
         QueueClearWithoutPromptCommand = new RelayCommand(QueueClearWithoutPromptCommand_ExecuteAsync, QueueClearWithoutPromptCommand_CanExecute);
-        //QueueListviewClearCommand = new RelayCommand(QueueListviewClearCommand_ExecuteAsync, QueueListviewClearCommand_CanExecute);
-        //QueueListviewConfirmClearPopupCommand = new RelayCommand(QueueListviewConfirmClearPopupCommand_Execute, QueueListviewConfirmClearPopupCommand_CanExecute);
-
         QueueSaveAsCommand = new RelayCommand(QueueSaveAsCommand_ExecuteAsync, QueueSaveAsCommand_CanExecute);
-        QueueSaveAsDialogCommand = new GenericRelayCommand<String>(param => QueueSaveAsDialogCommand_Execute(param), param => QueueSaveAsDialogCommand_CanExecute());
-
         QueueSaveToCommand = new RelayCommand(QueueSaveToCommand_ExecuteAsync, QueueSaveToCommand_CanExecute);
-        QueueSaveToDialogCommand = new GenericRelayCommand<String>(param => QueueSaveToDialogCommand_Execute(param), param => QueueSaveToDialogCommand_CanExecute());
 
         QueueListviewMoveUpCommand = new GenericRelayCommand<object>(param => QueueListviewMoveUpCommand_Execute(param), param => QueueListviewMoveUpCommand_CanExecute());
         QueueListviewMoveDownCommand = new GenericRelayCommand<object>(param => QueueListviewMoveDownCommand_Execute(param), param => QueueListviewMoveDownCommand_CanExecute());
 
         QueueListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => QueueListviewSaveSelectedAsCommand_Execute(param), param => QueueListviewSaveSelectedAsCommand_CanExecute());
-        QueueListviewSaveSelectedAsPopupCommand = new GenericRelayCommand<String>(param => QueueListviewSaveSelectedAsPopupCommand_Execute(param), param => QueueListviewSaveSelectedAsPopupCommand_CanExecute());
-
         QueueListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => QueueListviewSaveSelectedToCommand_Execute(param), param => QueueListviewSaveSelectedToCommand_CanExecute());
-        QueueListviewSaveSelectedToPopupCommand = new GenericRelayCommand<Playlist>(param => QueueListviewSaveSelectedToPopupCommand_Execute(param), param => QueueListviewSaveSelectedToPopupCommand_CanExecute());
+
+        QueueListviewEnterKeyCommand = new RelayCommand(QueueListviewEnterKeyCommand_ExecuteAsync, QueueListviewEnterKeyCommand_CanExecute);
+        QueueListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfoEx>(param => QueueListviewLeftDoubleClickCommand_ExecuteAsync(param), param => QueueListviewLeftDoubleClickCommand_CanExecute());
+
+        QueueListviewDeleteSelectedWithoutPromptCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteSelectedWithoutPromptCommand_Execute(param), param => QueueListviewDeleteSelectedWithoutPromptCommand_CanExecute());
+        //QueueListviewDeleteCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteCommand_Execute(param), param => QueueListviewDeleteCommand_CanExecute());
+        //QueueListviewConfirmDeletePopupCommand = new RelayCommand(QueueListviewConfirmDeletePopupCommand_Execute, QueueListviewConfirmDeletePopupCommand_CanExecute);
 
         ShowSettingsCommand = new RelayCommand(ShowSettingsCommand_Execute, ShowSettingsCommand_CanExecute);
         SettingsOKCommand = new RelayCommand(SettingsOKCommand_Execute, SettingsOKCommand_CanExecute);
@@ -3473,13 +3516,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         FilterQueueClearCommand = new RelayCommand(FilterQueueClearCommand_Execute, FilterQueueClearCommand_CanExecute);
 
-        SearchResultListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => SearchResultListviewSaveSelectedAsCommand_Execute(param), param => SearchResultListviewSaveSelectedAsCommand_CanExecute());
-        SearchResultListviewSaveSelectedAsPopupCommand = new GenericRelayCommand<string>(param => SearchResultListviewSaveSelectedAsPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedAsPopupCommand_CanExecute());
-        SearchResultListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => SearchResultListviewSaveSelectedToCommand_Execute(param), param => SearchResultListviewSaveSelectedToCommand_CanExecute());
-        SearchResultListviewSaveSelectedToPopupCommand = new GenericRelayCommand<Playlist>(param => SearchResultListviewSaveSelectedToPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedToPopupCommand_CanExecute());
+        SearchListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => SearchListviewSaveSelectedAsCommand_Execute(param), param => SearchListviewSaveSelectedAsCommand_CanExecute());
+        //SearchResultListviewSaveSelectedAsPopupCommand = new GenericRelayCommand<string>(param => SearchResultListviewSaveSelectedAsPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedAsPopupCommand_CanExecute());
+        SearchListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => SearchListviewSaveSelectedToCommand_Execute(param), param => SearchListviewSaveSelectedToCommand_CanExecute());
+        //SearchResultListviewSaveSelectedToPopupCommand = new GenericRelayCommand<Playlist>(param => SearchResultListviewSaveSelectedToPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedToPopupCommand_CanExecute());
 
 
-        SongsListviewAddCommand = new GenericRelayCommand<object>(param => SongsListviewAddCommand_Execute(param), param => SongsListviewAddCommand_CanExecute());
+        SongsListviewAddSelectedToQueueCommand = new GenericRelayCommand<object>(param => SongsListviewAddSelectedToQueueCommand_Execute(param), param => SongsListviewAddSelectedToQueueCommand_CanExecute());
         SongFilesListviewAddCommand = new GenericRelayCommand<object>(param => SongFilesListviewAddCommand_Execute(param), param => SongFilesListviewAddCommand_CanExecute());
 
         SongFilesListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => SongFilesListviewSaveSelectedAsCommand_Execute(param), param => SongFilesListviewSaveSelectedAsCommand_CanExecute());
@@ -3497,9 +3540,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         ClearAckTextCommand = new RelayCommand(ClearAckTextCommand_Execute, ClearAckTextCommand_CanExecute);
         ShowAckWindowCommand = new RelayCommand(ShowAckWindowCommand_Execute, ShowAckWindowCommand_CanExecute);
 
-        PlaylistListviewDeletePosCommand = new GenericRelayCommand<object>(param => PlaylistListviewDeletePosCommand_Execute(param), param => PlaylistListviewDeletePosCommand_CanExecute());
-        PlaylistListviewDeletePosPopupCommand = new RelayCommand(PlaylistListviewDeletePosPopupCommand_Execute, PlaylistListviewDeletePosPopupCommand_CanExecute);
-        PlaylistListviewConfirmDeletePosNotSupportedPopupCommand = new RelayCommand(PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_Execute, PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_CanExecute);
+        PlaylistListviewDeleteSelectedWithoutPromptCommand = new GenericRelayCommand<object>(param => PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute(param), param => PlaylistListviewDeleteSelectedWithoutPromptCommand_CanExecute());
+        //PlaylistListviewDeletePosCommand = new GenericRelayCommand<object>(param => PlaylistListviewDeletePosCommand_Execute(param), param => PlaylistListviewDeletePosCommand_CanExecute());
+        //PlaylistListviewDeletePosPopupCommand = new RelayCommand(PlaylistListviewDeletePosPopupCommand_Execute, PlaylistListviewDeletePosPopupCommand_CanExecute);
+        //PlaylistListviewConfirmDeletePosNotSupportedPopupCommand = new RelayCommand(PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_Execute, PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_CanExecute);
 
         //QueueFilterSelectCommand = new GenericRelayCommand<object>(param => QueueFilterSelectCommand_Execute(param), param => QueueFilterSelectCommand_CanExecute());
         QueueFilterSelectCommand = new RelayCommand(QueueFilterSelectCommand_Execute, QueueFilterSelectCommand_CanExecute);
@@ -5181,6 +5225,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         }
                     }
 
+                    // TODO: do I need this?
                     if (IsAutoScrollToNowPlaying)
                         ScrollIntoView?.Invoke(this, CurrentSong.Index);
                 }
@@ -5624,11 +5669,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     
     private void UpdateAlbumsAndArtists()
     {
+        // Sort
+        //CultureInfo ci = CultureInfo.CurrentCulture;
+        //StringComparer comp = StringComparer.Create(ci, true);
+
         UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
-        Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY.
+        Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. //.OrderBy(x => x.Name, comp)
 
         UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
-        Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
+        Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY. // Sort .OrderBy(x => x.Name, comp)
 
         UpdateProgress?.Invoke(this, "");
         /* 
@@ -5647,11 +5696,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
 
         UpdateProgress?.Invoke(this, "[UI] Playlists loading...");
+
         await Task.Delay(10);
-
         
-        Dispatcher.UIThread.Post(() => {
-
+        Dispatcher.UIThread.Post(() => 
+        {
             //IsBusy = true;
             IsWorking = true;
 
@@ -5663,6 +5712,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (playlistDir is not null)
             {
+                /*
                 // Sort playlists.
                 List<string> slTmp = [];
 
@@ -5671,13 +5721,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     slTmp.Add(v.Name);
                 }
                 slTmp.Sort();
+                */
 
-                foreach (var hoge in slTmp)
+                foreach (var hoge in Playlists)
                 {
-                    var fuga = playlistDir.Children.FirstOrDefault(i => i.Name == hoge);
+                    var fuga = playlistDir.Children.FirstOrDefault(i => i.Name == hoge.Name);
                     if (fuga is null)
                     {
-                        NodeMenuPlaylistItem playlistNode = new(hoge);
+                        NodeMenuPlaylistItem playlistNode = new(hoge.Name);
+                        playlistNode.IsUpdateRequied = true;
                         playlistDir.Children.Add(playlistNode);
                     }
                 }
@@ -5685,7 +5737,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 List<NodeTree> tobedeleted = [];
                 foreach (var hoge in playlistDir.Children)
                 {
-                    var fuga = slTmp.FirstOrDefault(i => i == hoge.Name);
+                    var fuga = Playlists.FirstOrDefault(i => i.Name == hoge.Name);
                     if (fuga is null)
                     {
                         tobedeleted.Add(hoge);
@@ -5693,7 +5745,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     else
                     {
                         if (hoge is NodeMenuPlaylistItem nmpi)
+                        {
                             nmpi.IsUpdateRequied = true;
+                        }
                     }
                 }
 
@@ -5702,12 +5756,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     playlistDir.Children.Remove(hoge);
                 }
 
-                // 通知する
+                // Sort
+                CultureInfo ci = CultureInfo.CurrentCulture;
+                StringComparer comp = StringComparer.Create(ci, true);
+                playlistDir.Children = new ObservableCollection<NodeTree>(playlistDir.Children.OrderBy(x => x.Name, comp));
+
+                // Update playlist if selected
                 if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
                 {
                     if (nmpli.IsUpdateRequied)
                     {
-                        IsConfirmUpdatePlaylistSongsPopupVisible = true;
+                        GetPlaylistSongs(nmpli);
                     }
                 }
 
@@ -5717,14 +5776,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             }
 
+            if (!string.IsNullOrEmpty(RenamedSelectPendingPlaylistName))
+            {
+                GoToRenamedPlaylistPage(RenamedSelectPendingPlaylistName);
+                RenamedSelectPendingPlaylistName = string.Empty;
+            }
+
             //IsBusy = false;
             IsWorking = false;
 
             // apply open/close after this menu is loaded.
             NotifyPropertyChanged(nameof(IsNavigationViewMenuOpen));
-
         });
-
     }
 
     private Task<bool> UpdateLibraryMusicAsync()
@@ -6905,17 +6968,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     // called from code behind.
-    public IRelayCommand QueueSaveAsDialogCommand { get; }
-    public static bool QueueSaveAsDialogCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        */
-        return true;
-    }
-    public async void QueueSaveAsDialogCommand_Execute(string playlistName)
+    public async void QueueSaveAsDialog_Execute(string playlistName)
     {
         if (string.IsNullOrEmpty(playlistName))
             return;
@@ -6945,27 +6998,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     // called from code behind.
-    public IRelayCommand QueueSaveToDialogCommand { get; }
-    public static bool QueueSaveToDialogCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        */
-        return true;
-    }
-    public async void QueueSaveToDialogCommand_Execute(string playlistName)
+    public async void QueueSaveToDialog_Execute(string playlistName)
     {
         if (string.IsNullOrEmpty(playlistName))
             return;
         if (Queue.Count == 0)
             return;
 
-        await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.Id).ToList());
+        await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.File).ToList());
     }
 
-    // Enter or double click from code behind.
+    // TODO:  Enter or double click from code behind.
     public IRelayCommand QueueListviewEnterKeyCommand { get; set; }
     public static bool QueueListviewEnterKeyCommand_CanExecute()
     {
@@ -6987,7 +7030,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), _selectedQueueSong.Id);
     }
 
-    // Actually used as ContextMenu Play.
+    // TODO: Actually used as ContextMenu Play.
     public IRelayCommand QueueListviewLeftDoubleClickCommand { get; set; }
     public static bool QueueListviewLeftDoubleClickCommand_CanExecute()
     {
@@ -7028,15 +7071,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     // Command to delete selected songs from the queue listview.
-    public ICommand QueueListviewDeleteWithoutPromptCommand { get; }
-    public bool QueueListviewDeleteWithoutPromptCommand_CanExecute()
+    public ICommand QueueListviewDeleteSelectedWithoutPromptCommand { get; }
+    public bool QueueListviewDeleteSelectedWithoutPromptCommand_CanExecute()
     {
         if (IsBusy) return false;
         if (IsWorking) return false;
         //if (SelectedQueueSong is null) return false;
         return true;
     }
-    public async void QueueListviewDeleteWithoutPromptCommand_Execute(object obj)
+    public async void QueueListviewDeleteSelectedWithoutPromptCommand_Execute(object obj)
     {
         if (obj is null) return;
         System.Collections.IList items = (System.Collections.IList)obj;
@@ -7056,7 +7099,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     }
 
-    // Command to move selected songs up in the queue listview.
+    // Move selected songs up in the queue listview.
     public IRelayCommand QueueListviewMoveUpCommand { get; }
     public bool QueueListviewMoveUpCommand_CanExecute()
     {
@@ -7097,6 +7140,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    // Move down
     public IRelayCommand QueueListviewMoveDownCommand { get; }
     public bool QueueListviewMoveDownCommand_CanExecute()
     {
@@ -7137,6 +7181,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    // Sort reverse
     public IRelayCommand QueueListviewSortReverseCommand { get; }
     public bool QueueListviewSortReverseCommand_CanExecute()
     {
@@ -7163,6 +7208,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdMoveId(IdToNewPos);
     }
 
+    // Sort
     public IRelayCommand QueueListviewSortByCommand { get; }
     public bool QueueListviewSortByCommand_CanExecute()
     {
@@ -7198,6 +7244,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Album, comp));
         }
+        else if (key == "disc")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.DiscSort));
+        }
+        else if (key == "track")
+        {
+            sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.TrackSort));
+        }
         else if (key == "genre")
         {
             sorted = new ObservableCollection<SongInfoEx>(Queue.OrderBy(x => x.Genre, comp));
@@ -7222,101 +7276,56 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdMoveId(IdToNewPos);
     }
 
+    // Save selected As
     public IRelayCommand QueueListviewSaveSelectedAsCommand { get; }
     public bool QueueListviewSaveSelectedAsCommand_CanExecute()
     {
+        /*
         if (IsBusy) return false;
         if (IsWorking) return false;
         if (Queue.Count == 0) return false;
         if (SelectedQueueSong is null) return false;
+        */
         return true;
     }
     public void QueueListviewSaveSelectedAsCommand_Execute(object obj)
     {
-        if (obj is null) return;
-
-        List<SongInfoEx> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() => {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfoEx>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfoEx);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
+        if (obj is null)
         {
-            if (!string.IsNullOrEmpty(item.File))
-                fileUrisToAddList.Add(item.File);
+            return;
         }
 
-        if (fileUrisToAddList.Count == 0)
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        if (items.Count == 0)
+        {
             return;
+        }
 
-        queueListviewSelectedQueueSongIdsForPopup = fileUrisToAddList;
+        var collection = items.Cast<SongInfoEx>();
 
-        IsSelectedSaveAsPopupVisible = true;
+        List<string> selectedList = [];
 
+        foreach (var item in collection)
+        {
+            selectedList.Add(item.File);
+        }
+
+        QueueListviewSaveAsDialogShow?.Invoke(this, selectedList);
     }
 
-    public IRelayCommand QueueListviewSaveSelectedAsPopupCommand { get; }
-    public bool QueueListviewSaveSelectedAsPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
-        return true;
-    }
-    public async void QueueListviewSaveSelectedAsPopupCommand_Execute(string playlistName)
+    public async void QueueListviewSaveAsDialog_Execute(string playlistName, List<string> list)
     {
         if (string.IsNullOrEmpty(playlistName))
             return;
 
-        if (queueListviewSelectedQueueSongIdsForPopup.Count < 1)
+        if (list.Count < 1)
             return;
 
-        await _mpc.MpdPlaylistAdd(playlistName, queueListviewSelectedQueueSongIdsForPopup);
-
-        queueListviewSelectedQueueSongIdsForPopup.Clear();
-
-        IsSelectedSaveAsPopupVisible = false;
+        await _mpc.MpdPlaylistAdd(playlistName, list);
     }
 
-    public IRelayCommand QueueListviewSaveSelectedToPopupCommand { get; }
-    public bool QueueListviewSaveSelectedToPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
-        return true;
-    }
-    public async void QueueListviewSaveSelectedToPopupCommand_Execute(Playlist playlist)
-    {
-        if (playlist is null)
-            return;
-
-        if (string.IsNullOrEmpty(playlist.Name))
-            return;
-
-        if (queueListviewSelectedQueueSongIdsForPopup.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlist.Name, queueListviewSelectedQueueSongIdsForPopup);
-
-        queueListviewSelectedQueueSongIdsForPopup.Clear();
-
-        IsSelectedSaveToPopupVisible = false;
-    }
-
+    // Save selected to
     public IRelayCommand QueueListviewSaveSelectedToCommand { get; }
     public bool QueueListviewSaveSelectedToCommand_CanExecute()
     {
@@ -7328,39 +7337,43 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void QueueListviewSaveSelectedToCommand_Execute(object obj)
     {
-        if (obj is null) return;
-
-        List<SongInfoEx> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() => {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfoEx>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfoEx);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
+        if (obj is null)
         {
-            if (!string.IsNullOrEmpty(item.File))
-                fileUrisToAddList.Add(item.File);
+            return;
         }
 
-        if (fileUrisToAddList.Count == 0)
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        if (items.Count == 0)
+        {
             return;
+        }
 
-        queueListviewSelectedQueueSongIdsForPopup = fileUrisToAddList;
+        var collection = items.Cast<SongInfoEx>();
 
-        IsSelectedSaveToPopupVisible = true;
+        List<string> selectedList = [];
+
+        foreach (var item in collection)
+        {
+            selectedList.Add(item.File);
+        }
+
+        QueueListviewSaveToDialogShow?.Invoke(this, selectedList);
 
     }
 
+    public async void QueueListviewSaveToDialog_Execute(string playlistName, List<string> list)
+    {
+        if (string.IsNullOrEmpty(playlistName))
+            return;
+
+        if (list.Count < 1)
+            return;
+
+        await _mpc.MpdPlaylistAdd(playlistName, list);
+    }
+
+    // ScrollIntoNowPlaying
     public IRelayCommand ScrollIntoNowPlayingCommand { get; }
     public bool ScrollIntoNowPlayingCommand_CanExecute()
     {
@@ -7431,7 +7444,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         QueueFindWindowVisivilityChanged_SetFocus?.Invoke(this, EventArgs.Empty);
     }
 
-
+    //
     public IRelayCommand QueueFilterSelectCommand { get; set; }
     public static bool QueueFilterSelectCommand_CanExecute()
     {
@@ -7483,8 +7496,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void SearchExecCommand_Execute()
     {
-        Debug.WriteLine("SearchExecCommand_Execute: " + SearchQuery);
-
         if (string.IsNullOrEmpty(SearchQuery)) return;
 
         // TODO: Make "==" an option in search.
@@ -7517,140 +7528,86 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         UpdateProgress?.Invoke(this, "");
     }
 
-    public IRelayCommand SearchResultListviewSaveSelectedAsCommand { get; }
-    public bool SearchResultListviewSaveSelectedAsCommand_CanExecute()
+    // Save as
+    public IRelayCommand SearchListviewSaveSelectedAsCommand { get; }
+    public bool SearchListviewSaveSelectedAsCommand_CanExecute()
     {
-        if (IsBusy) return false;
-        if (SearchResult is null) return false;
-        if (SearchResult.Count == 0) return false;
+        //if (IsBusy) return false;
+        //if (SearchResult is null) return false;
+        //if (SearchResult.Count == 0) return false;
         return true;
     }
-    public void SearchResultListviewSaveSelectedAsCommand_Execute(object obj)
+    public void SearchListviewSaveSelectedAsCommand_Execute(object obj)
     {
         if (obj is null) return;
 
-        List<SongInfo> selectedList = [];
+        System.Collections.IList items = (System.Collections.IList)obj;
 
-        
-        Dispatcher.UIThread.Post(() =>
+        var collection = items.Cast<SongInfo>();
+
+        List<String> uriList = [];
+
+        foreach (var item in collection)
         {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfo>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfo);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
-        {
-            if (!string.IsNullOrEmpty(item.File))
-                fileUrisToAddList.Add(item.File);
+            uriList.Add(item.File);
         }
 
-        if (fileUrisToAddList.Count == 0)
-            return;
-
-        searchResultListviewSelectedQueueSongUriForPopup = fileUrisToAddList;
-
-        IsSearchResultSelectedSaveAsPopupVisible = true;
+        if (uriList.Count> 0)
+        {
+            SearchListviewSaveAsDialogShow?.Invoke(this, uriList);
+        }
     }
 
-    public IRelayCommand SearchResultListviewSaveSelectedAsPopupCommand { get; }
-    public bool SearchResultListviewSaveSelectedAsPopupCommand_CanExecute()
+    public async void SearchListviewSaveAsDialog_Execute(string playlist, List<string> list) 
     {
-        if (IsBusy) return false;
-        if (SearchResult is null) return false;
-        if (SearchResult.Count == 0) return false;
+        if (string.IsNullOrEmpty(playlist))
+            return;
+
+        if (list.Count < 1)
+            return;
+
+        await _mpc.MpdPlaylistAdd(playlist, list);
+    }
+
+    // Save to
+    public IRelayCommand SearchListviewSaveSelectedToCommand { get; }
+    public bool SearchListviewSaveSelectedToCommand_CanExecute()
+    {
+        //if (IsBusy) return false;
+        //if (SearchResult is null) return false;
+        //if (SearchResult.Count == 0) return false;
         return true;
     }
-    public async void SearchResultListviewSaveSelectedAsPopupCommand_Execute(string playlistName)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-            return;
-
-        if (searchResultListviewSelectedQueueSongUriForPopup.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlistName, searchResultListviewSelectedQueueSongUriForPopup);
-
-        searchResultListviewSelectedQueueSongUriForPopup.Clear();
-
-        IsSearchResultSelectedSaveAsPopupVisible = false;
-    }
-
-    public IRelayCommand SearchResultListviewSaveSelectedToCommand { get; }
-    public bool SearchResultListviewSaveSelectedToCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (SearchResult is null) return false;
-        if (SearchResult.Count == 0) return false;
-        return true;
-    }
-    public void SearchResultListviewSaveSelectedToCommand_Execute(object obj)
+    public void SearchListviewSaveSelectedToCommand_Execute(object obj)
     {
         if (obj is null) return;
 
-        List<SongInfo> selectedList = [];
+        System.Collections.IList items = (System.Collections.IList)obj;
 
-        
-        Dispatcher.UIThread.Post(() =>
+        var collection = items.Cast<SongInfo>();
+
+        List<String> uriList = [];
+
+        foreach (var item in collection)
         {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<SongInfo>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as SongInfo);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
-        {
-            if (!string.IsNullOrEmpty(item.File))
-                fileUrisToAddList.Add(item.File);
+            uriList.Add(item.File);
         }
 
-        if (fileUrisToAddList.Count == 0)
-            return;
-
-        searchResultListviewSelectedQueueSongUriForPopup = fileUrisToAddList;
-
-        IsSearchResultSelectedSaveToPopupVisible = true;
-
+        if (uriList.Count > 0)
+        {
+            SearchListviewSaveToDialogShow?.Invoke(this, uriList);
+        }
     }
 
-    public IRelayCommand SearchResultListviewSaveSelectedToPopupCommand { get; }
-    public bool SearchResultListviewSaveSelectedToPopupCommand_CanExecute()
+    public async void SearchListviewSaveToDialog_Execute(string playlist, List<string> list)
     {
-        if (IsBusy) return false;
-        if (SearchResult is null) return false;
-        if (SearchResult.Count == 0) return false;
-        return true;
-    }
-    public async void SearchResultListviewSaveSelectedToPopupCommand_Execute(Playlist playlist)
-    {
-        if (playlist is null)
+        if (string.IsNullOrEmpty(playlist))
             return;
 
-        if (string.IsNullOrEmpty(playlist.Name))
+        if (list.Count < 1)
             return;
 
-        if (searchResultListviewSelectedQueueSongUriForPopup.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlist.Name, searchResultListviewSelectedQueueSongUriForPopup);
-
-        searchResultListviewSelectedQueueSongUriForPopup.Clear();
-
-        IsSearchResultSelectedSaveToPopupVisible = false;
+        await _mpc.MpdPlaylistAdd(playlist, list);
     }
 
     #endregion
@@ -8027,6 +7984,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #endregion
 
     #region == Playlists ==
+
     /*
     public IRelayCommand ChangePlaylistCommand { get; set; }
     public bool ChangePlaylistCommand_CanExecute()
@@ -8147,48 +8105,81 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         await _mpc.MpdChangePlaylist(_selectedPlaylist.Name);
     }    
-    public IRelayCommand PlaylistListviewRenamePlaylistCommand { get; set; }
-    public static bool PlaylistListviewRenamePlaylistCommand_CanExecute()
-    {
-        if (IsBusy)
-            return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public static void PlaylistListviewRenamePlaylistCommand_Execute(Playlist playlist)
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
 
-        if (_selectedPlaylist != playlist)
-            return;
-    }
     */
 
-    // TODO: Rename playlists.
-    public async void DoRenamePlaylist(String oldPlaylistName, String newPlaylistName)
+    public IRelayCommand PlaylistRenamePlaylistCommand { get; set; }
+    public static bool PlaylistRenamePlaylistCommand_CanExecute()
     {
-        await _mpc.MpdRenamePlaylist(oldPlaylistName, newPlaylistName);
+        return true;
+    }
+    public void PlaylistRenamePlaylistCommand_Execute(string playlist)
+    {
+        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        {
+            return;
+        }
+
+        if (_selectedPlaylistName != playlist)
+        {
+            return;
+        }
+
+        PlaylistRenameToDialogShow?.Invoke(this, playlist);
     }
 
-    // TODO: CheckPlaylistNameExists when Rename playlists.
-    /*
-    private bool CheckPlaylistNameExists(string playlistName)
+    // Rename playlist.
+    public async void PlaylistRenamePlaylist_Execute(String oldPlaylistName, String newPlaylistName)
+    {
+        var ret = await _mpc.MpdRenamePlaylist(oldPlaylistName, newPlaylistName);
+
+        if (ret.IsSuccess)
+        {
+            //SelectedPlaylistName = newPlaylistName;
+            RenamedSelectPendingPlaylistName = newPlaylistName;
+
+            // This is not going to work because renamed listviewitem is not yet created.
+            //GoToRenamedPlaylistPage(newPlaylistName);
+        }
+    }
+
+    private void GoToRenamedPlaylistPage(string playlist)
+    {
+        RenamedSelectPendingPlaylistName = string.Empty;
+
+        foreach (var hoge in MainMenuItems)
+        {
+            if (hoge is NodeMenuPlaylists)
+            {
+                foreach (var fuga in hoge.Children)
+                {
+                    if (fuga is NodeMenuPlaylistItem)
+                    {
+                        if (string.Equals(playlist, fuga.Name, StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            Debug.WriteLine($"{playlist} is now selected....");
+                            IsNavigationViewMenuOpen = true;
+                            fuga.Selected = true;
+                            SelectedNodeMenu = fuga;
+                            SelectedPlaylistName  = fuga.Name;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // CheckPlaylistNameExists when Rename playlists.
+    public bool CheckIfPlaylistExists(string playlistName)
     {
         bool match = false;
 
         if (Playlists.Count > 0)
         {
-
             foreach (var hoge in Playlists)
             {
-                if (hoge.Name.ToLower() == playlistName.ToLower())
+                if (string.Equals(playlistName, hoge.Name, StringComparison.CurrentCultureIgnoreCase))
                 {
                     match = true;
                     break;
@@ -8198,7 +8189,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         return match;
     }
-    */
 
     public IRelayCommand PlaylistRemovePlaylistWithoutPromptCommand { get; set; }
     public static bool PlaylistRemovePlaylistWithoutPromptCommand_CanExecute()
@@ -8224,94 +8214,34 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        await _mpc.MpdRemovePlaylist(_selectedPlaylistName);
+        var ret = await _mpc.MpdRemovePlaylist(_selectedPlaylistName);
 
-        // Clear listview 
-        SelectedPlaylistName = string.Empty;
-        PlaylistSongs.Clear();
-        //CurrentPage = App.GetService<QueuePage>();
-    }
-
-    /*
-    public IRelayCommand PlaylistListviewRemovePlaylistCommand { get; set; }
-    public bool PlaylistListviewRemovePlaylistCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public void PlaylistListviewRemovePlaylistCommand_Execute(Playlist playlist)
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        if (_selectedPlaylist != playlist)
-            return;
-
-        IsConfirmDeletePlaylistPopupVisible = true;
-    }
-
-    public IRelayCommand PlaylistListviewConfirmRemovePlaylistPopupCommand { get; set; }
-    public bool PlaylistListviewConfirmRemovePlaylistPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void PlaylistListviewConfirmRemovePlaylistPopupCommand_Execute()
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        await _mpc.MpdRemovePlaylist(_selectedPlaylist.Name);
-
-        IsConfirmDeletePlaylistPopupVisible = false;
-    }
-    */
-    #endregion
-
-    #region == PlaylistItems ==
-
-    // Do reload after confirming to reload playlist.
-    public IRelayCommand PlaylistListviewConfirmUpdatePopupCommand { get; set; }
-    public bool PlaylistListviewConfirmUpdatePopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        return true;
-    }
-    public void PlaylistListviewConfirmUpdatePopupCommand_Execute()
-    {
-        if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
+        if (ret.IsSuccess)
         {
-            if (nmpli.IsUpdateRequied)
-            {
-                GetPlaylistSongs(nmpli);
-            }
-        }
+            // Clear listview 
+            SelectedPlaylistName = string.Empty;
 
-        IsConfirmUpdatePlaylistSongsPopupVisible = false;
+            RenamedSelectPendingPlaylistName = string.Empty;
+            PlaylistSongs.Clear();
+            //CurrentPage = App.GetService<QueuePage>();
+        }
     }
 
     // Deletes song in a playlist.
-    public IRelayCommand PlaylistListviewDeletePosCommand { get; set; }
-    public bool PlaylistListviewDeletePosCommand_CanExecute()
+    public IRelayCommand PlaylistListviewDeleteSelectedWithoutPromptCommand { get; set; }
+    public bool PlaylistListviewDeleteSelectedWithoutPromptCommand_CanExecute()
     {
-        if (SelectedPlaylistSong is null) return false;
-        if (IsBusy) return false;
+        //if (SelectedPlaylistSong is null) return false;
+        //if (IsBusy) return false;
         return true;
     }
-    public void PlaylistListviewDeletePosCommand_Execute(object obj)
+    public async void PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute(object obj)
     {
+        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        {
+            return;
+        }
+
         if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
         {
             if (nmpli.IsUpdateRequied)
@@ -8324,114 +8254,47 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        if (obj is null) return;
-
-        System.Collections.IList items = (System.Collections.IList)obj;
-
-        if (items.Count > 1)
+        if (obj is SongInfo song)
         {
-            // not supported by MPD protocol error.
-            IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible = true;
+            await _mpc.MpdPlaylistDelete(_selectedPlaylistName, song.Index);
         }
-        else
-        {
-            if (items.Count == 1)
-                IsConfirmDeletePlaylistSongPopupVisible = true;
-            //await _mpc.MpdPlaylistDelete(playlistName, (items[0] as SongInfo).Index);
-        }
+
     }
 
-    // 
-    public IRelayCommand PlaylistListviewConfirmDeletePosNotSupportedPopupCommand { get; set; }
-    public static bool PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_CanExecute()
+    // Playlist Clear
+    public IRelayCommand PlaylistClearPlaylistWithoutPromptCommand { get; set; }
+    public static bool PlaylistClearPlaylistWithoutPromptCommand_CanExecute()
     {
-        return true;
-    }
-    public void PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_Execute()
-    {
-        IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible = false;
-    }
-
-    // 
-    public IRelayCommand PlaylistListviewDeletePosPopupCommand { get; set; }
-    public bool PlaylistListviewDeletePosPopupCommand_CanExecute()
-    {
-        if (SelectedPlaylistSong is null) return false;
+        /*
         if (IsBusy) return false;
+        if (_selectedPlaylist is null)
+            return false;
+        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
+            return false;
+        */
         return true;
     }
-    public async void PlaylistListviewDeletePosPopupCommand_Execute()
+    public async void PlaylistClearPlaylistWithoutPromptCommand_Execute(string playlist)
     {
-        string playlistName;
-
-        if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
-        {
-            if (nmpli.IsUpdateRequied)
-            {
-                return;
-            }
-            else
-            {
-                playlistName = nmpli.Name;
-            }
-        }
-        else
+        if (string.IsNullOrEmpty(_selectedPlaylistName))
         {
             return;
         }
 
-        if (SelectedPlaylistSong is null)
-            return;
-
-        await _mpc.MpdPlaylistDelete(playlistName, SelectedPlaylistSong.Index);
-
-        IsConfirmDeletePlaylistSongPopupVisible = false;
-    }
-
-    // 
-    public IRelayCommand PlaylistListviewClearCommand { get; set; }
-    public bool PlaylistListviewClearCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        return true;
-    }
-    public void PlaylistListviewClearCommand_Execute()
-    {
-        IsConfirmPlaylistClearPopupVisible = true;
-    }
-
-    public IRelayCommand PlaylistListviewClearPopupCommand { get; set; }
-    public bool PlaylistListviewClearPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void PlaylistListviewClearPopupCommand_Execute()
-    {
-        string playlistName;
-
-        if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
-        {
-            if (nmpli.IsUpdateRequied)
-            {
-                return;
-            }
-            else
-            {
-                playlistName = nmpli.Name;
-            }
-        }
-        else
+        if (_selectedPlaylistName != playlist)
         {
             return;
         }
 
-        await _mpc.MpdPlaylistClear(playlistName);
+        var ret = await _mpc.MpdPlaylistClear(playlist);
 
-        IsConfirmPlaylistClearPopupVisible = false;
+        if (ret.IsSuccess)
+        {
+            PlaylistSongs.Clear();
+        }
     }
 
-    // double clicked in a playlist listview
+    // double clicked in a playlist listview (currently NOT USED)
     public IRelayCommand PlaylistSongsListviewLeftDoubleClickCommand { get; set; }
     public bool PlaylistSongsListviewLeftDoubleClickCommand_CanExecute()
     {
@@ -8447,16 +8310,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #endregion
 
-    #region == Search and PlaylistItems ==
+    #region == AddSelectedToQueue used in Search and PlaylistItems ==
 
-    public IRelayCommand SongsListviewAddCommand { get; }
-    public bool SongsListviewAddCommand_CanExecute()
+    public IRelayCommand SongsListviewAddSelectedToQueueCommand { get; }
+    public bool SongsListviewAddSelectedToQueueCommand_CanExecute()
     {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
+        //if (IsBusy) return false;
+        //if (IsWorking) return false;
         return true;
     }
-    public async void SongsListviewAddCommand_Execute(object obj)
+    public async void SongsListviewAddSelectedToQueueCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -9563,15 +9426,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             return;
         }
-
         var items = Albums.Where(i => i.Name == CurrentSong.Album);
         if (items is not null)
         {
-            var asdf = CurrentSong.Artist;
+            var asdf = CurrentSong.AlbumArtist;
             if (string.IsNullOrEmpty(asdf.Trim()))
             {
-                asdf = CurrentSong.AlbumArtist;
+                asdf = CurrentSong.Artist;
             }
+
             // no artist name
             if (string.IsNullOrEmpty(asdf.Trim()))
             {
@@ -9635,10 +9498,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        var asdf = CurrentSong.Artist;
+        var asdf = CurrentSong.AlbumArtist;
         if (string.IsNullOrEmpty(asdf.Trim()))
         {
-            asdf = CurrentSong.AlbumArtist;
+            asdf = CurrentSong.Artist;
         }
 
         if (string.IsNullOrEmpty(asdf.Trim()))

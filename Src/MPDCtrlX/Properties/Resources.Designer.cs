@@ -691,7 +691,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Play/Pause (Space/Ctrl+P/MediaKeys) に類似しているローカライズされた文字列を検索します。
+        ///   Play/Pause (Ctrl+Space/Ctrl+P/MediaKeys) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Playback_PlayPauseButton {
             get {
@@ -772,6 +772,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Remove に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItemContextMenu_Remove {
+            get {
+                return ResourceManager.GetString("PlaylistItemContextMenu_Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Rename に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemContextMenu_Rename {
@@ -781,11 +790,29 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Clear playlist に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItemMenu_Clear {
+            get {
+                return ResourceManager.GetString("PlaylistItemMenu_Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Remove playlist に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemMenu_Remove {
             get {
                 return ResourceManager.GetString("PlaylistItemMenu_Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Rename playlist に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItemMenu_Rename {
+            get {
+                return ResourceManager.GetString("PlaylistItemMenu_Rename", resourceCulture);
             }
         }
         

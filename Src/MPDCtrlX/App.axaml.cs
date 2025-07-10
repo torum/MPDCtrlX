@@ -49,7 +49,6 @@ public partial class App : Application
                     services.AddSingleton<QueuePage>(); 
                     services.AddSingleton<SearchPage>(); 
                     services.AddSingleton<FilesPage>(); 
-                    //services.AddSingleton<PlaylistsPage>(); 
                     services.AddSingleton<PlaylistItemPage>(); 
                     services.AddSingleton<AlbumPage>();
                     services.AddSingleton<ArtistPage>();
