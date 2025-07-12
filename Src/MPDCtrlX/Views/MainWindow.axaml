@@ -14,7 +14,7 @@
         Title="MPDCtrlX"
 		Background="{DynamicResource ThemeBackgroundBrush}"
 		x:Name="ThisMainWindow"
-        x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="680" MinHeight="180">
+        x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="680" MinHeight="210">
 
 	<!-- <views:MainView/> -->
 	<Window.Resources>

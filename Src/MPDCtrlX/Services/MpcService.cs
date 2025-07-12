@@ -1,8 +1,10 @@
 using Avalonia;
+using Avalonia.Controls.Shapes;
 using Avalonia.Threading;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -15,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Path = System.IO.Path;
 
 namespace MPDCtrlX.Services;
 
@@ -1754,9 +1757,18 @@ public partial class MpcService : IMpcService
         return result;
     }
 
+    [GeneratedRegex(@"[\\]+")]
+    private static partial Regex EscapeRegex1();
+
+    [GeneratedRegex(@"[\']+")]
+    private static partial Regex EscapeRegex2();
+
+    [GeneratedRegex(@"[""]+")]
+    private static partial Regex EscapeRegex3();
+
     public async Task<CommandSearchResult> MpdSearch(string queryTag, string queryShiki, string queryValue, bool autoIdling = true)
     {
-        MpcProgress?.Invoke(this, "[Background] Searching...");
+        //MpcProgress?.Invoke(this, "[Background] Searching...");
 
         CommandSearchResult result = new();
 
@@ -1777,9 +1789,12 @@ public partial class MpcService : IMpcService
 
         //queryValue = @"foo'bar""";
         var escapeValue = queryValue;
-        escapeValue = Regex.Replace(escapeValue, @"[\\]+", @"\");
-        escapeValue = Regex.Replace(escapeValue, @"[\']+", @"\\'");
-        escapeValue = Regex.Replace(escapeValue, @"[""]+", @"\\\""");
+        //escapeValue = Regex.Replace(escapeValue, @"[\\]+", @"\");
+        escapeValue = EscapeRegex1().Replace(escapeValue, @"\");
+        //escapeValue = Regex.Replace(escapeValue, @"[\']+", @"\\'");
+        escapeValue = EscapeRegex2().Replace(escapeValue, @"\\'");
+        //escapeValue = Regex.Replace(escapeValue, @"[""]+", @"\\\""");
+        escapeValue = EscapeRegex3().Replace(escapeValue, @"\\\""");
 
         var expression = queryTag + " " + queryShiki + " \\\"" + escapeValue + "\\\"";
         //var expression = queryTag + " " + queryShiki + " \'" + Regex.Escape(queryValue) + "\'";
@@ -1791,7 +1806,7 @@ public partial class MpcService : IMpcService
         CommandResult cm = await MpdCommandSendCommand(cmd, autoIdling);
         if (cm.IsSuccess)
         {
-            MpcProgress?.Invoke(this, "[Background] Parsing search result...");
+            //MpcProgress?.Invoke(this, "[Background] Parsing search result...");
             /*
             if (await ParseSearchResult(cm.ResultText))
             {
@@ -1804,12 +1819,13 @@ public partial class MpcService : IMpcService
                 MpcProgress?.Invoke(this, "[Background] Search result updated.");
             }
             */
-            MpcProgress?.Invoke(this, "[Background] Search completed.");
+            //MpcProgress?.Invoke(this, "[Background] Search completed.");
             result.IsSuccess = true;
+            result.ResultText = cm.ResultText;
             result.SearchResult = await ParseSearchResult(cm.ResultText);
         }
 
-        MpcProgress?.Invoke(this, "");
+        //MpcProgress?.Invoke(this, "");
 
         return result;
     }
@@ -1873,7 +1889,7 @@ public partial class MpcService : IMpcService
                 //res.AlbumCover = _binaryDownloader.AlbumCover;
 
                 //await Task.Delay(1000);
-                await Task.Delay(200);
+                //await Task.Delay(200);
                 MpdAlbumArtChanged?.Invoke(this);
             }
             else
@@ -1881,7 +1897,7 @@ public partial class MpcService : IMpcService
                 //Debug.WriteLine("MpdQueryAlbumArt failed. Why... > " + res.ErrorMessage);
 
                 // need this to clear image.
-                await Task.Delay(200);
+                //await Task.Delay(200);
                 MpdAlbumArtChanged?.Invoke(this);
 
                 if (res.IsTimeOut)
@@ -2400,6 +2416,37 @@ public partial class MpcService : IMpcService
         return result;
     }
 
+    public async Task<CommandResult> MpdMultiplePlay(List<string> uris)
+    {
+        if (uris.Count < 1)
+        {
+            CommandResult f = new()
+            {
+                IsSuccess = false
+            };
+            return f;
+        }
+
+        string cmd = "command_list_begin" + "\n";
+        cmd = cmd + "clear" + "\n";
+        foreach (var uri in uris)
+        {
+            cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+        }
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd, true);
+
+        if (result.IsSuccess)
+        {
+            await ParseCurrentSong(result.ResultText);
+        }
+
+        return result;
+    }
+
     public async Task<CommandResult> MpdChangePlaylist(string playlistName)
     {
         if (string.IsNullOrEmpty(playlistName))
@@ -2414,11 +2461,19 @@ public partial class MpcService : IMpcService
         playlistName = Regex.Escape(playlistName);
 
         string cmd = "command_list_begin" + "\n";
+        //cmd = cmd + "stop" + "\n";
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "load \"" + playlistName + "\"\n";
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
         CommandResult result = await MpdCommandSendCommand(cmd, true);
+
+        if (result.IsSuccess)
+        {
+            await ParseCurrentSong(result.ResultText);
+        }
 
         return result;
     }
@@ -2911,7 +2966,7 @@ public partial class MpcService : IMpcService
                     }
                     else
                     {
-                        SongValues.Add(StatusValuePair[0].Trim(), value.Replace(StatusValuePair[0].Trim() + ": ", ""));
+                        SongValues.TryAdd(StatusValuePair[0].Trim(), value.Replace(StatusValuePair[0].Trim() + ": ", ""));
                     }
                 }
             }
@@ -3066,7 +3121,8 @@ public partial class MpcService : IMpcService
                 string[] StatusValuePair = value.Trim().Split(':');
                 if (StatusValuePair.Length > 1)
                 {
-                    if (SongValues.ContainsKey(StatusValuePair[0].Trim()))
+                    //if (SongValues.ContainsKey(StatusValuePair[0].Trim()))
+                    if (StatusValuePair[0].Trim().Equals("file"))
                     {
                         if (SongValues.ContainsKey("Id"))
                         {
@@ -3074,13 +3130,6 @@ public partial class MpcService : IMpcService
 
                             if (sng is not null)
                             {
-                                /*
-                                if (Application.Current is null) { return Task.FromResult(false); }
-                                Application.Current.Dispatcher.Invoke(() =>
-                                {
-                                    CurrentQueue.Add(sng);
-                                });
-                                */
                                 //CurrentQueue.Add(sng);
                                 tmpQueue.Add(sng);
 
@@ -3091,31 +3140,14 @@ public partial class MpcService : IMpcService
                                 SongValues.Clear();
                             }
                         }
-                        /*
-                        if (!SongValues.ContainsKey(StatusValuePair[0].Trim()))
-                        {
-                            SongValues.Add(StatusValuePair[0].Trim(), value.Replace(StatusValuePair[0].Trim() + ": ", ""));
-                        }
-                        else
-                        {
-                            if (StatusValuePair[0].Trim() == "Genre")
-                            {
-                                SongValues["Genre"] = SongValues["Genre"] + "/" + value.Replace(StatusValuePair[0].Trim() + ": ", "");
-                            } 
-                        }
-                        */
-                    }
 
-                    if (!SongValues.ContainsKey(StatusValuePair[0].Trim()))
-                    {
+                        SongValues.Clear();
                         SongValues.Add(StatusValuePair[0].Trim(), value.Replace(StatusValuePair[0].Trim() + ": ", ""));
                     }
                     else
+                    //if (!SongValues.ContainsKey(StatusValuePair[0].Trim()))
                     {
-                        if (StatusValuePair[0].Trim() == "Genre")
-                        {
-                            SongValues["Genre"] = SongValues["Genre"] + "/" + value.Replace(StatusValuePair[0].Trim() + ": ", "");
-                        }
+                        SongValues.TryAdd(StatusValuePair[0].Trim(), value.Replace(StatusValuePair[0].Trim() + ": ", ""));
                     }
                 }
             }
@@ -3178,130 +3210,137 @@ public partial class MpcService : IMpcService
     {
         try
         {
-            SongInfoEx sng = new();
-
             if (SongValues.ContainsKey("Id"))
             {
-                sng.Id = SongValues["Id"];
-            }
+                SongInfoEx sng = new();
 
-            if (SongValues.ContainsKey("Title"))
-            {
-                sng.Title = SongValues["Title"];
-            }
-            else
-            {
-                sng.Title = "";
-                if (SongValues.ContainsKey("file"))
+                if (SongValues.ContainsKey("Id"))
                 {
-                    sng.Title = Path.GetFileName(SongValues["file"]);
+                    sng.Id = SongValues["Id"];
                 }
-            }
 
-            if (SongValues.ContainsKey("Artist"))
-            {
-                sng.Artist = SongValues["Artist"];
-            }
-            else
-            {
-                if (SongValues.ContainsKey("AlbumArtist"))
+                if (SongValues.ContainsKey("Title"))
                 {
-                    // TODO: Should I?
-                    sng.Artist = SongValues["AlbumArtist"];
+                    sng.Title = SongValues["Title"];
                 }
                 else
                 {
-                    sng.Artist = "";
-                }
-            }
-
-            if (SongValues.ContainsKey("Last-Modified"))
-            {
-                sng.LastModified = SongValues["Last-Modified"];
-            }
-
-            if (SongValues.ContainsKey("AlbumArtist"))
-            {
-                sng.AlbumArtist = SongValues["AlbumArtist"];
-            }
-
-            if (SongValues.ContainsKey("Album"))
-            {
-                sng.Album = SongValues["Album"];
-            }
-
-            if (SongValues.ContainsKey("Track"))
-            {
-                sng.Track = SongValues["Track"];
-            }
-
-            if (SongValues.ContainsKey("Disc"))
-            {
-                sng.Disc = SongValues["Disc"];
-            }
-
-            if (SongValues.ContainsKey("Date"))
-            {
-                sng.Date = SongValues["Date"];
-            }
-
-            if (SongValues.ContainsKey("Genre"))
-            {
-                sng.Genre = SongValues["Genre"];
-            }
-
-            if (SongValues.ContainsKey("Composer"))
-            {
-                sng.Composer = SongValues["Composer"];
-            }
-
-            if (SongValues.ContainsKey("Time"))
-            {
-                sng.Time = SongValues["Time"];
-            }
-
-            if (SongValues.ContainsKey("duration"))
-            {
-                sng.Time = SongValues["duration"];
-                sng.Duration = SongValues["duration"];
-            }
-
-            if (SongValues.ContainsKey("Pos"))
-            {
-                sng.Pos = SongValues["Pos"];
-            }
-
-            if (SongValues.ContainsKey("file"))
-            {
-                sng.File = SongValues["file"];
-            }
-
-            // for sorting.
-            sng.Index = i;
-            /*
-            if (i < 0) 
-            { 
-                // -1 means we are not parsing queue but parsing currentsong.<Oppes currentsong does not return pos..
-                if (string.IsNullOrEmpty(sng.Pos))
-                {
-                    int tmpi = -1;
-                    try
+                    sng.Title = "";
+                    if (SongValues.ContainsKey("file"))
                     {
-                        tmpi = Int32.Parse(sng.Pos);
-                        sng.Index = tmpi;
+                        sng.Title = Path.GetFileName(SongValues["file"]);
                     }
-                    catch{}
                 }
-            }
-            */
 
-            //
-            if (sng.Id == MpdStatus.MpdSongID)
+                if (SongValues.ContainsKey("Artist"))
+                {
+                    sng.Artist = SongValues["Artist"];
+                }
+                else
+                {
+                    if (SongValues.ContainsKey("AlbumArtist"))
+                    {
+                        // TODO: Should I?
+                        sng.Artist = SongValues["AlbumArtist"];
+                    }
+                    else
+                    {
+                        sng.Artist = "";
+                    }
+                }
+
+                if (SongValues.ContainsKey("Last-Modified"))
+                {
+                    sng.LastModified = SongValues["Last-Modified"];
+                }
+
+                if (SongValues.ContainsKey("AlbumArtist"))
+                {
+                    sng.AlbumArtist = SongValues["AlbumArtist"];
+                }
+
+                if (SongValues.ContainsKey("Album"))
+                {
+                    sng.Album = SongValues["Album"];
+                }
+
+                if (SongValues.ContainsKey("Track"))
+                {
+                    sng.Track = SongValues["Track"];
+                }
+
+                if (SongValues.ContainsKey("Disc"))
+                {
+                    sng.Disc = SongValues["Disc"];
+                }
+
+                if (SongValues.ContainsKey("Date"))
+                {
+                    sng.Date = SongValues["Date"];
+                }
+
+                if (SongValues.ContainsKey("Genre"))
+                {
+                    sng.Genre = SongValues["Genre"];
+                }
+
+                if (SongValues.ContainsKey("Composer"))
+                {
+                    sng.Composer = SongValues["Composer"];
+                }
+
+                if (SongValues.ContainsKey("Time"))
+                {
+                    sng.Time = SongValues["Time"];
+                }
+
+                if (SongValues.ContainsKey("duration"))
+                {
+                    sng.Time = SongValues["duration"];
+                    sng.Duration = SongValues["duration"];
+                }
+
+                if (SongValues.ContainsKey("Pos"))
+                {
+                    sng.Pos = SongValues["Pos"];
+                }
+
+                if (SongValues.ContainsKey("file"))
+                {
+                    sng.File = SongValues["file"];
+                }
+
+                // for sorting.
+                sng.Index = i;
+                /*
+                if (i < 0) 
+                { 
+                    // -1 means we are not parsing queue but parsing currentsong.<Oppes currentsong does not return pos..
+                    if (string.IsNullOrEmpty(sng.Pos))
+                    {
+                        int tmpi = -1;
+                        try
+                        {
+                            tmpi = Int32.Parse(sng.Pos);
+                            sng.Index = tmpi;
+                        }
+                        catch{}
+                    }
+                }
+                */
+
+                //
+                if (sng.Id == MpdStatus.MpdSongID)
+                {
+                    MpdCurrentSong = sng;
+                }
+
+                return sng;
+            }
+            else
             {
-                MpdCurrentSong = sng;
+                return null;
             }
-
-            return sng;
         }
         catch (Exception e)
         {
@@ -3573,7 +3612,7 @@ public partial class MpcService : IMpcService
                     arts?.Albums.Add(albx);
 
                     // Create Albums at the same time.
-                    if ((!string.IsNullOrEmpty(albx.Name.Trim())))// (!string.IsNullOrEmpty(arts?.Name.Trim()))
+                    if ((!string.IsNullOrEmpty(albx.Name)))// (!string.IsNullOrEmpty(arts?.Name.Trim()))
                     {
                         Albums.Add(albx);
                     }
@@ -3674,55 +3713,45 @@ public partial class MpcService : IMpcService
 
             var comparer = StringComparer.OrdinalIgnoreCase;
             Dictionary<string, string> SongValues = new(comparer);
+            //Dictionary<string, string> SongValues = new();
 
             int i = 0;
 
             foreach (string line in resultLines)
             {
+                //Debug.WriteLine(line);
                 string[] ValuePair = line.Split(':');
                 if (ValuePair.Length > 1)
                 {
-                    if (SongValues.ContainsKey(ValuePair[0].Trim()))
+                    if (ValuePair[0].Trim().Equals("file"))
                     {
-                        // Contains means new one.
-
                         // save old one and clear songvalues.
-                        if (SongValues.ContainsKey("file"))
+                        if (SongValues.ContainsKey("file"))// && SongValues.ContainsKey("duration")
                         {
-                            SongInfo sng = FillSongInfo(SongValues, i);
-
-                            i++;
+                            //Debug.WriteLine(SongValues["file"]);
+                            SongInfo? sng = FillSongInfo(SongValues, i);
 
                             SongValues.Clear();
 
-                            //Dispatcher.UIThread.Post(() =>
-                            //{
-                            //    SearchResult.Add(sng);
-                            res.Add(sng);
-                            //});
+                            if (sng is not null)
+                            {
+                                i++;
+
+                                res.Add(sng);
+                            }
 
                             MpcProgress?.Invoke(this, string.Format("[Background] Parsing search result item... ({0})", i));
+
                         }
 
-                        // start over
-                        //SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
-                    }
-                    /*
-                    else
-                    {
-                        SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
-                    }
-                    */
-                    if (!SongValues.ContainsKey(ValuePair[0].Trim()))
-                    {
+
+                        SongValues.Clear();
                         SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
                     }
                     else
                     {
-                        if (ValuePair[0].Trim() == "Genre")
-                        {
-                            SongValues["Genre"] = SongValues["Genre"] + "/" + line.Replace(ValuePair[0].Trim() + ": ", "");
-                        }
+                        SongValues.TryAdd(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
+
                     }
                 }
             }
@@ -3730,15 +3759,14 @@ public partial class MpcService : IMpcService
             // last one
             if ((SongValues.Count > 0) && SongValues.ContainsKey("file"))
             {
-                SongInfo sng = FillSongInfo(SongValues, i);
+                SongInfo? sng = FillSongInfo(SongValues, i);
 
                 SongValues.Clear();
 
-                //Application.Current.Dispatcher.Invoke(() =>
-                //Dispatcher.UIThread.Post(() =>
-                //{
+                if (sng is not null)
+                {
                     res.Add(sng);
-                //});
+                }
 
                 MpcProgress?.Invoke(this, string.Format("[Background] Parsing search result item... ({0})", i + 1));
             }
@@ -3819,37 +3847,37 @@ public partial class MpcService : IMpcService
                 string[] ValuePair = line.Split(':');
                 if (ValuePair.Length > 1)
                 {
-                    if (SongValues.ContainsKey(ValuePair[0].Trim()))
+                    if (ValuePair[0].Trim().Equals("file"))
                     {
                         // Contains means new one.
 
                         // save old one and clear songvalues.
-                        if (SongValues.ContainsKey("file"))
+                        if (SongValues.ContainsKey("file")) // && SongValues.ContainsKey("duration")
                         {
-                            SongInfo sng = FillSongInfo(SongValues, i);
-
-                            i++;
-
+                            SongInfo? sng = FillSongInfo(SongValues, i);
+                            
                             SongValues.Clear();
 
-                            //if (Application.Current is null) { return songList; }
-                            //Application.Current.Dispatcher.Invoke(() =>
-                            //{
-                            songList.Add(sng);
-                            //});
+                            if (sng is not null)
+                            {
+                                songList.Add(sng);
+
+                                i++;
+                            }
 
                             MpcProgress?.Invoke(this, string.Format("[Background] Parsing playlist item... ({0})", i));
                         }
 
                         // start over
-                        //SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
-                    }
-                    /*
-                    else
-                    {
+                        SongValues.Clear();
                         SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
                     }
-                    */
+                    else
+                    {
+                        //SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].TrimStart() + ": ", ""));
+                        SongValues.TryAdd(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
+                    }
+                    /*
                     if (!SongValues.ContainsKey(ValuePair[0].Trim()))
                     {
                         SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
@@ -3861,21 +3889,23 @@ public partial class MpcService : IMpcService
                             SongValues["Genre"] = SongValues["Genre"] + "/" + line.Replace(ValuePair[0].Trim() + ": ", "");
                         }
                     }
+                    */
+
                 }
             }
 
             // last one
             if ((SongValues.Count > 0) && SongValues.ContainsKey("file"))
             {
-                SongInfo sng = FillSongInfo(SongValues, i);
+                SongInfo? sng = FillSongInfo(SongValues, i);
 
                 SongValues.Clear();
 
-                //if (Application.Current is null) { return songList; }
-                //Application.Current.Dispatcher.Invoke(() =>
-                //{
-                songList.Add(sng);
-                //});
+                if (sng is not null)
+                {
+                    songList.Add(sng);
+                }
+
                 MpcProgress?.Invoke(this, string.Format("[Background] Parsing playlist item... ({0})", i + 1));
             }
 
@@ -3892,101 +3922,118 @@ public partial class MpcService : IMpcService
         return songList;
     }
 
-    private static SongInfo FillSongInfo(Dictionary<string, string> SongValues, int i)
+    private static SongInfo? FillSongInfo(Dictionary<string, string> SongValues, int i)
     {
-
-        SongInfo sng = new();
-
-        if (SongValues.ContainsKey("Title"))
+        if (SongValues.ContainsKey("file"))
         {
-            sng.Title = SongValues["Title"];
-        }
-        else
-        {
-            sng.Title = "";
-            if (SongValues.ContainsKey("file"))
+            SongInfo sng = new();
+
+            sng.File = SongValues["file"];
+
+            if (string.IsNullOrEmpty(sng.File.Trim()))
             {
-                sng.Title = Path.GetFileName(SongValues["file"]);
+                Debug.WriteLine("file is empty @FillSongInfo");
+                return null;
             }
-        }
 
-        if (SongValues.ContainsKey("Artist"))
-        {
-            sng.Artist = SongValues["Artist"];
-        }
-        else
-        {
-            if (SongValues.ContainsKey("AlbumArtist"))
+            if (SongValues.ContainsKey("Title"))
             {
-                // TODO: Should I?
-                sng.Artist = SongValues["AlbumArtist"];
+                sng.Title = SongValues["Title"];
             }
             else
             {
-                sng.Artist = "";
+                sng.Title = "";
+                if (SongValues.ContainsKey("file"))
+                {
+                    sng.Title = Path.GetFileName(SongValues["file"]);
+                }
             }
-        }
 
-        if (SongValues.ContainsKey("Last-Modified"))
+            if (SongValues.ContainsKey("Artist"))
+            {
+                sng.Artist = SongValues["Artist"];
+            }
+            /*
+            else
+            {
+                if (SongValues.ContainsKey("AlbumArtist"))
+                {
+                    // TODO: Should I?
+                    //sng.Artist = SongValues["AlbumArtist"];
+                }
+                else
+                {
+                    sng.Artist = "";
+                }
+            }
+            */
+
+            if (SongValues.ContainsKey("Last-Modified"))
+            {
+                sng.LastModified = SongValues["Last-Modified"];
+            }
+
+            if (SongValues.ContainsKey("AlbumArtist"))
+            {
+                sng.AlbumArtist = SongValues["AlbumArtist"];
+            }
+
+            if (SongValues.ContainsKey("Album"))
+            {
+                sng.Album = SongValues["Album"];
+            }
+
+            if (SongValues.ContainsKey("Track"))
+            {
+                sng.Track = SongValues["Track"];
+            }
+
+            if (SongValues.ContainsKey("Disc"))
+            {
+                sng.Disc = SongValues["Disc"];
+            }
+
+            if (SongValues.ContainsKey("Date"))
+            {
+                sng.Date = SongValues["Date"];
+            }
+
+            if (SongValues.ContainsKey("Genre"))
+            {
+                sng.Genre = SongValues["Genre"];
+            }
+
+            if (SongValues.ContainsKey("Composer"))
+            {
+                sng.Composer = SongValues["Composer"];
+            }
+
+            if (SongValues.ContainsKey("Time"))
+            {
+                sng.Time = SongValues["Time"];
+            }
+
+            if (SongValues.ContainsKey("duration"))
+            {
+                sng.Time = SongValues["duration"];
+                sng.Duration = SongValues["duration"];
+            }
+            /*
+            if (SongValues.ContainsKey("file"))
+            {
+                sng.File = SongValues["file"];
+            }
+            */
+
+            // for sorting. (and playlist pos)
+            sng.Index = i;
+
+            return sng;
+        }
+        else
         {
-            sng.LastModified = SongValues["Last-Modified"];
+            return null;
         }
-
-        if (SongValues.ContainsKey("AlbumArtist"))
-        {
-            sng.AlbumArtist = SongValues["AlbumArtist"];
-        }
-
-        if (SongValues.ContainsKey("Album"))
-        {
-            sng.Album = SongValues["Album"];
-        }
-
-        if (SongValues.ContainsKey("Track"))
-        {
-            sng.Track = SongValues["Track"];
-        }
-
-        if (SongValues.ContainsKey("Disc"))
-        {
-            sng.Disc = SongValues["Disc"];
-        }
-
-        if (SongValues.ContainsKey("Date"))
-        {
-            sng.Date = SongValues["Date"];
-        }
-
-        if (SongValues.ContainsKey("Genre"))
-        {
-            sng.Genre = SongValues["Genre"];
-        }
-
-        if (SongValues.ContainsKey("Composer"))
-        {
-            sng.Composer = SongValues["Composer"];
-        }
-
-        if (SongValues.ContainsKey("Time"))
-        {
-            sng.Time = SongValues["Time"];
-        }
-
-        if (SongValues.ContainsKey("duration"))
-        {
-            sng.Time = SongValues["duration"];
-            sng.Duration = SongValues["duration"];
-        }
-
-        if (SongValues.ContainsKey("file"))
-        {
-            sng.File = SongValues["file"];
-        }
-
-        // for sorting. (and playlist pos)
-        sng.Index = i;
-
-        return sng;
     }
 
     #endregion

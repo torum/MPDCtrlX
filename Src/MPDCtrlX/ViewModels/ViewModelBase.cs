@@ -14,13 +14,13 @@ public class ViewModelBase : INotifyPropertyChanged//ObservableObject
     protected void NotifyPropertyChanged(string propertyName)
     {
         if (string.IsNullOrEmpty(propertyName)) return;
-
+        /*
         Dispatcher.UIThread.Post(() =>
         {
-            if (PropertyChanged != null)
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         });
-
+        */
+        if (PropertyChanged != null)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     #endregion

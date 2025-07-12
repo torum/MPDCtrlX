@@ -28,7 +28,9 @@ public partial class App : Application
     private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, _appDeveloper)), AppName);
     public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
-    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(AppDataFolder, "Cache");
+
+    private static readonly string _envCacheFolder = System.IO.Path.GetTempPath();
+    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envCacheFolder, AppName + "_AlbumCoverCache");
 
 
     public IHost AppHost { get; private set; }

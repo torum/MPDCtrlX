@@ -137,11 +137,12 @@
 								<Grid Grid.Row="0" Grid.Column="1" >
 									<Grid.RowDefinitions>
 										<RowDefinition Height="Auto"></RowDefinition>
+										<RowDefinition Height="Auto"></RowDefinition>
 										<RowDefinition Height="*"></RowDefinition>
 									</Grid.RowDefinitions>
 
 									<StackPanel Margin="16,16,16,16">
-										<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
+										<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
 											<Interaction.Behaviors>
 												<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
 													<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
@@ -150,7 +151,42 @@
 										</TextBlock>
 									</StackPanel>
 
-									<Border Grid.Row="1" Grid.Column="1">
+									<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="24" Margin="16,0,16,16" HorizontalAlignment="Left">
+										<!-- Play button -->
+										<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" Command="{Binding Path=$parent[ItemsControl].((vm:MainViewModel)DataContext).AlbumsSelectedAlbumPlayCommand}" CommandParameter="{Binding Songs}">
+											<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+													Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z">
+												</PathIcon>
+											</Viewbox>
+											<SplitButton.Flyout>
+												<MenuFlyout Placement="Bottom">
+													<MenuItem Header="Append to the queue" Command="{Binding Path=$parent[UserControl].((vm:MainViewModel)DataContext).AlbumsSelectedAlbumAddToQueueCommand}" CommandParameter="{Binding Songs}"/>
+												</MenuFlyout>
+											</SplitButton.Flyout>
+										</SplitButton>
+										<!-- More options button -->
+										<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsVisible="False">
+											<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+													Data="M10 6C9.30964 6 8.75 5.44036 8.75 4.75C8.75 4.05964 9.30964 3.5 10 3.5C10.6904 3.5 11.25 4.05964 11.25 4.75C11.25 5.44036 10.6904 6 10 6ZM10 11.25C9.30964 11.25 8.75 10.6904 8.75 10C8.75 9.30964 9.30964 8.75 10 8.75C10.6904 8.75 11.25 9.30964 11.25 10C11.25 10.6904 10.6904 11.25 10 11.25ZM8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14C9.30964 14 8.75 14.5596 8.75 15.25Z">
+												</PathIcon>
+											</Viewbox>
+											<!--
+										<Button.Flyout>
+											<MenuFlyout>
+												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Rename}" Command="{Binding PlaylistRenamePlaylistCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+												<Separator/>
+												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Clear}" Command="{Binding PlaylistClearPlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+												<Separator/>
+												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Remove}" Command="{Binding PlaylistRemovePlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+											</MenuFlyout>
+										</Button.Flyout>
+										-->
+										</Button>
+									</StackPanel>
+									
+									<Border Grid.Row="2">
 
 
 										<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->
@@ -164,7 +200,18 @@
 											</ListBox.ItemsPanel>-->
 											<ListBox.ItemTemplate>
 												<DataTemplate x:DataType="mod:SongInfo">
-													<TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9"></TextBlock>
+													<Grid>
+														<Grid.ColumnDefinitions>
+															<ColumnDefinition Width="*"></ColumnDefinition>
+															<ColumnDefinition Width="70"></ColumnDefinition>
+															<ColumnDefinition Width="42"></ColumnDefinition>
+															<ColumnDefinition Width="62"></ColumnDefinition>
+														</Grid.ColumnDefinitions>
+														<TextBlock Grid.Column="0" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+														<TextBlock Grid.Column="1" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+														<TextBlock Grid.Column="2" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+														<TextBlock Grid.Column="3" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+													</Grid>
 												</DataTemplate>
 											</ListBox.ItemTemplate>
 											<ListBox.Styles>
