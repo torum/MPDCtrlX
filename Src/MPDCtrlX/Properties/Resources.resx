@@ -352,7 +352,7 @@ SOFTWARE.</value>
     <value>Load (Enter)</value>
   </data>
   <data name="PlaylistItemMenu_Remove" xml:space="preserve">
-    <value>Remove playlist</value>
+    <value>Remove</value>
   </data>
   <data name="PlaylistItemContextMenu_Rename" xml:space="preserve">
     <value>Rename</value>
@@ -619,12 +619,12 @@ SOFTWARE.</value>
     <value>Select playlist</value>
   </data>
   <data name="PlaylistItemMenu_Clear" xml:space="preserve">
-    <value>Clear playlist</value>
+    <value>Clear</value>
   </data>
   <data name="PlaylistItemContextMenu_Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
   <data name="PlaylistItemMenu_Rename" xml:space="preserve">
-    <value>Rename playlist</value>
+    <value>Rename</value>
   </data>
 </root>

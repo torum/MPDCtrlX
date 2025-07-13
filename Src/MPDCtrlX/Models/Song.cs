@@ -246,4 +246,20 @@ public partial class SongInfoEx : SongInfo
             }
         }
     }
+
+    private bool _isAlbumCoverNeedsUpdate = true;
+    public bool IsAlbumCoverNeedsUpdate
+    {
+        get
+        {
+            return _isAlbumCoverNeedsUpdate;
+        }
+        set
+        {
+            if (SetProperty(ref _isAlbumCoverNeedsUpdate, value))
+            {
+                //
+            }
+        }
+    }
 }

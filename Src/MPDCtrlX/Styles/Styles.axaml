@@ -4,7 +4,7 @@
     <Styles.Resources>
         <ResourceDictionary>
 
-			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">2,0,0,0</CornerRadius>
+			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">4,0,0,0</CornerRadius>
 			<Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
 			<Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
 			<Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,1,0,0</Thickness>

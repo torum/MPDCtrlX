@@ -25,6 +25,7 @@ namespace MPDCtrlX.Services;
 #pragma warning disable CA1854
 #pragma warning disable IDE0305
 #pragma warning disable CA1862
+#pragma warning disable IDE0290
 #pragma warning restore IDE0079 //
 public partial class MpcService : IMpcService
 {
@@ -157,11 +158,7 @@ public partial class MpcService : IMpcService
 
     private readonly IBinaryDownloader _binaryDownloader;
 
-#pragma warning disable IDE0079 
-#pragma warning disable IDE0290
     public MpcService(IBinaryDownloader binaryDownloader)
-#pragma warning restore IDE0290
-#pragma warning restore IDE0079
     {
         _binaryDownloader = binaryDownloader;
     }
@@ -1779,7 +1776,7 @@ public partial class MpcService : IMpcService
         });
         */
 
-        if (string.IsNullOrEmpty(queryTag) || string.IsNullOrEmpty(queryValue) || string.IsNullOrEmpty(queryShiki))
+        if (string.IsNullOrEmpty(queryTag) || string.IsNullOrEmpty(queryShiki)) // || string.IsNullOrEmpty(queryValue) 
         {
             result.IsSuccess = false;
             return result;
@@ -2433,6 +2430,34 @@ public partial class MpcService : IMpcService
         {
             cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         }
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd, true);
+
+        if (result.IsSuccess)
+        {
+            await ParseCurrentSong(result.ResultText);
+        }
+
+        return result;
+    }
+
+    public async Task<CommandResult> MpdSinglePlay(string uri)
+    {
+        if (string.IsNullOrEmpty(uri))
+        {
+            CommandResult f = new()
+            {
+                IsSuccess = false
+            };
+            return f;
+        }
+
+        string cmd = "command_list_begin" + "\n";
+        cmd = cmd + "clear" + "\n";
+        cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         cmd = cmd + "play" + "\n";
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using FluentAvalonia.Core;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
 using System;
@@ -56,4 +57,21 @@ public partial class AlbumPage : UserControl
         */
     }
 
+    private void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        if (AlbumSongsListBox is null)
+        {
+            return;
+        }
+
+        if (AlbumSongsListBox.ItemsSource is null)
+        {
+            return;
+        }
+
+        if (AlbumSongsListBox.ItemsSource.Count() > 0)
+        {
+            AlbumSongsListBox.ScrollIntoView(0);
+        }
+    }
 }

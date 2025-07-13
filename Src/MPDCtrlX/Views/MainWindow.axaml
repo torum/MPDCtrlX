@@ -279,7 +279,7 @@
 								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
 								<ui:NavigationViewItem.Content>
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-											<Viewbox Width="14" Height="14" Opacity="0.9" HorizontalAlignment="Left" Margin="0,0,0,0">
+											<Viewbox Width="15" Height="15" Opacity="1" HorizontalAlignment="Left" Margin="0,0,0,0">
 												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Padding="0"
 													Data="{Binding PathIcon}">
 												</PathIcon>

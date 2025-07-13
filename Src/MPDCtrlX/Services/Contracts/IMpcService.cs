@@ -42,6 +42,7 @@ public interface IMpcService
     Task<CommandResult> MpdAdd(List<string> uris);
     Task<CommandResult> MpdAdd(string uri);
     Task<CommandResult> MpdMultiplePlay(List<string> uris);
+    Task<CommandResult> MpdSinglePlay(string uri);
     Task<CommandResult> MpdChangePlaylist(string playlistName);
     Task<CommandResult> MpdClear();
     Task<ConnectionResult> MpdCommandConnect(string host, int port);

@@ -8,15 +8,28 @@
              x:DataType="vm:DialogViewModel"
              x:Class="MPDCtrlX.Views.Dialogs.SaveToDialog">
 	<Grid>
-		<StackPanel Margin="10">
+		<StackPanel Margin="10" Width="250">
+			
+			<ComboBox x:Name="PlaylistComboBox" SelectedIndex="-1" Width="250">
+				<ComboBox.ItemTemplate>
+					<DataTemplate x:DataType="mod:Playlist">
+						<TextBlock Text="{Binding Name}"></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			
+			<CheckBox x:Name="CreateNewCheckBox" Content="Create new playlist" Click="CheckBox_Click" ClickMode="Release" Margin="0,12,0,0" HorizontalAlignment="Left"></CheckBox>
+			
+			<TextBox Name="TextBoxPlaylistName" Text="" Margin="0,12,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Watermark="Enter a new playlist name" IsVisible="False"/>
+			<!--
 			<ListBox x:Name="PlaylistListBox" SelectionMode="Single" MaxHeight="200">
 				<ListBox.ItemTemplate>
 					<DataTemplate x:DataType="mod:Playlist">
 						<TextBlock Text="{Binding Name}"></TextBlock>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
-				
 			</ListBox>
+			-->
 		</StackPanel>
 
 	</Grid>

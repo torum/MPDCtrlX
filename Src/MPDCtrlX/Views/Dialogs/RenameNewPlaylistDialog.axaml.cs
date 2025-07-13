@@ -6,9 +6,9 @@ using Avalonia.Threading;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class SaveToDialog : UserControl
+public partial class RenameNewPlaylistDialog : UserControl
 {
-    public SaveToDialog()
+    public RenameNewPlaylistDialog()
     {
         InitializeComponent();
     }
@@ -22,21 +22,6 @@ public partial class SaveToDialog : UserControl
             {
                 inputElement.Focus(NavigationMethod.Unspecified, KeyModifiers.None);
             });
-        }
-    }
-
-
-    private void CheckBox_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (CreateNewCheckBox.IsChecked is true)
-        {
-            TextBoxPlaylistName.IsVisible = true;
-            PlaylistComboBox.IsEnabled = false;
-        }
-        else
-        {
-            TextBoxPlaylistName.IsVisible = false;
-            PlaylistComboBox.IsEnabled = true;
         }
     }
 }

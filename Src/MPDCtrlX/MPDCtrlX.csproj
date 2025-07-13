@@ -75,8 +75,8 @@
 		<Compile Update="Views\Dialogs\SaveToDialog.axaml.cs">
 			<DependentUpon>SaveToDialog.axaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\Dialogs\SaveAsDialog.axaml.cs">
-			<DependentUpon>SaveAsDialog.axaml</DependentUpon>
+		<Compile Update="Views\Dialogs\RenameNewPlaylistDialog.axaml.cs">
+			<DependentUpon>RenameNewPlaylistDialog.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\PlaylistItemPage.axaml.cs">
 			<DependentUpon>PlaylistItemPage.axaml</DependentUpon>

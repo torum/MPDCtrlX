@@ -69,7 +69,7 @@ public partial class PlaylistItemPage : UserControl
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.SaveAsDialog()
+            Content = new Views.Dialogs.RenameNewPlaylistDialog()
             {
                 //DataContext = new DialogViewModel()
             }
@@ -79,7 +79,7 @@ public partial class PlaylistItemPage : UserControl
 
         if (result == ContentDialogResult.Primary)
         {
-            if (dialog.Content is Views.Dialogs.SaveAsDialog dlg)
+            if (dialog.Content is Views.Dialogs.RenameNewPlaylistDialog dlg)
             {
                 var plname = dlg.TextBoxPlaylistName.Text;
 

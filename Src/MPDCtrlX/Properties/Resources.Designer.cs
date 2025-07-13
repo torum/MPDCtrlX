@@ -790,7 +790,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Clear playlist に類似しているローカライズされた文字列を検索します。
+        ///   Clear に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemMenu_Clear {
             get {
@@ -799,7 +799,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Remove playlist に類似しているローカライズされた文字列を検索します。
+        ///   Remove に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemMenu_Remove {
             get {
@@ -808,7 +808,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Rename playlist に類似しているローカライズされた文字列を検索します。
+        ///   Rename に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemMenu_Rename {
             get {
