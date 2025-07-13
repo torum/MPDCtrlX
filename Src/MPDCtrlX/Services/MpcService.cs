@@ -156,6 +156,8 @@ public partial class MpcService : IMpcService
 
     #endregion
 
+    static System.Threading.SemaphoreSlim _semaphore = new System.Threading.SemaphoreSlim(1, 1);
+
     private readonly IBinaryDownloader _binaryDownloader;
 
     public MpcService(IBinaryDownloader binaryDownloader)
@@ -1131,11 +1133,30 @@ public partial class MpcService : IMpcService
 
         string cmd = "password " + password + "\n";
 
-        return await MpdCommandSendCommand(cmd);
+        return await MpdCommandSendCommandProtected(cmd);
 
     }
 
     private async Task<CommandResult> MpdCommandSendCommand(string cmd, bool isAutoIdling = false, int reTryCount = 0)
+    {
+        await _semaphore.WaitAsync();
+
+        CommandResult ret = new();
+
+        try
+        {
+            ret = await MpdCommandSendCommandProtected(cmd, false);
+        }
+        finally
+        {
+            _semaphore.Release();
+
+        }
+
+        return ret;
+    }
+
+    private async Task<CommandResult> MpdCommandSendCommandProtected(string cmd, bool isAutoIdling = false, int reTryCount = 0)
     {
         // TEST: 
         isAutoIdling = false;
@@ -1314,11 +1335,11 @@ public partial class MpcService : IMpcService
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount++);
                         //if (d.IsSuccess)
                         //{
-                            DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
-                            Debug.WriteLine(string.Format("Reconnecting Success.  @IOExceptionOfWriteAsync"));
+                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
+                        Debug.WriteLine(string.Format("Reconnecting Success.  @IOExceptionOfWriteAsync"));
 
 
-                        ret = await MpdCommandSendCommand(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
                         //}
                     }
 
@@ -1466,7 +1487,7 @@ public partial class MpcService : IMpcService
                 ret.ErrorMessage = "ReadLineAsync@MpdSendCommand received null data";
 
                 // タイムアウトしていたらここで「も」エラーになる模様。
-                
+
                 if ((ConnectionState == ConnectionStatus.Disconnecting) || (ConnectionState == ConnectionStatus.DisconnectedByUser))
                 {
                     IsBusy?.Invoke(this, false);
@@ -1497,10 +1518,10 @@ public partial class MpcService : IMpcService
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount);
                         //if (d.IsSuccess)
                         //{
-                            DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @isNullReturn" + Environment.NewLine + Environment.NewLine));
-                            Debug.WriteLine(string.Format("Reconnecting Success. @isNullReturn, RetryCount="+ reTryCount.ToString() + Environment.NewLine));
+                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @isNullReturn" + Environment.NewLine + Environment.NewLine));
+                        Debug.WriteLine(string.Format("Reconnecting Success. @isNullReturn, RetryCount=" + reTryCount.ToString() + Environment.NewLine));
 
-                            ret = await MpdCommandSendCommand(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
                         //}
                     }
                 }
@@ -1513,7 +1534,7 @@ public partial class MpcService : IMpcService
 
                     ConnectionError?.Invoke(this, "The connection (command) has been terminated (null return).");
                 }
-                
+
                 IsBusy?.Invoke(this, false);
 
                 return ret;
@@ -1621,12 +1642,12 @@ public partial class MpcService : IMpcService
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount);
                         //if (d.IsSuccess)
                         //{
-                            DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfReadLineAsync" + Environment.NewLine + Environment.NewLine));
-                            Debug.WriteLine(string.Format("Reconnecting Success. @IOExceptionOfReadLineAsync"));
+                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfReadLineAsync" + Environment.NewLine + Environment.NewLine));
+                        Debug.WriteLine(string.Format("Reconnecting Success. @IOExceptionOfReadLineAsync"));
 
                         ConnectionState = ConnectionStatus.Connected;
 
-                        ret = await MpdCommandSendCommand(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
                         //}
                     }
 
