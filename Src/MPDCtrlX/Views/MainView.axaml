@@ -57,7 +57,7 @@
 
 
 					<!-- ConnectionStatusMessage  -->
-					<TextBlock Text="{Binding ConnectionStatusMessage}" Margin="6 0 6 0" TextWrapping="NoWrap" IsVisible="False"></TextBlock>
+					<TextBlock Text="{Binding ConnectionStatusMessage}" Margin="6 0 6 0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" IsVisible="False"></TextBlock>
 
 					<!--
 					<Viewbox Width="16" Height="16" Margin="2 0 4 0" Opacity="0.7">
@@ -91,7 +91,7 @@
 					</Viewbox>
 					-->
 					<!-- Status Error Message -->
-					<TextBlock Text="{Binding MpdStatusMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" Opacity="0.5"></TextBlock>
+					<TextBlock Text="{Binding MpdStatusMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Opacity="0.5"></TextBlock>
 
 				</StackPanel>
 
@@ -99,7 +99,7 @@
 
 				<StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center" Margin="6 0 6 2">
 
-					<TextBlock Text="{Binding StatusBarMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" Opacity="0.5"></TextBlock>
+					<TextBlock Text="{Binding StatusBarMessage}" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="6 0 6 0" Padding="0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Opacity="0.5"></TextBlock>
 
 				</StackPanel>
 

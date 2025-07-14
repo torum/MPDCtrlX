@@ -502,7 +502,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Copyright (c) 2020 torum
+        ///   Copyright (c) 2025 torum
         ///
         ///Permission is hereby granted, free of charge, to any person obtaining a copy
         ///of this software and associated documentation files (the &quot;Software&quot;), to deal
@@ -1389,6 +1389,15 @@ namespace MPDCtrlX.Properties {
         public static string Settings_Opts_Themes_Light {
             get {
                 return ResourceManager.GetString("Settings_Opts_Themes_Light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   System に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_Themes_System {
+            get {
+                return ResourceManager.GetString("Settings_Opts_Themes_System", resourceCulture);
             }
         }
         

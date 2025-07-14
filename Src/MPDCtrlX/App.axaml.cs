@@ -20,7 +20,6 @@ namespace MPDCtrlX;
 
 public partial class App : Application
 {
-
     public static readonly string AppName = "MPDCtrlX";
     private static readonly string _appDeveloper = "torum";
 
@@ -32,7 +31,6 @@ public partial class App : Application
     // Temp album cover cache folder.
     private static readonly string _envCacheFolder = System.IO.Path.GetTempPath();
     public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envCacheFolder, AppName + "_AlbumCoverCache");
-
 
     public IHost AppHost { get; private set; }
 

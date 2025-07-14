@@ -24,8 +24,8 @@ namespace MPDCtrlX.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
-    private readonly MainView? _shellPage;// = (App.Current as App)?.AppHost.Services.GetRequiredService<MainView>();
-    private readonly SettingsPage? _settingsPage;// = (App.Current as App)?.AppHost.Services.GetRequiredService<SettingsPage>();
+    private readonly MainView? _shellPage;
+    private readonly SettingsPage? _settingsPage;
 
     private NavigationViewItem? _navigationViewSelectedItem;
 

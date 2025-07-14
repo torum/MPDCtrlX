@@ -53,6 +53,22 @@ public class MainDummyViewModel
 
 public partial class MainViewModel : ViewModelBase //ObservableObject
 {
+    private string _appVersion = string.Empty;
+    public string AppVersion
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(_appVersion))
+            {
+                var assembly = Assembly.GetExecutingAssembly().GetName();
+                var version = assembly.Version;
+                _appVersion = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
+            }
+
+            return _appVersion;
+        }
+    }
+
     #region == Layout ==
 
     #region == Window and loading flag ==
@@ -559,7 +575,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Themes ==
 
-    private ObservableCollection<Theme> _themes;
+    private ObservableCollection<Theme> _themes =
+        [
+            new Theme() { Id = 0, Name = "System", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_System, IconData="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z"},
+            new Theme() { Id = 1, Name = "Dark", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Dark, IconData="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z"},
+            new Theme() { Id = 2, Name = "Light", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Light, IconData="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"}
+        ];
+
     public ObservableCollection<Theme> Themes
     {
         get { return _themes; }
@@ -580,11 +602,26 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _currentTheme = value;
             NotifyPropertyChanged(nameof(CurrentTheme));
 
-            // TODO:
             /*
             if (_currentTheme.Name is not null)
                 App.ChangeTheme(_currentTheme.Name);
             */
+
+            FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
+            if (_currentTheme.Id == 1)
+            {
+                _faTheme!.PreferSystemTheme = false;
+                (Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Dark;
+            }
+            else if (_currentTheme.Id == 2)
+            {
+                _faTheme!.PreferSystemTheme = false;
+                (Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
+            }
+            else
+            {
+                _faTheme!.PreferSystemTheme = true;
+            }
         }
     }
 
@@ -1139,7 +1176,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private double _volume;
+    private double _volume = 20;
     public double Volume
     {
         get
@@ -1284,7 +1321,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private double _time;
+    private double _time = 0;
     public double Time
     {
         get
@@ -1298,7 +1335,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private double _elapsed;
+    private double _elapsed = 0;
     public double Elapsed
     {
         get
@@ -2865,6 +2902,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     private static string Encrypt(string s)
     {
+        //System.Security.Cryptography.ProtectedData
+
         /*
         if (String.IsNullOrEmpty(s)) { return ""; }
 
@@ -2883,7 +2922,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return "";
         }
         */
-        return "";
+        return s;
     }
 
     private static string Decrypt(string s)
@@ -2906,7 +2945,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return "";
         }
         */
-        return "";
+        return s;
     }
 
     private static string DummyPassword(string s)
@@ -3647,14 +3686,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         #endregion
 
         #region == Themes ==
-
+        /*
         // 
         _themes =
         [
-            new Theme() { Id = 1, Name = "DarkTheme", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Dark, IconData="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z"},
-            new Theme() { Id = 2, Name = "LightTheme", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Light, IconData="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"}
+            new Theme() { Id = 0, Name = "System", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_System, IconData="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z"},
+            new Theme() { Id = 1, Name = "Dark", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Dark, IconData="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z"},
+            new Theme() { Id = 2, Name = "Light", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Light, IconData="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"}
         ];
-
+        */
         // 
         _currentTheme = _themes[0];
 
@@ -3705,16 +3745,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         #endregion
 
-        // start the connection
-        IsShowDebugWindow = false;
-        IsAutoScrollToNowPlaying = true;
+
         Start("localhost", 6600);
         Volume = 20; // needs this until implement profiles.
-        IsWorking = false;
+        //IsWorking = false;
         
 
-        FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
-        _faTheme!.PreferSystemTheme = true;
+        //FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
+        //_faTheme!.PreferSystemTheme = true;
 
         //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
         //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
@@ -3826,7 +3864,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         var hoge = thm.Attribute("ThemeName");
                         if (hoge is not null)
                         {
-                            if ((hoge.Value == "DarkTheme") || hoge.Value == "LightTheme")
+                            if ((hoge.Value == "Dark") || hoge.Value == "Light" || hoge.Value == "System")
                             {
                                 Theme? theme = _themes.FirstOrDefault(x => x.Name == hoge.Value);
                                 if (theme is not null)
@@ -4401,8 +4439,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     // Startup
     public void OnWindowLoaded(object? sender, EventArgs e)
     {
-
-
         if (CurrentProfile is null)
         {
             ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting;
@@ -4423,12 +4459,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             Start(CurrentProfile.Host, CurrentProfile.Port);
         }
 
-
+        /*
         if (sender is Window win)
         {
             //win.Show();
             win.IsVisible = true;
         }
+        */
     }
 
     // On window's content rendered <<< TODO: Not called in AvaloniaUI
@@ -7462,7 +7499,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     // Add selected to playlist
     public IRelayCommand QueueListviewSaveSelectedToCommand { get; }
-    public bool QueueListviewSaveSelectedToCommand_CanExecute()
+    public static bool QueueListviewSaveSelectedToCommand_CanExecute()
     {
         /*
         if (IsBusy) return false;
@@ -7612,7 +7649,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #region == Search ==
 
     public IRelayCommand SearchExecCommand { get; }
-    public bool SearchExecCommand_CanExecute()
+    public static bool SearchExecCommand_CanExecute()
     {
         /*
         if (IsBusy) return false;
@@ -7719,7 +7756,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     
     //
     public IRelayCommand FilesListviewAddSelectedToQueueCommand { get; }
-    public bool FilesListviewAddSelectedToQueueCommand_CanExecute()
+    public static bool FilesListviewAddSelectedToQueueCommand_CanExecute()
     {
         //if (IsBusy) return false;
         //if (IsWorking) return false;
@@ -8371,7 +8408,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     */
 
     public IRelayCommand PlaylistLoadPlaylistCommand { get; }
-    public bool PlaylistLoadPlaylistCommand_CanExecute()
+    public static bool PlaylistLoadPlaylistCommand_CanExecute()
     {
         /*
         if (SelectedNodeMenu is null)
@@ -8396,7 +8433,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     public IRelayCommand PlaylistClearLoadPlaylistCommand { get; }
-    public bool PlaylistClearLoadPlaylistCommand_CanExecute()
+    public static bool PlaylistClearLoadPlaylistCommand_CanExecute()
     {
         /*
         if (SelectedNodeMenu is null)

@@ -628,4 +628,7 @@ SOFTWARE.</value>
   <data name="PlaylistItemMenu_Rename" xml:space="preserve">
     <value>プレイリストの名前を変更する</value>
   </data>
+  <data name="Settings_Opts_Themes_System" xml:space="preserve">
+    <value />
+  </data>
 </root>

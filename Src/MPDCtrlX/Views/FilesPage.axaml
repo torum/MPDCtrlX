@@ -98,7 +98,7 @@
 		<TreeDataGrid Grid.Row="0" Grid.Column="0" BorderThickness="0 0 0 0" Source="{Binding MusicDirectoriesSource, Mode=TwoWay}" />
 		-->
 		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-		<TreeView Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+		<TreeView Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.ItemTemplate>
 				<TreeDataTemplate ItemsSource="{Binding Path=Children}" x:DataType="mod:NodeTree">
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
