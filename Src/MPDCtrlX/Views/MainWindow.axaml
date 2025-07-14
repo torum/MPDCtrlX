@@ -114,7 +114,7 @@
 		</Grid>
 		
 		<!-- Header -->
-		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*" x:Name="Header">
+		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*,Auto" x:Name="Header">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="380" />
@@ -160,21 +160,25 @@
 						</Grid>
 					</Border>
 
-					<Button x:Name="BackButton" Grid.Column="0" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayPrevCommand}" BorderThickness="0" Focusable="False">
-						<Viewbox Width="18" Height="18">
-							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-								Data="M3 20.25a.75.75 0 0 0 1.5 0V3.75a.75.75 0 1 0-1.5 0v16.5ZM18.23 20.475c1.158.83 2.77.002 2.77-1.422V4.83c0-1.384-1.53-2.22-2.695-1.473l-10.47 6.716a1.75 1.75 0 0 0-.074 2.895l10.47 7.507Zm1.27-1.422a.25.25 0 0 1-.396.203l-10.47-7.507a.25.25 0 0 1 .011-.413l10.47-6.717a.25.25 0 0 1 .385.21v14.224Z">
-							</PathIcon>
-						</Viewbox>
-					</Button>
+					<Border Grid.Column="0" CornerRadius="18" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Button x:Name="BackButton" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayPrevCommand}" BorderThickness="0" Focusable="False">
+							<Viewbox Width="18" Height="18">
+								<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+									Data="M3 20.25a.75.75 0 0 0 1.5 0V3.75a.75.75 0 1 0-1.5 0v16.5ZM18.23 20.475c1.158.83 2.77.002 2.77-1.422V4.83c0-1.384-1.53-2.22-2.695-1.473l-10.47 6.716a1.75 1.75 0 0 0-.074 2.895l10.47 7.507Zm1.27-1.422a.25.25 0 0 1-.396.203l-10.47-7.507a.25.25 0 0 1 .011-.413l10.47-6.717a.25.25 0 0 1 .385.21v14.224Z">
+								</PathIcon>
+							</Viewbox>
+						</Button>
+					</Border>
 
-					<Button x:Name="NextButton" ToolTip.Tip="{x:Static prop:Resources.Playback_NextButton}" Grid.Column="2" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayNextCommand}" BorderThickness="0" Focusable="False">
-						<Viewbox Width="18" Height="18">
-							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-								Data="M21 3.75a.75.75 0 0 0-1.5 0v16.5a.75.75 0 0 0 1.5 0V3.75ZM5.77 3.525C4.612 2.695 3 3.523 3 4.947V19.17c0 1.384 1.53 2.22 2.695 1.473l10.47-6.716a1.75 1.75 0 0 0 .074-2.895L5.77 3.525ZM4.5 4.947a.25.25 0 0 1 .396-.203l10.47 7.507a.25.25 0 0 1-.011.413l-10.47 6.717a.25.25 0 0 1-.385-.21V4.946Z">
-							</PathIcon>
-						</Viewbox>
-					</Button>
+					<Border Grid.Column="2" CornerRadius="18" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Button x:Name="NextButton" ToolTip.Tip="{x:Static prop:Resources.Playback_NextButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayNextCommand}" BorderThickness="0" Focusable="False">
+							<Viewbox Width="18" Height="18">
+								<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+									Data="M21 3.75a.75.75 0 0 0-1.5 0v16.5a.75.75 0 0 0 1.5 0V3.75ZM5.77 3.525C4.612 2.695 3 3.523 3 4.947V19.17c0 1.384 1.53 2.22 2.695 1.473l10.47-6.716a1.75 1.75 0 0 0 .074-2.895L5.77 3.525ZM4.5 4.947a.25.25 0 0 1 .396-.203l10.47 7.507a.25.25 0 0 1-.011.413l-10.47 6.717a.25.25 0 0 1-.385-.21V4.946Z">
+								</PathIcon>
+							</Viewbox>
+						</Button>
+					</Border>
 
 				</Grid>
 
@@ -221,6 +225,10 @@
 				</WrapPanel>
 				<Slider Grid.Column="1" Height="132" Margin="12,0,0,0" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Slider>
 			</Grid>
+
+			<!-- InfoBar -->
+			<ui:InfoBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Title="{Binding InfoBarAckTitle}" IsOpen="{Binding IsShowAckWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Warning" Message="{Binding InfoBarAckMessage}" />
+			<ui:InfoBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Title="{Binding InfoBarErrTitle}" IsOpen="{Binding IsShowErrWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Error" Message="{Binding InfoBarErrMessage}" />
 
 		</Grid>
 

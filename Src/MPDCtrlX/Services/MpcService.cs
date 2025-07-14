@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using static MPDCtrlX.Services.MpcService;
 using Path = System.IO.Path;
 
 namespace MPDCtrlX.Services;
@@ -136,8 +137,12 @@ public partial class MpcService : IMpcService
     public delegate void IsMpdIdleConnectedEvent(MpcService sender);
     public event IsMpdIdleConnectedEvent? MpdIdleConnected;
 
-    public delegate void MpdAckErrorEvent(MpcService sender, string data);
+    public delegate void MpdAckErrorEvent(MpcService sender, string data, string origin);
     public event MpdAckErrorEvent? MpdAckError;
+
+    //
+    public delegate void MpdFatalErrorEvent(MpcService sender, string data, string origin);
+    public event MpdFatalErrorEvent? MpdFatalError;
 
     public delegate void MpdPlayerStatusChangedEvent(MpcService sender);
     public event MpdPlayerStatusChangedEvent? MpdPlayerStatusChanged;
@@ -458,7 +463,9 @@ public partial class MpcService : IMpcService
             StringBuilder stringBuilder = new();
 
             bool isAck = false;
+            bool isErr = false;
             string ackText = "";
+            string errText = "";
 
             while (true)
             {
@@ -477,6 +484,16 @@ public partial class MpcService : IMpcService
                         ackText = line;
                         ret.ErrorMessage = line;
 
+                        break;
+                    }
+                    else if (line.StartsWith("error"))
+                    {
+                        Debug.WriteLine("error line @MpdIdleSendCommand: " + cmd.Trim() + " and " + line);
+
+                        isErr = true;
+                        errText = line.Replace("error:",string.Empty);
+                        errText = errText.Trim();
+                        ret.ErrorMessage = errText;
                         break;
                     }
                     else if (line.StartsWith("OK"))
@@ -527,7 +544,19 @@ public partial class MpcService : IMpcService
             nowait = Task.Run(() => DebugIdleOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
 
             if (isAck)
-                nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText + " (@MISC)"));
+            {
+                nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Idle"));
+            }
+
+            if (isErr)
+            {
+                nowait = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
+                ret.IsSuccess = false;
+
+                await MpdIdleSendCommand("clearerror");
+
+                return ret;
+            }
 
             ret.ResultText = stringBuilder.ToString();
 
@@ -798,7 +827,7 @@ public partial class MpcService : IMpcService
 
             if (isAck)
             {
-                MpdAckError?.Invoke(this, ackText + " (@idle)");
+                MpdAckError?.Invoke(this, ackText + " (@idle)", "Command");
             }
             else
             {
@@ -1546,7 +1575,7 @@ public partial class MpcService : IMpcService
                 Task nowait = Task.Run(() => DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
 
                 if (isAck)
-                    nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText + " (@MSC)"));
+                    nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Command"));
 
                 ret.ResultText = stringBuilder.ToString();
 

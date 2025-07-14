@@ -328,13 +328,13 @@
 							</Grid.ColumnDefinitions>
 							
 							<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
-								<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="Move up">
+								<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="Move up" Background="Transparent" BorderThickness="0">
 									<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<PathIcon Data="M7.5 13.5C7.5 13.7761 7.72386 14 8 14C8.27614 14 8.5 13.7761 8.5 13.5V3.80298L12.1283 7.83448C12.3131 8.03974 12.6292 8.05638 12.8345 7.87165C13.0397 7.68692 13.0564 7.37077 12.8716 7.16552L8.37165 2.16552C8.27683 2.06016 8.14174 2 8 2C7.85826 2 7.72317 2.06016 7.62835 2.16552L3.12836 7.16552C2.94363 7.37077 2.96027 7.68692 3.16552 7.87165C3.37078 8.05638 3.68692 8.03974 3.87165 7.83448L7.5 3.80298V13.5Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 										</PathIcon>
 									</Viewbox>
 								</Button>
-								<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="Move down">
+								<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveDownCommand}" CommandParameter="{Binding}" ToolTip.Tip="Move down" Background="Transparent" BorderThickness="0">
 									<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<PathIcon Data="M8.5 2.5C8.5 2.22386 8.27615 2 8 2C7.72386 2 7.5 2.22386 7.5 2.5V12.197L3.87165 8.16552C3.68692 7.96026 3.37078 7.94362 3.16552 8.12835C2.96027 8.31308 2.94363 8.62923 3.12836 8.83448L7.62836 13.8345C7.72318 13.9398 7.85826 14 8 14C8.14175 14 8.27683 13.9398 8.37165 13.8345L12.8717 8.83448C13.0564 8.62923 13.0397 8.31308 12.8345 8.12835C12.6292 7.94362 12.3131 7.96026 12.1284 8.16552L8.5 12.197V2.5Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 										</PathIcon>

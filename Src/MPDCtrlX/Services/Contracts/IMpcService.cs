@@ -33,6 +33,7 @@ public interface IMpcService
     event MpcService.IsBusyEvent IsBusy;
     event MpcService.MpcProgressEvent MpcProgress;
     event MpcService.MpdAckErrorEvent MpdAckError;
+    event MpcService.MpdFatalErrorEvent MpdFatalError;
     event MpcService.MpdAlbumArtChangedEvent MpdAlbumArtChanged;
     event MpcService.MpdCurrentQueueChangedEvent MpdCurrentQueueChanged;
     event MpcService.IsMpdIdleConnectedEvent MpdIdleConnected;

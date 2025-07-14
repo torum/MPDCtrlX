@@ -835,8 +835,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private bool _isShowAckWindow
-;
+    private bool _isShowAckWindow;
     public bool IsShowAckWindow
 
     {
@@ -848,7 +847,35 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isShowAckWindow = value;
 
+            if (!_isShowAckWindow)
+            {
+                InfoBarAckTitle = string.Empty;
+                InfoBarAckMessage = string.Empty;
+            }
+
             NotifyPropertyChanged(nameof(IsShowAckWindow));
+        }
+    }
+
+    private bool _isShowErrWindow;
+    public bool IsShowErrWindow
+
+    {
+        get { return _isShowErrWindow; }
+        set
+        {
+            if (_isShowErrWindow == value)
+                return;
+
+            _isShowErrWindow = value;
+
+            if (!_isShowErrWindow)
+            {
+                InfoBarErrTitle = string.Empty;
+                InfoBarErrMessage = string.Empty;
+            }
+
+            NotifyPropertyChanged(nameof(IsShowErrWindow));
         }
     }
 
@@ -3047,6 +3074,63 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private string _infoBarAckTitle = "";
+    public string InfoBarAckTitle
+    {
+        get
+        {
+            return _infoBarAckTitle;
+        }
+        set
+        {
+            _infoBarAckTitle = value;
+            NotifyPropertyChanged(nameof(InfoBarAckTitle));
+        }
+    }
+
+    private string _infoBarAckMessage = "";
+    public string InfoBarAckMessage
+    {
+        get
+        {
+            return _infoBarAckMessage;
+        }
+        set
+        {
+            _infoBarAckMessage = value;
+            NotifyPropertyChanged(nameof(InfoBarAckMessage));
+        }
+    }
+
+    private string _infoBarErrTitle = "";
+    public string InfoBarErrTitle
+    {
+        get
+        {
+            return _infoBarErrTitle;
+        }
+        set
+        {
+            _infoBarErrTitle = value;
+            NotifyPropertyChanged(nameof(InfoBarErrTitle));
+        }
+    }
+
+    private string _infoBarErrMessage = "";
+    public string InfoBarErrMessage
+    {
+        get
+        {
+            return _infoBarErrMessage;
+        }
+        set
+        {
+            _infoBarErrMessage = value;
+            NotifyPropertyChanged(nameof(InfoBarErrMessage));
+        }
+    }
+
+
     private static readonly string _pathDefaultNoneButton = "";
     private static readonly string _pathDisconnectedButton = "M4,1C2.89,1 2,1.89 2,3V7C2,8.11 2.89,9 4,9H1V11H13V9H10C11.11,9 12,8.11 12,7V3C12,1.89 11.11,1 10,1H4M4,3H10V7H4V3M14,13C12.89,13 12,13.89 12,15V19C12,20.11 12.89,21 14,21H11V23H23V21H20C21.11,21 22,20.11 22,19V15C22,13.89 21.11,13 20,13H14M3.88,13.46L2.46,14.88L4.59,17L2.46,19.12L3.88,20.54L6,18.41L8.12,20.54L9.54,19.12L7.41,17L9.54,14.88L8.12,13.46L6,15.59L3.88,13.46M14,15H20V19H14V15Z";
 
@@ -3362,6 +3446,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     // AckWindow
     public event EventHandler<string>? AckWindowOutput;
+    // ErrWindow
+    //public event EventHandler<string>? ErrWindowOutput;
 
     public delegate void AckWindowClearEventHandler();
     public event AckWindowClearEventHandler? AckWindowClear;
@@ -3591,6 +3677,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         _mpc.MpdPlaylistsChanged += new MpcService.MpdPlaylistsChangedEvent(OnMpdPlaylistsChanged);
 
         _mpc.MpdAckError += new MpcService.MpdAckErrorEvent(OnMpdAckError);
+        _mpc.MpdFatalError += new MpcService.MpdFatalErrorEvent(OnMpdFatalError);
 
         _mpc.MpdAlbumArtChanged += new MpcService.MpdAlbumArtChangedEvent(OnAlbumArtChanged);
 
@@ -5012,7 +5099,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else
             {
-                // needed this
+                // just in case
                 if (_mpc.MpdCurrentSong is not null)
                 {
                     _mpc.MpdCurrentSong.IsPlaying = false;
@@ -5073,7 +5160,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         Debug.WriteLine("item is null. @UpdateStatus()");
                         // TODO:
-                        //CurrentSong = null;
+                        CurrentSong = null;
                         AlbumCover = null;
                         //IsAlbumArtVisible = false;
                         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
@@ -6737,10 +6824,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private void OnMpdAckError(MpcService sender, string ackMsg)
+    private void OnMpdAckError(MpcService sender, string ackMsg, string origin)
     {
         if (string.IsNullOrEmpty(ackMsg))
             return;
+
+        Debug.WriteLine($"MpdAckError: {ackMsg}");
 
         string s = ackMsg;
         string patternStr = @"[\[].+?[\]]";//@"[{\[].+?[}\]]";
@@ -6748,13 +6837,64 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         s = s.Replace("ACK ", string.Empty);
         s = s.Replace("{} ", string.Empty);
 
-        
         Dispatcher.UIThread.Post(() =>
         {
             AckWindowOutput?.Invoke(this, MpdVersion + ": " + MPDCtrlX.Properties.Resources.MPD_CommandError + " - " + s + Environment.NewLine);
         });
 
+        if (origin.Equals("Command"))
+        {
+            InfoBarAckTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandError;
+        }
+        else if (origin.Equals("Idle"))
+        {
+            InfoBarAckTitle = MpdVersion;// + " " + MPDCtrlX.Properties.Resources.MPD_StatusError; // TODO:
+        }
+        else
+        {
+            InfoBarAckTitle = MpdVersion;
+        }
+
+        InfoBarAckMessage = s;
+
         IsShowAckWindow = true;
+    }
+
+    private void OnMpdFatalError(MpcService sender, string errMsg, string origin)
+    {
+        if (string.IsNullOrEmpty(errMsg))
+            return;
+
+        Debug.WriteLine($"MpdFatalError: {errMsg}");
+
+        string s = errMsg;
+        string patternStr = @"[\[].+?[\]]";//@"[{\[].+?[}\]]";
+        s = System.Text.RegularExpressions.Regex.Replace(s, patternStr, string.Empty);
+        s = s.Replace("ACK ", string.Empty);
+        s = s.Replace("{} ", string.Empty);
+        /*
+        Dispatcher.UIThread.Post(() =>
+        {
+            ErrWindowOutput?.Invoke(this, MpdVersion + ": " + MPDCtrlX.Properties.Resources.MPD_CommandError + " - " + s + Environment.NewLine);
+        });
+        */
+
+        if (origin.Equals("Command"))
+        {
+            InfoBarErrTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandError;
+        }
+        else if (origin.Equals("Idle"))
+        {
+            InfoBarErrTitle = MpdVersion;// + " " + MPDCtrlX.Properties.Resources.MPD_StatusError; // TODO:
+        }
+        else
+        {
+            InfoBarErrTitle = MpdVersion;
+        }
+
+        InfoBarErrMessage = s;
+
+        IsShowErrWindow = true;
     }
 
     private void OnMpcProgress(MpcService sender, string msg)
