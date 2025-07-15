@@ -388,8 +388,10 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 												</TransitioningContentControl.ContentTemplate>
 											</TransitioningContentControl>
 
-											<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+											<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+												<!--
 												<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center"></Viewbox>
+												-->
 											</Button>
 
 										</Grid>

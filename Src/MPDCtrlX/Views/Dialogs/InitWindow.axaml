@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+		xmlns:ui="using:FluentAvalonia.UI.Controls"
+		xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+		xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
+		x:DataType="vm:MainViewModel"
+        x:Class="MPDCtrlX.Views.Dialogs.InitWindow"
+        
+        TransparencyLevelHint="AcrylicBlur"
+        ExtendClientAreaToDecorationsHint="True"
+		
+		WindowStartupLocation="CenterOwner"
+		Width="500"
+		Height="570"
+        Title="">
+	<!-- Topmost="True" -->
+
+	<Grid>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+			
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<StackPanel Grid.Row="0" Spacing="12" HorizontalAlignment="Stretch" Margin="24">
+
+			<StackPanel>
+				<TextBlock Text="MPDCtrlX" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
+				<Separator/>
+			</StackPanel>
+
+			<StackPanel Spacing="6" Margin="0,0,0,12">
+				<StackPanel Orientation="Vertical" Spacing="12">
+					<TextBlock Text="Initial configuration" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
+					<TextBlock Text="MPDCtrlX requires MPD (Music Player Daemon) to be installed and running preferably as service (aka daemon)." Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
+				</StackPanel>
+			</StackPanel>
+			
+			
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
+				<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="IP address or PC name" Width="250"></TextBox>
+				<!--  (127.0.0.1 or localhost for Local PC) -->
+			</StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
+				<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="Default is 6600" Width="250"></TextBox>
+			</StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
+				<StackPanel Spacing="24" Orientation="Horizontal">
+					<TextBox Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
+					<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
+				</StackPanel>
+			</StackPanel>
+
+			<StackPanel>
+				<CheckBox Content="Remember this" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
+			</StackPanel>
+			<!--
+			<StackPanel Spacing="3" Margin="0,12,0,0">
+				
+				<Button Content="Apply changes and connect" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
+							<Button Content="{x:Static prop:Resources.Connect}" IsEnabled="{Binding Path=IsNotConnecting}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding ElementName=PasswordBox}" IsDefault="False"></Button>
+							
+			</StackPanel>
+			-->
+			
+		</StackPanel>
+
+		<Grid Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0">
+				<Separator/>
+				<TextBlock Text="{Binding ConnectionStatusMessage}" Margin="6 2 6 2" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
+			</StackPanel>
+			
+			<StackPanel Grid.Row="1">
+				<Separator/>
+				<StackPanel Spacing="24" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,24,24,24">
+					<Button Content="Cancel" Click="Button_Click" HotKey="Escape"></Button>
+					<Button Content="Let's go" IsDefault="True" Command="{Binding TryConnectCommand}"></Button>
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+	</Grid>
+		
+</Window>

@@ -52,6 +52,7 @@
 		<PackageReference Include="FluentAvaloniaUI" Version="2.3.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.7" />
 		<PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.2" />
 	</ItemGroup>
 

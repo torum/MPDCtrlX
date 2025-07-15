@@ -12,16 +12,7 @@
         </Border>
     </Design.PreviewWith>
 
-
-	<!-- This fixes weird space in NavigationViewItem. Also, change padding value(to -2,0,2,0) in NavigationViewItemStyles.axaml -->
-	<Thickness x:Key="NavigationViewItemContentPresenterMargin">0</Thickness>
-	<Thickness x:Key="NavigationViewPaneContentGridMargin">0,4,0,3</Thickness>
-	<!--
-	<Thickness x:Key="NavigationViewItemContentPresenterMargin">4,-1,8,0</Thickness>
-	<Thickness x:Key="NavigationViewPaneContentGridMargin">-1,3</Thickness>
-	-->
-
-	<!-- Added padding -2,0,2,0. fixing weird space -->
+	<!-- Added <Setter Property="Padding" Value="4,0,0,0"/>. fixing non-aligning item -->
 	
     <ControlTheme x:Key="{x:Type ui:NavigationViewItem}" TargetType="ui:NavigationViewItem">
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
@@ -35,7 +26,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
-		<Setter Property="Padding" Value="-2,0,2,0"/>
+		<Setter Property="Padding" Value="4,0,0,0"/>
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid Name="NVIRootGrid" RowDefinitions="*,Auto">

@@ -10,6 +10,7 @@ using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
+using MPDCtrlX.Views.Dialogs;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -54,6 +55,7 @@ public partial class App : Application
                     services.AddSingleton<AlbumPage>();
                     services.AddSingleton<ArtistPage>();
                     services.AddSingleton<SettingsPage>();
+                    services.AddTransient<InitWindow>();
                 })
                 .Build();
     }

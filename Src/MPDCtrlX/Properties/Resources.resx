@@ -433,7 +433,7 @@ SOFTWARE.</value>
     <value>App Privacy Policy</value>
   </data>
   <data name="PrivacyPolicyText" xml:space="preserve">
-    <value>MPDCtrl allows you to access your music player via specified IP address with optional user credentials. None of the data is transmitted anywhere besides your specified music player and your settings are stored on your device only. Optional user credentials are encrypted with a platform provided shceme.</value>
+    <value>MPDCtrl allows you to access your music player via specified IP address with optional user credentials. None of the data is transmitted anywhere besides your specified music player and your settings are stored on your device only.</value>
   </data>
   <data name="Profile" xml:space="preserve">
     <value>Profile</value>

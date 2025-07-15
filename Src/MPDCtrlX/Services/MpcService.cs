@@ -161,7 +161,7 @@ public partial class MpcService : IMpcService
 
     #endregion
 
-    static System.Threading.SemaphoreSlim _semaphore = new System.Threading.SemaphoreSlim(1, 1);
+    private static readonly System.Threading.SemaphoreSlim _semaphore = new(1, 1);
 
     private readonly IBinaryDownloader _binaryDownloader;
 
@@ -172,26 +172,21 @@ public partial class MpcService : IMpcService
 
     #region == Idle Connection ==
 
-    public async Task<bool> MpdIdleConnectionStart(string host, int port, string password)
+    public async Task<ConnectionResult> MpdIdleConnectionStart(string host, int port, string password)
     {
-        // TODO: not used for now.
-
         ConnectionResult r = await MpdIdleConnect(host, port);
-
-        bool ret = false;
 
         if (r.IsSuccess)
         {
-            CommandResult d = await MpdIdleSendPassword(password);
-
-            if (d.IsSuccess)
+            if (!string.IsNullOrEmpty(password))
             {
-                ret = true;
+                CommandResult d = await MpdIdleSendPassword(password);
 
+                r.IsSuccess = d.IsSuccess;
+                r.ErrorMessage = d.ErrorMessage;
             }
         }
-
-        return ret;
+        return r;
     }
 
     public async Task<ConnectionResult> MpdIdleConnect(string host, int port)
@@ -1872,7 +1867,7 @@ public partial class MpcService : IMpcService
             result.SearchResult = await ParseSearchResult(cm.ResultText);
         }
 
-        //MpcProgress?.Invoke(this, "");
+        MpcProgress?.Invoke(this, "");
 
         return result;
     }
@@ -4001,9 +3996,10 @@ public partial class MpcService : IMpcService
     {
         if (SongValues.ContainsKey("file"))
         {
-            SongInfo sng = new();
-
-            sng.File = SongValues["file"];
+            SongInfo sng = new()
+            {
+                File = SongValues["file"]
+            };
 
             if (string.IsNullOrEmpty(sng.File.Trim()))
             {

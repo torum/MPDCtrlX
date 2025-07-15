@@ -18,6 +18,7 @@ using MPDCtrlX.Models;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.Views;
+using MPDCtrlX.Views.Dialogs;
 using SkiaSharp;
 using System;
 using System.Collections;
@@ -32,8 +33,11 @@ using System.Net;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Intrinsics.X86;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
@@ -2696,16 +2700,22 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _currentProfile = value;
             NotifyPropertyChanged(nameof(CurrentProfile));
 
-            SelectedProfile = _currentProfile;
+            //SelectedProfile = _currentProfile;
 
             if (_currentProfile is not null)
             {
                 _volume = _currentProfile.Volume;
                 NotifyPropertyChanged(nameof(Volume));
+
+                Host = _currentProfile.Host;
+                Port = _currentProfile.Port.ToString();
+                _password = _currentProfile.Password;
+
             }
         }
     }
 
+    /*
     private Profile? _selectedProfile;
     public Profile? SelectedProfile
     {
@@ -2748,6 +2758,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
         }
     }
+    */
 
     public bool IsProfileSwitchOK
     {
@@ -2760,6 +2771,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    /*
     private Profile? _selectedQuickProfile;
     public Profile? SelectedQuickProfile
     {
@@ -2788,6 +2800,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             NotifyPropertyChanged(nameof(SelectedQuickProfile));
         }
     }
+    */
 
     private string _host = "";
     public string Host
@@ -2804,7 +2817,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 //SetError(nameof(Host), MPDCtrlX.Properties.Resources.Settings_ErrorHostMustBeSpecified);
 
             }
-            /*
             else if (value == "localhost")
             {
                 _host = "127.0.0.1";
@@ -2823,10 +2835,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 catch
                 {
                     //System.FormatException
-                    SetError(nameof(Host), MPDCtrlX.Properties.Resources.Settings_ErrorHostInvalidAddressFormat);
+                    //SetError(nameof(Host), MPDCtrlX.Properties.Resources.Settings_ErrorHostInvalidAddressFormat);
                 }
             }
-            */
 
             NotifyPropertyChanged(nameof(Host));
         }
@@ -2858,7 +2869,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (value == "")
             {
                 //SetError(nameof(Port), MPDCtrlX.Properties.Resources.Settings_ErrorPortMustBeSpecified);
-                _port = 0;
+                _port = 6600;
             }
             else
             {
@@ -2873,7 +2884,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 else
                 {
                     //SetError(nameof(Port), MPDCtrlX.Properties.Resources.Settings_ErrorInvalidPortNaN);
-                    _port = 0;
+                    _port = 6600;
                 }
             }
 
@@ -2894,63 +2905,105 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _password = value;
 
-            NotifyPropertyChanged(nameof(IsNotPasswordSet));
-            NotifyPropertyChanged(nameof(IsPasswordSet));
+            //NotifyPropertyChanged(nameof(IsNotPasswordSet));
+            //NotifyPropertyChanged(nameof(IsPasswordSet));
             NotifyPropertyChanged(nameof(Password));
         }
     }
 
     private static string Encrypt(string s)
     {
-        //System.Security.Cryptography.ProtectedData
-
-        /*
-        if (String.IsNullOrEmpty(s)) { return ""; }
+        if (string.IsNullOrEmpty(s)) { return ""; }
 
         byte[] entropy = [0x72, 0xa2, 0x12, 0x04];
 
-        try
+        // Uses System.Security.Cryptography.ProtectedData
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            byte[] userData = System.Text.Encoding.UTF8.GetBytes(s);
+            try
+            {
+                byte[] userData = System.Text.Encoding.UTF8.GetBytes(s);
+                byte[] encryptedData = System.Security.Cryptography.ProtectedData.Protect(userData, entropy, System.Security.Cryptography.DataProtectionScope.CurrentUser);
 
-            byte[] encryptedData = ProtectedData.Protect(userData, entropy, DataProtectionScope.CurrentUser);
-
-            return System.Convert.ToBase64String(encryptedData);
+                return System.Convert.ToBase64String(encryptedData);
+            }
+            catch
+            {
+                Debug.WriteLine($"Encrypt fail.");
+                return s;
+            }
         }
-        catch
+        //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        else
         {
-            return "";
+            string EncryptionKey = "withas";
+            byte[] sBytes = Encoding.Unicode.GetBytes(s);
+            using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new(EncryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using MemoryStream ms = new();
+                using (CryptoStream cs = new(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(sBytes, 0, sBytes.Length);
+                    cs.Close();
+                }
+                s = Convert.ToBase64String(ms.ToArray());
+            }
+            return s;
         }
-        */
-        return s;
     }
 
     private static string Decrypt(string s)
     {
-        /*
-        if (String.IsNullOrEmpty(s)) { return ""; }
+        if (string.IsNullOrEmpty(s)) { return ""; }
 
         byte[] entropy = [0x72, 0xa2, 0x12, 0x04];
 
-        try
+        // Uses System.Security.Cryptography.ProtectedData
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            byte[] encryptedData = System.Convert.FromBase64String(s);
+            try
+            {
+                byte[] encryptedData = System.Convert.FromBase64String(s);
+                byte[] userData = System.Security.Cryptography.ProtectedData.Unprotect(encryptedData, entropy, DataProtectionScope.CurrentUser);
 
-            byte[] userData = ProtectedData.Unprotect(encryptedData, entropy, DataProtectionScope.CurrentUser);
-
-            return System.Text.Encoding.UTF8.GetString(userData);
+                return System.Text.Encoding.UTF8.GetString(userData);
+            }
+            catch
+            {
+                Debug.WriteLine($"Decrypt fail.");
+                return "";
+            }
         }
-        catch
+        //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        else
         {
-            return "";
+            string EncryptionKey = "withas";
+            s = s.Replace(" ", "+");
+            byte[] sBytes = Convert.FromBase64String(s);
+            using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new(EncryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using MemoryStream ms = new();
+                using (CryptoStream cs = new(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(sBytes, 0, sBytes.Length);
+                    cs.Close();
+                }
+                s = Encoding.Unicode.GetString(ms.ToArray());
+            }
+            
+            return s;
         }
-        */
-        return s;
     }
 
     private static string DummyPassword(string s)
     {
-        if (String.IsNullOrEmpty(s)) { return ""; }
+        if (string.IsNullOrEmpty(s)) { return ""; }
         string e = "";
         for (int i = 1; i <= s.Length; i++)
         {
@@ -2958,7 +3011,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
         return e;
     }
-
+    /*
     private string _settingProfileEditMessage = "";
     public string SettingProfileEditMessage
     {
@@ -3049,6 +3102,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _changePasswordDialogMessage = value;
             NotifyPropertyChanged(nameof(ChangePasswordDialogMessage));
+        }
+    }
+    */
+
+    private bool _isRememberAsProfile = true;
+    public bool IsRememberAsProfile
+    {
+        get
+        {
+            return _isRememberAsProfile;
+        }
+        set
+        {
+            if (_isRememberAsProfile == value)
+                return;
+
+            _isRememberAsProfile = value;
+            NotifyPropertyChanged(nameof(IsRememberAsProfile));
         }
     }
 
@@ -3521,10 +3592,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService)
+    private readonly InitWindow _initWin;
+
+    public MainViewModel(IMpcService mpcService, InitWindow initWin)
     {
         // MPD Service dependency injection.
         _mpc = mpcService;
+        _initWin = initWin;
 
         #region == Init commands ==
 
@@ -3682,6 +3756,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         FilesListviewPlayThisCommand = new GenericRelayCommand<object>(param => FilesListviewPlayThisCommand_Execute(param), param => FilesListviewPlayThisCommand_CanExecute());
         FilesListviewAddThisCommand = new GenericRelayCommand<object>(param => FilesListviewAddThisCommand_Execute(param), param => FilesListviewAddThisCommand_CanExecute());
 
+        TryConnectCommand = new RelayCommand(TryConnectCommand_Execute, TryConnectCommand_CanExecute);
 
         #endregion
 
@@ -3746,8 +3821,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         #endregion
 
 
-        Start("localhost", 6600);
-        Volume = 20; // needs this until implement profiles.
+        //Start("localhost", 6600);
+        //Volume = 20; // needs this until implement profiles.
         //IsWorking = false;
         
 
@@ -4020,8 +4095,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                     {
                                         pro.IsDefault = true;
 
-                                        CurrentProfile = pro;
-                                        SelectedProfile = pro;
                                     }
                                 }
                             }
@@ -4041,7 +4114,21 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 }
                             }
 
-                            Profiles.Add(pro);
+                            if (!string.IsNullOrEmpty(pro.Host.Trim()))
+                            {
+                                if (pro.IsDefault)
+                                {
+                                    CurrentProfile = pro;
+
+                                    NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+
+                                    Profiles.Add(pro);
+                                }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Host info is empty. @LoadSettings");
+                            }
                         }
                     }
                     #endregion
@@ -4403,7 +4490,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     #endregion
 
 
-                    NotifyPropertyChanged(nameof(IsCurrentProfileSet));
                 }
                 else
                 {
@@ -4434,6 +4520,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         #endregion
+
+        if (Profiles.Count > 0)
+        {
+            if (CurrentProfile is null)
+            {
+                var prof = Profiles.FirstOrDefault(x => x.IsDefault);
+                if (prof != null)
+                {
+                    CurrentProfile = prof;
+                }
+                else
+                {
+                    CurrentProfile = Profiles[0];
+                }
+                NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+            }
+        }
     }
 
     // Startup
@@ -4441,31 +4544,28 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         if (CurrentProfile is null)
         {
-            ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting;
+            //ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting; // no need. 
             StatusButton = _pathNewConnectionButton;
 
             // Show connection setting
             IsConnectionSettingShow = true;
-        }
-        else
-        {
-            IsConnectionSettingShow = false;
 
-            // set this "quietly"
-            _volume = CurrentProfile.Volume;
-            NotifyPropertyChanged(nameof(Volume));
+            //var InitWin = new InitWindow();// use DI.
+            _initWin.DataContext = this;
+            _initWin.ShowDialog(owner: App.GetService<MainWindow>());
 
-            // start the connection
-            Start(CurrentProfile.Host, CurrentProfile.Port);
+            return;
         }
 
-        /*
-        if (sender is Window win)
-        {
-            //win.Show();
-            win.IsVisible = true;
-        }
-        */
+        IsConnectionSettingShow = false;
+
+        // set this "quietly"
+        _volume = CurrentProfile.Volume;
+        NotifyPropertyChanged(nameof(Volume));
+
+        // start the connection
+        Start(CurrentProfile.Host, CurrentProfile.Port, CurrentProfile.Password);
+
     }
 
     // On window's content rendered <<< TODO: Not called in AvaloniaUI
@@ -4910,7 +5010,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             xProfiles.AppendChild(xProfile);
         }
 
-        root.AppendChild(xProfiles);
+        if (IsRememberAsProfile)
+        {
+            root.AppendChild(xProfiles);
+        }
 
         #endregion
 
@@ -4976,7 +5079,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Methods ==
 
-    private async void Start(string host, int port)
+    private async void Start(string host, int port, string pass)
     {
         HostIpAddress = null;
         try
@@ -5003,24 +5106,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         // Start MPD connection.
-        _ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
-    }
-
-    private void OnMpdIdleConnected(MpcService sender)
-    {
-        Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
-
-        MpdVersion = _mpc.MpdVerText;
-
-        //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
-
-        MpdStatusButton = _pathMpdOkButton;
-
-        // Need this to show CurrentSong.
-        IsConnected = true;
-
-        // Run in a background thread.
-        Task.Run(() => LoadInitialData());
+        _ = Task.Run(() => _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), port, pass));
     }
 
     private async void LoadInitialData()
@@ -5153,7 +5239,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     var item = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
                     if (item is not null)
                     {
-                        Debug.WriteLine("Currentsong is set. @UpdateStatus()");
+                        //Debug.WriteLine("Currentsong is set. @UpdateStatus()");
                         CurrentSong = (item as SongInfoEx);
                         CurrentSong.IsPlaying = true;
 
@@ -5173,7 +5259,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         {
                             if (IsDownloadAlbumArt)
                             {
-                                Debug.WriteLine("getting album cover. @UpdateStatus()");
+                                //Debug.WriteLine("getting album cover. @UpdateStatus()");
                                 var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
 
                                 if (res.AlbumCover?.SongFilePath == CurrentSong.File)
@@ -5195,7 +5281,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     }
                     else
                     {
-                        Debug.WriteLine("item is null. @UpdateStatus()");
+                        //Debug.WriteLine("item is null. @UpdateStatus()");
                         // TODO:
                         CurrentSong = null;
                         AlbumCover = null;
@@ -5206,7 +5292,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else
             {
-                Debug.WriteLine("Queue.Count == 0. @UpdateStatus()");
+                //Debug.WriteLine("Queue.Count == 0. @UpdateStatus()");
                 // TODO:
                 //CurrentSong = null;
                 AlbumCover = null;
@@ -5347,7 +5433,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         {
                             if (IsDownloadAlbumArt)
                             {
-                                Debug.WriteLine("getting album cover. @UpdateCurrentSong()");
+                                //Debug.WriteLine("getting album cover. @UpdateCurrentSong()");
                                 /*
                                 //await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
                                 var res = await _mpc.MpdQueryAlbumArt(_mpc.MpdCurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
@@ -5368,7 +5454,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 }
                                 */
 
-                                Debug.WriteLine("getting album cover. @UpdateStatus()");
                                 var res = await _mpc.MpdQueryAlbumArt(_mpc.MpdCurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
 
                                 if (res.AlbumCover?.SongFilePath == _mpc.MpdCurrentSong.File)
@@ -5403,16 +5488,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else
             {
-                Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentSong()");
+                //Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentSong()");
             }
         });
     }
 
     private async void UpdateCurrentQueue()
     {
+        /*
         if (IsSwitchingProfile)
             return;
-
+        */
         IsQueueFindVisible = false;
 
         if (Queue.Count > 0)
@@ -5420,8 +5506,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
             await Task.Delay(20);
 
+            /*
             if (IsSwitchingProfile)
                 return;
+            */
 
             Dispatcher.UIThread.Post(() =>
             {
@@ -5643,13 +5731,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
         else
         {
-            Debug.WriteLine("Queue.Count == 0. @UpdateCurrentQueue()");
+            //Debug.WriteLine("Queue.Count == 0. @UpdateCurrentQueue()");
 
             UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
             await Task.Delay(20);
-
+            /*
             if (IsSwitchingProfile)
                 return;
+            */
 
             Dispatcher.UIThread.Post(() =>
             {
@@ -5738,14 +5827,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                             }
                             else
                             {
-                                Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentQueue()");
+                                //Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentQueue()");
                                 isNeedToFindCurrentSong = true;
                             }
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("CurrentSong is null. @UpdateCurrentQueue()");
+                        //Debug.WriteLine("CurrentSong is null. @UpdateCurrentQueue()");
                         isNeedToFindCurrentSong = true;
                     }
 
@@ -5755,7 +5844,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
                         if (curitem is not null)
                         {
-                            Debug.WriteLine($"Currentsong is set. {curitem.Title}. @UpdateCurrentQueue()");
+                            //Debug.WriteLine($"Currentsong is set. {curitem.Title}. @UpdateCurrentQueue()");
 
                             CurrentSong = curitem;
                             CurrentSong.IsPlaying = true;
@@ -5883,9 +5972,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     private async void UpdatePlaylists()
     {
+        /*
         if (IsSwitchingProfile)
             return;
-
+        */
         UpdateProgress?.Invoke(this, "[UI] Playlists loading...");
 
         await Task.Delay(10);
@@ -5986,9 +6076,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     private Task<bool> UpdateLibraryMusicAsync()
     {
         // Music files
-
+        /*
         if (IsSwitchingProfile)
             return Task.FromResult(false);
+        */
 
         UpdateProgress?.Invoke(this, "[UI] Library songs loading...");
 
@@ -6005,9 +6096,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         foreach (var songfile in _mpc.LocalFiles)
         {
+            /*
             if (IsSwitchingProfile)
                 break;
-
+            */
             //await Task.Delay(5);
 
             //if (IsSwitchingProfile)
@@ -6034,9 +6126,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     */
                     tmpMusicEntries.Add(hoge);
                 }
-
+                /*
                 if (IsSwitchingProfile)
                     break;
+                */
             }
             catch (Exception e)
             {
@@ -6052,10 +6145,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return Task.FromResult(false);
             }
         }
-
+        /*
         if (IsSwitchingProfile)
             return Task.FromResult(false);
-
+        */
         //IsBusy = true;
         IsWorking = true;
 
@@ -6080,9 +6173,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     private Task<bool> UpdateLibraryDirectoriesAsync()
     {
         // Directories
-
+        /*
         if (IsSwitchingProfile)
             return Task.FromResult(false);
+        */
 
         UpdateProgress?.Invoke(this, "[UI] Library directories loading...");
 
@@ -6098,8 +6192,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             IsWorking = true;
 
-            UpdateProgress?.Invoke(this, "[UI] Library directories loading...");
             Dispatcher.UIThread.Post(() => {
+
+                UpdateProgress?.Invoke(this, "[UI] Library directories loading...");
+
                 MusicDirectories = new ObservableCollection<NodeTree>(tmpMusicDirectories.Children);// COPY
                 if (MusicDirectories.Count > 0)
                 {
@@ -6130,7 +6226,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             Debug.WriteLine("_musicDirectories.Load: " + e.Message);
 
-
             Dispatcher.UIThread.Post(() => 
             {
                 //IsBusy = false;
@@ -6147,6 +6242,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         //IsBusy = false;
         IsWorking = false;
+        UpdateProgress?.Invoke(this, "");
 
         return Task.FromResult(true);
     }
@@ -6379,7 +6475,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        UpdateProgress?.Invoke(this, "[UI] Library album covers loading...");
+        UpdateProgress?.Invoke(this, "[UI] Loading album covers ...");
         //IsBusy = true;
         IsWorking = true;
 
@@ -6574,6 +6670,66 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     #region == MPD event callback == 
+
+    private void OnMpdIdleConnected(MpcService sender)
+    {
+        Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
+
+        MpdVersion = _mpc.MpdVerText;
+
+        //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
+
+        MpdStatusButton = _pathMpdOkButton;
+
+        // Need this to show CurrentSong.
+        IsConnected = true;
+
+        IsShowAckWindow = false;
+        IsShowErrWindow = false;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (_initWin is not null)
+            {
+                if (_initWin.IsActive || _initWin.IsVisible)
+                {
+                    if (IsRememberAsProfile)
+                    {
+                        var prof = new Profile
+                        {
+                            Name = _host,
+                            Host = _host,
+                            Port = _port,
+                            Password = _password,
+                            IsDefault = true,
+                            Volume = _volume
+                        };
+
+                        if (!string.IsNullOrEmpty(prof.Host.Trim()))
+                        {
+                            CurrentProfile = prof;
+                            Profiles.Add(prof);
+
+                            NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Host info is empty. @OnMpdIdleConnected");
+                        }
+                        Debug.WriteLine($"Password = {_password}");
+                    }
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _initWin.Close();
+                    });
+                }
+            }
+        });
+
+        // Run in a background thread.
+        _ = Task.Run(() => LoadInitialData());
+    }
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
     {
@@ -8877,25 +9033,26 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     public IRelayCommand NewProfileCommand { get; }
-    public bool NewProfileCommand_CanExecute()
+    public static bool NewProfileCommand_CanExecute()
     {
-        if (SelectedProfile is null) return false;
+        //if (SelectedProfile is null) return false;
         return true;
     }
     public void NewProfileCommand_Execute()
     {
-        SelectedProfile = null;
+        //SelectedProfile = null;
     }
 
     public IRelayCommand DeleteProfileCommand { get; }
-    public bool DeleteProfileCommand_CanExecute()
+    public static bool DeleteProfileCommand_CanExecute()
     {
-        if (Profiles.Count < 2) return false;
-        if (SelectedProfile is null) return false;
+        //if (Profiles.Count < 2) return false;
+        //if (SelectedProfile is null) return false;
         return true;
     }
     public void DeleteProfileCommand_Execute()
     {
+        /*
         if (SelectedProfile is null) return;
         if (Profiles.Count < 2) return;
 
@@ -8911,12 +9068,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (tmpIsDefault)
                 Profiles[0].IsDefault = tmpIsDefault;
         }
+        */
     }
 
     public IRelayCommand SaveProfileCommand { get; }
     public bool SaveProfileCommand_CanExecute()
     {
-        if (SelectedProfile is not null) return false;
+        //if (SelectedProfile is not null) return false;
         if (String.IsNullOrEmpty(Host)) return false;
         if (_port == 0) return false;
         return true;
@@ -8924,16 +9082,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public void SaveProfileCommand_Execute(object obj)
     {
         if (obj is null) return;
-        if (SelectedProfile is not null) return;
+        //if (SelectedProfile is not null) return;
         if (String.IsNullOrEmpty(Host)) return;
         if (_port == 0) return;
-
+        /*
         Profile pro = new()
         {
             Host = _host,
             Port = _port
         };
-
+        */
         /*
         // for Unbindable PasswordBox.
         var passwordBox = obj as PasswordBox;
@@ -8946,6 +9104,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
         */
 
+        /*
         if (SetIsDefault)
         {
             foreach (var p in Profiles)
@@ -8974,23 +9133,25 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             pro.IsDefault = true;
             CurrentProfile = pro;
         }
+        */
     }
 
     public IRelayCommand UpdateProfileCommand { get; }
-    public bool UpdateProfileCommand_CanExecute()
+    public static bool UpdateProfileCommand_CanExecute()
     {
-        if (SelectedProfile is null) return false;
+        //if (SelectedProfile is null) return false;
         return true;
     }
     public void UpdateProfileCommand_Execute(object obj)
     {
         if (obj is null) return;
-        if (SelectedProfile is null) return;
+        //if (SelectedProfile is null) return;
         if (String.IsNullOrEmpty(Host)) return;
         if (_port == 0) return;
-
+        /*
         SelectedProfile.Host = _host;
         SelectedProfile.Port = _port;
+        */
         /*
         // for Unbindable PasswordBox.
         var passwordBox = obj as PasswordBox;
@@ -9009,6 +9170,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
         }
         */
+        /*
         if (SetIsDefault)
         {
             foreach (var p in Profiles)
@@ -9033,6 +9195,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         SelectedProfile.Name = Host + ":" + _port.ToString();
 
         SettingProfileEditMessage = MPDCtrlX.Properties.Resources.Settings_ProfileUpdated;
+        */
     }
 
     #endregion
@@ -9046,7 +9209,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (string.IsNullOrWhiteSpace(Host)) return false;
         if (String.IsNullOrEmpty(Host)) return false;
         if (IsConnecting) return false;
-        if ((SelectedProfile is not null) && CurrentProfile is null) return false;
+        //if ((SelectedProfile is not null) && CurrentProfile is null) return false;
         return true;
     }
     public async void ChangeConnectionProfileCommand_Execute(object obj)
@@ -9059,7 +9222,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsBusy) return;
         if (IsWorking) return;
 
-        IsSwitchingProfile = true;
+        //IsSwitchingProfile = true;
 
         if (IsConnected)
         {
@@ -9072,6 +9235,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (CurrentProfile is not null)
             CurrentProfile.Volume = Convert.ToInt32(Volume);
 
+        /*
         // Validate Host input.
         if (Host == "")
         {
@@ -9081,30 +9245,29 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
         else
         {
-            /*
             if (Host == "localhost")
             {
                 Host = "127.0.0.1";
             }
 
-            IPAddress ipAddress = null;
+            IPAddress? ipAddress = null;
             try
             {
                 ipAddress = IPAddress.Parse(Host);
                 if (ipAddress is not null)
                 {
-                    ClearError(nameof(Host));
+                    //ClearError(nameof(Host));
                 }
             }
             catch
             {
                 //System.FormatException
-                SetError(nameof(Host), "Error: Invalid address format."); //TODO: translate
+                //SetError(nameof(Host), "Error: Invalid address format."); //TODO: translate
 
                 return;
             }
-            */
         }
+        */
 
         HostIpAddress = null;
         try
@@ -9215,7 +9378,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (HostIpAddress is null) return;
         //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+
+        // Start MPD connection.
+        ConnectionResult r = await _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), _port, _password);
 
         if (r.IsSuccess)
         {
@@ -9235,13 +9401,35 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 };
 
                 CurrentProfile = prof;
-                SelectedProfile = prof;
+                //SelectedProfile = prof;
 
                 Profiles.Add(prof);
                 NotifyPropertyChanged(nameof(IsCurrentProfileSet));
             }
             else
             {
+                var prof = new Profile
+                {
+                    Name = _host,
+                    Host = _host,
+                    Port = _port,
+                    Password = _password,
+                    IsDefault = true,
+                    Volume = _volume
+                };
+
+                if (!string.IsNullOrEmpty(prof.Host.Trim()))
+                {
+                    CurrentProfile = prof;
+                    Profiles.Add(prof);
+
+                    NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                }
+                else
+                {
+                    Debug.WriteLine("Host info is empty. @OnMpdIdleConnected");
+                }
+                /*
                 //SelectedProfile = new Profile();
                 if (SelectedProfile is not null)
                 {
@@ -9268,10 +9456,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                     CurrentProfile = SelectedProfile;
                 }
+                */
             }
         }
 
-        IsSwitchingProfile = false;
+        //IsSwitchingProfile = false;
     }
 
     private async void ChangeConnection(Profile prof)
@@ -9281,7 +9470,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (IsWorking) return;
 
         IsBusy = true;
-        IsSwitchingProfile = true;
+        //IsSwitchingProfile = true;
 
         if (IsConnected)
         {
@@ -9397,7 +9586,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (HostIpAddress is null) return;
         //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        ConnectionResult r = await _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), _port, _password);
 
         if (r.IsSuccess)
         {
@@ -9406,7 +9595,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             SelectedNodeMenu = MainMenuItems[0];
         }
 
-        IsSwitchingProfile = false;
+        //IsSwitchingProfile = false;
         IsBusy = false;
     }
 
@@ -9417,7 +9606,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public IRelayCommand ShowChangePasswordDialogCommand { get; }
     public bool ShowChangePasswordDialogCommand_CanExecute()
     {
-        if (SelectedProfile is null) return false;
+        //if (SelectedProfile is null) return false;
         if (String.IsNullOrEmpty(Host)) return false;
         if (_port == 0) return false;
         return true;
@@ -9444,7 +9633,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public IRelayCommand ChangePasswordDialogOKCommand { get; }
     public bool ChangePasswordDialogOKCommand_CanExecute()
     {
-        if (SelectedProfile is null) return false;
+        //if (SelectedProfile is null) return false;
         if (String.IsNullOrEmpty(Host)) return false;
         if (_port == 0) return false;
         return true;
@@ -9971,6 +10160,20 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
 
     #endregion
+
+
+    public IRelayCommand TryConnectCommand { get; }
+    public static bool TryConnectCommand_CanExecute()
+    {
+        return true;
+    }
+    public void TryConnectCommand_Execute()
+    {
+
+        // start the connection
+        Start(_host, _port, _password);
+    }
+
 
     #endregion
 }

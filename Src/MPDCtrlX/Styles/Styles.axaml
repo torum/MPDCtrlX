@@ -9,13 +9,24 @@
 			<Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
 			<Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,1,0,0</Thickness>
 
+			<x:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">15</x:Double>
+
+			<!-- fix non-align items -->
+			<Thickness x:Key="NavigationViewItemContentPresenterMargin">-4,0,0,0</Thickness>
+			<Thickness x:Key="NavigationViewPaneContentGridMargin">0,4,0,3</Thickness>
+
+			<!-- fix 3>4, 16>18 This is because we added transparent border 1px to SelectionIndicator in order to delete strange artifacts after erase animation.  -->
+			<x:Double x:Key="NavigationViewSelectionIndicatorWidth">4</x:Double>
+			<x:Double x:Key="NavigationViewSelectionIndicatorHeight">18</x:Double>
+
 			<StaticResource x:Key="CardStrokeBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
 			
 			<ResourceDictionary.MergedDictionaries>
 				<!-- <ResourceInclude Source="avares://MPDCtrlX/Styles/AppWindowStyles.axaml" /> -->
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemStyles.axaml" />
-
+				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemPresenterStyles.axaml" />
+				
 
 
 				<ResourceDictionary>

@@ -79,7 +79,7 @@
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpanderItem>
-					<CheckBox Content="Remember this" IsChecked="true" HorizontalAlignment="Right" />
+					<CheckBox Content="Remember this" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Right" />
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpander.Footer>
