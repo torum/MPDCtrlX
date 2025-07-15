@@ -1,28 +1,46 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 
-<!-- 	<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>   -->
-	  
-	  
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="MPDCtrlX.ico" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PublishAot>True</PublishAot>
+		<!-- Recommended Avalonia trimming settings for Native AOT -->
+		<BuiltInComInteropSupport>False</BuiltInComInteropSupport>
+		<TrimMode>link</TrimMode>
+		<PublishTrimmed>True</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+		<TrimMode>link</TrimMode>
+		<SelfContained>true</SelfContained>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.2" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MPDCtrlX\MPDCtrlX.csproj" />
-  </ItemGroup>
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaNameGeneratorAttachDevTools>False</AvaloniaNameGeneratorAttachDevTools>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="MPDCtrlX.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MPDCtrlX\MPDCtrlX.csproj" />
+	</ItemGroup>
 </Project>
