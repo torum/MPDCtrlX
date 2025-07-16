@@ -491,10 +491,11 @@ public partial class MpcService : IMpcService
                         Debug.WriteLine("error line @MpdIdleSendCommand: " + cmd.Trim() + " and " + line);
 
                         isErr = true;
-                        errText = line.Replace("error:",string.Empty);
-                        errText = errText.Trim();
-                        ret.ErrorMessage = errText;
-                        break;
+                        errText = line;
+                        ret.ErrorMessage = line;
+
+                        if (!string.IsNullOrEmpty(line))
+                            stringBuilder.Append(line + "\n");
                     }
                     else if (line.StartsWith("OK"))
                     {
@@ -551,11 +552,11 @@ public partial class MpcService : IMpcService
             if (isErr)
             {
                 nowait = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
-                ret.IsSuccess = false;
+                //ret.IsSuccess = false;
 
                 await MpdIdleSendCommand("clearerror");
 
-                return ret;
+                //return ret;
             }
 
             ret.ResultText = stringBuilder.ToString();
@@ -595,7 +596,6 @@ public partial class MpcService : IMpcService
 
             return ret;
         }
-
     }
 
     public async Task<CommandResult> MpdIdleQueryStatus()
@@ -755,7 +755,9 @@ public partial class MpcService : IMpcService
             StringBuilder stringBuilder = new();
 
             bool isAck = false;
+            bool isErr = false;
             string ackText = "";
+            string errText = "";
 
             while (true)
             {
@@ -777,6 +779,16 @@ public partial class MpcService : IMpcService
                         ackText = line;
 
                         break;
+                    }
+                    else if (line.StartsWith("error"))
+                    {
+                        Debug.WriteLine("error line @MpdIdle(): " + cmd.Trim() + " and " + line);
+
+                        isErr = true;
+                        errText = line;
+
+                        if (!string.IsNullOrEmpty(line))
+                            stringBuilder.Append(line + "\n");
                     }
                     else if (line.StartsWith("OK"))
                     {
@@ -829,10 +841,21 @@ public partial class MpcService : IMpcService
             {
                 MpdAckError?.Invoke(this, ackText + " (@idle)", "Command");
             }
+            else if (isErr)
+            {
+                MpdFatalError?.Invoke(this, errText, "Idle");
+                //ret.IsSuccess = false;
+
+                await MpdIdleSendCommand("clearerror");
+
+                //return ret;
+            }
             else
             {
-                await ParseSubSystemsAndRaiseChangedEvent(result);
+                //await ParseSubSystemsAndRaiseChangedEvent(result);
             }
+
+            await ParseSubSystemsAndRaiseChangedEvent(result);
         }
         catch (System.IO.IOException e)
         {
