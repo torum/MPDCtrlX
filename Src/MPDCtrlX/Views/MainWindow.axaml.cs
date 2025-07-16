@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -37,7 +38,9 @@ public partial class MainWindow : Window//AppWindow//
         _settingsPage = settingsPage;
 
         this.DataContext = vm;
-        
+
+        //this.Icon = new WindowIcon(new Bitmap())
+
         #region == This must be before InitializeComponent() ==
 
         if ((vm.WindowLeft > 0) && (vm.WindowTop > 0)) 
@@ -246,4 +249,85 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
+    private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
+    {
+        if (this.Width < 580)
+        {
+            this.SeekSlider.Width = 250;
+        }
+        else
+        {
+            this.SeekSlider.Width = 380;
+        }
+
+        if (this.Width < 630)
+        {
+            this.AlbumCoverBorder.IsVisible = false;
+
+            HeaderOverlayColSpaceLeft.Width = 24;
+            HeaderOverlayColSpaceRight.Width = 24;
+        }
+        else
+        {
+            if (this.ContentsSplitView.IsPaneOpen)
+            {
+                this.AlbumCoverBorder.IsVisible = false;
+            }
+            else
+            {
+                this.AlbumCoverBorder.IsVisible = true;
+            }
+
+            HeaderOverlayColSpaceLeft.Width = 170;
+            HeaderOverlayColSpaceRight.Width = 170;
+        }
+    }
+
+    private void OverLayShowHideToggleButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (this.ContentsSplitView.IsPaneOpen)
+        {
+            this.ContentsSplitView.IsPaneOpen = false;
+
+            if (this.Width >= 630)
+            {
+                this.AlbumCoverBorder.IsVisible = true;
+            }
+            else
+            {
+                this.AlbumCoverBorder.IsVisible = false;
+            }
+        }
+        else
+        {
+            if (this.Width >= 630)
+            {
+                this.AlbumCoverBorder.IsVisible = true;
+            }
+            else
+            {
+                this.AlbumCoverBorder.IsVisible = false;
+            }
+        }
+    }
+
+    private void SplitView_PaneClosed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (this.Width >= 630)
+        {
+            this.AlbumCoverBorder.IsVisible = true;
+        }
+        else
+        {
+            this.AlbumCoverBorder.IsVisible = false;
+        }
+    }
+
+    private void SplitView_PaneOpened(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (this.ContentsSplitView.IsPaneOpen)
+        {
+            this.AlbumCoverBorder.IsVisible = false;
+        }
+    }
 }

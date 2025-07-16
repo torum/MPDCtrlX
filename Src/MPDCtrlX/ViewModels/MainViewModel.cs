@@ -811,7 +811,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isAlbumArtPanelIsOpen = value;
 
             NotifyPropertyChanged(nameof(IsAlbumArtPanelIsOpen));
-            IsAlbumArtVisible = !_isAlbumArtPanelIsOpen;
         }
     }
 
@@ -3660,8 +3659,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         ShowSettingsCommand = new RelayCommand(ShowSettingsCommand_Execute, ShowSettingsCommand_CanExecute);
         SettingsOKCommand = new RelayCommand(SettingsOKCommand_Execute, SettingsOKCommand_CanExecute);
 
-        NewProfileCommand = new RelayCommand(NewProfileCommand_Execute, NewProfileCommand_CanExecute);
-        DeleteProfileCommand = new RelayCommand(DeleteProfileCommand_Execute, DeleteProfileCommand_CanExecute);
         SaveProfileCommand = new GenericRelayCommand<object>(param => SaveProfileCommand_Execute(param), param => SaveProfileCommand_CanExecute());
         UpdateProfileCommand = new GenericRelayCommand<object>(param => UpdateProfileCommand_Execute(param), param => UpdateProfileCommand_CanExecute());
         ChangeConnectionProfileCommand = new GenericRelayCommand<object>(param => ChangeConnectionProfileCommand_Execute(param), param => ChangeConnectionProfileCommand_CanExecute());
@@ -3820,11 +3817,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         #endregion
 
-
+        IsShowDebugWindow = false;
+        
         //Start("localhost", 6600);
         //Volume = 20; // needs this until implement profiles.
         //IsWorking = false;
-        
+
 
         //FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
         //_faTheme!.PreferSystemTheme = true;
@@ -4564,7 +4562,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         NotifyPropertyChanged(nameof(Volume));
 
         // start the connection
-        Start(CurrentProfile.Host, CurrentProfile.Port, CurrentProfile.Password);
+        Start(CurrentProfile.Host, CurrentProfile.Port);
 
     }
 
@@ -5079,7 +5077,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Methods ==
 
-    private async void Start(string host, int port, string pass)
+    private async void Start(string host, int port)
     {
         HostIpAddress = null;
         try
@@ -5106,7 +5104,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         // Start MPD connection.
-        _ = Task.Run(() => _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), port, pass));
+        _ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
     }
 
     private async void LoadInitialData()
@@ -5214,7 +5212,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         _mpc.MpdCurrentSong.IsPlaying = false;
                     }
-
                     AlbumCover = null;
                     //IsAlbumArtVisible = false;
                     AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
@@ -9032,45 +9029,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsSettingsShow = false;
     }
 
-    public IRelayCommand NewProfileCommand { get; }
-    public static bool NewProfileCommand_CanExecute()
-    {
-        //if (SelectedProfile is null) return false;
-        return true;
-    }
-    public void NewProfileCommand_Execute()
-    {
-        //SelectedProfile = null;
-    }
-
-    public IRelayCommand DeleteProfileCommand { get; }
-    public static bool DeleteProfileCommand_CanExecute()
-    {
-        //if (Profiles.Count < 2) return false;
-        //if (SelectedProfile is null) return false;
-        return true;
-    }
-    public void DeleteProfileCommand_Execute()
-    {
-        /*
-        if (SelectedProfile is null) return;
-        if (Profiles.Count < 2) return;
-
-        var tmpNama = SelectedProfile.Name;
-        var tmpIsDefault = SelectedProfile.IsDefault;
-
-        if (Profiles.Remove(SelectedProfile))
-        {
-            SettingProfileEditMessage = MPDCtrlX.Properties.Resources.Settings_ProfileDeleted + " (" + tmpNama + ")";
-
-            SelectedProfile = Profiles[0];
-
-            if (tmpIsDefault)
-                Profiles[0].IsDefault = tmpIsDefault;
-        }
-        */
-    }
-
     public IRelayCommand SaveProfileCommand { get; }
     public bool SaveProfileCommand_CanExecute()
     {
@@ -9381,7 +9339,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
 
         // Start MPD connection.
-        ConnectionResult r = await _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), _port, _password);
+        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
 
         if (r.IsSuccess)
         {
@@ -9586,7 +9544,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (HostIpAddress is null) return;
         //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        ConnectionResult r = await _mpc.MpdIdleConnectionStart(HostIpAddress.ToString(), _port, _password);
+        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
 
         if (r.IsSuccess)
         {
@@ -10031,7 +9989,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsAlbumArtPanelIsOpen = false;
     }
 
-
     // Jump menu from CurrentSong
     public IRelayCommand JumpToAlbumPageCommand { get; set; }
     public static bool JumpToAlbumPageCommand_CanExecute()
@@ -10158,9 +10115,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-
     #endregion
-
 
     public IRelayCommand TryConnectCommand { get; }
     public static bool TryConnectCommand_CanExecute()
@@ -10169,9 +10124,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void TryConnectCommand_Execute()
     {
-
-        // start the connection
-        Start(_host, _port, _password);
+        Start(_host, _port);
     }
 
 

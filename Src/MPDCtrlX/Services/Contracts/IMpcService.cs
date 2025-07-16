@@ -53,7 +53,7 @@ public interface IMpcService
     Task<CommandResult> MpdDeleteId(string id);
     void MpdDisconnect();
     Task<ConnectionResult> MpdIdleConnect(string host, int port);
-    Task<ConnectionResult> MpdIdleConnectionStart(string host, int port, string password);
+    //Task<ConnectionResult> MpdIdleConnectionStart(string host, int port, string password);
     Task<CommandResult> MpdIdleQueryCurrentQueue();
     Task<CommandResult> MpdIdleQueryCurrentSong();
     Task<CommandResult> MpdIdleQueryListAll();

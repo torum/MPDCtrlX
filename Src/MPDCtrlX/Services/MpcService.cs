@@ -172,6 +172,7 @@ public partial class MpcService : IMpcService
 
     #region == Idle Connection ==
 
+    /*
     public async Task<ConnectionResult> MpdIdleConnectionStart(string host, int port, string password)
     {
         ConnectionResult r = await MpdIdleConnect(host, port);
@@ -188,6 +189,7 @@ public partial class MpcService : IMpcService
         }
         return r;
     }
+    */
 
     public async Task<ConnectionResult> MpdIdleConnect(string host, int port)
     {
@@ -340,7 +342,7 @@ public partial class MpcService : IMpcService
             return ret;
         }
 
-        string cmd = "password " + password + "\n";
+        string cmd = "password " + password;
 
         return await MpdIdleSendCommand(cmd);
 
@@ -1009,9 +1011,6 @@ public partial class MpcService : IMpcService
                 // ここでIdleにして、以降はnoidle + cmd + idleの組み合わせでやる。
                 // ただし、実際にはidleのあとReadしていないからタイムアウトで切断されてしまう模様。
 
-                // TEST:
-                //d = await MpdSendIdle();
-
                 return d.IsSuccess;
             }
         }
@@ -1158,7 +1157,7 @@ public partial class MpcService : IMpcService
             return ret;
         }
 
-        string cmd = "password " + password + "\n";
+        string cmd = "password " + password;
 
         return await MpdCommandSendCommandProtected(cmd);
 

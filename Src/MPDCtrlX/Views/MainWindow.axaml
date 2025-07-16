@@ -10,12 +10,13 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="MPDCtrlX.Views.MainWindow"
 		x:DataType="vm:MainViewModel"
-        Icon="/Assets/MPDCtrlX.ico"
-        Title="MPDCtrlX"
+        Icon="avares://MPDCtrlX/Assets/Untitled.ico"
+        Title=""
 		Background="{DynamicResource ThemeBackgroundBrush}"
 		x:Name="ThisMainWindow"
-        x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="680" MinHeight="210">
-
+        x:CompileBindings="True" Cursor="Arrow" WindowStartupLocation="Manual" MinWidth="530" MinHeight="692" SizeChanged="Window_SizeChanged">
+	<!-- Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
+	<!-- Icon="/Assets/MPDCtrlX.ico" -->
 	<!-- <views:MainView/> -->
 	<Window.Resources>
 
@@ -75,14 +76,26 @@
 
 	<Grid RowDefinitions="Auto,*"
 		Background="{DynamicResource LayerFillColorBaseBrush}">
-
+		
+		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="2">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.85" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		
 		<!-- HeaderOverlay -->
 		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*" x:Name="HeaderOverlay" Margin="0,8,0,0" VerticalAlignment="Top">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="170" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="170" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
+			
+			<Grid Grid.Column="0" Width="170" Name="HeaderOverlayColSpaceLeft"></Grid>
 			
 			<Grid Grid.Column="1" HorizontalAlignment="Center">
 				<Grid.ColumnDefinitions>
@@ -111,20 +124,23 @@
 					</Viewbox>
 				</Button>
 			</Grid>
+			
+			<Grid Grid.Column="2" Width="170" Name="HeaderOverlayColSpaceRight"></Grid>
+			
 		</Grid>
 		
 		<!-- Header -->
 		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*,Auto" x:Name="Header">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="380" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
 			<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource CardStrokeBorderBrush}" Opacity="0.9"></Border>
 
 			<!-- Album cover -->
-			<Border Grid.Row="0" Grid.Column="0" Margin="16,16,20,0" Width="128" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="0" ClipToBounds="True" CornerRadius="6" IsVisible="{Binding IsAlbumArtVisible, Mode=TwoWay}">
+			<Border Grid.Row="0" Grid.Column="0" Name="AlbumCoverBorder" Margin="16,16,20,0" Width="128" Height="128" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="0" ClipToBounds="True" CornerRadius="6" IsVisible="{Binding IsAlbumArtVisible, Mode=TwoWay}">
 				<Grid>
 					<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
 						Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 9.515T8.5 12t1.015 2.486T12 15.5m0-2.5q-.425 0-.712-.288T11 12t.288-.712T12 11t.713.288T13 12t-.288.713T12 13m.003 8q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8">
@@ -184,7 +200,7 @@
 
 				<!-- Seek -->
 				<Grid Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
-					<Slider Orientation="Horizontal" Maximum="{Binding Mode=TwoWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Minimum="0" Width="380" Margin="0" Padding="0"></Slider>
+					<Slider Orientation="Horizontal" Name="SeekSlider" Maximum="{Binding Mode=TwoWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Minimum="0" Width="380" Margin="0" Padding="0"></Slider>
 				</Grid>
 
 			</Grid>
@@ -223,7 +239,7 @@
 						</Viewbox>
 					</ToggleButton>
 				</WrapPanel>
-				<Slider Grid.Column="1" Height="132" Margin="12,0,0,0" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Slider>
+				<Slider Grid.Column="1" Height="100" Margin="12,0,0,0" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="100" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom"></Slider>
 			</Grid>
 
 			<!-- InfoBar -->
@@ -233,10 +249,20 @@
 		</Grid>
 
 
-		<SplitView Grid.Row="1" Margin="0,0,0,0" PanePlacement="Right" IsPaneOpen="{Binding IsAlbumArtPanelIsOpen, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=ThisMainWindow}">
+		<SplitView Grid.Row="1" Margin="0,0,0,0" PanePlacement="Right" Name="ContentsSplitView" PaneClosed="SplitView_PaneClosed" PaneOpened="SplitView_PaneOpened" IsPaneOpen="{Binding IsAlbumArtPanelIsOpen, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=ThisMainWindow}">
 			<SplitView.Pane>
 				
 				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+					
+					<ExperimentalAcrylicBorder IsHitTestVisible="False">
+						<ExperimentalAcrylicBorder.Material>
+							<ExperimentalAcrylicMaterial
+								BackgroundSource="Digger"
+								TintColor="Black"
+								TintOpacity="1"
+								MaterialOpacity="0.85" />
+						</ExperimentalAcrylicBorder.Material>
+					</ExperimentalAcrylicBorder>
 					
 					<Border BorderThickness="0" ClipToBounds="True" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0">
 						<Grid>
@@ -258,7 +284,8 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 
-						<Button Name="OverLayShowHideToggleButton" ToolTip.Tip="Close (ESC)" Command="{Binding AlbumsCoverOverlayPanelCloseCommand}" HotKey="Escape" Opacity="1" BorderThickness="0" Padding="2" Margin="6,0,2,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Focusable="False">
+						<!-- Command="{Binding AlbumsCoverOverlayPanelCloseCommand}" -->
+						<Button Name="OverLayShowHideToggleButton" ToolTip.Tip="Close (ESC)" Click="OverLayShowHideToggleButton_Click"  HotKey="Escape" Opacity="1" BorderThickness="0" Padding="2" Margin="6,0,2,0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Focusable="False">
 							<Viewbox Width="20" Height="20">
 								<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="4" Opacity="0.8" HorizontalAlignment="Center" VerticalAlignment="Center"
 									Data="M9.17903 10.5L8.18051 11.3737C7.9727 11.5555 7.95164 11.8714 8.13348 12.0792C8.31532 12.2871 8.6312 12.3081 8.83902 12.1263L10.839 10.3763C10.9475 10.2813 11.0098 10.1442 11.0098 9.99999C11.0098 9.85581 10.9475 9.71865 10.839 9.62371L8.83902 7.87371C8.6312 7.69186 8.31532 7.71292 8.13348 7.92074C7.95164 8.12856 7.9727 8.44444 8.18051 8.62628L9.17905 9.5L5.5 9.5C5.22386 9.5 5 9.72386 5 10C5 10.2761 5.22386 10.5 5.5 10.5L9.17903 10.5ZM16 16C17.1046 16 18 15.1046 18 14V6C18 4.89543 17.1046 4 16 4H4C2.89543 4 2 4.89543 2 6V14C2 15.1046 2.89543 16 4 16L16 16ZM17 14C17 14.5523 16.5523 15 16 15H13L13 5L16 5C16.5523 5 17 5.44772 17 6L17 14ZM12 5L12 15L4 15C3.44772 15 3 14.5523 3 14L3 6C3 5.44771 3.44772 5 4 5L12 5Z">
