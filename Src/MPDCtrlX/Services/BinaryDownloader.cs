@@ -3,6 +3,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using static MPDCtrlX.Services.MpcService;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MPDCtrlX.Services;
 
@@ -147,10 +149,8 @@ public class BinaryDownloader : IBinaryDownloader
         return await MpdBinarySendCommand(cmd);
     }
 
-    private async Task<CommandResult> MpdBinarySendCommand(string cmd, bool isAutoIdling = false)
+    private async Task<CommandResult> MpdBinarySendCommand(string cmd)
     {
-        isAutoIdling = false;
-
         CommandResult ret = new();
 
         if (_binaryConnection.Client is null)
@@ -177,31 +177,13 @@ public class BinaryDownloader : IBinaryDownloader
         {
             //IsBusy?.Invoke(this, true);
 
-            if (cmd.Trim().StartsWith("idle"))
-            {
-                await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
+            string cmdDummy = cmd;
+            if (cmd.StartsWith("password "))
+                cmdDummy = "password ****";
 
-                if (!isAutoIdling)
-                {
-                    ret.IsSuccess = true;
+            cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
 
-                    //IsBusy?.Invoke(this, false);
-                    return ret;
-                }
-            }
-            else
-            {
-                string cmdDummy = cmd;
-                if (cmd.StartsWith("password "))
-                    cmdDummy = "password ****";
-
-                cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
-
-                if (isAutoIdling)
-                    await _binaryWriter.WriteAsync("noidle\n" + cmd.Trim() + "\n" + "idle player\n");
-                else
-                    await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
-            }
+            await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
         }
         catch (System.IO.IOException e)
         {
@@ -230,7 +212,6 @@ public class BinaryDownloader : IBinaryDownloader
 
             StringBuilder stringBuilder = new();
 
-            bool isDoubleOk = false;
             string ackText = "";
             bool isNullReturn = false;
 
@@ -255,33 +236,12 @@ public class BinaryDownloader : IBinaryDownloader
                     }
                     else if (line.StartsWith("OK"))
                     {
-                        if (isAutoIdling)
-                        {
-                            if (isDoubleOk)
-                            {
-                                if (!string.IsNullOrEmpty(line))
-                                    stringBuilder.Append(line + "\n");
+                        ret.IsSuccess = true;
 
-                                ret.IsSuccess = true;
+                        if (!string.IsNullOrEmpty(line))
+                            stringBuilder.Append(line + "\n");
 
-                                break;
-                            }
-
-                            if (!string.IsNullOrEmpty(line))
-                                stringBuilder.Append(line + "\n");
-
-                            isDoubleOk = true;
-
-                        }
-                        else
-                        {
-                            ret.IsSuccess = true;
-
-                            if (!string.IsNullOrEmpty(line))
-                                stringBuilder.Append(line + "\n");
-
-                            break;
-                        }
+                        break;
                     }
                     else if (line.StartsWith("changed: "))
                     {
@@ -357,7 +317,7 @@ public class BinaryDownloader : IBinaryDownloader
 
     }
 
-    private async Task<CommandBinaryResult> MpdBinarySendBinaryCommand(string cmd, bool isAutoIdling = false)
+    private async Task<CommandBinaryResult> MpdBinarySendBinaryCommand(string cmd)
     {
         CommandBinaryResult ret = new();
 
@@ -394,28 +354,13 @@ public class BinaryDownloader : IBinaryDownloader
         // WriteAsync
         try
         {
-            if (cmd.Trim().StartsWith("idle"))
-            {
-                await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
+            string cmdDummy = cmd;
+            if (cmd.StartsWith("password "))
+                cmdDummy = "password ****";
 
-                if (!isAutoIdling) 
-                { 
-                    return ret;
-                }
-            }
-            else
-            {
-                string cmdDummy = cmd;
-                if (cmd.StartsWith("password "))
-                    cmdDummy = "password ****";
+            cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
 
-                cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
-
-                if (isAutoIdling)
-                    await _binaryWriter.WriteAsync("noidle\n" + cmd.Trim() + "\n" + "idle player\n");
-                else
-                    await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
-            }
+            await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
         }
         catch (System.IO.IOException e)
         {
@@ -448,7 +393,6 @@ public class BinaryDownloader : IBinaryDownloader
 
             byte[] bin = [];
 
-            bool isDoubleOk = false;
             bool isAck = false;
             string ackText = "";
             bool isNullReturn = false;
@@ -564,35 +508,13 @@ public class BinaryDownloader : IBinaryDownloader
                             }
                             else if (line == "OK")
                             {
-                                if (isAutoIdling)
-                                {
-                                    if (isDoubleOk)
-                                    {
-                                        if (!string.IsNullOrEmpty(line))
-                                            stringBuilder.Append(line + "\n");
+                                ret.IsSuccess = true;
 
-                                        ret.IsSuccess = true;
+                                if (!string.IsNullOrEmpty(line))
+                                    stringBuilder.Append(line + "\n");
 
-                                        isWaitForOK = false;
-                                        break;
-                                    }
-
-                                    if (!string.IsNullOrEmpty(line))
-                                        stringBuilder.Append(line + "\n");
-
-                                    isDoubleOk = true;
-
-                                }
-                                else
-                                {
-                                    ret.IsSuccess = true;
-
-                                    if (!string.IsNullOrEmpty(line))
-                                        stringBuilder.Append(line + "\n");
-
-                                    isWaitForOK = false;
-                                    break;
-                                }
+                                isWaitForOK = false;
+                                break;
                             }
                             else
                             {
@@ -905,7 +827,7 @@ public class BinaryDownloader : IBinaryDownloader
             if (CompareVersionString(MpdVersion, "0.22.0") >= 0)
                 cmd = "readpicture \"" + uri + "\" 0" + "\n";
 
-        CommandBinaryResult result = await MpdBinarySendBinaryCommand(cmd, false);
+        CommandBinaryResult result = await MpdBinarySendBinaryCommand(cmd);
 
         CommandImageResult b = new();
         bool r = false;
@@ -926,7 +848,7 @@ public class BinaryDownloader : IBinaryDownloader
                 if (_albumCover.BinaryData is not null)
                 {
                     //_albumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
-                    b.AlbumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
+                    b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(_albumCover.BinaryData);
                 }
 
                 //if (_albumCover.AlbumImageSource is not null)
@@ -972,7 +894,7 @@ public class BinaryDownloader : IBinaryDownloader
                             if (_albumCover.BinaryData is not null)
                             {
                                 //_albumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
-                                b.AlbumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
+                                b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(_albumCover.BinaryData);
                             }
 
                             //if (_albumCover.AlbumImageSource is not null)
@@ -1076,7 +998,7 @@ public class BinaryDownloader : IBinaryDownloader
             if (CompareVersionString(MpdVersion, "0.22.0") >= 0)
                 cmd = "readpicture \"" + uri + "\" " + offset.ToString() + "\n";
 
-        return await MpdBinarySendBinaryCommand(cmd, false);
+        return await MpdBinarySendBinaryCommand(cmd);
     }
 
     private static int CompareVersionString(string a, string b)
@@ -1084,28 +1006,65 @@ public class BinaryDownloader : IBinaryDownloader
         return (new System.Version(a)).CompareTo(new System.Version(b));
     }
 
-    private static Bitmap? BitmaSourceFromByteArray(byte[] buffer)
+    //private static readonly System.Threading.SemaphoreSlim _semaphore = new(1, 1);
+
+    private static Bitmap? BitmapSourceFromByteArray(byte[] buffer)
     {
         // Bug in MPD 0.23.5 
-        if (buffer?.Length > 0)
+        if (buffer?.Length <= 0)
         {
-            using var stream = new MemoryStream(buffer);
-            try
+            Debug.WriteLine("if (buffer?.Length > 0) @BitmapSourceFromByteArray");
+
+            return null;
+        }
+
+        if (buffer == null)
+        {
+            Debug.WriteLine("buffer == null) @BitmapSourceFromByteArray");
+            return null;
+        }
+
+        //await _semaphore.WaitAsync();
+
+        using var stream = new MemoryStream(buffer);
+        try
+        {
+            // A huge bug in Skia dll for linux. 1 out of 3 won't work on Linux. 
+            //return Bitmap.DecodeToWidth(stream, 400);
+
+            using var skbit = SKBitmap.Decode(stream);
+            if (skbit is null)
             {
-                // Bug in Avalonia UI Skia dll.
-                return Bitmap.DecodeToWidth(stream, 400);
+                return null;
             }
-            catch
+
+            // resize
+            var realScale = skbit.Height < skbit.Width ? (double)skbit.Height / skbit.Width : (double)skbit.Width / skbit.Height;
+
+            using var resized = skbit.Resize(new SKSizeI(400, (int)(realScale * 400)), SKFilterQuality.High);
+            using var enc = resized?.Encode(SKEncodedImageFormat.Png, 100);
+            using var stm = enc?.AsStream();
+            if (stm != null)
             {
-                Debug.WriteLine("BitmaSourceFromByteArray exception BitmaSourceFromByteArray Bitmap.DecodeToWidth");
+                return new Bitmap(stm);
+            }
+            else
+            {
                 return null;
             }
         }
-        else
+        catch
         {
-            Debug.WriteLine("BitmaSourceFromByteArray if (buffer?.Length > 0)");
-            return null;
+            Debug.WriteLine("Exception Bitmap.DecodeToWidth @BitmapSourceFromByteArray");
+
         }
+        finally
+        {
+            //_semaphore.Release();
+
+        }
+
+        return null;
     }
 
     public void MpdBinaryConnectionDisconnect()

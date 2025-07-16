@@ -395,6 +395,7 @@ public partial class MpcService : IMpcService
 
         try
         {
+            /*
             if (cmd.Trim().StartsWith("idle"))
             {
                 await _idleWriter.WriteAsync(cmd.Trim() + "\n");
@@ -406,6 +407,8 @@ public partial class MpcService : IMpcService
                 //await _idleWriter.WriteAsync("noidle\n" + cmd.Trim() + "\n");
                 await _idleWriter.WriteAsync(cmd.Trim() + "\n");
             }
+            */
+            await _idleWriter.WriteAsync(cmd.Trim() + "\n");
         }
         catch (System.IO.IOException e)
         {
@@ -1161,7 +1164,7 @@ public partial class MpcService : IMpcService
 
     }
 
-    private async Task<CommandResult> MpdCommandSendCommand(string cmd, bool isAutoIdling = false, int reTryCount = 0)
+    private async Task<CommandResult> MpdCommandSendCommand(string cmd)
     {
         await _semaphore.WaitAsync();
 
@@ -1174,7 +1177,6 @@ public partial class MpcService : IMpcService
         finally
         {
             _semaphore.Release();
-
         }
 
         return ret;
@@ -1725,7 +1727,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdQueryStatus(bool autoIdling = true)
     {
-        CommandResult result = await MpdCommandSendCommand("status", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("status");
         if (result.IsSuccess)
         {
             result.IsSuccess = await ParseStatus(result.ResultText);
@@ -1736,7 +1738,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdQueryCurrentSong(bool autoIdling = true)
     {
-        CommandResult result = await MpdCommandSendCommand("currentsong", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("currentsong");
         if (result.IsSuccess)
         {
             result.IsSuccess = await ParseCurrentSong(result.ResultText);
@@ -1747,7 +1749,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdQueryCurrentQueue(bool autoIdling = true)
     {
-        CommandResult result = await MpdCommandSendCommand("playlistinfo", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("playlistinfo");
         if (result.IsSuccess)
         {
             result.IsSuccess = await ParsePlaylistInfo(result.ResultText);
@@ -1758,7 +1760,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdQueryPlaylists(bool autoIdling = true)
     {
-        CommandResult result = await MpdCommandSendCommand("listplaylists", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("listplaylists");
         if (result.IsSuccess)
         {
             result.IsSuccess = await ParsePlaylists(result.ResultText);
@@ -1771,7 +1773,7 @@ public partial class MpcService : IMpcService
     {
         MpcProgress?.Invoke(this, "[Background] Querying files and directories...");
 
-        CommandResult result = await MpdCommandSendCommand("listall", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("listall");
         if (result.IsSuccess)
         {
             MpcProgress?.Invoke(this, "[Background] Parsing files and directories...");
@@ -1787,7 +1789,7 @@ public partial class MpcService : IMpcService
     {
         MpcProgress?.Invoke(this, "[Background] Querying artists...");
 
-        CommandResult result = await MpdCommandSendCommand("list album group albumartist", autoIdling);
+        CommandResult result = await MpdCommandSendCommand("list album group albumartist");
         if (result.IsSuccess)
         {
             MpcProgress?.Invoke(this, "[Background] Parsing artists...");
@@ -1845,7 +1847,7 @@ public partial class MpcService : IMpcService
 
         //Debug.WriteLine("MpdSearch cmd: " + cmd);
 
-        CommandResult cm = await MpdCommandSendCommand(cmd, autoIdling);
+        CommandResult cm = await MpdCommandSendCommand(cmd);
         if (cm.IsSuccess)
         {
             //MpcProgress?.Invoke(this, "[Background] Parsing search result...");
@@ -1886,7 +1888,7 @@ public partial class MpcService : IMpcService
 
         playlistName = Regex.Escape(playlistName);
 
-        CommandResult cm = await MpdCommandSendCommand("listplaylistinfo \"" + playlistName + "\"", autoIdling);
+        CommandResult cm = await MpdCommandSendCommand("listplaylistinfo \"" + playlistName + "\"");
         if (cm.IsSuccess)
         {
             MpcProgress?.Invoke(this, "[Background] Parsing playlist info...");
@@ -1959,6 +1961,7 @@ public partial class MpcService : IMpcService
                         var b = await _binaryDownloader.MpdBinaryConnectionStart(MpdHost, MpdPort, MpdPassword);
                         if (b)
                         {
+                            DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting success.");
                             Debug.WriteLine("MpdQueryAlbumArt@Timeout. Reconnecting success.");
                             // retry for the timeout.
                             return await MpdQueryAlbumArt(uri, isUsingReadpicture);
@@ -2072,7 +2075,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdSendUpdate()
     {
-        CommandResult result = await MpdCommandSendCommand("update", false);// TEST: no autoIdling
+        CommandResult result = await MpdCommandSendCommand("update");// TEST: no autoIdling
 
         return result;
     }
@@ -2093,7 +2096,7 @@ public partial class MpcService : IMpcService
 
         if (MpdStatus.MpdVolumeIsSet)
         {
-            CommandResult result = await MpdCommandSendCommand(cmd, true);
+            CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
@@ -2104,7 +2107,7 @@ public partial class MpcService : IMpcService
             cmdList = cmdList + cmd + "\n";
             cmdList = cmdList + "command_list_end" + "\n";
 
-            CommandResult result = await MpdCommandSendCommand(cmdList, true);
+            CommandResult result = await MpdCommandSendCommand(cmdList);
 
             return result;
         }
@@ -2112,7 +2115,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackPause()
     {
-        CommandResult result = await MpdCommandSendCommand("pause 1", true);
+        CommandResult result = await MpdCommandSendCommand("pause 1");
 
         return result;
     }
@@ -2121,7 +2124,7 @@ public partial class MpcService : IMpcService
     {
         if (MpdStatus.MpdVolumeIsSet)
         {
-            CommandResult result = await MpdCommandSendCommand("pause 0", true);
+            CommandResult result = await MpdCommandSendCommand("pause 0");
 
             return result;
         }
@@ -2132,7 +2135,7 @@ public partial class MpcService : IMpcService
             cmd += "pause 0\n";
             cmd = cmd + "command_list_end" + "\n";
 
-            CommandResult result = await MpdCommandSendCommand(cmd, true);
+            CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
@@ -2140,7 +2143,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackStop()
     {
-        CommandResult result = await MpdCommandSendCommand("stop", true);
+        CommandResult result = await MpdCommandSendCommand("stop");
 
         return result;
     }
@@ -2149,7 +2152,7 @@ public partial class MpcService : IMpcService
     {
         if (MpdStatus.MpdVolumeIsSet)
         {
-            CommandResult result = await MpdCommandSendCommand("next", true);
+            CommandResult result = await MpdCommandSendCommand("next");
 
             return result;
         }
@@ -2160,7 +2163,7 @@ public partial class MpcService : IMpcService
             cmd += "next\n";
             cmd = cmd + "command_list_end" + "\n";
 
-            CommandResult result = await MpdCommandSendCommand(cmd, true);
+            CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
@@ -2170,7 +2173,7 @@ public partial class MpcService : IMpcService
     {
         if (MpdStatus.MpdVolumeIsSet)
         {
-            CommandResult result = await MpdCommandSendCommand("previous", true);
+            CommandResult result = await MpdCommandSendCommand("previous");
 
             return result;
         }
@@ -2181,7 +2184,7 @@ public partial class MpcService : IMpcService
             cmd += "previous\n";
             cmd = cmd + "command_list_end" + "\n";
 
-            CommandResult result = await MpdCommandSendCommand(cmd, true);
+            CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
@@ -2198,7 +2201,7 @@ public partial class MpcService : IMpcService
             return f;
         }
 
-        CommandResult result = await MpdCommandSendCommand("setvol " + v.ToString(), true);
+        CommandResult result = await MpdCommandSendCommand("setvol " + v.ToString());
 
         return result;
     }
@@ -2214,7 +2217,7 @@ public partial class MpcService : IMpcService
             return f;
         }
 
-        CommandResult result = await MpdCommandSendCommand("seekid " + songId + " " + seekTime.ToString(), true);
+        CommandResult result = await MpdCommandSendCommand("seekid " + songId + " " + seekTime.ToString());
 
         return result;
     }
@@ -2240,7 +2243,7 @@ public partial class MpcService : IMpcService
             cmd = "repeat 0";
         }
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2266,7 +2269,7 @@ public partial class MpcService : IMpcService
             cmd = "random 0";
         }
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2292,7 +2295,7 @@ public partial class MpcService : IMpcService
             cmd = "consume 0";
         }
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2318,14 +2321,14 @@ public partial class MpcService : IMpcService
             cmd = "single 0";
         }
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
 
     public async Task<CommandResult> MpdClear()
     {
-        CommandResult result = await MpdCommandSendCommand("clear", true);
+        CommandResult result = await MpdCommandSendCommand("clear");
 
         return result;
     }
@@ -2343,7 +2346,7 @@ public partial class MpcService : IMpcService
 
         playlistName = Regex.Escape(playlistName);
 
-        CommandResult result = await MpdCommandSendCommand("save \"" + playlistName + "\"", true);
+        CommandResult result = await MpdCommandSendCommand("save \"" + playlistName + "\"");
 
         return result;
     }
@@ -2361,7 +2364,7 @@ public partial class MpcService : IMpcService
 
         uri = Regex.Escape(uri);
 
-        CommandResult result = await MpdCommandSendCommand("add \"" + uri + "\"", true);
+        CommandResult result = await MpdCommandSendCommand("add \"" + uri + "\"");
 
         return result;
     }
@@ -2385,7 +2388,7 @@ public partial class MpcService : IMpcService
         }
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2408,7 +2411,7 @@ public partial class MpcService : IMpcService
         }
         cmd = cmd + "command_list_end" + "\n";
 
-        return await MpdCommandSendCommand(cmd, true);
+        return await MpdCommandSendCommand(cmd);
     }
 
     public async Task<CommandResult> MpdDeleteId(string id)
@@ -2424,7 +2427,7 @@ public partial class MpcService : IMpcService
 
         string cmd = "deleteid " + id + "\n";
 
-        return await MpdCommandSendCommand(cmd, true);
+        return await MpdCommandSendCommand(cmd);
     }
 
     public async Task<CommandResult> MpdMoveId(Dictionary<string, string> IdToNewPosPair)
@@ -2453,7 +2456,7 @@ public partial class MpcService : IMpcService
         }
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2479,7 +2482,7 @@ public partial class MpcService : IMpcService
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         if (result.IsSuccess)
         {
@@ -2507,7 +2510,7 @@ public partial class MpcService : IMpcService
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         if (result.IsSuccess)
         {
@@ -2538,7 +2541,7 @@ public partial class MpcService : IMpcService
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         if (result.IsSuccess)
         {
@@ -2563,7 +2566,7 @@ public partial class MpcService : IMpcService
 
         string cmd = "load \"" + playlistName + "\"";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2584,7 +2587,7 @@ public partial class MpcService : IMpcService
 
         string cmd = "rename \"" + playlistName + "\" \"" + newPlaylistName + "\"";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2604,7 +2607,7 @@ public partial class MpcService : IMpcService
 
         string cmd = "rm \"" + playlistName + "\"";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2646,7 +2649,7 @@ public partial class MpcService : IMpcService
         }
         cmd = cmd + "command_list_end" + "\n";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2667,7 +2670,7 @@ public partial class MpcService : IMpcService
         //playlistdelete {NAME} {SONGPOS}
         string cmd = "playlistdelete \"" + playlistName + "\"" + " " + pos.ToString();
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -2725,7 +2728,7 @@ public partial class MpcService : IMpcService
         //playlistclear {NAME}
         string cmd = "playlistclear \"" + playlistName + "\"";
 
-        CommandResult result = await MpdCommandSendCommand(cmd, true);
+        CommandResult result = await MpdCommandSendCommand(cmd);
 
         return result;
     }
@@ -4143,17 +4146,10 @@ public partial class MpcService : IMpcService
             ConnectionState = ConnectionStatus.DisconnectedByUser;
         }
 
-        try
-        {
-            _binaryDownloader.MpdBinaryConnectionDisconnect();
-        }
-        catch { }
-        finally
-        {
-            IsBusy?.Invoke(this, false);
-            ConnectionState = ConnectionStatus.DisconnectedByUser;
-        }
-    }
+        _binaryDownloader.MpdBinaryConnectionDisconnect();
 
+        ConnectionState = ConnectionStatus.DisconnectedByUser;
+        IsBusy?.Invoke(this, false);
+    }
 }
 
