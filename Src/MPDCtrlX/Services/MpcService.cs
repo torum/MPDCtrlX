@@ -554,9 +554,12 @@ public partial class MpcService : IMpcService
                 nowait = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
                 //ret.IsSuccess = false;
 
-                await MpdIdleSendCommand("clearerror");
-
                 //return ret;
+            }
+
+            if (isAck || isErr)
+            {
+                await MpdIdleSendCommand("clearerror");
             }
 
             ret.ResultText = stringBuilder.ToString();
@@ -841,18 +844,21 @@ public partial class MpcService : IMpcService
             {
                 MpdAckError?.Invoke(this, ackText + " (@idle)", "Command");
             }
-            else if (isErr)
+            if (isErr)
             {
                 MpdFatalError?.Invoke(this, errText, "Idle");
                 //ret.IsSuccess = false;
-
-                await MpdIdleSendCommand("clearerror");
 
                 //return ret;
             }
             else
             {
                 //await ParseSubSystemsAndRaiseChangedEvent(result);
+            }
+
+            if (isAck || isErr)
+            {
+                await MpdIdleSendCommand("clearerror");
             }
 
             await ParseSubSystemsAndRaiseChangedEvent(result);
