@@ -20,6 +20,8 @@ public partial class QueuePage : UserControl
 {
     private readonly MainViewModel? vm;
 
+    private bool _isHeaderWidthInitialized;
+
     public QueuePage() { }
 
     public QueuePage(MainViewModel viewmodel)
@@ -58,6 +60,14 @@ public partial class QueuePage : UserControl
         {
             return;
         }
+
+        if (_isHeaderWidthInitialized)
+        {
+            // Everytime page is changed back, this loaded is called. So.
+            return;
+        }
+
+        _isHeaderWidthInitialized = true;
 
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
@@ -233,7 +243,7 @@ public partial class QueuePage : UserControl
     }
 
     // Called on window closing to save dummy header sizes.
-    public void SaveHeaderWidth()
+    public void SaveQueueHeaderWidth()
     {
         if (vm is null)
         {
@@ -295,6 +305,7 @@ public partial class QueuePage : UserControl
         });
     }
 
+    // Double click to play
     private void QueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
         if (DataContext is MainViewModel vm)
@@ -306,7 +317,7 @@ public partial class QueuePage : UserControl
         }
     }
 
-
+    // FilterBox
     private void FilterQueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
         if (this.FilterQueueListBox.SelectedItem is SongInfoEx song)
@@ -472,4 +483,5 @@ public partial class QueuePage : UserControl
             }
         }
     }
+
 }

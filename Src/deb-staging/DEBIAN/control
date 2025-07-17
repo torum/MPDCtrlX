@@ -1,0 +1,11 @@
+Package: MPDCtrlX.Desktop
+Version: 1.0.0
+Section: misc
+Priority: optional
+Architecture: amd64
+Installed-Size: 33596,520
+Depends: libx11-6, libice6, libsm6, libfontconfig1, ca-certificates, tzdata, libc6, libgcc1 | libgcc-s1, libgssapi-krb5-2, libstdc++6, zlib1g, libssl1.0.0 | libssl1.0.2 | libssl1.1 | libssl3, libicu | libicu74 | libicu72 | libicu71 | libicu70 | libicu69 | libicu68 | libicu67 | libicu66 | libicu65 | libicu63 | libicu60 | libicu57 | libicu55 | libicu52
+Maintainer: torum
+Homepage: https://github.com/torum/MPDCtrlX
+Description: Music Player Daemon Client
+Copyright: torum 2025

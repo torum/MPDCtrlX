@@ -8,6 +8,7 @@
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
+		<AssemblyName>MPDCtrlX.Desktop</AssemblyName>
 
 	</PropertyGroup>
 

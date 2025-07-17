@@ -76,17 +76,7 @@
 
 	<Grid RowDefinitions="Auto,*"
 		Background="{DynamicResource LayerFillColorBaseBrush}">
-		
-		<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.RowSpan="2">
-			<ExperimentalAcrylicBorder.Material>
-				<ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="1"
-                    MaterialOpacity="0.85" />
-			</ExperimentalAcrylicBorder.Material>
-		</ExperimentalAcrylicBorder>
-		
+
 		<!-- HeaderOverlay -->
 		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*" x:Name="HeaderOverlay" Margin="0,8,0,0" VerticalAlignment="Top">
 			<Grid.ColumnDefinitions>
@@ -253,16 +243,6 @@
 			<SplitView.Pane>
 				
 				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-					
-					<ExperimentalAcrylicBorder IsHitTestVisible="False">
-						<ExperimentalAcrylicBorder.Material>
-							<ExperimentalAcrylicMaterial
-								BackgroundSource="Digger"
-								TintColor="Black"
-								TintOpacity="1"
-								MaterialOpacity="0.85" />
-						</ExperimentalAcrylicBorder.Material>
-					</ExperimentalAcrylicBorder>
 					
 					<Border BorderThickness="0" ClipToBounds="True" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0">
 						<Grid>

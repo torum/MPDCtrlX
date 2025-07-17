@@ -4177,9 +4177,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                         #region == Header columns ==
 
-                        var Headers = lay.Element("Headers");///Queue/Position
+                        var Headers = lay.Element("Headers");
                         if (Headers is not null)
                         {
+                            // Queue page
                             var Que = Headers.Element("Queue");
                             if (Que is not null)
                             {
@@ -4479,6 +4480,52 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                     }
                                 }
                             }
+
+                            // Files page
+                            var Filp = Headers.Element("Files");
+                            if (Filp is not null)
+                            {
+                                var column = Filp.Element("FileName");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                Debug.WriteLine(s);
+                                                LibraryColumnHeaderTitleWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                //LibraryColumnHeaderTitleWidth = 160;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Filp.Element("FilePath");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                LibraryColumnHeaderFilePathWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                //LibraryColumnHeaderFilePathWidth = 160;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                         }
 
                         #endregion
@@ -4486,7 +4533,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     }
 
                     #endregion
-
 
                 }
                 else
@@ -4584,7 +4630,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         // This is a dirty work around for AvaloniaUI.
         QueuePage? qp = App.GetService<QueuePage>();
-        qp?.SaveHeaderWidth();
+        qp?.SaveQueueHeaderWidth();
+        FilesPage? fp = App.GetService<FilesPage>();
+        fp?.SaveFilesHeaderWidth();
 
         double windowWidth = 780;
 
@@ -4728,13 +4776,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             XmlElement headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
 
+            // Queue page
             XmlElement queueHeader;
             XmlElement queueHeaderColumn;
-
             XmlAttribute qAttrs;
 
             queueHeader = doc.CreateElement(string.Empty, "Queue", string.Empty);
-
 
             // Position
             queueHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
@@ -4864,6 +4911,48 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //
             headers.AppendChild(queueHeader);
+
+
+            // FilesPage
+            XmlElement filesHeader;
+            XmlElement filesHeaderColumn;
+            XmlAttribute fAttrs;
+
+            filesHeader = doc.CreateElement(string.Empty, "Files", string.Empty);
+
+            filesHeaderColumn = doc.CreateElement(string.Empty, "FileName", string.Empty);
+            /*
+            fAttrs = doc.CreateAttribute("Visible");
+            fAttrs.Value = 
+            filesHeaderColumn.SetAttributeNode(fAttrs);
+            */
+            fAttrs = doc.CreateAttribute("Width");
+            fAttrs.Value = LibraryColumnHeaderTitleWidth.ToString();
+            filesHeaderColumn.SetAttributeNode(fAttrs);
+            //
+            filesHeader.AppendChild(filesHeaderColumn);
+
+
+            filesHeaderColumn = doc.CreateElement(string.Empty, "FilePath", string.Empty);
+            /*
+            fAttrs = doc.CreateAttribute("Visible");
+            fAttrs.Value = 
+            filesHeaderColumn.SetAttributeNode(fAttrs);
+            */
+            fAttrs = doc.CreateAttribute("Width");
+            fAttrs.Value = LibraryColumnHeaderFilePathWidth.ToString();
+            filesHeaderColumn.SetAttributeNode(fAttrs);
+            //
+            filesHeader.AppendChild(filesHeaderColumn);
+
+            //
+            headers.AppendChild(filesHeader);
+
+
+
+            // TODO: more
+
+
             ////
             lay.AppendChild(headers);
 

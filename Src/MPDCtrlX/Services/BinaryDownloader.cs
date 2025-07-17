@@ -213,6 +213,7 @@ public class BinaryDownloader : IBinaryDownloader
             StringBuilder stringBuilder = new();
 
             string ackText = "";
+            string errText = "";
             bool isNullReturn = false;
 
             while (true)
@@ -242,6 +243,17 @@ public class BinaryDownloader : IBinaryDownloader
                             stringBuilder.Append(line + "\n");
 
                         break;
+                    }
+                    else if (line.StartsWith("error"))
+                    {
+                        Debug.WriteLine("error line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
+
+                        //isErr = true;
+                        errText = line;
+                        ret.ErrorMessage = line;
+
+                        if (!string.IsNullOrEmpty(line))
+                            stringBuilder.Append(line + "\n");
                     }
                     else if (line.StartsWith("changed: "))
                     {
@@ -395,6 +407,8 @@ public class BinaryDownloader : IBinaryDownloader
 
             bool isAck = false;
             string ackText = "";
+            bool isErr = false;
+            string errText = "";
             bool isNullReturn = false;
             bool isBinaryFound = false;
 
@@ -444,6 +458,8 @@ public class BinaryDownloader : IBinaryDownloader
                         {
                             if (line.StartsWith("ACK"))
                             {
+                                Debug.WriteLine("ack line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
+
                                 if (!string.IsNullOrEmpty(line))
                                     stringBuilder.Append(line + "\n");
 
@@ -454,6 +470,17 @@ public class BinaryDownloader : IBinaryDownloader
                                 isWaitForOK = false;
 
                                 break;
+                            }
+                            else if (line.StartsWith("error"))
+                            {
+                                Debug.WriteLine("error line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
+
+                                isErr = true;
+                                errText = line;
+                                ret.ErrorMessage = line;
+
+                                if (!string.IsNullOrEmpty(line))
+                                    stringBuilder.Append(line + "\n");
                             }
                             else if (line.StartsWith("changed: "))
                             {
@@ -550,10 +577,22 @@ public class BinaryDownloader : IBinaryDownloader
                     Debug.WriteLine("@MpdBinarySendBinaryCommand ReadAsync isAck");
 
                     ret.ErrorMessage = ackText + " (@MpdBinarySendBinaryCommand)";
-                    ret.IsSuccess = false;
-                    return ret;
+                    //ret.IsSuccess = false;
+                    //return ret;
                 }
-                else if (isBinaryFound)
+
+                if (isErr)
+                {
+                    //MpdFatalError?.Invoke(this, ackText + " (@MCGB)");
+
+                    Debug.WriteLine("@MpdBinarySendBinaryCommand ReadAsync isErr");
+
+                    ret.ErrorMessage = errText + " (@MpdBinarySendBinaryCommand)";
+                    //ret.IsSuccess = false;
+                    //return ret;
+                }
+
+                if (isBinaryFound)
                 {
                     return ParseAlbumImageData(bin);
                 }

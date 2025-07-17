@@ -52,16 +52,6 @@
 							<ColumnDefinition Width="*"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 
-						<ExperimentalAcrylicBorder IsHitTestVisible="False" Grid.ColumnSpan="2">
-							<ExperimentalAcrylicBorder.Material>
-								<ExperimentalAcrylicMaterial
-									BackgroundSource="Digger"
-									TintColor="Black"
-									TintOpacity="1"
-									MaterialOpacity="0.85" />
-							</ExperimentalAcrylicBorder.Material>
-						</ExperimentalAcrylicBorder>
-
 						<!-- Album Image -->
 						<Border Grid.Row="0" Grid.Column="0" Margin="24" Width="240" Height="240" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
 							<Grid>

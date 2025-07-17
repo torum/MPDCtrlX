@@ -20,6 +20,8 @@ public partial class FilesPage : UserControl
 {
     private readonly MainViewModel? vm;
 
+    private bool _isHeaderWidthInitialized;
+
     public FilesPage() { }
 
     public FilesPage(MainViewModel viewmodel)
@@ -42,9 +44,28 @@ public partial class FilesPage : UserControl
             return;
         }
 
+        if (_isHeaderWidthInitialized)
+        {
+            // Everytime page is changed back, this loaded is called. So.
+            return;
+        }
+
+        _isHeaderWidthInitialized = true;
+
         this.Library1x.Width = vm.LibraryColumnHeaderTitleWidth;
         this.Library2x.Width = vm.LibraryColumnHeaderFilePathWidth;
+    }
 
+    // Called on window closing to save dummy header sizes.
+    public void SaveFilesHeaderWidth()
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        vm.LibraryColumnHeaderTitleWidth = this.Library1.Bounds.Size.Width;
+        vm.LibraryColumnHeaderFilePathWidth = this.Library2.Bounds.Size.Width;
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.
