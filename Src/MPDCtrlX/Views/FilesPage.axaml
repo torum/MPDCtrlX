@@ -251,13 +251,13 @@
 							<Setter Property="Height" Value="36"/>
 							<Setter Property="MinHeight" Value="32"/>
 							<Setter Property="Padding" Value="0,0,6,0" />
-							<Setter Property="ContextMenu">
+							<Setter Property="ContextFlyout">
 								<Setter.Value>
-									<ContextMenu>
+									<MenuFlyout>
 										<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 										<Separator/>
 										<MenuItem Header="Add to playlist" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
-									</ContextMenu>
+									</MenuFlyout>
 								</Setter.Value>
 							</Setter>
 						</Style>

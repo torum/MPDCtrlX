@@ -445,9 +445,9 @@
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-						<Setter Property="ContextMenu">
+						<Setter Property="ContextFlyout">
 							<Setter.Value>
-								<ContextMenu>
+								<MenuFlyout>
 									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Play}" InputGesture="Enter" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewLeftDoubleClickCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}"/>
 									<!-- {Binding $parent[ListBox].SelectedItem} -->
 									<!-- Add to playlist -->
@@ -455,32 +455,12 @@
 									<Separator/>
 									<!-- Remove -->
 									<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_Remove}" InputGesture="Ctrl+Delete" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewDeleteSelectedWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
-								</ContextMenu>
+								</MenuFlyout>
 
 							</Setter.Value>
 						</Setter>
 					</Style>
 				</ListBox.Styles>
-				<!--
-				<ListBox.ItemContainerTheme>
-					<ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-						<EventSetter Event="DoubleTapped" Handler="ListBox_DoubleTapped"/>
-					</ControlTheme>
-				</ListBox.ItemContainerTheme>
-				-->
-				<!--  
-				<ListBox.ItemContainerTheme>
-					<ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-						<Setter Property="ContextMenu">
-							<Setter.Value>
-								<ContextMenu>
-									<MenuItem Header="Delete"/>
-								</ContextMenu>
-							</Setter.Value>
-						</Setter>
-					</ControlTheme>
-				</ListBox.ItemContainerTheme>
-				-->
 			</ListBox>
 
 			<!-- Filtered  -->

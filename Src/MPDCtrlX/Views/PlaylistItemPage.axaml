@@ -306,21 +306,15 @@
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-						<Setter Property="ContextMenu">
+						<Setter Property="ContextFlyout">
 							<Setter.Value>
-								<ContextMenu>
+								<MenuFlyout>
 									<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
-									
-									<!-- Save -->
-									<!--<Separator/>
-									<MenuItem Header="Save">
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedAs}"/>
-										<MenuItem Header="{x:Static prop:Resources.QueueItemContextMenu_SaveSelectedTo}"/>
-									</MenuItem> -->
+
 									<Separator/>
 									<!-- Remove -->
 									<MenuItem Header="{x:Static prop:Resources.PlaylistItemContextMenu_Remove}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).PlaylistListviewDeleteSelectedWithoutPromptCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}"/>
-								</ContextMenu>
+								</MenuFlyout>
 
 							</Setter.Value>
 						</Setter>

@@ -332,13 +332,13 @@
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0" />
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-						<Setter Property="ContextMenu">
+						<Setter Property="ContextFlyout">
 							<Setter.Value>
-								<ContextMenu>
+								<MenuFlyout>
 									<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 									<Separator/>
 									<MenuItem Header="Add to playlist" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SearchListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
-								</ContextMenu>
+								</MenuFlyout>
 							</Setter.Value>
 						</Setter>
 					</Style>

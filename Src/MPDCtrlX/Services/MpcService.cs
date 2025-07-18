@@ -844,6 +844,7 @@ public partial class MpcService : IMpcService
             {
                 MpdAckError?.Invoke(this, ackText + " (@idle)", "Command");
             }
+
             if (isErr)
             {
                 MpdFatalError?.Invoke(this, errText, "Idle");

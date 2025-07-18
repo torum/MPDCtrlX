@@ -3817,18 +3817,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         #endregion
 
-        IsShowDebugWindow = false;
-        
-        //Start("localhost", 6600);
-        //Volume = 20; // needs this until implement profiles.
-        //IsWorking = false;
 
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
+            //_faTheme!.PreferSystemTheme = true;
+            _faTheme!.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
+        }
 
-        //FluentAvaloniaTheme? _faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
-        //_faTheme!.PreferSystemTheme = true;
-
-        //_faTheme.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
         //(Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
+
+        IsShowDebugWindow = false;
 
 #if DEBUG
         IsSaveLog = true;
@@ -4495,7 +4494,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         {
                                             try
                                             {
-                                                Debug.WriteLine(s);
                                                 LibraryColumnHeaderTitleWidth = Double.Parse(s);
                                             }
                                             catch
@@ -7225,6 +7223,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void PlayCommand_ExecuteAsync()
     {
+        if (Queue.Count < 1) { return; }
+
         switch (_mpc.MpdStatus.MpdState)
         {
             case Status.MpdPlayState.Play:
@@ -7258,6 +7258,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void PlayNextCommand_ExecuteAsync()
     {
+        if (Queue.Count < 1) { return; }
+
         await _mpc.MpdPlaybackNext(Convert.ToInt32(_volume));
     }
 
@@ -7270,6 +7272,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void PlayPrevCommand_ExecuteAsync()
     {
+        if (Queue.Count < 1) { return; }
+
         await _mpc.MpdPlaybackPrev(Convert.ToInt32(_volume));
     }
 
