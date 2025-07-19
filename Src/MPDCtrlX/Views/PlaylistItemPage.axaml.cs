@@ -61,6 +61,11 @@ public partial class PlaylistItemPage : UserControl
             return;
         }
 
+        if (!_isHeaderWidthInitialized)
+        {
+            return;
+        }
+
         vm.PlaylistColumnHeaderPositionWidth = this.PlaylistColumn1.Bounds.Size.Width;
         // = this.PlaylistColumn2.Bounds.Size.Width;
         vm.PlaylistColumnHeaderTitleWidth = this.PlaylistColumn3.Bounds.Size.Width;

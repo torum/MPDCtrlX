@@ -64,6 +64,11 @@ public partial class FilesPage : UserControl
             return;
         }
 
+        if (!_isHeaderWidthInitialized)
+        {
+            return;
+        }
+
         vm.LibraryColumnHeaderTitleWidth = this.Library1.Bounds.Size.Width;
         vm.LibraryColumnHeaderFilePathWidth = this.Library2.Bounds.Size.Width;
     }

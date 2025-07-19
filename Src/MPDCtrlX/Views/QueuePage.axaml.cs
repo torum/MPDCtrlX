@@ -250,6 +250,11 @@ public partial class QueuePage : UserControl
             return;
         }
 
+        if (!_isHeaderWidthInitialized)
+        {
+            return;
+        }
+
         // This is a dirty workaround for AvaloniaUI.
         vm.QueueColumnHeaderPositionWidth = this.Column1.Bounds.Size.Width;
         vm.QueueColumnHeaderNowPlayingWidth = this.Column2.Bounds.Size.Width;
