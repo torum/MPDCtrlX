@@ -83,7 +83,7 @@ public partial class App : Application
         BindingPlugins.DataValidators.RemoveAt(0);
 
         // TMP:
-        Properties.Resources.Culture = new CultureInfo("en-US");
+        //Properties.Resources.Culture = new CultureInfo("en-US");
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

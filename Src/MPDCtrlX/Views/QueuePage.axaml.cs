@@ -63,7 +63,7 @@ public partial class QueuePage : UserControl
 
         if (_isHeaderWidthInitialized)
         {
-            // Everytime page is changed back, this loaded is called. So.
+            // Everytime page is changed come back, this loaded is called. So.
             return;
         }
 
@@ -404,16 +404,29 @@ public partial class QueuePage : UserControl
         {
             if (dialog.Content is Views.Dialogs.SaveToDialog dlg)
             {
-                var plselitem = dlg.PlaylistComboBox.SelectedItem;
 
-                if (plselitem is Models.Playlist pl)
+                if (dlg.CreateNewCheckBox.IsChecked is true)
                 {
-                    if (string.IsNullOrWhiteSpace(pl.Name))
-                    {
-                        return;
-                    }
+                    var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
 
-                    vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
+                    if (!string.IsNullOrEmpty(str.Trim()))
+                    {
+                        vm?.QueueSaveToDialog_Execute(str.Trim());
+                    }
+                }
+                else
+                {
+                    var plselitem = dlg.PlaylistComboBox.SelectedItem;
+
+                    if (plselitem is Models.Playlist pl)
+                    {
+                        if (string.IsNullOrWhiteSpace(pl.Name))
+                        {
+                            return;
+                        }
+
+                        vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
+                    }
                 }
             }
         }

@@ -12,6 +12,7 @@ public partial class PlaylistItemPage : UserControl
 {
     private readonly MainViewModel? vm;
 
+    private bool _isHeaderWidthInitialized;
     public PlaylistItemPage() { }
 
     public PlaylistItemPage(MainViewModel viedwmodel)
@@ -32,17 +33,44 @@ public partial class PlaylistItemPage : UserControl
             return;
         }
 
-        this.test1x.Width = vm.QueueColumnHeaderPositionWidth;
-        this.test2x.Width = vm.QueueColumnHeaderNowPlayingWidth;
-        this.test3x.Width = vm.QueueColumnHeaderTitleWidth;
-        this.test4x.Width = vm.QueueColumnHeaderTimeWidth;
-        this.test5x.Width = vm.QueueColumnHeaderArtistWidth;
-        this.test6x.Width = vm.QueueColumnHeaderAlbumWidth;
-        this.test7x.Width = vm.QueueColumnHeaderDiscWidth;
-        this.test8x.Width = vm.QueueColumnHeaderTrackWidth;
-        this.test9x.Width = vm.QueueColumnHeaderGenreWidth;
-        this.test10x.Width = vm.QueueColumnHeaderLastModifiedWidth;
+        if (_isHeaderWidthInitialized)
+        {
+            // Everytime page is changed back, this loaded is called. So.
+            return;
+        }
 
+        _isHeaderWidthInitialized = true;
+
+        this.PlaylistColumn1x.Width = vm.PlaylistColumnHeaderPositionWidth;
+        //this.PlaylistColumn2x.Width = ;
+        this.PlaylistColumn3x.Width = vm.PlaylistColumnHeaderTitleWidth;
+        this.PlaylistColumn4x.Width = vm.PlaylistColumnHeaderTimeWidth;
+        this.PlaylistColumn5x.Width = vm.PlaylistColumnHeaderArtistWidth;
+        this.PlaylistColumn6x.Width = vm.PlaylistColumnHeaderAlbumWidth;
+        this.PlaylistColumn7x.Width = vm.PlaylistColumnHeaderDiscWidth;
+        this.PlaylistColumn8x.Width = vm.PlaylistColumnHeaderTrackWidth;
+        this.PlaylistColumn9x.Width = vm.PlaylistColumnHeaderGenreWidth;
+        this.PlaylistColumn10x.Width = vm.PlaylistColumnHeaderLastModifiedWidth;
+    }
+
+    // Called on window closing to save dummy header sizes.
+    public void SavePlaylistItemsHeaderWidth()
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        vm.PlaylistColumnHeaderPositionWidth = this.PlaylistColumn1.Bounds.Size.Width;
+        // = this.PlaylistColumn2.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderTitleWidth = this.PlaylistColumn3.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderTimeWidth = this.PlaylistColumn4.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderArtistWidth = this.PlaylistColumn5.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderAlbumWidth = this.PlaylistColumn6.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderDiscWidth = this.PlaylistColumn7.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderTrackWidth = this.PlaylistColumn8.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderGenreWidth = this.PlaylistColumn9.Bounds.Size.Width;
+        vm.PlaylistColumnHeaderLastModifiedWidth = this.PlaylistColumn10.Bounds.Size.Width;
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.
