@@ -1554,7 +1554,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
                 {
-                    GetPlaylistSongs(nmpli);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        GetPlaylistSongs(nmpli);
+                    });
                 }
             }
             else if (value is NodeMenu)
@@ -3582,7 +3585,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
 
     public event EventHandler<string>? PlaylistRenameToDialogShow;
-    
+
+
+    //public delegate void NavigationViewMenuItemsLoadedEventHandler();
+    //public event NavigationViewMenuItemsLoadedEventHandler? NavigationViewMenuItemsLoaded;
+    //
+
+    //public event EventHandler? NavigationViewMenuItemsLoaded;
+
     #endregion
 
     #region == Services == 
@@ -6331,24 +6341,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         return Task.FromResult(true);
     }
 
-    private async void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
+    private void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
     {
         if (playlistNode is null)
             return;
 
-        IsWorking = true;
-
-        Dispatcher.UIThread.Post(() => {
-            if (playlistNode.PlaylistSongs.Count > 0)
-                playlistNode.PlaylistSongs.Clear();
-        });
-
-        CommandPlaylistResult result = await _mpc.MpdQueryPlaylistSongs(playlistNode.Name);
-        if (result.IsSuccess)
-        {
+        Dispatcher.UIThread.Post(async () => {
             IsWorking = true;
 
-            Dispatcher.UIThread.Post(() => {
+            if (playlistNode.PlaylistSongs.Count > 0)
+            {
+                playlistNode.PlaylistSongs.Clear();
+            }
+
+            CommandPlaylistResult result = await _mpc.MpdQueryPlaylistSongs(playlistNode.Name);
+            if (result.IsSuccess)
+            {
+                IsWorking = true;
+
                 if (result.PlaylistSongs is not null)
                 {
                     playlistNode.PlaylistSongs = result.PlaylistSongs;
@@ -6360,14 +6370,63 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         PlaylistSongs = playlistNode.PlaylistSongs;
                         UpdateProgress?.Invoke(this, "");
                         SelectedPlaylistSong = null;
+
+                        Debug.WriteLine("SelectedNodeMenu == playlistNode @GetPlaylistSongs");
+
+                        // Force NavView to reset selected item. 
+                        playlistNode.Selected = false;
+                        GoToJustPlaylistPage(playlistNode);
                     }
 
                     playlistNode.IsUpdateRequied = false;
+                    //Debug.WriteLine("GetPlaylistSongs " + playlistNode.Name);
                 }
-            });
-        }
+            }
 
-        IsWorking = false;
+            IsWorking = false;
+        });
+    }
+
+    private void GoToJustPlaylistPage(NodeMenuPlaylistItem playlist)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            foreach (var hoge in MainMenuItems)
+            {
+                if (hoge is NodeMenuPlaylists)
+                {
+                    foreach (var fuga in hoge.Children)
+                    {
+                        if (fuga is NodeMenuPlaylistItem)
+                        {
+                            if (fuga == playlist)
+                            {
+                                if (IsNavigationViewMenuOpen)
+                                {
+                                    fuga.Selected = true;
+                                    SelectedNodeMenu = fuga;
+                                    SelectedPlaylistName = fuga.Name;
+                                    Debug.WriteLine($"{playlist.Name} is now selected....");
+                                    break;
+                                }
+                            }
+                            /*
+                            if (string.Equals(playlist, fuga.Name, StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                Debug.WriteLine($"{playlist} is now selected....");
+                                IsNavigationViewMenuOpen = true;
+                                fuga.Selected = true;
+                                SelectedNodeMenu = fuga;
+                                SelectedPlaylistName = fuga.Name;
+                                break;
+                            }
+                            */
+                        }
+                    }
+                }
+            }
+        });
+
     }
 
     private void GetFiles(NodeMenuFiles filestNode)
@@ -8837,10 +8896,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (ret.IsSuccess)
         {
-            // Clear listview 
             SelectedPlaylistName = string.Empty;
-
             RenamedSelectPendingPlaylistName = string.Empty;
+            // Clear listview 
             PlaylistSongs.Clear();
             //CurrentPage = App.GetService<QueuePage>();
         }
@@ -8856,28 +8914,35 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute(object obj)
     {
+        /*
+        // This caused problem
         if (string.IsNullOrEmpty(_selectedPlaylistName))
         {
+            Debug.WriteLine("string.IsNullOrEmpty(_selectedPlaylistName) @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
             return;
         }
+        */
 
         if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
         {
             if (nmpli.IsUpdateRequied)
             {
+                Debug.WriteLine("nmpli.IsUpdateRequied @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
                 return;
+            }
+            else 
+            {
+                if (obj is SongInfo song)
+                {
+                    await _mpc.MpdPlaylistDelete(nmpli.Name, song.Index);
+                }
             }
         }
         else
         {
+            Debug.WriteLine("SelectedNodeMenu is NOT NodeMenuPlaylistItem nmpli @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
             return;
         }
-
-        if (obj is SongInfo song)
-        {
-            await _mpc.MpdPlaylistDelete(_selectedPlaylistName, song.Index);
-        }
-
     }
 
     // Playlist Clear

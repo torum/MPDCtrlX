@@ -24,10 +24,10 @@
 
 			<!-- PlaylistItem page title  -->
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
-				
+				<!--			
 				<TextBlock Text="Playlist" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-
-				<TextBlock Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4">
+-->
+				<TextBlock Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom">
 					<Run Text="{Binding SelectedPlaylistName, Mode=OneWay}"/>
 				</TextBlock>
 				

@@ -28,7 +28,7 @@ public partial class MainWindow : Window//AppWindow//
     private readonly MainView? _shellPage;
     private readonly SettingsPage? _settingsPage;
 
-    private NavigationViewItem? _navigationViewSelectedItem;
+    //private NavigationViewItem? _navigationViewSelectedItem;
 
     public MainWindow() { }
 
@@ -68,6 +68,9 @@ public partial class MainWindow : Window//AppWindow//
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
+
+        //vm.NavigationViewMenuItemsLoaded += (sender, args) => NavigationViewLoaded();
+
 
         //this.ContentRendered += vm.OnContentRendered;
         //vm.CurrentSongChanged += (sender, arg) => OnCurrentSongChanged(arg);
@@ -140,22 +143,37 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
+        if (this.navigateView is null)
+        {
+            return;
+        }
+
         if (this.DataContext is MainViewModel vm)
         {
-            var hoge = this.navigateView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
-            if (hoge != null)
-            {
-                hoge.IsSelected = true;
-
-                //
-                _navigationViewSelectedItem = hoge;
-            }
-
             vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
             if (vm.SelectedNodeMenu != null)
             {
                 vm.SelectedNodeMenu.Selected = true;
             }
+
+            /*
+             * Debug.WriteLine(this.navigateView.MenuItems.Count.ToString());
+            var hoge = this.navigateView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
+            //var hoge = this.navigateView.MenuItems.FirstOrDefault();
+            //if (hoge != null)
+            if (hoge is NavigationViewItem nvi)
+            {
+                nvi.IsSelected = true;
+
+                Debug.WriteLine(nvi.Name + " hoge");
+                //
+                //_navigationViewSelectedItem = hoge;
+            }
+            else
+            {
+                Debug.WriteLine("not item " + hoge?.ToString());
+            }
+            */
 
             if (vm.IsNavigationViewMenuOpen)
             {
@@ -210,7 +228,7 @@ public partial class MainWindow : Window//AppWindow//
                 }
                 else
                 {
-                    vm.SelectedNodeMenu = null; 
+                    vm.SelectedNodeMenu = null;
                 }
             }
         }
@@ -231,7 +249,7 @@ public partial class MainWindow : Window//AppWindow//
                 nv.Content = _shellPage;
             }
 
-
+            /*
             if (nv.SelectedItem is NodeMenuPlaylists)
             {
                 // don't change page here.
@@ -246,6 +264,7 @@ public partial class MainWindow : Window//AppWindow//
             }
 
             _navigationViewSelectedItem = nv.SelectedItem as NavigationViewItem;
+            */
         }
     }
 

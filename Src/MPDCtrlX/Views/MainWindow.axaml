@@ -282,7 +282,8 @@
 
 				<!-- Navigation menu -->
 				<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
-					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" Loaded="NavigationView_Loaded" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="260" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=TwoWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="260" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+						<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
 						<ui:NavigationView.PaneHeader>
 						</ui:NavigationView.PaneHeader>
 						<ui:NavigationView.PaneCustomContent>
@@ -291,7 +292,7 @@
 						</ui:NavigationView.PaneFooter>
 						<ui:NavigationView.Resources>
 							<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
-								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
+								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=TwoWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
 									<ui:NavigationViewItem.IconSource>
 										<ui:PathIconSource Data="{Binding PathIcon}">
 											
