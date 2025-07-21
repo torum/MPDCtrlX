@@ -161,19 +161,6 @@ public class MenuTreeBuilder : NodeTree
         };
         Children.Add(queue);
 
-        /*
-        NodeMenuSearch search = new(Properties.Resources.MenuTreeItem_Search)
-        {
-            Selected = false,
-            Expanded = false,
-
-            Parent = this
-        };
-        Children.Add(search);
-
-        _searchDirectory = search;
-        */
-
         NodeMenuLibrary browse = new(Properties.Resources.MenuTreeItem_Library)
         {
             Selected = false,

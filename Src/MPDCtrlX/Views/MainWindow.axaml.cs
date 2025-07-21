@@ -174,7 +174,7 @@ public partial class MainWindow : Window//AppWindow//
                 Debug.WriteLine("not item " + hoge?.ToString());
             }
             */
-
+            
             if (vm.IsNavigationViewMenuOpen)
             {
                 foreach (var fuga in vm.MainMenuItems)
@@ -189,7 +189,6 @@ public partial class MainWindow : Window//AppWindow//
                     }
                 }
             }
-
         }
     }
 

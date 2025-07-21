@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using MPDCtrlX.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -8,7 +9,7 @@ namespace MPDCtrlX.Models;
 /// <summary>
 /// Profile class for connection setting.
 /// </summary>
-public class Profile : INotifyPropertyChanged
+public class Profile : ViewModelBase
 {
     private string _host = "";
     public string Host
@@ -111,19 +112,4 @@ public class Profile : INotifyPropertyChanged
             NotifyPropertyChanged(nameof(Volume));
         }
     }
-
-    #region == INotifyPropertyChanged ==
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected void NotifyPropertyChanged(string propertyName)
-    {
-        //Application.Current.Dispatcher.Invoke(() =>
-        Dispatcher.UIThread.Post(() =>
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        });
-    }
-
-    #endregion
 }

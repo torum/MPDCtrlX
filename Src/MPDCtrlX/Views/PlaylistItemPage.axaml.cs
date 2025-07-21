@@ -10,25 +10,21 @@ namespace MPDCtrlX.Views;
 
 public partial class PlaylistItemPage : UserControl
 {
-    private readonly MainViewModel? vm;
-
     private bool _isHeaderWidthInitialized;
     public PlaylistItemPage() { }
 
     public PlaylistItemPage(MainViewModel viedwmodel)
     {
-        vm = viedwmodel;
-
-        DataContext = vm;
+        DataContext = viedwmodel;
 
         InitializeComponent();
 
-        vm.PlaylistRenameToDialogShow += this.PlaylistRenameToDialogShowAsync;
+        viedwmodel.PlaylistRenameToDialogShow += this.PlaylistRenameToDialogShowAsync;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (vm == null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -56,7 +52,7 @@ public partial class PlaylistItemPage : UserControl
     // Called on window closing to save dummy header sizes.
     public void SavePlaylistItemsHeaderWidth()
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -89,7 +85,7 @@ public partial class PlaylistItemPage : UserControl
 
     private async void PlaylistRenameToDialogShowAsync(object? sender,string playlist)
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }

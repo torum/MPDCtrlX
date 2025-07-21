@@ -1,12 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using MPDCtrlX.ViewModels;
 using System;
+using System.Xml.Linq;
 
 namespace MPDCtrlX.Models;
 
 /// <summary>
 /// Generic song file class. (for listall)
 /// </summary>
-public partial class SongFile : ObservableObject
+public partial class SongFile : ViewModelBase
 {
     public string File { get; set; } = "";
 }
@@ -134,6 +136,9 @@ public partial class SongInfo : SongFile
                 return;
 
             _lastModified = value;
+
+            NotifyPropertyChanged(nameof(LastModified));
+            NotifyPropertyChanged(nameof(LastModifiedFormated));
         }
     }
 
@@ -174,10 +179,13 @@ public partial class SongInfo : SongFile
         }
         set
         {
-            if (SetProperty(ref _index, value))
-            {
-                //
-            }
+            if (_index == value)
+                return;
+
+            _index = value;
+
+            NotifyPropertyChanged(nameof(Index));
+            NotifyPropertyChanged(nameof(IndexPlusOne));
         }
     }
 
@@ -190,10 +198,12 @@ public partial class SongInfo : SongFile
         }
         set
         {
-            if (SetProperty(ref _isSelected, value))
-            {
-                //
-            }
+            if (_isSelected == value)
+                return;
+
+            _isSelected = value;
+
+            NotifyPropertyChanged(nameof(IsSelected));
         }
     }
 
@@ -224,10 +234,12 @@ public partial class SongInfoEx : SongInfo
         }
         set
         {
-            if (SetProperty(ref _pos, value))
-            {
-                //
-            }
+            if (_pos == value)
+                return;
+
+            _pos = value;
+
+            NotifyPropertyChanged(nameof(Pos));
         }
     }
 
@@ -240,10 +252,12 @@ public partial class SongInfoEx : SongInfo
         }
         set
         {
-            if (SetProperty(ref _isPlaying, value))
-            {
-                //
-            }
+            if (_isPlaying == value)
+                return;
+
+            _isPlaying = value;
+
+            NotifyPropertyChanged(nameof(IsPlaying));
         }
     }
 
@@ -256,10 +270,12 @@ public partial class SongInfoEx : SongInfo
         }
         set
         {
-            if (SetProperty(ref _isAlbumCoverNeedsUpdate, value))
-            {
-                //
-            }
+            if (_isAlbumCoverNeedsUpdate == value)
+                return;
+
+            _isAlbumCoverNeedsUpdate = value;
+
+            NotifyPropertyChanged(nameof(IsAlbumCoverNeedsUpdate));
         }
     }
 }

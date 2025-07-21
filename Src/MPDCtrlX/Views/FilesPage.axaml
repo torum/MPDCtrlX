@@ -39,7 +39,7 @@
 			
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<!-- page title-->
-				<TextBlock Text="Files" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Files}" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
 				<!-- song count -->
 				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Total Files"/>
@@ -54,7 +54,7 @@
 				<!-- Filter box -->
 				<StackPanel Orientation="Horizontal">
 					<TextBox Name="FilesFilterQueryTextBox" MinWidth="120" Width="150" Text="{Binding FilterMusicEntriesQuery, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsVisible="{Binding IsChecked, ElementName=TglButtonFilesItemsFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
-					<ToggleButton Name="TglButtonFilesItemsFilter" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" Click="ButtonFilesItemsFilter_Click">
+					<ToggleButton Name="TglButtonFilesItemsFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Filter}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" Click="ButtonFilesItemsFilter_Click">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="M7.5 13H12.5C12.7761 13 13 13.2239 13 13.5C13 13.7455 12.8231 13.9496 12.5899 13.9919L12.5 14H7.5C7.22386 14 7 13.7761 7 13.5C7 13.2545 7.17688 13.0504 7.41012 13.0081L7.5 13H12.5H7.5ZM5.5 9H14.5C14.7761 9 15 9.22386 15 9.5C15 9.74546 14.8231 9.94961 14.5899 9.99194L14.5 10H5.5C5.22386 10 5 9.77614 5 9.5C5 9.25454 5.17688 9.05039 5.41012 9.00806L5.5 9H14.5H5.5ZM3.5 5H16.5C16.7761 5 17 5.22386 17 5.5C17 5.74546 16.8231 5.94961 16.5899 5.99194L16.5 6H3.5C3.22386 6 3 5.77614 3 5.5C3 5.25454 3.17688 5.05039 3.41012 5.00806L3.5 5H16.5H3.5Z">
@@ -64,7 +64,7 @@
 				</StackPanel>
 				
 				<!-- Play button -->
-				<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" ToolTip.Tip="Play all" Command="{Binding FilesPlayCommand}" CommandParameter="{Binding MusicEntriesFiltered}">
+				<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding FilesPlayCommand}" CommandParameter="{Binding MusicEntriesFiltered}">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 							Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z">
@@ -72,7 +72,7 @@
 					</Viewbox>
 					<SplitButton.Flyout>
 						<MenuFlyout Placement="Bottom">
-							<MenuItem Header="Queue all" Command="{Binding FilesAddToQueueCommand}" CommandParameter="{Binding MusicEntriesFiltered}">
+							<MenuItem Header="{x:Static prop:Resources.PageMenu_QueueAll}" Command="{Binding FilesAddToQueueCommand}" CommandParameter="{Binding MusicEntriesFiltered}">
 								<MenuItem.Icon>
 									<PathIcon Data="M8 2C8.27614 2 8.5 2.22386 8.5 2.5V7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H8.5V13.5C8.5 13.7761 8.27614 14 8 14C7.72386 14 7.5 13.7761 7.5 13.5V8.5H2.5C2.22386 8.5 2 8.27614 2 8C2 7.72386 2.22386 7.5 2.5 7.5H7.5V2.5C7.5 2.22386 7.72386 2 8 2Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 									</PathIcon>
@@ -83,7 +83,7 @@
 				</SplitButton>
 				
 				<!-- More options button -->
-				<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+				<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip.Tip="{x:Static prop:Resources.PageMenu_More}">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 							Data="M10 6C9.30964 6 8.75 5.44036 8.75 4.75C8.75 4.05964 9.30964 3.5 10 3.5C10.6904 3.5 11.25 4.05964 11.25 4.75C11.25 5.44036 10.6904 6 10 6ZM10 11.25C9.30964 11.25 8.75 10.6904 8.75 10C8.75 9.30964 9.30964 8.75 10 8.75C10.6904 8.75 11.25 9.30964 11.25 10C11.25 10.6904 10.6904 11.25 10 11.25ZM8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14C9.30964 14 8.75 14.5596 8.75 15.25Z">
@@ -91,7 +91,7 @@
 					</Viewbox>
 					<Button.Flyout>
 						<MenuFlyout>
-							<MenuItem Header="Add to playlist" Command="{Binding FilesPageFilesAddToPlaylistCommand}" CommandParameter="{Binding MusicEntriesFiltered}"/>
+							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_AddToPlaylist}" Command="{Binding FilesPageFilesAddToPlaylistCommand}" CommandParameter="{Binding MusicEntriesFiltered}"/>
 						</MenuFlyout>
 					</Button.Flyout>
 				</Button>
@@ -158,11 +158,11 @@
 
 						<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
 						<Grid Grid.Column="2" Name="Library1">
-							<Label Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Name</Label>
+							<Label Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.FilesListviewColumnHeader_FileName}"></Label>
 						</Grid>
 						<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
 						<Grid Grid.Column="4" Name="Library2">
-							<Label Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center">File Path</Label>
+							<Label Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.FilesListviewColumnHeader_FilePath}"></Label>
 						</Grid>
 						<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
 
@@ -230,13 +230,13 @@
 								</Grid.ColumnDefinitions>
 
 								<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">
-									<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewPlayThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="Play" Background="Transparent" BorderThickness="0">
+									<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewPlayThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListViewItemContextMenu_Play}" Background="Transparent" BorderThickness="0">
 										<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 											<PathIcon Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 											</PathIcon>
 										</Viewbox>
 									</Button>
-									<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="Add to queue" Background="Transparent" BorderThickness="0">
+									<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListviewItemContextMenu_AddToQueue}" Background="Transparent" BorderThickness="0">
 										<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
 											<PathIcon Data="M8 2C8.27614 2 8.5 2.22386 8.5 2.5V7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H8.5V13.5C8.5 13.7761 8.27614 14 8 14C7.72386 14 7.5 13.7761 7.5 13.5V8.5H2.5C2.22386 8.5 2 8.27614 2 8C2 7.72386 2.22386 7.5 2.5 7.5H7.5V2.5C7.5 2.22386 7.72386 2 8 2Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 											</PathIcon>
@@ -259,9 +259,9 @@
 							<Setter Property="ContextFlyout">
 								<Setter.Value>
 									<MenuFlyout>
-										<MenuItem Header="Add to queue" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToQueue}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 										<Separator/>
-										<MenuItem Header="Add to playlist" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToPlaylist}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
 									</MenuFlyout>
 								</Setter.Value>
 							</Setter>

@@ -18,28 +18,23 @@ namespace MPDCtrlX.Views;
 
 public partial class FilesPage : UserControl
 {
-    private readonly MainViewModel? vm;
-
     private bool _isHeaderWidthInitialized;
 
     public FilesPage() { }
 
     public FilesPage(MainViewModel viewmodel)
     {
-        vm = viewmodel;
-        //_viewModel = App.GetService<MainViewModel>();
-
-        DataContext = vm;
+        DataContext = viewmodel;
 
         InitializeComponent();
 
-        vm.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
+        viewmodel.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
 
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (vm == null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -59,7 +54,7 @@ public partial class FilesPage : UserControl
     // Called on window closing to save dummy header sizes.
     public void SaveFilesHeaderWidth()
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -84,7 +79,7 @@ public partial class FilesPage : UserControl
 
     private async void AddToPlaylistDialogShowAsync(object? sender, List<string> list)
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }

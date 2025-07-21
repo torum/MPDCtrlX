@@ -20,33 +20,11 @@ public partial class MainView : UserControl
 
         InitializeComponent();
 
-
         if (vm is not null)
         {
-            // Event subscriptions
-            //vm.OnWindowLoaded(this);
-
-            // Subscribe to Window events.
-
-            //Loaded += vm.OnWindowLoaded;
-            //Closing += vm.OnWindowClosing;
-            //ContentRendered += vm.OnContentRendered;
-
-            // Subscribe to ViewModel events.
-
-            //vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
-            //vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-
-
             vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
-            //vm.DebugWindowShowHide2 += (sender, arg) => OnDebugWindowShowHide2(arg);
             vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
             vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
-            //vm.DebugCommandClear += () => OnDebugCommandClear();
-            //vm.DebugIdleClear += () => OnDebugIdleClear();
-            vm.AckWindowOutput += (sender, arg) => { this.OnAckWindowOutput(arg); };
-            vm.AckWindowClear += () => OnAckWindowClear();
-
         }
         /*
         Unloaded += (sender, e) =>
@@ -62,30 +40,7 @@ public partial class MainView : UserControl
             }
         };
         */
-
-        /*
-        var os = Environment.OSVersion;
-        if (os.Platform.ToString().StartsWith("Win"))
-        {
-            this.MainGrid.RowDefinitions[0].Height = new GridLength(32, GridUnitType.Pixel);
-            this.ImageLogo.IsVisible = true;
-        }
-        else
-        {
-            this.MainGrid.RowDefinitions[0].Height = new GridLength(0, GridUnitType.Pixel);
-            this.ImageLogo.IsVisible = false;
-        }
-        */
     }
-    /*
-#pragma warning disable CS8618
-    public MainView()
-#pragma warning restore CS8618
-    {
-        InitializeComponent();
-
-    }
-    */
 
     private readonly StringBuilder _sbCommandOutput = new();
     public void OnDebugCommandOutput(string arg)
@@ -114,21 +69,22 @@ public partial class MainView : UserControl
         DebugIdleTextBox.Text = _sbIdleOutput.ToString();
         DebugIdleTextBox.CaretIndex = DebugIdleTextBox.Text.Length;
     }
+
+    /*
     public void OnAckWindowOutput(string arg)
     {
-        /*
         // AppendText() is much faster than data binding.
         AckTextBox.AppendText(arg);
 
         AckTextBox.CaretIndex = AckTextBox.Text.Length;
         AckTextBox.ScrollToEnd();
-        */
     }
 
     public void OnAckWindowClear()
     {
         //AckTextBox.Clear();
     }
+    */
 
     public void OnDebugWindowShowHide()
     {

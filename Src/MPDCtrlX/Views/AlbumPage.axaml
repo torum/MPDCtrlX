@@ -6,6 +6,7 @@
 			 d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:Class="MPDCtrlX.Views.AlbumPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
@@ -28,7 +29,7 @@
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
-				<TextBlock Text="Albums" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
+				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Albums}" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
 				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
 					<Run Text="Albums"/>
 					<Run Text=": "/>
@@ -109,7 +110,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 
 								<StackPanel Orientation="Horizontal" Spacing="24" Grid.Row="1" Margin="16,16,16,16" HorizontalAlignment="Left">
 									<!-- Play button -->
-									<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" ToolTip.Tip="Play all" Command="{Binding SongsPlayCommand}" CommandParameter="{Binding SelectedAlbumSongs}">
+									<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding SongsPlayCommand}" CommandParameter="{Binding SelectedAlbumSongs}">
 										<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 											<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 												Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z">
@@ -117,7 +118,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 										</Viewbox>
 										<SplitButton.Flyout>
 											<MenuFlyout Placement="Bottom">
-												<MenuItem Header="Queue all" Command="{Binding SongsAddToQueueCommand}" CommandParameter="{Binding SelectedAlbumSongs}">
+												<MenuItem Header="{x:Static prop:Resources.PageMenu_QueueAll}" Command="{Binding SongsAddToQueueCommand}" CommandParameter="{Binding SelectedAlbumSongs}">
 													<MenuItem.Icon>
 														<PathIcon Data="M8 2C8.27614 2 8.5 2.22386 8.5 2.5V7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H8.5V13.5C8.5 13.7761 8.27614 14 8 14C7.72386 14 7.5 13.7761 7.5 13.5V8.5H2.5C2.22386 8.5 2 8.27614 2 8C2 7.72386 2.22386 7.5 2.5 7.5H7.5V2.5C7.5 2.22386 7.72386 2 8 2Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 														</PathIcon>
@@ -150,7 +151,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 							</Grid>
 
 							<!-- Close button -->
-							<Button Grid.Row="0" Grid.Column="1" Command="{Binding AlbumsCloseAlbumContentPanelCommand}" ToolTip.Tip="Close (ESC)" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="24" Width="34" Height="34">
+							<Button Grid.Row="0" Grid.Column="1" Command="{Binding AlbumsCloseAlbumContentPanelCommand}" ToolTip.Tip="{x:Static prop:Resources.Close}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="24" Width="34" Height="34">
 								<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center">
 									<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 										Data="M9.17903 10.5L8.18051 11.3737C7.9727 11.5555 7.95164 11.8714 8.13348 12.0792C8.31532 12.2871 8.6312 12.3081 8.83902 12.1263L10.839 10.3763C10.9475 10.2813 11.0098 10.1442 11.0098 9.99999C11.0098 9.85581 10.9475 9.71865 10.839 9.62371L8.83902 7.87371C8.6312 7.69186 8.31532 7.71292 8.13348 7.92074C7.95164 8.12856 7.9727 8.44444 8.18051 8.62628L9.17905 9.5L5.5 9.5C5.22386 9.5 5 9.72386 5 10C5 10.2761 5.22386 10.5 5.5 10.5L9.17903 10.5ZM16 16C17.1046 16 18 15.1046 18 14V6C18 4.89543 17.1046 4 16 4H4C2.89543 4 2 4.89543 2 6V14C2 15.1046 2.89543 16 4 16L16 16ZM17 14C17 14.5523 16.5523 15 16 15H13L13 5L16 5C16.5523 5 17 5.44772 17 6L17 14ZM12 5L12 15L4 15C3.44772 15 3 14.5523 3 14L3 6C3 5.44771 3.44772 5 4 5L12 5Z">
@@ -178,28 +179,28 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 										<DataTemplate x:DataType="mod:SongInfo">
 											<Grid>
 												<Grid.ColumnDefinitions>
+													<ColumnDefinition Width="76" MinWidth="76"></ColumnDefinition>
 													<ColumnDefinition Width="*"></ColumnDefinition>
 													<ColumnDefinition Width="70"></ColumnDefinition>
 													<ColumnDefinition Width="42"></ColumnDefinition>
 													<ColumnDefinition Width="62"></ColumnDefinition>
-													<ColumnDefinition Width="76" MinWidth="76"></ColumnDefinition>
 													<ColumnDefinition Width="12" MinWidth="12"></ColumnDefinition>
 												</Grid.ColumnDefinitions>
 
 												
-												<TextBlock Grid.Column="0" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
-												<TextBlock Grid.Column="1" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
-												<TextBlock Grid.Column="2" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
-												<TextBlock Grid.Column="3" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+												<TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+												<TextBlock Grid.Column="2" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+												<TextBlock Grid.Column="3" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
+												<TextBlock Grid.Column="4" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9"></TextBlock>
 
-												<StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Center">
-													<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewPlayThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="Play" Background="Transparent" BorderThickness="0">
+												<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+													<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewPlayThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListViewItemContextMenu_Play}" Background="Transparent" BorderThickness="0">
 														<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 															<PathIcon Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 															</PathIcon>
 														</Viewbox>
 													</Button>
-													<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="Add to queue" Background="Transparent" BorderThickness="0">
+													<Button Margin="3,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewAddThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListviewItemContextMenu_AddToQueue}" Background="Transparent" BorderThickness="0">
 														<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
 															<PathIcon Data="M8 2C8.27614 2 8.5 2.22386 8.5 2.5V7.5H13.5C13.7761 7.5 14 7.72386 14 8C14 8.27614 13.7761 8.5 13.5 8.5H8.5V13.5C8.5 13.7761 8.27614 14 8 14C7.72386 14 7.5 13.7761 7.5 13.5V8.5H2.5C2.22386 8.5 2 8.27614 2 8C2 7.72386 2.22386 7.5 2.5 7.5H7.5V2.5C7.5 2.22386 7.72386 2 8 2Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
 															</PathIcon>

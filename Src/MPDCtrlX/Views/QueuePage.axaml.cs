@@ -9,6 +9,7 @@ using MPDCtrlX.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -18,27 +19,22 @@ namespace MPDCtrlX.Views;
 
 public partial class QueuePage : UserControl
 {
-    private readonly MainViewModel? vm;
-
     private bool _isHeaderWidthInitialized;
 
     public QueuePage() { }
 
     public QueuePage(MainViewModel viewmodel)
     {
-        //vm = App.GetService<MainViewModel>();
-        vm = viewmodel;
-
-        DataContext = vm;
+        DataContext = viewmodel;
 
         InitializeComponent();
 
-        vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
-        vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-        vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
-        vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
-        vm.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
-        vm.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
+        viewmodel.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
+        viewmodel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+        viewmodel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
+        viewmodel.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
+        viewmodel.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
+        viewmodel.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
         /*
         Unloaded += (sender, e) =>
         {
@@ -56,7 +52,7 @@ public partial class QueuePage : UserControl
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (vm == null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -94,7 +90,7 @@ public partial class QueuePage : UserControl
 
     private void UpdateColumHeaders()
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -245,7 +241,7 @@ public partial class QueuePage : UserControl
     // Called on window closing to save dummy header sizes.
     public void SaveQueueHeaderWidth()
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -291,6 +287,12 @@ public partial class QueuePage : UserControl
             if (this.QueueListBox is ListBox lb)
             {
                 lb.ScrollIntoView(ind);
+
+                if (DataContext is not MainViewModel vm)
+                {
+                    return;
+                }
+
                 /* 
                 var test = vm?.Queue.FirstOrDefault(x => x.IsPlaying == true);
                 if (test != null)
@@ -299,6 +301,7 @@ public partial class QueuePage : UserControl
                     test.IsSelected = true;
                 }
                 */
+
                 var test = vm?.Queue.FirstOrDefault(x => x.Index == ind);
                 if (test != null)
                 {
@@ -341,13 +344,17 @@ public partial class QueuePage : UserControl
     {
         await Task.Yield();
         await Task.Delay(50); // Need to wait for UI to update
-        if (this.TglButtonQueueFilter is ToggleButton tb)
+
+        Dispatcher.UIThread.Post(() =>
         {
-            if (tb.IsChecked == true)
+            if (this.TglButtonQueueFilter is ToggleButton tb)
             {
-                this.FilterQueueQueryTextBox.Focus();
+                if (tb.IsChecked == true)
+                {
+                    this.FilterQueueQueryTextBox.Focus();
+                }
             }
-        }
+        });
     }
 
     // Sets focus in textbox when clicked.
@@ -373,7 +380,7 @@ public partial class QueuePage : UserControl
 
     private async void QueueSaveToDialogShowAsync(object? sender, System.EventArgs e)
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }
@@ -439,7 +446,7 @@ public partial class QueuePage : UserControl
 
     private async void QueueListviewSaveToDialogShowAsync(object? sender, List<string> list)
     {
-        if (vm is null)
+        if (DataContext is not MainViewModel vm)
         {
             return;
         }

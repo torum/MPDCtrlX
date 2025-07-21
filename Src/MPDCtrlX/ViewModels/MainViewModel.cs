@@ -1637,14 +1637,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (value is null)
             {
-                /*
                 Dispatcher.UIThread.Post(() =>
                 {
+                    SelectedPlaylistName = string.Empty;
+                    RenamedSelectPendingPlaylistName = string.Empty;
                 });
-                */
 
-                SelectedPlaylistName = string.Empty;
-                RenamedSelectPendingPlaylistName = string.Empty;
                 return;
             }
 
@@ -1707,23 +1705,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
-                /*
-                Dispatcher.UIThread.Post(() =>
-                {
-                });
-                */
-                SelectedPlaylistSong = null;
-                PlaylistSongs = nmpli.PlaylistSongs;
-                SelectedPlaylistName = nmpli.Name;
-                // Transient??
                 CurrentPage = App.GetService<PlaylistItemPage>();
 
+                Dispatcher.UIThread.Post(() =>
+                {
+                    SelectedPlaylistSong = null;
+                    PlaylistSongs = nmpli.PlaylistSongs;
+                    SelectedPlaylistName = nmpli.Name;
+                });
+                
                 if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
                 {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        GetPlaylistSongs(nmpli);
-                    });
+                    GetPlaylistSongs(nmpli);
                 }
             }
             else if (value is NodeMenu)
@@ -2568,10 +2561,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     // Search Tags
     private readonly ObservableCollection<Models.SearchOption> _searchTagList = 
     [
-        new Models.SearchOption(SearchTags.Title, Properties.Resources.QueueListviewColumnHeader_Title),
-        new Models.SearchOption(SearchTags.Artist, Properties.Resources.QueueListviewColumnHeader_Artist),
-        new Models.SearchOption(SearchTags.Album, Properties.Resources.QueueListviewColumnHeader_Album),
-        new Models.SearchOption(SearchTags.Genre, Properties.Resources.QueueListviewColumnHeader_Genre)
+        new Models.SearchOption(SearchTags.Title, Properties.Resources.ListviewColumnHeader_Title),
+        new Models.SearchOption(SearchTags.Artist, Properties.Resources.ListviewColumnHeader_Artist),
+        new Models.SearchOption(SearchTags.Album, Properties.Resources.ListviewColumnHeader_Album),
+        new Models.SearchOption(SearchTags.Genre, Properties.Resources.ListviewColumnHeader_Genre)
     ];
 
     public ObservableCollection<Models.SearchOption> SearchTagList
@@ -2582,7 +2575,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private Models.SearchOption _selectedSearchTag = new(SearchTags.Title, Properties.Resources.QueueListviewColumnHeader_Title);
+    private Models.SearchOption _selectedSearchTag = new(SearchTags.Title, Properties.Resources.ListviewColumnHeader_Title);
     public Models.SearchOption SelectedSearchTag
     {
         get
@@ -2602,8 +2595,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     // Search Shiki (contain/==)
     private readonly ObservableCollection<Models.SearchWith> _searchShikiList =
 [
-    new Models.SearchWith(SearchShiki.Contains, "Contains"),
-        new Models.SearchWith(SearchShiki.Equals, "Equals")
+    new Models.SearchWith(SearchShiki.Contains, Properties.Resources.Search_Shiki_Contains),
+        new Models.SearchWith(SearchShiki.Equals, Properties.Resources.Search_Shiki_Equals)
 ];
 
     public ObservableCollection<Models.SearchWith> SearchShikiList
@@ -6696,10 +6689,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         await Task.Delay(10);
         
-        Dispatcher.UIThread.Post(() => 
+        Dispatcher.UIThread.Post( () => 
         {
+            bool isListChanged = false;
             //IsBusy = true;
             IsWorking = true;
+
+            if (Playlists.Count == 0)
+            {
+                // this is the initial load, so use this flag to sort it later.
+                isListChanged = true;
+            }
 
             UpdateProgress?.Invoke(this, "[UI] Playlists loading...");
             Playlists = new ObservableCollection<Playlist>(_mpc.Playlists);
@@ -6740,6 +6740,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     if (fuga is null)
                     {
                         tobedeleted.Add(hoge);
+                        isListChanged = true;
                     }
                     else
                     {
@@ -6753,19 +6754,30 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 foreach (var hoge in tobedeleted)
                 {
                     playlistDir.Children.Remove(hoge);
+                    isListChanged = true;
                 }
 
-                // Sort
-                CultureInfo ci = CultureInfo.CurrentCulture;
-                StringComparer comp = StringComparer.Create(ci, true);
-                playlistDir.Children = new ObservableCollection<NodeTree>(playlistDir.Children.OrderBy(x => x.Name, comp));
+                // Sort > this was causing NavigationViewItem selection to reset..so >> only isChanged then sort it.
+                if (isListChanged && playlistDir.Children.Count > 1)
+                {
+                    CultureInfo ci = CultureInfo.CurrentCulture;
+                    StringComparer comp = StringComparer.Create(ci, true);
+                    // 
+                    playlistDir.Children = new ObservableCollection<NodeTree>(playlistDir.Children.OrderBy(x => x.Name, comp));  //<<This freaking resets selection of NavigationViewItem!
+                }
 
                 // Update playlist if selected
                 if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
                 {
-                    if (nmpli.IsUpdateRequied)
+                    if (nmpli.IsUpdateRequied && nmpli.Selected)
                     {
                         GetPlaylistSongs(nmpli);
+
+                        if (isListChanged)
+                        {
+                            // TODO: need to check if this is needed.
+                            GoToJustPlaylistPage(nmpli);
+                        }
                     }
                 }
 
@@ -6979,27 +6991,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             CommandPlaylistResult result = await _mpc.MpdQueryPlaylistSongs(playlistNode.Name);
             if (result.IsSuccess)
             {
-                IsWorking = true;
-
                 if (result.PlaylistSongs is not null)
                 {
-                    playlistNode.PlaylistSongs = result.PlaylistSongs;
+                    playlistNode.PlaylistSongs = new ObservableCollection<SongInfo>(result.PlaylistSongs);//result.PlaylistSongs
 
                     if (SelectedNodeMenu == playlistNode)
                     {
                         UpdateProgress?.Invoke(this, "[UI] Playlist loading...");
-                        //PlaylistSongs = new ObservableCollection<SongInfo>(playlistNode.PlaylistSongs);
-                        PlaylistSongs = playlistNode.PlaylistSongs;
+                        PlaylistSongs = playlistNode.PlaylistSongs; // just use this.
                         UpdateProgress?.Invoke(this, "");
-                        SelectedPlaylistSong = null;
-
-                        // Force NavView to reset selected item. 
-                        playlistNode.Selected = false;
-                        GoToJustPlaylistPage(playlistNode);
                     }
 
                     playlistNode.IsUpdateRequied = false;
-                    //Debug.WriteLine("GetPlaylistSongs " + playlistNode.Name);
                 }
             }
 
@@ -8075,8 +8078,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         if (_volume >= 10)
         {
-            Volume -= 10; 
+            Volume -= 10;
             //await _mpc.MpdSetVolume(Convert.ToInt32(_volume - 10));
+        }
+        else
+        {
+            Volume = 0;
         }
     }
 
@@ -8092,6 +8099,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             Volume += 10;
             //await _mpc.MpdSetVolume(Convert.ToInt32(_volume + 10));
+        }
+        else
+        {
+            Volume = 100;
         }
     }
 
@@ -9439,7 +9450,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         if (fuga is NodeMenuPlaylistItem)
                         {
-                            if (string.Equals(playlist, fuga.Name, StringComparison.CurrentCultureIgnoreCase))
+                            if (string.Equals(playlist, fuga.Name))
                             {
                                 Debug.WriteLine($"{playlist} is now selected....");
                                 IsNavigationViewMenuOpen = true;

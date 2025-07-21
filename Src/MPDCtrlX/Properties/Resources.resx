@@ -117,20 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="About" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="Ack_Window_Clear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
   <data name="Add" xml:space="preserve">
     <value>Add</value>
-  </data>
-  <data name="Application" xml:space="preserve">
-    <value>Application</value>
-  </data>
-  <data name="Browse" xml:space="preserve">
-    <value>Browse</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
@@ -195,20 +183,11 @@
   <data name="ConnectionStatus_SendFail_Timeout" xml:space="preserve">
     <value>Connection terminated.</value>
   </data>
-  <data name="Debug_Window_Clear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="Debug_Window_Close" xml:space="preserve">
-    <value>Close</value>
-  </data>
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
-  </data>
-  <data name="DeveloperMode" xml:space="preserve">
-    <value>Developer Mode</value>
   </data>
   <data name="Dialog_CancelClose" xml:space="preserve">
     <value>Cancel</value>
@@ -244,7 +223,7 @@
     <value>Filter</value>
   </data>
   <data name="FilterClear" xml:space="preserve">
-    <value>Clear Filter</value>
+    <value>Clear filter</value>
   </data>
   <data name="Host" xml:space="preserve">
     <value>Host</value>
@@ -279,10 +258,10 @@ SOFTWARE.</value>
   <data name="LicenseTitle" xml:space="preserve">
     <value>The MIT License</value>
   </data>
-  <data name="LocalfileItemContextMenu_Add" xml:space="preserve">
-    <value>Add (Enter)</value>
+  <data name="LocalfileItemContextMenu_AddToQueue" xml:space="preserve">
+    <value>Add to queue (Enter)</value>
   </data>
-  <data name="LocalfileListviewColumnHeader_FileName" xml:space="preserve">
+  <data name="FilesListviewColumnHeader_FileName" xml:space="preserve">
     <value>File Name</value>
   </data>
   <data name="LocalfileListviewTabitemHeader_LocalFiles" xml:space="preserve">
@@ -372,59 +351,8 @@ SOFTWARE.</value>
   <data name="PlaylistSongsContextMenu_Remove" xml:space="preserve">
     <value>Remove From Playlist</value>
   </data>
-  <data name="Popup_ConfirmClearPlaylist" xml:space="preserve">
-    <value>Confirm Clear Playlist</value>
-  </data>
-  <data name="Popup_ConfirmClearPlaylistQuestion" xml:space="preserve">
-    <value>Clear Playlist?</value>
-  </data>
-  <data name="Popup_ConfirmClearQueue" xml:space="preserve">
-    <value>Confirm Clear Queue</value>
-  </data>
-  <data name="Popup_ConfirmClearQueueQuestion" xml:space="preserve">
-    <value>Clear Queue?</value>
-  </data>
-  <data name="Popup_ConfirmReloadPlaylistQuestion" xml:space="preserve">
-    <value>Reload Playlist?</value>
-  </data>
-  <data name="Popup_ConfirmRemovePlaylist" xml:space="preserve">
-    <value>Confirm Remove Playlist</value>
-  </data>
-  <data name="Popup_ConfirmRemovePlaylistQuestion" xml:space="preserve">
-    <value>Remove Selected Playlist?</value>
-  </data>
-  <data name="Popup_ConfirmRemoveSelected" xml:space="preserve">
-    <value>Confirm Remove Selected</value>
-  </data>
-  <data name="Popup_ConfirmRemoveSelectedQuestion" xml:space="preserve">
-    <value>Remove Selected?</value>
-  </data>
   <data name="Dialog_Title_NewPlaylistName" xml:space="preserve">
     <value>New playlist name</value>
-  </data>
-  <data name="Popup_MultipleDeletionNotSupported" xml:space="preserve">
-    <value>Multiple Deletion Not Supported</value>
-  </data>
-  <data name="Popup_NotSuppotedByMPDProtocol" xml:space="preserve">
-    <value>Not Suppoted By MPD Protocol</value>
-  </data>
-  <data name="Popup_OK" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="Popup_PlaylistChangedNortification" xml:space="preserve">
-    <value>Playlist Changed Nortification</value>
-  </data>
-  <data name="Popup_SaveQueueAs" xml:space="preserve">
-    <value>Save Queue As</value>
-  </data>
-  <data name="Popup_SaveSelectedAs" xml:space="preserve">
-    <value>Save Selected As</value>
-  </data>
-  <data name="Popup_SaveSelectedTo" xml:space="preserve">
-    <value>Save Selected To</value>
-  </data>
-  <data name="Popup_SelectPlaylist" xml:space="preserve">
-    <value>Select Playlist:</value>
   </data>
   <data name="Port" xml:space="preserve">
     <value>Port</value>
@@ -444,59 +372,50 @@ SOFTWARE.</value>
   <data name="Profile_NewProfile" xml:space="preserve">
     <value>New Profile</value>
   </data>
-  <data name="QueueItemContextMenu_Move" xml:space="preserve">
-    <value>Move</value>
+  <data name="ListviewItemContextMenu_MoveDown" xml:space="preserve">
+    <value>Move down</value>
   </data>
-  <data name="QueueItemContextMenu_MoveDown" xml:space="preserve">
-    <value>Down (Ctrl+D)</value>
+  <data name="ListViewItemContextMenu_MoveUp" xml:space="preserve">
+    <value>Move up</value>
   </data>
-  <data name="QueueItemContextMenu_MoveUp" xml:space="preserve">
-    <value>Up (Ctrl+U)</value>
-  </data>
-  <data name="QueueMenu_QueueClear" xml:space="preserve">
+  <data name="FlyoutMenu_Clear" xml:space="preserve">
     <value>Clear</value>
   </data>
-  <data name="QueueMenu_QueueSaveAsPlaylist" xml:space="preserve">
-    <value>Save as...</value>
-  </data>
-  <data name="QueueItemContextMenu_Remove" xml:space="preserve">
+  <data name="ListviewItemContextMenu_Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
-  <data name="QueueItemContextMenu_SaveSelectedAs" xml:space="preserve">
-    <value>Save selected as...</value>
+  <data name="FlyoutMenu_AddToPlaylist" xml:space="preserve">
+    <value>Add to playlist</value>
   </data>
-  <data name="QueueItemContextMenu_SaveSelectedTo" xml:space="preserve">
-    <value>Save selected to...</value>
-  </data>
-  <data name="QueueMenu_ScrollIntoNowPlaying" xml:space="preserve">
+  <data name="FlyoutMenu_ScrollIntoNowPlaying" xml:space="preserve">
     <value>Scroll to current track</value>
   </data>
-  <data name="QueueListviewColumnHeader_Album" xml:space="preserve">
+  <data name="ListviewColumnHeader_Album" xml:space="preserve">
     <value>Album</value>
   </data>
-  <data name="QueueListviewColumnHeader_Artist" xml:space="preserve">
+  <data name="ListviewColumnHeader_Artist" xml:space="preserve">
     <value>Artist</value>
   </data>
-  <data name="QueueListviewColumnHeader_Genre" xml:space="preserve">
+  <data name="ListviewColumnHeader_Genre" xml:space="preserve">
     <value>Genre</value>
   </data>
-  <data name="QueueListviewColumnHeader_LastModified" xml:space="preserve">
+  <data name="ListviewColumnHeader_LastModified" xml:space="preserve">
     <value>Last Modified</value>
   </data>
-  <data name="QueueListviewColumnHeader_Position" xml:space="preserve">
+  <data name="ListviewColumnHeader_Position" xml:space="preserve">
     <value>Position</value>
   </data>
-  <data name="QueueListviewColumnHeader_Time" xml:space="preserve">
+  <data name="ListviewColumnHeader_Time" xml:space="preserve">
     <value>Time</value>
   </data>
-  <data name="QueueListviewColumnHeader_Title" xml:space="preserve">
+  <data name="ListviewColumnHeader_Title" xml:space="preserve">
     <value>Title</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="Search" xml:space="preserve">
-    <value>Search</value>
+  <data name="PageMenu_Find" xml:space="preserve">
+    <value>Find</value>
   </data>
   <data name="Search_ToolTip" xml:space="preserve">
     <value>Search (Ctrl+F)</value>
@@ -582,9 +501,6 @@ SOFTWARE.</value>
   <data name="StatusMsg_UpdatingDb" xml:space="preserve">
     <value>Updating database...</value>
   </data>
-  <data name="TreeviewMenuItemContextMenu_Load" xml:space="preserve">
-    <value>Load</value>
-  </data>
   <data name="Update" xml:space="preserve">
     <value>Update</value>
   </data>
@@ -606,11 +522,8 @@ SOFTWARE.</value>
   <data name="MenuTreeItem_Library" xml:space="preserve">
     <value>Library</value>
   </data>
-  <data name="QueueItemContextMenu_Play" xml:space="preserve">
+  <data name="ListViewItemContextMenu_Play" xml:space="preserve">
     <value>Play</value>
-  </data>
-  <data name="QueueMenu_QueueSaveToPlaylist" xml:space="preserve">
-    <value>Save to...</value>
   </data>
   <data name="Dialog_Ok" xml:space="preserve">
     <value>OK</value>
@@ -629,5 +542,83 @@ SOFTWARE.</value>
   </data>
   <data name="Settings_Opts_Themes_System" xml:space="preserve">
     <value>System</value>
+  </data>
+  <data name="ListviewColumnHeader_Disc" xml:space="preserve">
+    <value>Disc</value>
+  </data>
+  <data name="ListviewColumnHeader_Track" xml:space="preserve">
+    <value>Track</value>
+  </data>
+  <data name="ListviewItemContextMenu_AddToPlaylist" xml:space="preserve">
+    <value>Add to playlist</value>
+  </data>
+  <data name="ListviewItemContextMenu_AddToQueue" xml:space="preserve">
+    <value>Add to queue</value>
+  </data>
+  <data name="FlyoutMenu_GoToArtistPage" xml:space="preserve">
+    <value>Go to artist page</value>
+  </data>
+  <data name="FlyoutMenu_GoToAlbumPage" xml:space="preserve">
+    <value>Go to album page</value>
+  </data>
+  <data name="FlyoutMenu_ColumnVisibility" xml:space="preserve">
+    <value>Column visibility</value>
+  </data>
+  <data name="PageMenu_SortAndReorder" xml:space="preserve">
+    <value>Sort and reorder</value>
+  </data>
+  <data name="PageMenu_More" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="PageMenu_ReverseSort" xml:space="preserve">
+    <value>Reverse order</value>
+  </data>
+  <data name="PageMenu_PlayAll" xml:space="preserve">
+    <value>Play all</value>
+  </data>
+  <data name="PageMenu_QueueAll" xml:space="preserve">
+    <value>Queue all</value>
+  </data>
+  <data name="PageMenu_Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="FilesListviewColumnHeader_FilePath" xml:space="preserve">
+    <value>File path</value>
+  </data>
+  <data name="PageMenu_Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Search_Shiki_Contains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="Search_Shiki_Equals" xml:space="preserve">
+    <value>Equals</value>
+  </data>
+  <data name="Settings_PageTitle" xml:space="preserve">
+    <value>Application Settings</value>
+  </data>
+  <data name="Settings_Opts_Themes_Description" xml:space="preserve">
+    <value>Change the current app theme</value>
+  </data>
+  <data name="Settings_Opts_MPD" xml:space="preserve">
+    <value>Music Player Daemon</value>
+  </data>
+  <data name="Settings_Opts_MPD_Description" xml:space="preserve">
+    <value>Connection setting</value>
+  </data>
+  <data name="Settings_Opts_MPD_RememberThis" xml:space="preserve">
+    <value>Remember this</value>
+  </data>
+  <data name="Settings_Opts_MPD_Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Settings_Opts_Options_Description" xml:space="preserve">
+    <value>A few preferences</value>
+  </data>
+  <data name="Settings_ProjectPage" xml:space="preserve">
+    <value>Project page</value>
+  </data>
+  <data name="Settings_ProjectPage_Description" xml:space="preserve">
+    <value>Open source collaboration @GitHub</value>
   </data>
 </root>

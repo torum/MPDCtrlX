@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using MPDCtrlX.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -8,7 +9,7 @@ namespace MPDCtrlX.Models;
 /// <summary>
 /// Base class for Treeview Node and Listview Item.
 /// </summary>
-abstract public class Node : INotifyPropertyChanged
+abstract public class Node : ViewModelBase
 {
     private string _name;
     public string Name
@@ -49,23 +50,6 @@ abstract public class Node : INotifyPropertyChanged
     {
         _name = name;
     }
-
-    #region == INotifyPropertyChanged ==
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected void NotifyPropertyChanged(string propertyName)
-    {
-        //Application.Current.Dispatcher.Invoke(() =>
-        /*
-        Dispatcher.UIThread.Post(() =>
-        {
-        });
-        */
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    #endregion
 }
 
 /// <summary>

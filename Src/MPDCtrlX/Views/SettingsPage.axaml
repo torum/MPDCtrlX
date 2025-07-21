@@ -15,7 +15,7 @@
 
 		<StackPanel Spacing="24">
 			<StackPanel>
-				<TextBlock Text="Application Settings" Theme="{StaticResource TitleTextBlockStyle}" Margin="28,0,0,10"/>
+				<TextBlock Text="{x:Static prop:Resources.Settings_PageTitle}" Theme="{StaticResource TitleTextBlockStyle}" Margin="28,0,0,10"/>
 				<Separator/>
 			</StackPanel>
 
@@ -27,7 +27,7 @@
 			</StackPanel>
 
 
-			<ui:SettingsExpander Header="App Theme" IconSource="DarkTheme" Description="Change the current app theme">
+			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
 
 				<ui:SettingsExpander.Footer>
 					<ComboBox MinWidth="150" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme, Mode=TwoWay}">
@@ -39,7 +39,7 @@
 											Data="{Binding IconData}">
 										</PathIcon>
 									</Viewbox>
-									<TextBlock Text="{Binding Name}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
+									<TextBlock Text="{Binding Label}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
@@ -48,71 +48,77 @@
 
 			</ui:SettingsExpander>
 
-			<ui:SettingsExpander Header="MPD" Description="Connection setting">
+			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}">
+
 
 				<ui:SettingsExpanderItem>
-					<StackPanel Spacing="12" HorizontalAlignment="Left">
-						<StackPanel Spacing="3" HorizontalAlignment="Left">
-							<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
-							<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="IP address or PC name" Width="250"></TextBox>
-							<!--  (127.0.0.1 or localhost for Local PC) -->
+					<StackPanel Spacing="3" HorizontalAlignment="Left">
+						<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
+						<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="IP address or PC name" Width="250"></TextBox>
+						<!--  (127.0.0.1 or localhost for Local PC) -->
+					</StackPanel>
+				</ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem>
+					<StackPanel Spacing="3" HorizontalAlignment="Left">
+						<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
+						<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="Default is 6600" Width="250"></TextBox>
+					</StackPanel>
+				</ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem>
+					<StackPanel Spacing="3" HorizontalAlignment="Left">
+						<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
+						<StackPanel Spacing="24" Orientation="Horizontal">
+							<TextBox Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
+							<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
 						</StackPanel>
-						<StackPanel Spacing="3" HorizontalAlignment="Left">
-							<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
-							<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="Default is 6600" Width="250"></TextBox>
-						</StackPanel>
-						<StackPanel Spacing="3" HorizontalAlignment="Left">
-							<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
-							<StackPanel Spacing="24" Orientation="Horizontal">
-								<TextBox Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
-								<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
-							</StackPanel>
-						</StackPanel>
-						<StackPanel Spacing="3" Margin="0,12,0,0">
-							<Button Content="Apply changes and connect" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
-							<!--
+					</StackPanel>
+				</ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem>
+					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_MPD_RememberThis}" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
+				</ui:SettingsExpanderItem>
+
+				<ui:SettingsExpanderItem>
+					<StackPanel Spacing="3" Margin="0,12,0,0" HorizontalAlignment="Right">
+						<Button Content="{x:Static prop:Resources.Settings_Opts_MPD_Connect}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
+						<!--
 							<Button Content="{x:Static prop:Resources.Connect}" IsEnabled="{Binding Path=IsNotConnecting}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding ElementName=PasswordBox}" IsDefault="False"></Button>
 							-->
-						</StackPanel>
 					</StackPanel>
 
 				</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem>
-					<CheckBox Content="Remember this" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Right" />
-				</ui:SettingsExpanderItem>
-
 				<ui:SettingsExpander.Footer>
-
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>
 
 
 			<!-- IconSource="DarkTheme" -->
-			<ui:SettingsExpander Header="Options" Description="A few preferences">
+			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
 
 				<ui:SettingsExpanderItem>
 					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UpdateDatabaseOnStartup}" IsChecked="{Binding IsUpdateOnStartup}" Margin="0"></CheckBox>
 				</ui:SettingsExpanderItem>
 				<ui:SettingsExpanderItem>
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
+					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
 				</ui:SettingsExpanderItem>
 				<ui:SettingsExpanderItem>
-					<StackPanel>
-						<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
-						<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="24,12,0,0"></CheckBox>
-					</StackPanel>
+					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="0"></CheckBox>
+				</ui:SettingsExpanderItem>
+				<ui:SettingsExpanderItem>
+					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpander.Footer>
-
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>
 
 
-			<ui:SettingsExpander Header="Project page" Description="Open source collaboration @GitHub ">
+			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 				<!--
 				<ui:SettingsExpanderItem>
 					<HyperlinkButton NavigateUri="https://torum.github.io/MPDCtrlX">https://torum.github.io/MPDCtrlX</HyperlinkButton>
@@ -123,7 +129,6 @@
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpander.Footer>
-
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>
@@ -136,7 +141,6 @@
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpander.Footer>
-
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>
@@ -149,7 +153,6 @@
 				</ui:SettingsExpanderItem>
 
 				<ui:SettingsExpander.Footer>
-
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>

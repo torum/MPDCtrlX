@@ -8,26 +8,21 @@ namespace MPDCtrlX.Views;
 
 public partial class ArtistPage : UserControl
 {
-    private readonly MainViewModel? vm;
-
     public ArtistPage() { }
 
     public ArtistPage(MainViewModel viewmodel)
     {
-        //_viewModel = App.GetService<MainViewModel>();
-        vm = viewmodel;
-
-        DataContext = vm;
+        DataContext = viewmodel;
 
         InitializeComponent();
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (vm == null)
-        {
-            return;
-        }
+        //if (DataContext is not MainViewModel vm)
+        //{
+        //    return;
+        //}
 
         //this.Artist1x.Width = _viewModel.LibraryColumnHeaderTitleWidth;
         //this.Artist2x.Width = _viewModel.LibraryColumnHeaderFilePathWidth;
