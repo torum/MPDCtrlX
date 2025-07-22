@@ -33,8 +33,8 @@ public partial class QueuePage : UserControl
         viewmodel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
         viewmodel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
         viewmodel.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
-        viewmodel.QueueHeaderVisivilityChanged += this.OnQueueHeaderVisivilityChanged;
-        viewmodel.QueueFindWindowVisivilityChanged_SetFocus += this.OnQueueFindWindowVisivilityChanged_SetFocus;
+        viewmodel.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
+        viewmodel.QueueFindWindowVisibilityChanged_SetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
         /*
         Unloaded += (sender, e) =>
         {
@@ -82,8 +82,8 @@ public partial class QueuePage : UserControl
         UpdateColumHeaders();
     }
 
-    // ListBox dummy header visivility option change.
-    private void OnQueueHeaderVisivilityChanged(object? sender, System.EventArgs e)
+    // ListBox dummy header Visibility option change.
+    private void OnQueueHeaderVisibilityChanged(object? sender, System.EventArgs e)
     {
         UpdateColumHeaders();
     }
@@ -340,7 +340,7 @@ public partial class QueuePage : UserControl
     }
 
     // Sets focus in textbox
-    private async void OnQueueFindWindowVisivilityChanged_SetFocus(object? sender, System.EventArgs e)
+    private async void OnQueueFindWindowVisibilityChanged_SetFocus(object? sender, System.EventArgs e)
     {
         await Task.Yield();
         await Task.Delay(50); // Need to wait for UI to update

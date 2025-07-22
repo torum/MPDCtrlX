@@ -559,7 +559,8 @@ public partial class MpcService : IMpcService
 
             if (isAck || isErr)
             {
-                await MpdIdleSendCommand("clearerror");
+                // Not good. If "{clearerror} you don't have permission for "clearerror"", then this gonna go forever.
+                //await MpdIdleSendCommand("clearerror");
             }
 
             ret.ResultText = stringBuilder.ToString();
@@ -859,7 +860,8 @@ public partial class MpcService : IMpcService
 
             if (isAck || isErr)
             {
-                await MpdIdleSendCommand("clearerror");
+                // Not good. If "{clearerror} you don't have permission for "clearerror"", then this gonna go forever.
+                //await MpdIdleSendCommand("clearerror");
             }
 
             await ParseSubSystemsAndRaiseChangedEvent(result);

@@ -191,6 +191,7 @@
   </data>
   <data name="Dialog_CancelClose" xml:space="preserve">
     <value>Cancel</value>
+    <comment>*using</comment>
   </data>
   <data name="Dialog_Comfirmation" xml:space="preserve">
     <value>Comfirmation</value>
@@ -201,11 +202,13 @@
   <data name="Dialog_Input" xml:space="preserve">
     <value>Input</value>
   </data>
-  <data name="Dialog_NewPlaylistName" xml:space="preserve">
-    <value>New Playlist Name:</value>
+  <data name="Dialog_CreateNewPlaylist" xml:space="preserve">
+    <value>Create new playlist</value>
+    <comment>*using</comment>
   </data>
   <data name="Dialog_PlaylistNameAlreadyExists" xml:space="preserve">
     <value>Playlist name already exists.</value>
+    <comment>*using</comment>
   </data>
   <data name="Dialog_PlaylistSelect_NewPlaylistName" xml:space="preserve">
     <value>New Playlist</value>
@@ -353,6 +356,7 @@ SOFTWARE.</value>
   </data>
   <data name="Dialog_Title_NewPlaylistName" xml:space="preserve">
     <value>New playlist name</value>
+    <comment>*using</comment>
   </data>
   <data name="Port" xml:space="preserve">
     <value>Port</value>
@@ -527,9 +531,11 @@ SOFTWARE.</value>
   </data>
   <data name="Dialog_Ok" xml:space="preserve">
     <value>OK</value>
+    <comment>*using</comment>
   </data>
   <data name="Dialog_Title_SelectPlaylist" xml:space="preserve">
     <value>Select playlist</value>
+    <comment>*using</comment>
   </data>
   <data name="PlaylistItemMenu_Clear" xml:space="preserve">
     <value>Clear</value>
@@ -620,5 +626,34 @@ SOFTWARE.</value>
   </data>
   <data name="Settings_ProjectPage_Description" xml:space="preserve">
     <value>Open source collaboration @GitHub</value>
+  </data>
+  <data name="Dialog_TextBox_Watermark_EnterNewPlaylistName" xml:space="preserve">
+    <value>Enter a new playlist name</value>
+    <comment>*using</comment>
+  </data>
+  <data name="Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName" xml:space="preserve">
+    <value>Enter a new playlist name</value>
+    <comment>*using</comment>
+  </data>
+  <data name="InitialSetupWindow_Subtitle" xml:space="preserve">
+    <value>Initial configuration</value>
+  </data>
+  <data name="InitialSetupWindow_Description" xml:space="preserve">
+    <value>MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as service (aka daemon).</value>
+  </data>
+  <data name="InitialSetupWindow_RememberThis" xml:space="preserve">
+    <value>Remember this</value>
+  </data>
+  <data name="InitialSetupWindow_Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_IPAddressOrServerName" xml:space="preserve">
+    <value>IP address or PC/Server name</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_DefaultIs6600" xml:space="preserve">
+    <value>Default is 6600</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise" xml:space="preserve">
+    <value>Optional unless configured otherwise</value>
   </data>
 </root>

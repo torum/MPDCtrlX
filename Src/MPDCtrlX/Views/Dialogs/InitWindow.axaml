@@ -14,7 +14,7 @@
 		
 		WindowStartupLocation="CenterOwner"
 		Width="500"
-		Height="570"
+		Height="600"
         Title="">
 	<!-- Topmost="True" -->
 
@@ -34,42 +34,43 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" Spacing="12" HorizontalAlignment="Stretch" Margin="24">
+		<ScrollViewer Grid.Row="0">
+			<StackPanel Spacing="12" HorizontalAlignment="Stretch" Margin="24">
 
-			<StackPanel>
-				<TextBlock Text="MPDCtrlX" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
-				<Separator/>
-			</StackPanel>
-
-			<StackPanel Spacing="6" Margin="0,0,0,12">
-				<StackPanel Orientation="Vertical" Spacing="12">
-					<TextBlock Text="Initial configuration" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
-					<TextBlock Text="MPDCtrlX requires MPD (Music Player Daemon) to be installed and running preferably as service (aka daemon)." Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
+				<StackPanel>
+					<TextBlock Text="MPDCtrlX" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
+					<Separator/>
 				</StackPanel>
-			</StackPanel>
-			
-			
-			<StackPanel Spacing="3" HorizontalAlignment="Left">
-				<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
-				<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="IP address or PC name" Width="250"></TextBox>
-				<!--  (127.0.0.1 or localhost for Local PC) -->
-			</StackPanel>
-			<StackPanel Spacing="3" HorizontalAlignment="Left">
-				<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
-				<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="Default is 6600" Width="250"></TextBox>
-			</StackPanel>
-			<StackPanel Spacing="3" HorizontalAlignment="Left">
-				<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
-				<StackPanel Spacing="24" Orientation="Horizontal">
-					<TextBox Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
-					<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
-				</StackPanel>
-			</StackPanel>
 
-			<StackPanel>
-				<CheckBox Content="Remember this" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
-			</StackPanel>
-			<!--
+				<StackPanel Spacing="6" Margin="0,0,0,12">
+					<StackPanel Orientation="Vertical" Spacing="12">
+						<TextBlock Text="{x:Static prop:Resources.InitialSetupWindow_Subtitle}" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
+						<TextBlock Text="{x:Static prop:Resources.InitialSetupWindow_Description}" Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
+					</StackPanel>
+				</StackPanel>
+
+
+				<StackPanel Spacing="3" HorizontalAlignment="Left">
+					<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
+					<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="{x:Static prop:Resources.InitialSetupWindow_Watermark_IPAddressOrServerName}" Width="250"></TextBox>
+					<!--  (127.0.0.1 or localhost for Local PC) -->
+				</StackPanel>
+				<StackPanel Spacing="3" HorizontalAlignment="Left">
+					<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
+					<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="InitialSetupWindow_Watermark_DefaultIs6600" Width="250"></TextBox>
+				</StackPanel>
+				<StackPanel Spacing="3" HorizontalAlignment="Left">
+					<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
+					<StackPanel Spacing="24" Orientation="Horizontal">
+						<TextBox Name="PasswordBox" Watermark="{x:Static prop:Resources.InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise}" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
+						<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
+					</StackPanel>
+				</StackPanel>
+
+				<StackPanel>
+					<CheckBox Content="{x:Static prop:Resources.InitialSetupWindow_RememberThis}" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
+				</StackPanel>
+				<!--
 			<StackPanel Spacing="3" Margin="0,12,0,0">
 				
 				<Button Content="Apply changes and connect" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
@@ -77,8 +78,9 @@
 							
 			</StackPanel>
 			-->
-			
-		</StackPanel>
+
+			</StackPanel>
+		</ScrollViewer>
 
 		<Grid Grid.Row="1">
 			<Grid.RowDefinitions>
@@ -94,8 +96,8 @@
 			<StackPanel Grid.Row="1">
 				<Separator/>
 				<StackPanel Spacing="24" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,24,24,24">
-					<Button Content="Cancel" Click="Button_Click" HotKey="Escape"></Button>
-					<Button Content="Let's go" IsDefault="True" Command="{Binding TryConnectCommand}"></Button>
+					<Button Content="{x:Static prop:Resources.Cancel}" Click="Button_Click" HotKey="Escape"></Button>
+					<Button Content="{x:Static prop:Resources.InitialSetupWindow_Connect}" IsDefault="True" Command="{Binding TryConnectCommand}"></Button>
 				</StackPanel>
 			</StackPanel>
 		</Grid>

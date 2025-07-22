@@ -5,6 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels.Dialogs"
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:DataType="vm:DialogViewModel"
              x:Class="MPDCtrlX.Views.Dialogs.SaveToDialog">
 	<Grid>
@@ -18,9 +19,9 @@
 				</ComboBox.ItemTemplate>
 			</ComboBox>
 			
-			<CheckBox x:Name="CreateNewCheckBox" Content="Create new playlist" Click="CheckBox_Click" ClickMode="Release" Margin="0,12,0,0" HorizontalAlignment="Left"></CheckBox>
+			<CheckBox x:Name="CreateNewCheckBox" Content="{x:Static prop:Resources.Dialog_CreateNewPlaylist}" Click="CheckBox_Click" ClickMode="Release" Margin="0,12,0,0" HorizontalAlignment="Left"></CheckBox>
 			
-			<TextBox Name="TextBoxPlaylistName" Text="" Margin="0,12,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Watermark="Enter a new playlist name" IsVisible="False"/>
+			<TextBox Name="TextBoxPlaylistName" Text="" Margin="0,12,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Watermark="{x:Static prop:Resources.Dialog_TextBox_Watermark_EnterNewPlaylistName}" IsVisible="False"/>
 			<!--
 			<ListBox x:Name="PlaylistListBox" SelectionMode="Single" MaxHeight="200">
 				<ListBox.ItemTemplate>

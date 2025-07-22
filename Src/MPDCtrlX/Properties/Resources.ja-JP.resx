@@ -201,11 +201,11 @@
   <data name="Dialog_Input" xml:space="preserve">
     <value>入力</value>
   </data>
-  <data name="Dialog_NewPlaylistName" xml:space="preserve">
-    <value>新規プレイリスト名：</value>
+  <data name="Dialog_CreateNewPlaylist" xml:space="preserve">
+    <value>新規プレイリスト作成</value>
   </data>
   <data name="Dialog_PlaylistNameAlreadyExists" xml:space="preserve">
-    <value>プレイリストに既に同じ名前が存在します。</value>
+    <value>既に同じ名前のプレイリストが存在します。</value>
   </data>
   <data name="Dialog_PlaylistSelect_NewPlaylistName" xml:space="preserve">
     <value>新規プレイリスト</value>
@@ -621,5 +621,32 @@ SOFTWARE.</value>
   </data>
   <data name="Settings_ProjectPage_Description" xml:space="preserve">
     <value>オープンソースコラボレーション @GitHub</value>
+  </data>
+  <data name="Dialog_TextBox_Watermark_EnterNewPlaylistName" xml:space="preserve">
+    <value>新規プレイリスト名の入力</value>
+  </data>
+  <data name="Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName" xml:space="preserve">
+    <value>プレイリスト名の入力</value>
+  </data>
+  <data name="InitialSetupWindow_Subtitle" xml:space="preserve">
+    <value>初期設定</value>
+  </data>
+  <data name="InitialSetupWindow_Description" xml:space="preserve">
+    <value>MPDCtrlXを利用するには、MPD (Music Player Daemon)がローカルPCまたはリモートサーバー等で（できればサービス・デーモンとして）動作している必要があります。</value>
+  </data>
+  <data name="InitialSetupWindow_RememberThis" xml:space="preserve">
+    <value>記憶する</value>
+  </data>
+  <data name="InitialSetupWindow_Connect" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_IPAddressOrServerName" xml:space="preserve">
+    <value>IPアドレスまたはPC・サーバー名</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_DefaultIs6600" xml:space="preserve">
+    <value>規定値は6600</value>
+  </data>
+  <data name="InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise" xml:space="preserve">
+    <value>オプション（MPDの設定で指定していない限り）</value>
   </data>
 </root>

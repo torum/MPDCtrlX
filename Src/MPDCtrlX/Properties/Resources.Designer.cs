@@ -295,6 +295,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Create new playlist に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Dialog_CreateNewPlaylist {
+            get {
+                return ResourceManager.GetString("Dialog_CreateNewPlaylist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Information に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Dialog_Information {
@@ -309,15 +318,6 @@ namespace MPDCtrlX.Properties {
         public static string Dialog_Input {
             get {
                 return ResourceManager.GetString("Dialog_Input", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   New Playlist Name: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string Dialog_NewPlaylistName {
-            get {
-                return ResourceManager.GetString("Dialog_NewPlaylistName", resourceCulture);
             }
         }
         
@@ -372,6 +372,24 @@ namespace MPDCtrlX.Properties {
         public static string Dialog_RemovePlaylistQ {
             get {
                 return ResourceManager.GetString("Dialog_RemovePlaylistQ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter a new playlist name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Dialog_TextBox_Watermark_EnterNewPlaylistName {
+            get {
+                return ResourceManager.GetString("Dialog_TextBox_Watermark_EnterNewPlaylistName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter a new playlist name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName {
+            get {
+                return ResourceManager.GetString("Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName", resourceCulture);
             }
         }
         
@@ -498,6 +516,69 @@ namespace MPDCtrlX.Properties {
         public static string Init_NewConnectionSetting {
             get {
                 return ResourceManager.GetString("Init_NewConnectionSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Connect に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Connect {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as service (aka daemon). に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Description {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remember this に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_RememberThis {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_RememberThis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Initial configuration に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Subtitle {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Subtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Default is 6600 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Watermark_DefaultIs6600 {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Watermark_DefaultIs6600", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   IP address or PC/Server name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Watermark_IPAddressOrServerName {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Watermark_IPAddressOrServerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Optional unless configured otherwise に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise {
+            get {
+                return ResourceManager.GetString("InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise", resourceCulture);
             }
         }
         

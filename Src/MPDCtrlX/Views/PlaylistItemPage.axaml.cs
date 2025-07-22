@@ -121,7 +121,7 @@ public partial class PlaylistItemPage : UserControl
                 {
                     var resultHint = new ContentDialog()
                     {
-                        Content = $"Playlist \"{plname}\" already exists.",
+                        Content = MPDCtrlX.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
                         Title = "Result",
                         PrimaryButtonText = "OK"
                     };
