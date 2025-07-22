@@ -2,7 +2,7 @@ namespace MPDCtrlX.Models;
 
 public enum SearchTags
 {
-    Title, Artist, Album, Genre
+    Title, Artist, Album, Genre, Any
 }
 
 public class SearchOption(SearchTags key, string label)

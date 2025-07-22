@@ -2563,7 +2563,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         new Models.SearchOption(SearchTags.Title, Properties.Resources.ListviewColumnHeader_Title),
         new Models.SearchOption(SearchTags.Artist, Properties.Resources.ListviewColumnHeader_Artist),
         new Models.SearchOption(SearchTags.Album, Properties.Resources.ListviewColumnHeader_Album),
-        new Models.SearchOption(SearchTags.Genre, Properties.Resources.ListviewColumnHeader_Genre)
+        new Models.SearchOption(SearchTags.Genre, Properties.Resources.ListviewColumnHeader_Genre),
+        new Models.SearchOption(SearchTags.Any, Properties.Resources.SearchOption_Any)
     ];
 
     public ObservableCollection<Models.SearchOption> SearchTagList

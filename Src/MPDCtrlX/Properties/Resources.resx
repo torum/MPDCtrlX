@@ -656,4 +656,7 @@ SOFTWARE.</value>
   <data name="InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise" xml:space="preserve">
     <value>Optional unless configured otherwise</value>
   </data>
+  <data name="SearchOption_Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
 </root>

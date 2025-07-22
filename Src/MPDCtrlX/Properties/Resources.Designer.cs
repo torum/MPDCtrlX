@@ -1249,6 +1249,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Any に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SearchOption_Any {
+            get {
+                return ResourceManager.GetString("SearchOption_Any", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings {

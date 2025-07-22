@@ -649,4 +649,7 @@ SOFTWARE.</value>
   <data name="InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise" xml:space="preserve">
     <value>オプション（MPDの設定で指定していない限り）</value>
   </data>
+  <data name="SearchOption_Any" xml:space="preserve">
+    <value>すべて</value>
+  </data>
 </root>
