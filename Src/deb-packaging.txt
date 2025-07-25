@@ -1,6 +1,6 @@
 # Build and publish
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet build -c Release -r linux-x64 -f net9.0 --self-contained true
+MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet build -c Release -r linux-x64 -f net9.0
 
 MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish -c Release -r linux-x64 --self-contained true
 
@@ -13,11 +13,9 @@ MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX.Desk
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX.Desktop.dbg
 
 # Put them in ...
-
-MPDCtrlX/Src/deb-staging/usr/lib/
+MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX.Desktop/
 
 # Create a deb package
-
 MPDCtrlX/Src/MPDCtrlX.Desktop$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.0_amd64.deb
 
 # Test it

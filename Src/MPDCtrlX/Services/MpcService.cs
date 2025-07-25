@@ -1197,17 +1197,18 @@ public partial class MpcService : IMpcService
 
     private async Task<CommandResult> MpdCommandSendCommand(string cmd)
     {
-        await _semaphore.WaitAsync();
-
         CommandResult ret = new();
 
-        try
+        if (await _semaphore.WaitAsync(TimeSpan.FromSeconds(5)))
         {
-            ret = await MpdCommandSendCommandProtected(cmd, false);
-        }
-        finally
-        {
-            _semaphore.Release();
+            try
+            {
+                ret = await MpdCommandSendCommandProtected(cmd, false);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         return ret;
