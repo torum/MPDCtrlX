@@ -2883,6 +2883,12 @@ public partial class MpcService : IMpcService
 
                             MpdStatus.MpdVolumeIsSet = true;
                         }
+                        else
+                        {
+                            Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
+                            MpdStatus.MpdVolume = 20;
+                            MpdStatus.MpdVolumeIsSet = false;
+                        }
                     }
                     catch (FormatException e)
                     {
