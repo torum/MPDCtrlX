@@ -2889,6 +2889,12 @@ public partial class MpcService : IMpcService
                         System.Diagnostics.Debug.WriteLine(e.Message);
                     }
                 }
+                else
+                {
+                    Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
+                    MpdStatus.MpdVolume = 20;
+                    MpdStatus.MpdVolumeIsSet = false;
+                }
 
                 // songID
                 MpdStatus.MpdSongID = "";
