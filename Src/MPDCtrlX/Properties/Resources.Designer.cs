@@ -70,6 +70,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   {0} albums に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AlbumPage_SubTitle_AlbumCount {
+            get {
+                return ResourceManager.GetString("AlbumPage_SubTitle_AlbumCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Cancel {
@@ -426,6 +435,15 @@ namespace MPDCtrlX.Properties {
         public static string FilesListviewColumnHeader_FilePath {
             get {
                 return ResourceManager.GetString("FilesListviewColumnHeader_FilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilesPage_SubTitle_FileCount {
+            get {
+                return ResourceManager.GetString("FilesPage_SubTitle_FileCount", resourceCulture);
             }
         }
         
@@ -1114,6 +1132,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   {0} songs に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistPage_SubTitle_SongCount {
+            get {
+                return ResourceManager.GetString("PlaylistPage_SubTitle_SongCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Playlists に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistsListviewColumnHeader_Playlists {
@@ -1204,6 +1231,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   {0} songs に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string QueuePage_SubTitle_SongCount {
+            get {
+                return ResourceManager.GetString("QueuePage_SubTitle_SongCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Save に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Save {
@@ -1254,6 +1290,15 @@ namespace MPDCtrlX.Properties {
         public static string SearchOption_Any {
             get {
                 return ResourceManager.GetString("SearchOption_Any", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} result に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SearchPage_SubTitle_ResultCount {
+            get {
+                return ResourceManager.GetString("SearchPage_SubTitle_ResultCount", resourceCulture);
             }
         }
         

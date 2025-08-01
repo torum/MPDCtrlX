@@ -282,7 +282,7 @@
 
 				<!-- Navigation menu -->
 				<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
-					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="250" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="240" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 						<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
 						<ui:NavigationView.PaneHeader>
 						</ui:NavigationView.PaneHeader>

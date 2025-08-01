@@ -16,11 +16,13 @@
 		<DebugType>embedded</DebugType>
 		<IsTrimmable>True</IsTrimmable>
 		<IsAotCompatible>True</IsAotCompatible>
+		<IsPublishable>False</IsPublishable>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>embedded</DebugType>
 		<IsTrimmable>True</IsTrimmable>
 		<IsAotCompatible>True</IsAotCompatible>
+		<IsPublishable>False</IsPublishable>
 	</PropertyGroup>
 
 

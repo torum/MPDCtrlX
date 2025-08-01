@@ -36,11 +36,7 @@
 				<!-- page title-->
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Search}" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
 				<!-- song count -->
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
-					<Run Text="Result"/>
-					<Run Text=": "/>
-					<Run Text="{Binding SearchResult.Count, Mode=OneWay}"/>
-				</TextBlock>
+				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" Text="{Binding SearchPageSubTitleResultCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
 
 			<!-- Page command menu buttons (more) -->

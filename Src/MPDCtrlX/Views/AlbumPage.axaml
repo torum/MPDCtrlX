@@ -30,11 +30,7 @@
 			</Grid.ColumnDefinitions>
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Albums}" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
-					<Run Text="Albums"/>
-					<Run Text=": "/>
-					<Run Text="{Binding Albums.Count, Mode=OneWay}"/>
-				</TextBlock>
+				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" Text="{Binding AlbumPageSubTitleAlbumCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
 			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 

@@ -107,8 +107,8 @@ public partial class App : Application
 
     public static void AppendErrorLog(string errorTxt, string kindTxt)
     {
-        DateTime dt = DateTime.Now;
-        string nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
+        var dt = DateTime.Now;
+        var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
 
         _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
     }
@@ -118,7 +118,7 @@ public partial class App : Application
         if (string.IsNullOrEmpty(_logFilePath))
             return;
 
-        string s = _errortxt.ToString();
+        var s = _errortxt.ToString();
         if (!string.IsNullOrEmpty(s))
             File.WriteAllText(_logFilePath, s);
     }

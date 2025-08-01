@@ -59,6 +59,7 @@ public interface IMpcService
     Task<CommandResult> MpdIdleQueryListAll();
     Task<CommandResult> MpdIdleQueryPlaylists();
     Task<CommandResult> MpdIdleQueryStatus();
+    Task<CommandResult> MpdIdleQueryProtocol();
     Task<CommandResult> MpdIdleSendPassword(string password = "");
     void MpdIdleStart();
     Task<CommandResult> MpdLoadPlaylist(string playlistName);

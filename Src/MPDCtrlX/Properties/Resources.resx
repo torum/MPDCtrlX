@@ -659,4 +659,19 @@ SOFTWARE.</value>
   <data name="SearchOption_Any" xml:space="preserve">
     <value>Any</value>
   </data>
+  <data name="QueuePage_SubTitle_SongCount" xml:space="preserve">
+    <value>{0} songs</value>
+  </data>
+  <data name="AlbumPage_SubTitle_AlbumCount" xml:space="preserve">
+    <value>{0} albums</value>
+  </data>
+  <data name="FilesPage_SubTitle_FileCount" xml:space="preserve">
+    <value>{0} files</value>
+  </data>
+  <data name="SearchPage_SubTitle_ResultCount" xml:space="preserve">
+    <value>{0} result</value>
+  </data>
+  <data name="PlaylistPage_SubTitle_SongCount" xml:space="preserve">
+    <value>{0} songs</value>
+  </data>
 </root>

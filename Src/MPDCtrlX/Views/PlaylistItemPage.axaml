@@ -31,11 +31,7 @@
 					<Run Text="{Binding SelectedPlaylistName, Mode=OneWay}"/>
 				</TextBlock>
 				
-				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7">
-					<Run Text="Songs"/>
-					<Run Text=": "/>
-					<Run Text="{Binding PlaylistSongs.Count, Mode=OneWay}"/>
-				</TextBlock>
+				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" Text="{Binding PlaylistPageSubTitleSongCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 				
 			</StackPanel>
 			

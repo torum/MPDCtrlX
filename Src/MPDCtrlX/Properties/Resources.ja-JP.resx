@@ -652,4 +652,19 @@ SOFTWARE.</value>
   <data name="SearchOption_Any" xml:space="preserve">
     <value>すべて</value>
   </data>
+  <data name="QueuePage_SubTitle_SongCount" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="AlbumPage_SubTitle_AlbumCount" xml:space="preserve">
+    <value>{0}アルバム</value>
+  </data>
+  <data name="FilesPage_SubTitle_FileCount" xml:space="preserve">
+    <value>{0}ファイル</value>
+  </data>
+  <data name="SearchPage_SubTitle_ResultCount" xml:space="preserve">
+    <value>{0}件</value>
+  </data>
+  <data name="PlaylistPage_SubTitle_SongCount" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
 </root>

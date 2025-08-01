@@ -602,6 +602,19 @@ public partial class MpcService : IMpcService
         }
     }
 
+    public async Task<CommandResult> MpdIdleQueryProtocol()
+    {
+        MpcProgress?.Invoke(this, "[Background] Querying available protocol features...");
+        CommandResult result = await MpdIdleSendCommand("protocol available");
+        if (result.IsSuccess)
+        {
+            MpcProgress?.Invoke(this, "[Background] Parsing protocol features...");
+            result.IsSuccess = await ParseProtocolFeatures(result.ResultText);
+            MpcProgress?.Invoke(this, "[Background] Protocol features updated.");
+        }
+        return result;
+    }
+
     public async Task<CommandResult> MpdIdleQueryStatus()
     {
         MpcProgress?.Invoke(this, "[Background] Querying status...");
@@ -2768,6 +2781,17 @@ public partial class MpcService : IMpcService
     #endregion
 
     #region == Response parser methods ==
+
+    private Task<bool> ParseProtocolFeatures(string result)
+    {
+        if (MpdStop) { return Task.FromResult(false); }
+        if (string.IsNullOrEmpty(result)) return Task.FromResult(false);
+
+        Debug.WriteLine(result);
+
+        return Task.FromResult(true); 
+    
+    }
 
     private Task<bool> ParseStatus(string result)
     {

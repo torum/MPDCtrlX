@@ -1911,6 +1911,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queue = value;
             NotifyPropertyChanged(nameof(Queue));
+            NotifyPropertyChanged(nameof(QueuePageSubTitleSongCount));
         }
     }
 
@@ -2107,6 +2108,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private string _queuePageSubTitleSongCount = "";
+    public string QueuePageSubTitleSongCount
+    {
+        get 
+        {
+            _queuePageSubTitleSongCount = string.Format(MPDCtrlX.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
+            return _queuePageSubTitleSongCount;
+        }
+    }
+
     #endregion
 
     #region == Files ==
@@ -2278,7 +2289,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _musicEntries = value;
             NotifyPropertyChanged(nameof(MusicEntries));
-
+            NotifyPropertyChanged(nameof(FilesPageSubTitleFileCount));
         }
     }
 
@@ -2369,6 +2380,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private string _filesPageSubTitleFileCount = "";
+    public string FilesPageSubTitleFileCount
+    {
+        get
+        {
+            _filesPageSubTitleFileCount = string.Format(MPDCtrlX.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
+            return _filesPageSubTitleFileCount;
+        }
+    }
+
     #endregion
 
     #region == Artists ==
@@ -2438,6 +2459,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _albums = value;
             NotifyPropertyChanged(nameof(Albums));
+            NotifyPropertyChanged(nameof(AlbumPageSubTitleAlbumCount));
         }
     }
 
@@ -2490,6 +2512,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _selectedAlbumSongs = value;
             NotifyPropertyChanged(nameof(SelectedAlbumSongs));
+        }
+    }
+
+    private string _albumPageSubTitleAlbumCount = "";
+    public string AlbumPageSubTitleAlbumCount
+    {
+        get
+        {
+            _albumPageSubTitleAlbumCount = string.Format(MPDCtrlX.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
+            return _albumPageSubTitleAlbumCount;
         }
     }
 
@@ -2550,6 +2582,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchResult = value;
             NotifyPropertyChanged(nameof(SearchResult));
+            NotifyPropertyChanged(nameof(SearchPageSubTitleResultCount));
         }
     }
 
@@ -2639,6 +2672,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private string _searchPageSubTitleResultCount = "";
+    public string SearchPageSubTitleResultCount
+    {
+        get
+        {
+            _searchPageSubTitleResultCount = string.Format(MPDCtrlX.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
+            return _searchPageSubTitleResultCount;
+        }
+    }
+
     #endregion
 
     #region == Playlists ==  
@@ -2694,6 +2737,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 _playlistSongs = value;
                 NotifyPropertyChanged(nameof(PlaylistSongs));
+                NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
             }
         }
     }
@@ -2712,6 +2756,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 _selectedPlaylistSong = value;
                 NotifyPropertyChanged(nameof(SelectedPlaylistSong));
             }
+        }
+    }
+
+    private string _playlistPageSubTitleSongCount = "";
+    public string PlaylistPageSubTitleSongCount
+    {
+        get
+        {
+            _playlistPageSubTitleSongCount = string.Format(MPDCtrlX.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
+            return _playlistPageSubTitleSongCount;
         }
     }
 
@@ -5813,6 +5867,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (r)
             {
+                // Testing:
+                //await _mpc.MpdIdleQueryProtocol();
+
                 if (IsUpdateOnStartup)
                 {
                     await _mpc.MpdSendUpdate();
@@ -5856,7 +5913,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                     //UpdateProgress?.Invoke(this, "");
 
-                    // IdleConnection
+                    // Idle start.
                     _mpc.MpdIdleStart();
                 }
 
@@ -7407,6 +7464,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsShowAckWindow = false;
         IsShowErrWindow = false;
 
+        // Connected from InitWindow, so save and clean up. 
         Dispatcher.UIThread.Post(() =>
         {
             if (_initWin is not null)
@@ -7447,7 +7505,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
         });
 
-        // Run in a background thread.
+        // 
         _ = Task.Run(() => LoadInitialData());
     }
 
@@ -7563,7 +7621,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         if (IsShowDebugWindow)
         {
-            
             Dispatcher.UIThread.Post(() =>
             {
                 DebugCommandOutput?.Invoke(this, data);
@@ -7575,7 +7632,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         if (IsShowDebugWindow)
         {
-            
             Dispatcher.UIThread.Post(() =>
             {
                 DebugIdleOutput?.Invoke(this, data);
@@ -10064,7 +10120,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             SearchResult?.Clear();
             SearchQuery = "";
 
-            IsAlbumArtVisible = false;
+            //IsAlbumArtVisible = false;
             AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
             // TODO: more
