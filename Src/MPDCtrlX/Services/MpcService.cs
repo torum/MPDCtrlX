@@ -604,6 +604,8 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdIdleQueryProtocol()
     {
+        // Not working with MPD 0.24.4?
+
         MpcProgress?.Invoke(this, "[Background] Querying available protocol features...");
         CommandResult result = await MpdIdleSendCommand("protocol available");
         if (result.IsSuccess)
@@ -2251,7 +2253,7 @@ public partial class MpcService : IMpcService
         return result;
     }
 
-    public async Task<CommandResult> MpdPlaybackSeek(string songId, int seekTime)
+    public async Task<CommandResult> MpdPlaybackSeek(string songId, double seekTime)
     {
         if ((songId == "") || (seekTime == 0))
         {
@@ -2787,6 +2789,8 @@ public partial class MpcService : IMpcService
         if (MpdStop) { return Task.FromResult(false); }
         if (string.IsNullOrEmpty(result)) return Task.FromResult(false);
 
+        // Not working with MPD 0.24.4?
+
         Debug.WriteLine(result);
 
         return Task.FromResult(true); 
@@ -2873,7 +2877,7 @@ public partial class MpcService : IMpcService
                 {
                     try
                     {
-                        if (string.IsNullOrEmpty(valueVolume))
+                        if (!string.IsNullOrEmpty(valueVolume))
                         {
                             MpdStatus.MpdVolume = Int32.Parse(valueVolume);
 

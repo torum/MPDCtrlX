@@ -11,10 +11,10 @@ public class ViewModelBase : INotifyPropertyChanged
     {
         if (string.IsNullOrEmpty(propertyName)) 
             return;
-
         Dispatcher.UIThread.Post(() =>
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         });
+        
     }
 }

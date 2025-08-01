@@ -115,7 +115,7 @@ public class Status
 
     public void Reset()
     {
-        _volume = 50;
+        _volume = 20;
         _volumeIsSet = false;
         _repeat = false;
         _random = false;

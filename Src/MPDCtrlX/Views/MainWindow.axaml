@@ -190,7 +190,7 @@
 
 				<!-- Seek -->
 				<Grid Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,0">
-					<Slider Orientation="Horizontal" Name="SeekSlider" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderSeek}" Maximum="{Binding Mode=TwoWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Minimum="0" Width="380" Margin="0" Padding="0"></Slider>
+					<Slider Orientation="Horizontal" Name="SeekSlider" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderSeek}" Maximum="{Binding Mode=OneWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Minimum="0" Width="380" Margin="0" Padding="0"></Slider>
 				</Grid>
 
 			</Grid>

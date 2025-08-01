@@ -1485,8 +1485,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    private double _time = 0;
-    public double Time
+    private int _time = 0;
+    public int Time
     {
         get
         {
@@ -1494,13 +1494,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
         set
         {
+            if (_time == value) 
+                return;
+
             _time = value;
             NotifyPropertyChanged(nameof(Time));
         }
     }
 
-    private double _elapsed = 0;
-    public double Elapsed
+    private int _elapsed = 0;
+    public int Elapsed
     {
         get
         {
@@ -1538,15 +1541,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     private System.Timers.Timer? _elapsedDelayTimer = null;
     private void DoChangeElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (_mpc is not null)
+        if (_mpc is not null && (_elapsed < _time) && SetSeekCommand.CanExecute(null))
         {
-            if ((_elapsed < _time))
-            {
-                if (SetSeekCommand.CanExecute(null))
-                {
-                    SetSeekCommand.Execute(null);
-                }
-            }
+            SetSeekCommand.Execute(null);
         }
     }
 
@@ -4008,7 +4005,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         #region == Init Song's time elapsed timer. ==  
 
         // Init Song's time elapsed timer.
-        _elapsedTimer = new System.Timers.Timer(500);
+        _elapsedTimer = new System.Timers.Timer(100);
         _elapsedTimer.Elapsed += new System.Timers.ElapsedEventHandler(ElapsedTimer);
 
         #endregion
@@ -6052,7 +6049,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     private void UpdateButtonStatus()
     {
-        
         Dispatcher.UIThread.Post(() =>
         {
             try
@@ -6102,21 +6098,26 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 _single = _mpc.MpdStatus.MpdSingle;
                 NotifyPropertyChanged(nameof(Single));
 
-                // no need to care about "double" updates for time.
-                Time = _mpc.MpdStatus.MpdSongTime;
-
-                _elapsed = _mpc.MpdStatus.MpdSongElapsed;
-                //NotifyPropertyChanged("Elapsed");
-
                 //start elapsed timer.
                 if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
                 {
+                    // no need to care about "double" updates for time.
+                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime * 10);
+
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed * 10);
+
                     if (!_elapsedTimer.Enabled)
                         _elapsedTimer.Start();
                 }
                 else
                 {
                     _elapsedTimer.Stop();
+
+                    // no need to care about "double" updates for time.
+                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime * 10);
+
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed * 10);
+                    //NotifyPropertyChanged(nameof(Elapsed));
                 }
 
                 //
@@ -7892,8 +7893,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         if ((_elapsed < _time) && (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play))
         {
-            _elapsed += 0.5;
+            _elapsed += 1;
             NotifyPropertyChanged(nameof(Elapsed));
+            //Debug.WriteLine($"ElapsedTimer: {_elapsed}/{_time}");
         }
         else
         {
@@ -8078,7 +8080,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void SetSeekCommand_ExecuteAsync()
     {
-        await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, Convert.ToInt32(_elapsed));
+        double elapsed = _elapsed / 10;
+        await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, elapsed);
     }
 
     public IRelayCommand VolumeMuteCommand { get; }
