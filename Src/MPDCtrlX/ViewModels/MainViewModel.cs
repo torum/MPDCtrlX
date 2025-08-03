@@ -6109,7 +6109,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         Debug.WriteLine("Volume is set to default 20. @UpdateButtonStatus()");
                         _volume = 20; // default volume.
                     }
-                     NotifyPropertyChanged(nameof(Volume));
+                    NotifyPropertyChanged(nameof(Volume));
                 }
 
                 _random = _mpc.MpdStatus.MpdRandom;
@@ -6143,7 +6143,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime * 10);
 
                     _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed * 10);
-                    //NotifyPropertyChanged(nameof(Elapsed));
+                    NotifyPropertyChanged(nameof(Elapsed));
                 }
 
                 //
