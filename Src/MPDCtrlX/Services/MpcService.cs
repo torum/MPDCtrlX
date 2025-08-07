@@ -2150,8 +2150,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmdList = "command_list_begin" + "\n";
-            cmdList = cmdList + "setvol " + volume.ToString() + "\n";
             cmdList = cmdList + cmd + "\n";
+            cmdList = cmdList + "setvol " + volume.ToString() + "\n";
             cmdList = cmdList + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmdList);
@@ -2178,8 +2178,8 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd += "pause 0\n";
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2239,7 +2239,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdSetVolume(int v)
     {
-        if (v == MpdStatus.MpdVolume)
+        if ((v == MpdStatus.MpdVolume) && (MpdStatus.MpdVolumeIsSet))
         {
             CommandResult f = new()
             {

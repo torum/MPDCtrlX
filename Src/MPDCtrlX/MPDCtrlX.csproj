@@ -49,16 +49,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.3.2" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.2" />
+		<PackageReference Include="Avalonia" Version="11.3.3" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.2" />
+		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.3" />
 		<PackageReference Include="FluentAvaloniaUI" Version="2.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
-		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.7" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.8" />
 		<PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.2" />
 	</ItemGroup>
 
