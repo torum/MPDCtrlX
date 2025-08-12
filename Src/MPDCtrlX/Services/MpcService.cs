@@ -2567,12 +2567,12 @@ public partial class MpcService : IMpcService
         {
             cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         }
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
         // if (!MpdStatus.MpdVolumeIsSet)
         //{
         cmd = cmd + "setvol " + volume.ToString() + "\n";
         //}
-        cmd = cmd + "play" + "\n";
-        cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
         CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2599,12 +2599,12 @@ public partial class MpcService : IMpcService
         string cmd = "command_list_begin" + "\n";
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
         //if (!MpdStatus.MpdVolumeIsSet)
         //{
         cmd = cmd + "setvol " + volume.ToString() + "\n";
         //}
-        cmd = cmd + "play" + "\n";
-        cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
         CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2634,12 +2634,12 @@ public partial class MpcService : IMpcService
         //cmd = cmd + "stop" + "\n";
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "load \"" + playlistName + "\"\n";
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "currentsong" + "\n";
         //if (!MpdStatus.MpdVolumeIsSet)
         //{
         cmd = cmd + "setvol " + volume.ToString() + "\n";
         //}
-        cmd = cmd + "play" + "\n";
-        cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
         CommandResult result = await MpdCommandSendCommand(cmd);
