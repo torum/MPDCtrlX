@@ -2131,7 +2131,7 @@ public partial class MpcService : IMpcService
     {
         string cmd = "play";
 
-        if (songId != "")
+        if (!string.IsNullOrEmpty(songId))
         {
             cmd = "playid " + songId;
         }
@@ -2140,7 +2140,7 @@ public partial class MpcService : IMpcService
         {
             // stop
         }
-
+        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2158,6 +2158,16 @@ public partial class MpcService : IMpcService
 
             return result;
         }
+        */
+
+        string cmdList = "command_list_begin" + "\n";
+        cmdList = cmdList + cmd + "\n";
+        cmdList = cmdList + "setvol " + volume.ToString() + "\n";
+        cmdList = cmdList + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmdList);
+
+        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackPause()
@@ -2169,6 +2179,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackResume(int volume)
     {
+        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("pause 0");
@@ -2186,6 +2197,16 @@ public partial class MpcService : IMpcService
 
             return result;
         }
+        */
+
+        string cmd = "command_list_begin" + "\n";
+        cmd += "pause 0\n";
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackStop()
@@ -2197,6 +2218,7 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackNext(int volume)
     {
+        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("next");
@@ -2214,10 +2236,20 @@ public partial class MpcService : IMpcService
 
             return result;
         }
+        */
+        string cmd = "command_list_begin" + "\n";
+        cmd += "next\n";
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackPrev(int volume)
     {
+        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("previous");
@@ -2235,10 +2267,20 @@ public partial class MpcService : IMpcService
 
             return result;
         }
+        */
+        string cmd = "command_list_begin" + "\n";
+        cmd += "previous\n";
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        return result;
     }
 
     public async Task<CommandResult> MpdSetVolume(int v)
     {
+        /*
         if ((v == MpdStatus.MpdVolume) && (MpdStatus.MpdVolumeIsSet))
         {
             CommandResult f = new()
@@ -2247,7 +2289,7 @@ public partial class MpcService : IMpcService
             };
             return f;
         }
-
+        */
         CommandResult result = await MpdCommandSendCommand("setvol " + v.ToString());
 
         return result;
@@ -2508,7 +2550,7 @@ public partial class MpcService : IMpcService
         return result;
     }
 
-    public async Task<CommandResult> MpdMultiplePlay(List<string> uris)
+    public async Task<CommandResult> MpdMultiplePlay(List<string> uris, int volume)
     {
         if (uris.Count < 1)
         {
@@ -2525,6 +2567,10 @@ public partial class MpcService : IMpcService
         {
             cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         }
+        // if (!MpdStatus.MpdVolumeIsSet)
+        //{
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        //}
         cmd = cmd + "play" + "\n";
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
@@ -2539,7 +2585,7 @@ public partial class MpcService : IMpcService
         return result;
     }
 
-    public async Task<CommandResult> MpdSinglePlay(string uri)
+    public async Task<CommandResult> MpdSinglePlay(string uri, int volume)
     {
         if (string.IsNullOrEmpty(uri))
         {
@@ -2553,6 +2599,10 @@ public partial class MpcService : IMpcService
         string cmd = "command_list_begin" + "\n";
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+        //if (!MpdStatus.MpdVolumeIsSet)
+        //{
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        //}
         cmd = cmd + "play" + "\n";
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
@@ -2567,7 +2617,7 @@ public partial class MpcService : IMpcService
         return result;
     }
 
-    public async Task<CommandResult> MpdChangePlaylist(string playlistName)
+    public async Task<CommandResult> MpdChangePlaylist(string playlistName, int volume)
     {
         if (string.IsNullOrEmpty(playlistName))
         {
@@ -2584,6 +2634,10 @@ public partial class MpcService : IMpcService
         //cmd = cmd + "stop" + "\n";
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "load \"" + playlistName + "\"\n";
+        //if (!MpdStatus.MpdVolumeIsSet)
+        //{
+        cmd = cmd + "setvol " + volume.ToString() + "\n";
+        //}
         cmd = cmd + "play" + "\n";
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
@@ -2722,43 +2776,6 @@ public partial class MpcService : IMpcService
         return result;
     }
 
-    /* NOT GOOD. Multiple deletion with SONGPO causes pos to shift.
-    public async Task<CommandResult> MpdPlaylistDelete(string playlistName, List<int> posList)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-        {
-            CommandResult f = new CommandResult();
-            f.IsSuccess = false;
-            return f;
-        }
-        if (posList is null)
-        {
-            CommandResult f = new CommandResult();
-            f.IsSuccess = false;
-            return f;
-        }
-        if (posList.Count < 1)
-        {
-            CommandResult f = new CommandResult();
-            f.IsSuccess = false;
-            return f;
-        }
-
-        playlistName = Regex.Escape(playlistName);
-
-        string cmd = "command_list_begin" + "\n";
-        foreach (var pos in posList)
-        {
-            cmd = cmd + "playlistdelete " + "\"" + playlistName + "\"" + " " + pos.ToString() + "\n";
-        }
-        cmd = cmd + "command_list_end" + "\n";
-
-        CommandResult result = await MpdSendCommand(cmd, true);
-
-        return result;
-    }
-    */
-
     public async Task<CommandResult> MpdPlaylistClear(string playlistName)
     {
         if (string.IsNullOrEmpty(playlistName))
@@ -2885,7 +2902,7 @@ public partial class MpcService : IMpcService
                         }
                         else
                         {
-                            Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
+                            //Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
                             MpdStatus.MpdVolume = 20;
                             MpdStatus.MpdVolumeIsSet = false;
                         }
@@ -2897,7 +2914,7 @@ public partial class MpcService : IMpcService
                 }
                 else
                 {
-                    Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
+                    //Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
                     MpdStatus.MpdVolume = 20;
                     MpdStatus.MpdVolumeIsSet = false;
                 }

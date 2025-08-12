@@ -25,6 +25,7 @@ public partial class QueuePage : UserControl
 
     public QueuePage(MainViewModel viewmodel)
     {
+        //App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();
@@ -162,7 +163,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderDiscWidth <= 0)
             {
-                vm.QueueColumnHeaderDiscWidth = 50; // Default width if not set
+                vm.QueueColumnHeaderDiscWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.QueueColumnHeaderDiscWidth);
             this.Column7.IsVisible = true;
@@ -182,7 +183,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderTrackWidth <= 0)
             {
-                vm.QueueColumnHeaderTrackWidth = 50; // Default width if not set
+                vm.QueueColumnHeaderTrackWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.QueueColumnHeaderTrackWidth);
             this.Column8.IsVisible = true;
@@ -412,33 +413,30 @@ public partial class QueuePage : UserControl
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
+        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
         {
-            if (dialog.Content is Views.Dialogs.SaveToDialog dlg)
+
+            if (dlg.CreateNewCheckBox.IsChecked is true)
             {
+                var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
 
-                if (dlg.CreateNewCheckBox.IsChecked is true)
+                if (!string.IsNullOrEmpty(str.Trim()))
                 {
-                    var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
-
-                    if (!string.IsNullOrEmpty(str.Trim()))
-                    {
-                        vm?.QueueSaveToDialog_Execute(str.Trim());
-                    }
+                    vm?.QueueSaveToDialog_Execute(str.Trim());
                 }
-                else
+            }
+            else
+            {
+                var plselitem = dlg.PlaylistComboBox.SelectedItem;
+
+                if (plselitem is Models.Playlist pl)
                 {
-                    var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-                    if (plselitem is Models.Playlist pl)
+                    if (string.IsNullOrWhiteSpace(pl.Name))
                     {
-                        if (string.IsNullOrWhiteSpace(pl.Name))
-                        {
-                            return;
-                        }
-
-                        vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
+                        return;
                     }
+
+                    vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
                 }
             }
         }
@@ -476,34 +474,31 @@ public partial class QueuePage : UserControl
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
+        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
         {
-            if (dialog.Content is Views.Dialogs.SaveToDialog dlg)
+            if (dlg.CreateNewCheckBox.IsChecked is true)
             {
-                if (dlg.CreateNewCheckBox.IsChecked is true)
+                var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
+
+                // TODO; check if already exists?
+
+                if (!string.IsNullOrEmpty(str.Trim()))
                 {
-                    var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
-
-                    // TODO; check if already exists?
-
-                    if (!string.IsNullOrEmpty(str.Trim()))
-                    {
-                        vm?.AddToPlaylist_Execute(str.Trim(), list);
-                    }
+                    vm?.AddToPlaylist_Execute(str.Trim(), list);
                 }
-                else
+            }
+            else
+            {
+                var plselitem = dlg.PlaylistComboBox.SelectedItem;
+
+                if (plselitem is Models.Playlist pl)
                 {
-                    var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-                    if (plselitem is Models.Playlist pl)
+                    if (string.IsNullOrWhiteSpace(pl.Name))
                     {
-                        if (string.IsNullOrWhiteSpace(pl.Name))
-                        {
-                            return;
-                        }
-
-                        vm?.AddToPlaylist_Execute(pl.Name.Trim(), list);
+                        return;
                     }
+
+                    vm?.AddToPlaylist_Execute(pl.Name.Trim(), list);
                 }
             }
         }

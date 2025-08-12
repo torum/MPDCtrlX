@@ -574,7 +574,336 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     #endregion
 
+    #region == Search column headers ==
+
+    private bool _isSearchColumnHeaderPositionVisible = true;
+    public bool IsSearchColumnHeaderPositionVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderPositionVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderPositionVisible)
+                return;
+
+            _isSearchColumnHeaderPositionVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderPositionVisible));
+        }
+    }
+
+    private double _searchColumnHeaderPositionWidth = 60;
+    public double SearchColumnHeaderPositionWidth
+    {
+        get
+        {
+            return _searchColumnHeaderPositionWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderPositionWidth)
+                return;
+
+            _searchColumnHeaderPositionWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderPositionWidth));
+        }
+    }
+
+    private double _searchColumnHeaderTitleWidth = 180;
+    public double SearchColumnHeaderTitleWidth
+    {
+        get
+        {
+            return _searchColumnHeaderTitleWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderTitleWidth)
+                return;
+
+            _searchColumnHeaderTitleWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderTitleWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderTimeVisible = true;
+    public bool IsSearchColumnHeaderTimeVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderTimeVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderTimeVisible)
+                return;
+
+            _isSearchColumnHeaderTimeVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderTimeVisible));
+        }
+    }
+
+    private double _searchColumnHeaderTimeWidth = 62;
+    public double SearchColumnHeaderTimeWidth
+    {
+        get
+        {
+            return _searchColumnHeaderTimeWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderTimeWidth)
+                return;
+
+            _searchColumnHeaderTimeWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderTimeWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderArtistVisible = true;
+    public bool IsSearchColumnHeaderArtistVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderArtistVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderArtistVisible)
+                return;
+
+            _isSearchColumnHeaderArtistVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderArtistVisible));
+        }
+    }
+
+    private double _searchColumnHeaderArtistWidth = 120;
+    public double SearchColumnHeaderArtistWidth
+    {
+        get
+        {
+            return _searchColumnHeaderArtistWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderArtistWidth)
+                return;
+
+            _searchColumnHeaderArtistWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderArtistWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderAlbumVisible = true;
+    public bool IsSearchColumnHeaderAlbumVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderAlbumVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderAlbumVisible)
+                return;
+
+            _isSearchColumnHeaderAlbumVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderAlbumVisible));
+        }
+    }
+
+    private double _searchColumnHeaderAlbumWidth = 120;
+    public double SearchColumnHeaderAlbumWidth
+    {
+        get
+        {
+            return _searchColumnHeaderAlbumWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderAlbumWidth)
+                return;
+
+            _searchColumnHeaderAlbumWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderAlbumWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderDiscVisible = true;
+    public bool IsSearchColumnHeaderDiscVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderDiscVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderDiscVisible)
+                return;
+
+            _isSearchColumnHeaderDiscVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderDiscVisible));
+        }
+    }
+
+    private double _searchColumnHeaderDiscWidth = 62;
+    public double SearchColumnHeaderDiscWidth
+    {
+        get
+        {
+            return _searchColumnHeaderDiscWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderDiscWidth)
+                return;
+
+            _searchColumnHeaderDiscWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderDiscWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderTrackVisible = true;
+    public bool IsSearchColumnHeaderTrackVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderTrackVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderTrackVisible)
+                return;
+
+            _isSearchColumnHeaderTrackVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderTrackVisible));
+        }
+    }
+
+    private double _searchColumnHeaderTrackWidth = 62;
+    public double SearchColumnHeaderTrackWidth
+    {
+        get
+        {
+            return _searchColumnHeaderTrackWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderTrackWidth)
+                return;
+
+            _searchColumnHeaderTrackWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderTrackWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderGenreVisible = true;
+    public bool IsSearchColumnHeaderGenreVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderGenreVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderGenreVisible)
+                return;
+
+            _isSearchColumnHeaderGenreVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderGenreVisible));
+        }
+    }
+
+    private double _searchColumnHeaderGenreWidth = 100;
+    public double SearchColumnHeaderGenreWidth
+    {
+        get
+        {
+            return _searchColumnHeaderGenreWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderGenreWidth)
+                return;
+
+            _searchColumnHeaderGenreWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderGenreWidth));
+        }
+    }
+
+    private bool _isSearchColumnHeaderLastModifiedVisible = true;
+    public bool IsSearchColumnHeaderLastModifiedVisible
+    {
+        get
+        {
+            return _isSearchColumnHeaderLastModifiedVisible;
+        }
+        set
+        {
+            if (value == _isSearchColumnHeaderLastModifiedVisible)
+                return;
+
+            _isSearchColumnHeaderLastModifiedVisible = value;
+
+            NotifyPropertyChanged(nameof(IsSearchColumnHeaderLastModifiedVisible));
+        }
+    }
+
+    private double _searchColumnHeaderLastModifiedWidth = 180;
+    public double SearchColumnHeaderLastModifiedWidth
+    {
+        get
+        {
+            return _searchColumnHeaderLastModifiedWidth;
+        }
+        set
+        {
+            if (value == _searchColumnHeaderLastModifiedWidth)
+                return;
+
+            _searchColumnHeaderLastModifiedWidth = value;
+
+            NotifyPropertyChanged(nameof(SearchColumnHeaderLastModifiedWidth));
+        }
+    }
+
+
+    #endregion
+
     #region == PlaylistItem headers == 
+
+    private bool _isPlaylistColumnHeaderPositionVisible = true;
+    public bool IsPlaylistColumnHeaderPositionVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderPositionVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderPositionVisible)
+                return;
+
+            _isPlaylistColumnHeaderPositionVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderPositionVisible));
+        }
+    }
 
     private double _playlistColumnHeaderPositionWidth = 60;
     public double PlaylistColumnHeaderPositionWidth
@@ -612,6 +941,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private bool _isPlaylistColumnHeaderTimeVisible = true;
+    public bool IsPlaylistColumnHeaderTimeVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderTimeVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderTimeVisible)
+                return;
+
+            _isPlaylistColumnHeaderTimeVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTimeVisible));
+        }
+    }
+
     private double _playlistColumnHeaderTimeWidth = 62;
     public double PlaylistColumnHeaderTimeWidth
     {
@@ -627,6 +974,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _playlistColumnHeaderTimeWidth = value;
 
             NotifyPropertyChanged(nameof(PlaylistColumnHeaderTimeWidth));
+        }
+    }
+
+    private bool _isPlaylistColumnHeaderArtistVisible = true;
+    public bool IsPlaylistColumnHeaderArtistVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderArtistVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderArtistVisible)
+                return;
+
+            _isPlaylistColumnHeaderArtistVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderArtistVisible));
         }
     }
 
@@ -648,6 +1013,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private bool _isPlaylistColumnHeaderAlbumVisible = true;
+    public bool IsPlaylistColumnHeaderAlbumVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderAlbumVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderAlbumVisible)
+                return;
+
+            _isPlaylistColumnHeaderAlbumVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderAlbumVisible));
+        }
+    }
+
     private double _playlistColumnHeaderAlbumWidth = 120;
     public double PlaylistColumnHeaderAlbumWidth
     {
@@ -663,6 +1046,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _playlistColumnHeaderAlbumWidth = value;
 
             NotifyPropertyChanged(nameof(PlaylistColumnHeaderAlbumWidth));
+        }
+    }
+
+    private bool _isPlaylistColumnHeaderDiscVisible = true;
+    public bool IsPlaylistColumnHeaderDiscVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderDiscVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderDiscVisible)
+                return;
+
+            _isPlaylistColumnHeaderDiscVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderDiscVisible));
         }
     }
 
@@ -684,6 +1085,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private bool _isPlaylistColumnHeaderTrackVisible = true;
+    public bool IsPlaylistColumnHeaderTrackVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderTrackVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderTrackVisible)
+                return;
+
+            _isPlaylistColumnHeaderTrackVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTrackVisible));
+        }
+
+    }
     private double _playlistColumnHeaderTrackWidth = 62;
     public double PlaylistColumnHeaderTrackWidth
     {
@@ -702,6 +1121,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private bool _isPlaylistColumnHeaderGenreVisible = true;
+    public bool IsPlaylistColumnHeaderGenreVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderGenreVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderGenreVisible)
+                return;
+
+            _isPlaylistColumnHeaderGenreVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderGenreVisible));
+        }
+
+    }
     private double _playlistColumnHeaderGenreWidth = 100;
     public double PlaylistColumnHeaderGenreWidth
     {
@@ -717,6 +1154,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _playlistColumnHeaderGenreWidth = value;
 
             NotifyPropertyChanged(nameof(PlaylistColumnHeaderGenreWidth));
+        }
+    }
+
+    private bool _isPlaylistColumnHeaderLastModifiedVisible = true;
+    public bool IsPlaylistColumnHeaderLastModifiedVisible
+    {
+        get
+        {
+            return _isPlaylistColumnHeaderLastModifiedVisible;
+        }
+        set
+        {
+            if (value == _isPlaylistColumnHeaderLastModifiedVisible)
+                return;
+
+            _isPlaylistColumnHeaderLastModifiedVisible = value;
+
+            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderLastModifiedVisible));
         }
     }
 
@@ -3792,6 +4247,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler? QueueHeaderVisibilityChanged;
     public event EventHandler? QueueFindWindowVisibilityChanged_SetFocus;
 
+    public event EventHandler? SearchHeaderVisibilityChanged;
+    public event EventHandler? PlaylistHeaderVisibilityChanged;
+
     public event EventHandler<List<string>>? SearchPageAddToPlaylistDialogShow;
     public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
 
@@ -3899,6 +4357,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         QueueColumnHeaderTrackShowHideCommand = new RelayCommand(QueueColumnHeaderTrackShowHideCommand_Execute, QueueColumnHeaderTrackShowHideCommand_CanExecute);
         QueueColumnHeaderGenreShowHideCommand = new RelayCommand(QueueColumnHeaderGenreShowHideCommand_Execute, QueueColumnHeaderGenreShowHideCommand_CanExecute);
         QueueColumnHeaderLastModifiedShowHideCommand = new RelayCommand(QueueColumnHeaderLastModifiedShowHideCommand_Execute, QueueColumnHeaderLastModifiedShowHideCommand_CanExecute);
+
+        PlaylistColumnHeaderPositionShowHideCommand = new RelayCommand(PlaylistColumnHeaderPositionShowHideCommand_Execute, PlaylistColumnHeaderPositionShowHideCommand_CanExecute);
+        PlaylistColumnHeaderTimeShowHideCommand = new RelayCommand(PlaylistColumnHeaderTimeShowHideCommand_Execute, PlaylistColumnHeaderTimeShowHideCommand_CanExecute);
+        PlaylistColumnHeaderArtistShowHideCommand = new RelayCommand(PlaylistColumnHeaderArtistShowHideCommand_Execute, PlaylistColumnHeaderArtistShowHideCommand_CanExecute);
+        PlaylistColumnHeaderAlbumShowHideCommand = new RelayCommand(PlaylistColumnHeaderAlbumShowHideCommand_Execute, PlaylistColumnHeaderAlbumShowHideCommand_CanExecute);
+        PlaylistColumnHeaderDiscShowHideCommand = new RelayCommand(PlaylistColumnHeaderDiscShowHideCommand_Execute, PlaylistColumnHeaderDiscShowHideCommand_CanExecute);
+        PlaylistColumnHeaderTrackShowHideCommand = new RelayCommand(PlaylistColumnHeaderTrackShowHideCommand_Execute, PlaylistColumnHeaderTrackShowHideCommand_CanExecute);
+        PlaylistColumnHeaderGenreShowHideCommand = new RelayCommand(PlaylistColumnHeaderGenreShowHideCommand_Execute, PlaylistColumnHeaderGenreShowHideCommand_CanExecute);
+        PlaylistColumnHeaderLastModifiedShowHideCommand = new RelayCommand(PlaylistColumnHeaderLastModifiedShowHideCommand_Execute, PlaylistColumnHeaderLastModifiedShowHideCommand_CanExecute);
+
+        SearchColumnHeaderPositionShowHideCommand = new RelayCommand(SearchColumnHeaderPositionShowHideCommand_Execute, SearchColumnHeaderPositionShowHideCommand_CanExecute);
+        SearchColumnHeaderTimeShowHideCommand = new RelayCommand(SearchColumnHeaderTimeShowHideCommand_Execute, SearchColumnHeaderTimeShowHideCommand_CanExecute);
+        SearchColumnHeaderArtistShowHideCommand = new RelayCommand(SearchColumnHeaderArtistShowHideCommand_Execute, SearchColumnHeaderArtistShowHideCommand_CanExecute);
+        SearchColumnHeaderAlbumShowHideCommand = new RelayCommand(SearchColumnHeaderAlbumShowHideCommand_Execute, SearchColumnHeaderAlbumShowHideCommand_CanExecute);
+        SearchColumnHeaderDiscShowHideCommand = new RelayCommand(SearchColumnHeaderDiscShowHideCommand_Execute, SearchColumnHeaderDiscShowHideCommand_CanExecute);
+        SearchColumnHeaderTrackShowHideCommand = new RelayCommand(SearchColumnHeaderTrackShowHideCommand_Execute, SearchColumnHeaderTrackShowHideCommand_CanExecute);
+        SearchColumnHeaderGenreShowHideCommand = new RelayCommand(SearchColumnHeaderGenreShowHideCommand_Execute, SearchColumnHeaderGenreShowHideCommand_CanExecute);
+        SearchColumnHeaderLastModifiedShowHideCommand = new RelayCommand(SearchColumnHeaderLastModifiedShowHideCommand_Execute, SearchColumnHeaderLastModifiedShowHideCommand_CanExecute);
 
         ShowFindCommand = new RelayCommand(ShowFindCommand_Execute, ShowFindCommand_CanExecute);
 
@@ -4835,7 +5311,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Time");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -4847,7 +5322,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderTimeVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4867,7 +5342,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Artist");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -4879,7 +5353,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderArtistVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4899,7 +5373,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Album");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -4911,7 +5384,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderAlbumVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4931,7 +5404,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Disc");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -4943,7 +5415,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderDiscVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4955,7 +5427,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                             catch
                                             {
-                                                PlaylistColumnHeaderDiscWidth = 53;
+                                                PlaylistColumnHeaderDiscWidth = 62;
                                             }
                                         }
                                     }
@@ -4963,7 +5435,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Track");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -4975,7 +5446,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderTrackVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4987,7 +5458,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             }
                                             catch
                                             {
-                                                PlaylistColumnHeaderTrackWidth = 53;
+                                                PlaylistColumnHeaderTrackWidth = 62;
                                             }
                                         }
                                     }
@@ -4995,7 +5466,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("Genre");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -5007,7 +5477,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderGenreVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5027,7 +5497,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 column = Playl.Element("LastModified");
                                 if (column is not null)
                                 {
-                                    /*
                                     if (column.Attribute("Visible") is not null)
                                     {
                                         var s = column.Attribute("Visible")?.Value;
@@ -5039,7 +5508,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 IsPlaylistColumnHeaderLastModifiedVisible = false;
                                         }
                                     }
-                                    */
+                                    
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5052,6 +5521,318 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             catch
                                             {
                                                 PlaylistColumnHeaderLastModifiedWidth = 53;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            //Search page
+                            var Seal = Headers.Element("Search");
+                            if (Seal is not null)
+                            {
+                                var column = Seal.Element("Position");
+                                if (column is not null)
+                                {
+                                    /*
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                            {
+                                                IsPlaylistColumnHeaderPositionVisible = true;
+                                            }
+                                            else
+                                            {
+                                                IsPlaylistColumnHeaderPositionVisible = false;
+                                            }
+                                        }
+                                    }
+                                    */
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderPositionWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderPositionWidth = 60;
+                                            }
+                                        }
+                                    }
+                                }
+                                /*
+                                column = Playl.Element("NowPlaying");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsPlaylistColumnHeaderNowPlayingVisible = true;
+                                            else
+                                                IsPlaylistColumnHeaderNowPlayingVisible = false;
+                                        }
+                                    }
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                PlaylistColumnHeaderNowPlayingWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                PlaylistColumnHeaderNowPlayingWidth = 53;
+                                            }
+                                        }
+                                    }
+                                }
+                                */
+                                column = Seal.Element("Title");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderTitleWidth = Double.Parse(s);
+                                                if (SearchColumnHeaderTitleWidth < 120)
+                                                    SearchColumnHeaderTitleWidth = 160;
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderTitleWidth = 160;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Time");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderTimeVisible = true;
+                                            else
+                                                IsSearchColumnHeaderTimeVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderTimeWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderTimeWidth = 53;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Artist");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderArtistVisible = true;
+                                            else
+                                                IsSearchColumnHeaderArtistVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderArtistWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderArtistWidth = 53;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Album");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderAlbumVisible = true;
+                                            else
+                                                IsSearchColumnHeaderAlbumVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderAlbumWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderAlbumWidth = 53;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Disc");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderDiscVisible = true;
+                                            else
+                                                IsSearchColumnHeaderDiscVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderDiscWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderDiscWidth = 62;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Track");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderTrackVisible = true;
+                                            else
+                                                IsSearchColumnHeaderTrackVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderTrackWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderTrackWidth = 62;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("Genre");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderGenreVisible = true;
+                                            else
+                                                IsSearchColumnHeaderGenreVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderGenreWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderGenreWidth = 100;
+                                            }
+                                        }
+                                    }
+                                }
+                                column = Seal.Element("LastModified");
+                                if (column is not null)
+                                {
+                                    if (column.Attribute("Visible") is not null)
+                                    {
+                                        var s = column.Attribute("Visible")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            if (s == "True")
+                                                IsSearchColumnHeaderLastModifiedVisible = true;
+                                            else
+                                                IsSearchColumnHeaderLastModifiedVisible = false;
+                                        }
+                                    }
+                                    
+                                    if (column.Attribute("Width") is not null)
+                                    {
+                                        var s = column.Attribute("Width")?.Value;
+                                        if (!string.IsNullOrEmpty(s))
+                                        {
+                                            try
+                                            {
+                                                SearchColumnHeaderLastModifiedWidth = Double.Parse(s);
+                                            }
+                                            catch
+                                            {
+                                                SearchColumnHeaderLastModifiedWidth = 53;
                                             }
                                         }
                                     }
@@ -5157,6 +5938,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         fp?.SaveFilesHeaderWidth();
         PlaylistItemPage? pp = App.GetService<PlaylistItemPage>();
         pp?.SavePlaylistItemsHeaderWidth();
+        SearchPage? sp = App.GetService<SearchPage>();
+        sp?.SaveSearchHeaderWidth();
 
         double windowWidth = 780;
 
@@ -5300,6 +6083,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             XmlElement headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
 
+            #region == Queue header ==
+
             // Queue page
             XmlElement queueHeader;
             XmlElement queueHeaderColumn;
@@ -5436,6 +6221,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //
             headers.AppendChild(queueHeader);
 
+            #endregion
+
+            #region == Files header ==
 
             // FilesPage
             XmlElement filesHeader;
@@ -5472,6 +6260,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //
             headers.AppendChild(filesHeader);
 
+            #endregion
+
+            #region == Playlist header ==
 
             // Playlist page
             XmlElement PlaylistHeader;
@@ -5483,9 +6274,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Position
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderPositionVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderPositionVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderPositionWidth.ToString();
@@ -5518,9 +6309,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Time
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderTimeVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderTimeVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderTimeWidth.ToString();
@@ -5531,9 +6322,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Artist
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderArtistVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderArtistVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderArtistWidth.ToString();
@@ -5544,9 +6335,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Album
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderAlbumVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderAlbumVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderAlbumWidth.ToString();
@@ -5557,9 +6348,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Disc
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderDiscVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderDiscVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderDiscWidth.ToString();
@@ -5570,9 +6361,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Track
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderTrackVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderTrackVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderTrackWidth.ToString();
@@ -5583,9 +6374,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Genre
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderGenreVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderGenreVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderGenreWidth.ToString();
@@ -5596,9 +6387,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Last Modified
             PlaylistHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
 
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderLastModifiedVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+            pAttrs = doc.CreateAttribute("Visible");
+            pAttrs.Value = IsPlaylistColumnHeaderLastModifiedVisible.ToString();
+            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
 
             pAttrs = doc.CreateAttribute("Width");
             pAttrs.Value = PlaylistColumnHeaderLastModifiedWidth.ToString();
@@ -5609,6 +6400,148 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //
             headers.AppendChild(PlaylistHeader);
 
+            #endregion
+
+            #region == Search header == 
+
+            // Search page
+            XmlElement SearchHeader;
+            XmlElement SearchHeaderColumn;
+            XmlAttribute sAttrs;
+
+            SearchHeader = doc.CreateElement(string.Empty, "Search", string.Empty);
+
+            // Position
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderPositionVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderPositionWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Now Playing
+            //PlaylistHeaderColumn = doc.CreateElement(string.Empty, "NowPlaying", string.Empty);
+
+            //pAttrs = doc.CreateAttribute("Visible");
+            //pAttrs.Value = IsPlaylistColumnHeaderNowPlayingVisible.ToString();
+            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+
+            //pAttrs = doc.CreateAttribute("Width");
+            //pAttrs.Value = PlaylistColumnHeaderNowPlayingWidth.ToString();
+            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
+
+            //PlaylistHeader.AppendChild(PlaylistHeaderColumn);
+
+            // Title skip visibility
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Title", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderTitleWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Time
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderTimeVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderTimeWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Artist
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderArtistVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderArtistWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Album
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderAlbumVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderAlbumWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Disc
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderDiscVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderDiscWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Track
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderTrackVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderTrackWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Genre
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderGenreVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderGenreWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            // Last Modified
+            SearchHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
+
+            sAttrs = doc.CreateAttribute("Visible");
+            sAttrs.Value = IsSearchColumnHeaderLastModifiedVisible.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            sAttrs = doc.CreateAttribute("Width");
+            sAttrs.Value = SearchColumnHeaderLastModifiedWidth.ToString();
+            SearchHeaderColumn.SetAttributeNode(sAttrs);
+
+            SearchHeader.AppendChild(SearchHeaderColumn);
+
+            //
+            headers.AppendChild(SearchHeader);
+
+            #endregion
+            
             // TODO: more
 
 
@@ -6082,6 +7015,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 if (_mpc.MpdStatus.MpdVolumeIsSet)
                 {
+                    Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
+
                     double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
                     if (_volume != tmpVol)
                     {
@@ -6098,7 +7033,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
                 else
                 {
-                    //Debug.WriteLine("Volume is not set. @UpdateButtonStatus()");
+                    Debug.WriteLine("Volume is NOT set. @UpdateButtonStatus()");
+
                     if (_currentProfile is not null)
                     {
                         //Debug.WriteLine($"Volume is set to _currentProfile {_currentProfile.Volume}. @UpdateButtonStatus()");
@@ -6643,7 +7579,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         }
                         else
                         {
-                            Debug.WriteLine("Oops. Maybe start up with playback Stop? @UpdateCurrentQueue()");
+                            Debug.WriteLine("Looks like starting up with playback status Stop. @UpdateCurrentQueue()");
                             // just in case.
                             CurrentSong = null;
                             AlbumCover = null;
@@ -7968,7 +8904,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
     }
 
     public IRelayCommand PlayNextCommand { get; }
@@ -8726,8 +9661,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #endregion
 
     #region == Files ==
-    
-    //
+
     public IRelayCommand FilesListviewAddSelectedToQueueCommand { get; }
     public static bool FilesListviewAddSelectedToQueueCommand_CanExecute()
     {
@@ -8789,168 +9723,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    /*
-    public IRelayCommand SongFilesListviewSaveSelectedAsCommand { get; }
-    public bool SongFilesListviewSaveSelectedAsCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public void SongFilesListviewSaveSelectedAsCommand_Execute(object obj)
-    {
-        if (obj is null) return;
-
-        List<NodeFile> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<NodeFile>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as NodeFile);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
-        {
-            if (!string.IsNullOrEmpty(item.OriginalFileUri))
-                fileUrisToAddList.Add(item.OriginalFileUri);
-        }
-
-        if (fileUrisToAddList.Count == 0)
-            return;
-
-        songFilesListviewSelectedQueueSongUriForPopup = fileUrisToAddList;
-
-        IsSongFilesSelectedSaveAsPopupVisible = true;
-
-    }
-
-    public IRelayCommand SongFilesListviewSaveSelectedAsPopupCommand { get; }
-    public bool SongFilesListviewSaveSelectedAsPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public void SongFilesListviewSaveSelectedAsPopupCommand_Execute(string playlistName)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-            return;
-        if (songFilesListviewSelectedQueueSongUriForPopup.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlistName, songFilesListviewSelectedQueueSongUriForPopup);
-
-        songFilesListviewSelectedQueueSongUriForPopup.Clear();
-
-        IsSongFilesSelectedSaveAsPopupVisible = false;
-    }
-
-    public IRelayCommand SongFilesListviewSaveSelectedToCommand { get; }
-    public bool SongFilesListviewSaveSelectedToCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public void SongFilesListviewSaveSelectedToCommand_Execute(object obj)
-    {
-        if (obj is null) return;
-        List<NodeFile> selectedList = [];
-
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            System.Collections.IList items = (System.Collections.IList)obj;
-
-            var collection = items.Cast<NodeFile>();
-
-            foreach (var item in collection)
-            {
-                selectedList.Add(item as NodeFile);
-            }
-        });
-
-        List<string> fileUrisToAddList = [];
-
-        foreach (var item in selectedList)
-        {
-            if (!string.IsNullOrEmpty(item.OriginalFileUri))
-                fileUrisToAddList.Add(item.OriginalFileUri);
-        }
-
-        if (fileUrisToAddList.Count == 0)
-            return;
-
-        songFilesListviewSelectedQueueSongUriForPopup = fileUrisToAddList;
-
-        IsSongFilesSelectedSaveToPopupVisible = true;
-    }
-
-    public IRelayCommand SongFilesListviewSaveSelectedToPopupCommand { get; }
-    public bool SongFilesListviewSaveSelectedToPopupCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public void SongFilesListviewSaveSelectedToPopupCommand_Execute(Playlist playlist)
-    {
-        if (playlist is null)
-            return;
-
-        if (string.IsNullOrEmpty(playlist.Name))
-            return;
-        if (songFilesListviewSelectedQueueSongUriForPopup.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlist.Name, songFilesListviewSelectedQueueSongUriForPopup);
-
-        songFilesListviewSelectedQueueSongUriForPopup.Clear();
-
-        IsSongFilesSelectedSaveToPopupVisible = false;
-    }
-
-    public IRelayCommand FilterMusicEntriesClearCommand { get; }
-    public bool FilterMusicEntriesClearCommand_CanExecute()
-    {
-        if (string.IsNullOrEmpty(FilterMusicEntriesQuery))
-            return false;
-        return true;
-    }
-    public void FilterMusicEntriesClearCommand_Execute()
-    {
-        FilterMusicEntriesQuery = "";
-    }
-
-
-    // double clicked 
-    public IRelayCommand SongFilesListviewLeftDoubleClickCommand { get; set; }
-    public bool SongFilesListviewLeftDoubleClickCommand_CanExecute()
-    {
-        //if (IsWorking) return false;
-        if (IsBusy) return false;
-        if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public async void SongFilesListviewLeftDoubleClickCommand_ExecuteAsync(NodeFile song)
-    {
-        if (song is not null)
-        {
-            await _mpc.MpdAdd(song.OriginalFileUri);
-        }
-    }
-
-    */
-
     // Play all
     public IRelayCommand FilesPlayCommand { get; set; }
     public static bool FilesPlayCommand_CanExecute()
@@ -8977,7 +9749,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     uriList.Add(song.OriginalFileUri);
                 }
 
-                await _mpc.MpdMultiplePlay(uriList);
+                await _mpc.MpdMultiplePlay(uriList, Convert.ToInt32(_volume));
 
                 // get album cover.
                 await Task.Yield();
@@ -9062,7 +9834,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 CurrentSong = null;
             });
 
-            await _mpc.MpdSinglePlay(song.OriginalFileUri);
+            await _mpc.MpdSinglePlay(song.OriginalFileUri, Convert.ToInt32(_volume));
 
             // get album cover.
             await Task.Yield();
@@ -9085,7 +9857,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             await _mpc.MpdAdd(song.OriginalFileUri);
         }
     }
-
 
     #endregion
 
@@ -9257,129 +10028,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Playlist ==
 
-    /*
-    public IRelayCommand ChangePlaylistCommand { get; set; }
-    public bool ChangePlaylistCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void ChangePlaylistCommand_ExecuteAsync()
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            Queue.Clear();
-        });
-
-        await _mpc.MpdChangePlaylist(_selectedPlaylist.Name);
-    }
-
-    public ICommand PlaylistListviewLeftDoubleClickCommand { get; set; }
-    public bool PlaylistListviewLeftDoubleClickCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void PlaylistListviewLeftDoubleClickCommand_ExecuteAsync(Playlist playlist)
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        if (_selectedPlaylist != playlist)
-            return;
-
-        await _mpc.MpdLoadPlaylist(playlist.Name);
-    }
-
-    public IRelayCommand PlaylistListviewEnterKeyCommand { get; set; }
-    public bool PlaylistListviewEnterKeyCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void PlaylistListviewEnterKeyCommand_ExecuteAsync()
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        await _mpc.MpdLoadPlaylist(_selectedPlaylist.Name);
-    }
-
-    public IRelayCommand PlaylistListviewLoadPlaylistCommand { get; set; }
-    public bool PlaylistListviewLoadPlaylistCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void PlaylistListviewLoadPlaylistCommand_ExecuteAsync()
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        await _mpc.MpdLoadPlaylist(_selectedPlaylist.Name);
-    }
-
-    public IRelayCommand PlaylistListviewClearLoadPlaylistCommand { get; set; }
-    public bool PlaylistListviewClearLoadPlaylistCommand_CanExecute()
-    {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        return true;
-    }
-    public async void PlaylistListviewClearLoadPlaylistCommand_ExecuteAsync()
-    {
-        if (_selectedPlaylist is null)
-            return;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return;
-
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            Queue.Clear();
-        });
-
-        await _mpc.MpdChangePlaylist(_selectedPlaylist.Name);
-    }    
-
-    */
-
     public IRelayCommand PlaylistLoadPlaylistCommand { get; }
     public static bool PlaylistLoadPlaylistCommand_CanExecute()
     {
@@ -9439,7 +10087,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         //await _mpc.MpdPlaybackStop(); // nomore needed -> changed _mpc.MpdChangePlaylist
 
-        await _mpc.MpdChangePlaylist(SelectedNodeMenu.Name);
+        await _mpc.MpdChangePlaylist(SelectedNodeMenu.Name, Convert.ToInt32(_volume));
 
         //await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume)); // nomore needed -> changed _mpc.MpdChangePlaylist
 
@@ -9725,7 +10373,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             uriList.Add(song.File);
         }
 
-        await _mpc.MpdMultiplePlay(uriList);
+        await _mpc.MpdMultiplePlay(uriList, Convert.ToInt32(_volume));
 
         // get album cover.
         await Task.Yield();
@@ -9794,7 +10442,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 CurrentSong = null;        
             });
 
-            await _mpc.MpdSinglePlay(song.File);
+            await _mpc.MpdSinglePlay(song.File, Convert.ToInt32(_volume));
 
             // get album cover.
             await Task.Yield();
@@ -10380,6 +11028,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsBusy = false;
     }
 
+    public IRelayCommand TryConnectCommand { get; }
+    public static bool TryConnectCommand_CanExecute()
+    {
+        return true;
+    }
+    public void TryConnectCommand_Execute()
+    {
+        Start(_host, _port);
+    }
+
     #endregion
 
     #region == Dialogs ==
@@ -10669,6 +11327,401 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    #endregion
+
+    #region == PlaylistListview header colums Show/Hide ==
+
+    public IRelayCommand PlaylistColumnHeaderPositionShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderPositionShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderPositionShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderPositionVisible)
+        {
+            IsPlaylistColumnHeaderPositionVisible = false;
+            PlaylistColumnHeaderPositionWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderPositionVisible = true;
+            PlaylistColumnHeaderPositionWidth = 60;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /*
+    public IRelayCommand PlaylistColumnHeaderNowPlayingShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderNowPlayingShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderNowPlayingShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderNowPlayingVisible)
+        {
+            IsPlaylistColumnHeaderNowPlayingVisible = false;
+            PlaylistColumnHeaderNowPlayingWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderNowPlayingVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+    */
+
+    public IRelayCommand PlaylistColumnHeaderTimeShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderTimeShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderTimeShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderTimeVisible)
+        {
+
+            IsPlaylistColumnHeaderTimeVisible = false;
+            PlaylistColumnHeaderTimeWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderTimeVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderArtistShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderArtistShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderArtistShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderArtistVisible)
+        {
+            IsPlaylistColumnHeaderArtistVisible = false;
+            PlaylistColumnHeaderArtistWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderArtistVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderAlbumShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderAlbumShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderAlbumShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderAlbumVisible)
+        {
+            IsPlaylistColumnHeaderAlbumVisible = false;
+            PlaylistColumnHeaderAlbumWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderAlbumVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderDiscShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderDiscShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderDiscShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderDiscVisible)
+        {
+            IsPlaylistColumnHeaderDiscVisible = false;
+            PlaylistColumnHeaderDiscWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderDiscVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderTrackShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderTrackShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderTrackShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderTrackVisible)
+        {
+            IsPlaylistColumnHeaderTrackVisible = false;
+            PlaylistColumnHeaderTrackWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderTrackVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderGenreShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderGenreShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderGenreShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderGenreVisible)
+        {
+            IsPlaylistColumnHeaderGenreVisible = false;
+            PlaylistColumnHeaderGenreWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderGenreVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand PlaylistColumnHeaderLastModifiedShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderLastModifiedShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderLastModifiedShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderLastModifiedVisible)
+        {
+            IsPlaylistColumnHeaderLastModifiedVisible = false;
+            PlaylistColumnHeaderLastModifiedWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderLastModifiedVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+
+    #endregion
+
+    #region == SearchListview header colums Show/Hide ==
+
+    public IRelayCommand SearchColumnHeaderPositionShowHideCommand { get; }
+    public static bool SearchColumnHeaderPositionShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderPositionShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderPositionVisible)
+        {
+            IsSearchColumnHeaderPositionVisible = false;
+            SearchColumnHeaderPositionWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderPositionVisible = true;
+            SearchColumnHeaderPositionWidth = 60;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /*
+    public IRelayCommand PlaylistColumnHeaderNowPlayingShowHideCommand { get; }
+    public static bool PlaylistColumnHeaderNowPlayingShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void PlaylistColumnHeaderNowPlayingShowHideCommand_Execute()
+    {
+        if (IsPlaylistColumnHeaderNowPlayingVisible)
+        {
+            IsPlaylistColumnHeaderNowPlayingVisible = false;
+            PlaylistColumnHeaderNowPlayingWidth = 0;
+        }
+        else
+        {
+            IsPlaylistColumnHeaderNowPlayingVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+    */
+
+    public IRelayCommand SearchColumnHeaderTimeShowHideCommand { get; }
+    public static bool SearchColumnHeaderTimeShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderTimeShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderTimeVisible)
+        {
+
+            IsSearchColumnHeaderTimeVisible = false;
+            SearchColumnHeaderTimeWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderTimeVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderArtistShowHideCommand { get; }
+    public static bool SearchColumnHeaderArtistShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderArtistShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderArtistVisible)
+        {
+            IsSearchColumnHeaderArtistVisible = false;
+            SearchColumnHeaderArtistWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderArtistVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderAlbumShowHideCommand { get; }
+    public static bool SearchColumnHeaderAlbumShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderAlbumShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderAlbumVisible)
+        {
+            IsSearchColumnHeaderAlbumVisible = false;
+            SearchColumnHeaderAlbumWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderAlbumVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderDiscShowHideCommand { get; }
+    public static bool SearchColumnHeaderDiscShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderDiscShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderDiscVisible)
+        {
+            IsSearchColumnHeaderDiscVisible = false;
+            SearchColumnHeaderDiscWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderDiscVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderTrackShowHideCommand { get; }
+    public static bool SearchColumnHeaderTrackShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderTrackShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderTrackVisible)
+        {
+            IsSearchColumnHeaderTrackVisible = false;
+            SearchColumnHeaderTrackWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderTrackVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderGenreShowHideCommand { get; }
+    public static bool SearchColumnHeaderGenreShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderGenreShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderGenreVisible)
+        {
+            IsSearchColumnHeaderGenreVisible = false;
+            SearchColumnHeaderGenreWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderGenreVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public IRelayCommand SearchColumnHeaderLastModifiedShowHideCommand { get; }
+    public static bool SearchColumnHeaderLastModifiedShowHideCommand_CanExecute()
+    {
+        return true;
+    }
+    public void SearchColumnHeaderLastModifiedShowHideCommand_Execute()
+    {
+        if (IsSearchColumnHeaderLastModifiedVisible)
+        {
+            IsSearchColumnHeaderLastModifiedVisible = false;
+            SearchColumnHeaderLastModifiedWidth = 0;
+        }
+        else
+        {
+            IsSearchColumnHeaderLastModifiedVisible = true;
+        }
+
+        // Notify code behind to do some work around ...
+        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
 
     #endregion
 
@@ -10925,16 +11978,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     #endregion
-
-    public IRelayCommand TryConnectCommand { get; }
-    public static bool TryConnectCommand_CanExecute()
-    {
-        return true;
-    }
-    public void TryConnectCommand_Execute()
-    {
-        Start(_host, _port);
-    }
 
 
     #endregion

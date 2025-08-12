@@ -136,7 +136,6 @@
 								</MenuItem>
 							</MenuItem>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
-
 							<Separator/>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_Clear}" Command="{Binding QueueClearWithoutPromptCommand}"/>
 						</MenuFlyout>

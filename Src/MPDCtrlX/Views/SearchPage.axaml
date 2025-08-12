@@ -70,6 +70,58 @@
 					</Viewbox>
 					<Button.Flyout>
 						<MenuFlyout>
+							<!-- Header visibility -->
+							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ColumnVisibility}">
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Title}" IsChecked="True" IsEnabled="False">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Time}" IsChecked="{Binding IsSearchColumnHeaderTimeVisible}" Command="{Binding SearchColumnHeaderTimeShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Artist}" IsChecked="{Binding IsSearchColumnHeaderArtistVisible}" Command="{Binding SearchColumnHeaderArtistShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Album}" IsChecked="{Binding IsSearchColumnHeaderAlbumVisible}" Command="{Binding SearchColumnHeaderAlbumShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Disc}" IsChecked="{Binding IsSearchColumnHeaderDiscVisible}" Command="{Binding SearchColumnHeaderDiscShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Track}" IsChecked="{Binding IsSearchColumnHeaderTrackVisible}" Command="{Binding SearchColumnHeaderTrackShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Genre}" IsChecked="{Binding IsSearchColumnHeaderGenreVisible}" Command="{Binding SearchColumnHeaderGenreShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_LastModified}" IsChecked="{Binding IsSearchColumnHeaderLastModifiedVisible}" Command="{Binding SearchColumnHeaderLastModifiedShowHideCommand}">
+									<MenuItem.Icon>
+										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
+											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
+									</MenuItem.Icon>
+								</MenuItem>
+							</MenuItem>
+							<Separator/>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_AddToPlaylist}" Command="{Binding SearchPageSongsAddToPlaylistCommand}" CommandParameter="{Binding SearchResult}"/>
 						</MenuFlyout>
 					</Button.Flyout>
@@ -123,7 +175,7 @@
 			<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 			<ScrollViewer Grid.Row="1" x:Name="SearchListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
 				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
-				<Grid Height="34" Margin="1,0,0,0">
+				<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
 						<ColumnDefinition Width="4"></ColumnDefinition>
@@ -149,54 +201,54 @@
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 
-					<Grid Grid.Column="0" Name="test1" Width="48">
-						<Label Name="test1x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
+					<Grid Grid.Column="0" Name="SearchColumn1" Width="48">
+						<Label Name="SearchColumn1x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
 					</Grid>
 
 					<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
-					<Grid Grid.Column="2" Name="test2">
-						<Label Name="test2x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
+					<Grid Grid.Column="2" Name="SearchColumn2">
+						<Label Name="SearchColumn2x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
 					</Grid>
 
 					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
 					<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="False"/>
-					<Grid Grid.Column="4" Name="test3">
-						<Label Name="test3x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Title}"></Label>
+					<Grid Grid.Column="4" Name="SearchColumn3">
+						<Label Name="SearchColumn3x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Title}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-					<Grid Grid.Column="6" Name="test4">
-						<Label Name="test4x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Time}"></Label>
+					<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="{Binding IsSearchColumnHeaderTimeVisible}"/>
+					<Grid Grid.Column="6" Name="SearchColumn4">
+						<Label Name="SearchColumn4x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Time}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="8" Name="test5">
-						<Label Name="test5x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Artist}"></Label>
+					<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderArtistVisible}"/>
+					<Grid Grid.Column="8" Name="SearchColumn5">
+						<Label Name="SearchColumn5x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Artist}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="10" Name="test6">
-						<Label Name="test6x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Album}"></Label>
+					<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderAlbumVisible}"/>
+					<Grid Grid.Column="10" Name="SearchColumn6">
+						<Label Name="SearchColumn6x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Album}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="12" Name="test7">
-						<Label Name="test7x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Disc}"></Label>
+					<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderDiscVisible}"/>
+					<Grid Grid.Column="12" Name="SearchColumn7">
+						<Label Name="SearchColumn7x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Disc}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="14" Name="test8">
-						<Label Name="test8x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Track}"></Label>
+					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderTrackVisible}"/>
+					<Grid Grid.Column="14" Name="SearchColumn8">
+						<Label Name="SearchColumn8x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Track}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="16" Name="test9">
-						<Label Name="test9x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Genre}"></Label>
+					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderGenreVisible}"/>
+					<Grid Grid.Column="16" Name="SearchColumn9">
+						<Label Name="SearchColumn9x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Genre}"></Label>
 					</Grid>
 
-					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="18" Name="test10">
-						<Label Name="test10x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_LastModified}"></Label>
+					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="{Binding IsSearchColumnHeaderLastModifiedVisible}"/>
+					<Grid Grid.Column="18" Name="SearchColumn10">
+						<Label Name="SearchColumn10x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_LastModified}"></Label>
 					</Grid>
 
 					<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
@@ -281,7 +333,7 @@
 							<!--						
 							<TextBlock Grid.Column="0" Width="{Binding Bounds.Size.Width, ElementName=test1}" Text="" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9" IsVisible="False"></TextBlock>
 -->
-							<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=test1}">
+							<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn1}">
 								<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewPlayThisCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListViewItemContextMenu_Play}" Background="Transparent" BorderThickness="0">
 									<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<PathIcon Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
@@ -299,28 +351,28 @@
 							<Viewbox Grid.Column="2" Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
 
 							</Viewbox>
-							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=test3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=test4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="6" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderTimeVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=test5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="8" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderArtistVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=test6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="10" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderAlbumVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="12" Width="{Binding Bounds.Size.Width, ElementName=test7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="12" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderDiscVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="14" Width="{Binding Bounds.Size.Width, ElementName=test8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="14" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderTrackVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=test9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="16" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderGenreVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
-							<TextBlock Grid.Column="18" Width="{Binding Bounds.Size.Width, ElementName=test10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+							<TextBlock Grid.Column="18" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsSearchColumnHeaderLastModifiedVisible}" Width="{Binding Bounds.Size.Width, ElementName=SearchColumn10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 
 							</TextBlock>
 
