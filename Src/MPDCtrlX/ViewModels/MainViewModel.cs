@@ -1838,23 +1838,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     private System.Timers.Timer? _volumeDelayTimer = null;
-    private void DoChangeVolume(object? sender, System.Timers.ElapsedEventArgs e)
+    private async void DoChangeVolume(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (_mpc is not null)
         {
-            if (Convert.ToDouble(_mpc.MpdStatus.MpdVolume) != _volume)
-            {
-                if (SetVolumeCommand.CanExecute(null))
-                {
-                    SetVolumeCommand.Execute(null);
-                }
-
-                // save
-                if (_currentProfile is not null)
-                {
-                    _currentProfile.Volume = _volume;
-                }
-            }
+            await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
         }
     }
 
