@@ -57,6 +57,7 @@ public class MainDummyViewModel
 
 public partial class MainViewModel : ViewModelBase //ObservableObject
 {
+
     private string _appVersion = string.Empty;
     public string AppVersion
     {
@@ -2971,44 +2972,42 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    /*
-    private AlbumEx? _invokedAlbum = new();
-    public AlbumEx? InvokedAlbum
+    private IEnumerable<object>? _visibleViewportAlbumExItems;
+    public IEnumerable<object>? VisibleViewportAlbumExItems
     {
-        get { return _invokedAlbum; }
+        get => _visibleViewportAlbumExItems;
         set
         {
-            if (_invokedAlbum == value)
-                return;
-
-            _invokedAlbum = value;
-            NotifyPropertyChanged(nameof(InvokedAlbum));
-            NotifyPropertyChanged(nameof(InvokedAlbumSongs));
-        }
-    }
-
-    private ObservableCollection<SongInfo> _invokedAlbumSongs = [];
-    public ObservableCollection<SongInfo> InvokedAlbumSongs
-    {
-        get 
-        {
-            if (_invokedAlbum is not null)
+            if (value == _visibleViewportAlbumExItems)
             {
-                return _invokedAlbum.Songs;
+                return;
             }
 
-            return _invokedAlbumSongs; 
-        }
-        set
-        {
-            if (_invokedAlbumSongs == value)
-                return;
+            _visibleViewportAlbumExItems = value;
 
-            _invokedAlbumSongs = value;
-            NotifyPropertyChanged(nameof(InvokedAlbumSongs));
+            NotifyPropertyChanged(nameof(VisibleViewportAlbumExItems));
+
+            if (VisibleViewportAlbumExItems is null)
+            {
+                return;
+            }
+
+            Debug.WriteLine("------------------------");
+
+            foreach (var hoge in VisibleViewportAlbumExItems)
+            {
+                if (hoge is AlbumEx alb)
+                {
+                    Debug.WriteLine(alb.Name);
+                }
+                else
+                {
+                    //Debug.WriteLine("asdf1");
+                }
+            }
+            Debug.WriteLine("========================");
         }
     }
-    */
 
     #endregion
 
@@ -7003,7 +7002,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 if (_mpc.MpdStatus.MpdVolumeIsSet)
                 {
-                    Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
+                    //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
 
                     double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
                     if (_volume != tmpVol)
@@ -7021,7 +7020,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
                 else
                 {
-                    Debug.WriteLine("Volume is NOT set. @UpdateButtonStatus()");
+                    //Debug.WriteLine("Volume is NOT set. @UpdateButtonStatus()");
 
                     if (_currentProfile is not null)
                     {

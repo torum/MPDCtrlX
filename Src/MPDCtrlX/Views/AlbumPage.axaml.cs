@@ -1,16 +1,22 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 using FluentAvalonia.Core;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace MPDCtrlX.Views;
 
 public partial class AlbumPage : UserControl
 {
+    //private ScrollViewer? _scrollViewer;
+    //private WrapPanel? _wrapPanel;
+
     public AlbumPage() { }
 
     public AlbumPage(MainViewModel viewmodel)
@@ -22,38 +28,8 @@ public partial class AlbumPage : UserControl
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        //if (DataContext is not MainViewModel vm)
-        //{
-        //    return;
-        //}
-
-        //this.Artist1x.Width = _viewModel.LibraryColumnHeaderTitleWidth;
-        //this.Artist2x.Width = _viewModel.LibraryColumnHeaderFilePathWidth;
-
-        /*
-        var realizedContainers = icAlbums.GetRealizedContainers();
-        if (realizedContainers != null)
-        {
-            Debug.WriteLine($"Realized containers not null.");
-            foreach (var container in realizedContainers)
-            {
-                var dataContext = container.DataContext;
-
-                if (dataContext is Album album)
-                {
-                    Debug.WriteLine($"Album Name: {album.Name}");
-                }
-                else
-                {
-                    Debug.WriteLine($"DataContext is not of type Album: {dataContext?.GetType().Name}");
-                }
-            }
-        }
-        else
-        {
-             Debug.WriteLine("No realized containers found.");
-        }
-        */
+        //_scrollViewer = AlbumsListBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+        //_wrapPanel = AlbumsListBox.GetVisualDescendants().OfType<WrapPanel>().FirstOrDefault();
     }
 
     private void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
@@ -72,5 +48,44 @@ public partial class AlbumPage : UserControl
         {
             AlbumSongsListBox.ScrollIntoView(0);
         }
+    }
+
+    private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+    {
+        /*
+        if (_scrollViewer is null)
+        {
+            return;
+        }
+
+        if (_wrapPanel is null)
+        {
+            return;
+        }
+
+        //var viewportRect = new Rect(scrollViewer.Offset, scrollViewer.Viewport);
+        var viewportRect = new Rect(new Point(_scrollViewer.Offset.X, _scrollViewer.Offset.Y), _scrollViewer.Viewport);
+
+        var visibleItems = _wrapPanel.Children.Where(child => child.Bounds.Intersects(viewportRect)).ToList();
+
+        foreach (var itemContainer in visibleItems)
+        {
+            // Get the data item from the container's DataContext
+            var dataItem = itemContainer.DataContext;
+            // Do something with the item...
+
+            if (dataItem != null)
+            {
+                if (dataItem is AlbumEx alb)
+                {
+                    if (alb.IsImageAcquired)
+                    {
+                        continue;
+                    }
+                    //Debug.WriteLine(alb.Name);
+                }
+            }
+        }
+        */
     }
 }
