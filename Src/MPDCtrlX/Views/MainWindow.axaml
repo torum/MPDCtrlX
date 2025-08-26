@@ -74,8 +74,7 @@
 		-->
 	</Window.KeyBindings>
 
-	<Grid RowDefinitions="Auto,*"
-		Background="{DynamicResource LayerFillColorBaseBrush}">
+	<Grid RowDefinitions="Auto,*" Background="{DynamicResource LayerFillColorBaseBrush}">
 
 		<!-- HeaderOverlay -->
 		<Grid Grid.Row="0" Grid.Column="0" RowDefinitions="*" x:Name="HeaderOverlay" Margin="0,8,0,0" VerticalAlignment="Top">
@@ -166,7 +165,7 @@
 						</Grid>
 					</Border>
 
-					<Border Grid.Column="0" CornerRadius="18" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Border Grid.Column="0" CornerRadius="3" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
 						<Button x:Name="BackButton" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayPrevCommand}" BorderThickness="0" Focusable="False">
 							<Viewbox Width="18" Height="18">
 								<PathIcon Background="Transparent" Width="NaN" Height="NaN"
@@ -176,7 +175,7 @@
 						</Button>
 					</Border>
 
-					<Border Grid.Column="2" CornerRadius="18" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<Border Grid.Column="2" CornerRadius="3" ClipToBounds="True" HorizontalAlignment="Center" VerticalAlignment="Center">
 						<Button x:Name="NextButton" ToolTip.Tip="{x:Static prop:Resources.Playback_NextButton}" HorizontalAlignment="Center" Height="36" Width="36" Background="Transparent" Command="{Binding PlayNextCommand}" BorderThickness="0" Focusable="False">
 							<Viewbox Width="18" Height="18">
 								<PathIcon Background="Transparent" Width="NaN" Height="NaN"
@@ -238,10 +237,9 @@
 
 		</Grid>
 
-
 		<SplitView Grid.Row="1" Margin="0,0,0,0" PanePlacement="Right" Name="ContentsSplitView" PaneClosed="SplitView_PaneClosed" PaneOpened="SplitView_PaneOpened" IsPaneOpen="{Binding IsAlbumArtPanelIsOpen, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=ThisMainWindow}">
 			<SplitView.Pane>
-				
+				<!-- Full album cover -->
 				<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
 					
 					<Border BorderThickness="0" ClipToBounds="True" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0">
@@ -282,7 +280,7 @@
 
 				<!-- Navigation menu -->
 				<Border BorderBrush="{DynamicResource CardStrokeBorderBrush}" BorderThickness="0,0,0,0" >
-					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="240" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+					<ui:NavigationView Name="navigateView" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="250" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 						<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
 						<ui:NavigationView.PaneHeader>
 						</ui:NavigationView.PaneHeader>
@@ -294,9 +292,7 @@
 							<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
 								<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
 									<ui:NavigationViewItem.IconSource>
-										<ui:PathIconSource Data="{Binding PathIcon}">
-											
-										</ui:PathIconSource>
+										<ui:PathIconSource Data="{Binding PathIcon}"/>
 									</ui:NavigationViewItem.IconSource>
 								<ui:NavigationViewItem.Content>
 										<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
@@ -312,8 +308,8 @@
 							</DataTemplate>
 						</ui:NavigationView.Resources>
 
-						<ui:Frame/>
 
+						<ui:Frame/>
 
 					</ui:NavigationView>
 				</Border>

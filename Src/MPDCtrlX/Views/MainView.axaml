@@ -20,7 +20,7 @@
 		<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 		<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
 
-		<Grid Grid.Row="0"></Grid>
+		<Grid Grid.Row="0" Background="{DynamicResource LayerFillColorDefaultBrush}"></Grid>
 
 		<!-- Pages -->
 		<Grid Grid.Row="1" RowDefinitions="*" ColumnDefinitions="*">

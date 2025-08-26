@@ -95,7 +95,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderTimeWidth <= 0)
             {
-                vm.SearchColumnHeaderTimeWidth = 80; // Default width if not set
+                //vm.SearchColumnHeaderTimeWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(vm.SearchColumnHeaderTimeWidth);
             this.SearchColumn4.IsVisible = true;
@@ -104,7 +104,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn4.IsVisible = false;
+            //this.SearchColumn4.IsVisible = false;
             this.SearchColumn4x.Width = 0;
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
@@ -115,7 +115,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderArtistWidth <= 0)
             {
-                vm.SearchColumnHeaderArtistWidth = 120; // Default width if not set
+                //vm.SearchColumnHeaderArtistWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(vm.SearchColumnHeaderArtistWidth);
             this.SearchColumn5.IsVisible = true;
@@ -124,7 +124,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn5.IsVisible = false;
+            //this.SearchColumn5.IsVisible = false;
             this.SearchColumn5x.Width = 0;
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
@@ -135,7 +135,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.PlaylistColumnHeaderAlbumWidth <= 0)
             {
-                vm.PlaylistColumnHeaderAlbumWidth = 120; // Default width if not set
+                //vm.PlaylistColumnHeaderAlbumWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(vm.SearchColumnHeaderAlbumWidth);
             this.SearchColumn6.IsVisible = true;
@@ -144,7 +144,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn6.IsVisible = false;
+            //this.SearchColumn6.IsVisible = false;
             this.SearchColumn6x.Width = 0;
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
@@ -155,7 +155,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderDiscWidth <= 0)
             {
-                vm.SearchColumnHeaderDiscWidth = 62; // Default width if not set
+                //vm.SearchColumnHeaderDiscWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.SearchColumnHeaderDiscWidth);
             this.SearchColumn7.IsVisible = true;
@@ -164,7 +164,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn7.IsVisible = false;
+            //this.SearchColumn7.IsVisible = false;
             this.SearchColumn7x.Width = 0;
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
@@ -175,7 +175,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderTrackWidth <= 0)
             {
-                vm.SearchColumnHeaderTrackWidth = 62; // Default width if not set
+                //vm.SearchColumnHeaderTrackWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.SearchColumnHeaderTrackWidth);
             this.SearchColumn8.IsVisible = true;
@@ -184,7 +184,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn8.IsVisible = false;
+            //this.SearchColumn8.IsVisible = false;
             this.SearchColumn8x.Width = 0;
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
@@ -195,7 +195,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderGenreWidth <= 0)
             {
-                vm.SearchColumnHeaderGenreWidth = 80; // Default width if not set
+                //vm.SearchColumnHeaderGenreWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(vm.SearchColumnHeaderGenreWidth);//
             this.SearchColumn9.IsVisible = true;
@@ -204,7 +204,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn9.IsVisible = false;
+            //this.SearchColumn9.IsVisible = false;
             this.SearchColumn9x.Width = 0;
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(0);//
             this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
@@ -215,7 +215,7 @@ public partial class SearchPage : UserControl
         {
             if (vm.SearchColumnHeaderLastModifiedWidth <= 0)
             {
-                vm.SearchColumnHeaderLastModifiedWidth = 120; // Default width if not set
+                //vm.SearchColumnHeaderLastModifiedWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(vm.SearchColumnHeaderLastModifiedWidth);
             this.SearchColumn10.IsVisible = true;
@@ -224,7 +224,7 @@ public partial class SearchPage : UserControl
         }
         else
         {
-            this.SearchColumn10.IsVisible = false;
+            //this.SearchColumn10.IsVisible = false;
             this.SearchColumn10x.Width = 0;
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;

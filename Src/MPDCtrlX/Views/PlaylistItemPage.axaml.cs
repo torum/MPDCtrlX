@@ -5,6 +5,7 @@ using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.ViewModels;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
@@ -38,19 +39,6 @@ public partial class PlaylistItemPage : UserControl
         }
 
         _isHeaderWidthInitialized = true;
-        
-        /*
-        this.PlaylistColumn1x.Width = vm.PlaylistColumnHeaderPositionWidth;
-        //this.PlaylistColumn2x.Width = ;
-        this.PlaylistColumn3x.Width = vm.PlaylistColumnHeaderTitleWidth;
-        this.PlaylistColumn4x.Width = vm.PlaylistColumnHeaderTimeWidth;
-        this.PlaylistColumn5x.Width = vm.PlaylistColumnHeaderArtistWidth;
-        this.PlaylistColumn6x.Width = vm.PlaylistColumnHeaderAlbumWidth;
-        this.PlaylistColumn7x.Width = vm.PlaylistColumnHeaderDiscWidth;
-        this.PlaylistColumn8x.Width = vm.PlaylistColumnHeaderTrackWidth;
-        this.PlaylistColumn9x.Width = vm.PlaylistColumnHeaderGenreWidth;
-        this.PlaylistColumn10x.Width = vm.PlaylistColumnHeaderLastModifiedWidth;
-        */
 
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
@@ -89,7 +77,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderTimeWidth <= 0)
             {
-                vm.PlaylistColumnHeaderTimeWidth = 80; // Default width if not set
+                //vm.PlaylistColumnHeaderTimeWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(vm.PlaylistColumnHeaderTimeWidth);
             this.PlaylistColumn4.IsVisible = true;
@@ -98,7 +86,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn4.IsVisible = false;
+            //this.PlaylistColumn4.IsVisible = false;
             this.PlaylistColumn4x.Width = 0;
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
@@ -109,7 +97,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderArtistWidth <= 0)
             {
-                vm.PlaylistColumnHeaderArtistWidth = 120; // Default width if not set
+                //vm.PlaylistColumnHeaderArtistWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(vm.PlaylistColumnHeaderArtistWidth);
             this.PlaylistColumn5.IsVisible = true;
@@ -118,7 +106,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn5.IsVisible = false;
+            //this.PlaylistColumn5.IsVisible = false;
             this.PlaylistColumn5x.Width = 0;
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
@@ -129,7 +117,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderAlbumWidth <= 0)
             {
-                vm.PlaylistColumnHeaderAlbumWidth = 120; // Default width if not set
+                //vm.PlaylistColumnHeaderAlbumWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(vm.PlaylistColumnHeaderAlbumWidth);
             this.PlaylistColumn6.IsVisible = true;
@@ -138,7 +126,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn6.IsVisible = false;
+            //this.PlaylistColumn6.IsVisible = false;
             this.PlaylistColumn6x.Width = 0;
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
@@ -149,7 +137,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderDiscWidth <= 0)
             {
-                vm.PlaylistColumnHeaderDiscWidth = 62; // Default width if not set
+                //vm.PlaylistColumnHeaderDiscWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.PlaylistColumnHeaderDiscWidth);
             this.PlaylistColumn7.IsVisible = true;
@@ -158,7 +146,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn7.IsVisible = false;
+            //this.PlaylistColumn7.IsVisible = false;
             this.PlaylistColumn7x.Width = 0;
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
@@ -169,7 +157,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderTrackWidth <= 0)
             {
-                vm.PlaylistColumnHeaderTrackWidth = 62; // Default width if not set
+                //vm.PlaylistColumnHeaderTrackWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.PlaylistColumnHeaderTrackWidth);
             this.PlaylistColumn8.IsVisible = true;
@@ -178,7 +166,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn8.IsVisible = false;
+            //this.PlaylistColumn8.IsVisible = false;
             this.PlaylistColumn8x.Width = 0;
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
@@ -189,7 +177,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderGenreWidth <= 0)
             {
-                vm.PlaylistColumnHeaderGenreWidth = 80; // Default width if not set
+                //vm.PlaylistColumnHeaderGenreWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(vm.PlaylistColumnHeaderGenreWidth);//
             this.PlaylistColumn9.IsVisible = true;
@@ -198,7 +186,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn9.IsVisible = false;
+            //this.PlaylistColumn9.IsVisible = false;
             this.PlaylistColumn9x.Width = 0;
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(0);//
             this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
@@ -209,7 +197,7 @@ public partial class PlaylistItemPage : UserControl
         {
             if (vm.PlaylistColumnHeaderLastModifiedWidth <= 0)
             {
-                vm.PlaylistColumnHeaderLastModifiedWidth = 120; // Default width if not set
+                //vm.PlaylistColumnHeaderLastModifiedWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(vm.PlaylistColumnHeaderLastModifiedWidth);
             this.PlaylistColumn10.IsVisible = true;
@@ -218,7 +206,7 @@ public partial class PlaylistItemPage : UserControl
         }
         else
         {
-            this.PlaylistColumn10.IsVisible = false;
+            //this.PlaylistColumn10.IsVisible = false;
             this.PlaylistColumn10x.Width = 0;
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;

@@ -103,7 +103,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderTimeWidth <= 0)
             {
-                vm.QueueColumnHeaderTimeWidth = 80; // Default width if not set
+                //vm.QueueColumnHeaderTimeWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(vm.QueueColumnHeaderTimeWidth);
             this.Column4.IsVisible = true;
@@ -112,7 +112,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column4.IsVisible = false;
+            //this.Column4.IsVisible = false;
             this.Column4X.Width = 0;
             this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
@@ -123,7 +123,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderArtistWidth <= 0)
             {
-                vm.QueueColumnHeaderArtistWidth = 120; // Default width if not set
+                //vm.QueueColumnHeaderArtistWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(vm.QueueColumnHeaderArtistWidth);
             this.Column5.IsVisible = true;
@@ -132,7 +132,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column5.IsVisible = false;
+            //this.Column5.IsVisible = false;
             this.Column5X.Width = 0;
             this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
@@ -143,7 +143,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderAlbumWidth <= 0)
             {
-                vm.QueueColumnHeaderAlbumWidth = 120; // Default width if not set
+                //vm.QueueColumnHeaderAlbumWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(vm.QueueColumnHeaderAlbumWidth);
             this.Column6.IsVisible = true;
@@ -152,7 +152,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column6.IsVisible = false;
+            //this.Column6.IsVisible = false;
             this.Column6X.Width = 0;
             this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
@@ -163,7 +163,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderDiscWidth <= 0)
             {
-                vm.QueueColumnHeaderDiscWidth = 62; // Default width if not set
+                //vm.QueueColumnHeaderDiscWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.QueueColumnHeaderDiscWidth);
             this.Column7.IsVisible = true;
@@ -172,7 +172,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column7.IsVisible = false;
+            //this.Column7.IsVisible = false;
             this.Column7X.Width = 0;
             this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
@@ -183,7 +183,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderTrackWidth <= 0)
             {
-                vm.QueueColumnHeaderTrackWidth = 62; // Default width if not set
+                //vm.QueueColumnHeaderTrackWidth = 62; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.QueueColumnHeaderTrackWidth);
             this.Column8.IsVisible = true;
@@ -192,7 +192,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column8.IsVisible = false;
+            //this.Column8.IsVisible = false;
             this.Column8X.Width = 0;
             this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
@@ -203,7 +203,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderGenreWidth <= 0)
             {
-                vm.QueueColumnHeaderGenreWidth = 80; // Default width if not set
+                //vm.QueueColumnHeaderGenreWidth = 80; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(vm.QueueColumnHeaderGenreWidth);//
             this.Column9.IsVisible = true;
@@ -212,7 +212,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column9.IsVisible = false;
+            //this.Column9.IsVisible = false;
             this.Column9X.Width = 0;
             this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(0);//
             this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
@@ -223,7 +223,7 @@ public partial class QueuePage : UserControl
         {
             if (vm.QueueColumnHeaderLastModifiedWidth <= 0)
             {
-                vm.QueueColumnHeaderLastModifiedWidth = 120; // Default width if not set
+                //vm.QueueColumnHeaderLastModifiedWidth = 120; // Default width if not set
             }
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(vm.QueueColumnHeaderLastModifiedWidth);
             this.Column10.IsVisible = true;
@@ -232,7 +232,7 @@ public partial class QueuePage : UserControl
         }
         else
         {
-            this.Column10.IsVisible = false;
+            //this.Column10.IsVisible = false;
             this.Column10X.Width = 0;
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
