@@ -45,5 +45,5 @@ public class AlbumEx :Album
     }
 
     public bool IsImageAcquired { get; set; } = false;
-
+    public bool IsImageLoading { get; set; } = false;
 }

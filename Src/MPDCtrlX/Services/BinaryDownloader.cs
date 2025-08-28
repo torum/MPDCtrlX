@@ -27,8 +27,8 @@ public class BinaryDownloader : IBinaryDownloader
     private StreamReader? _binaryReader;
     private StreamWriter? _binaryWriter;
 
-    private AlbumImage _albumCover = new();
-    public AlbumImage AlbumCover { get => _albumCover; }
+    //private AlbumImage _albumCover = new();
+    //public AlbumImage AlbumCover { get => _albumCover; }
 
     private string _host = "";
     private int _port = 6600;
@@ -329,7 +329,7 @@ public class BinaryDownloader : IBinaryDownloader
 
     }
 
-    private async Task<CommandBinaryResult> MpdBinarySendBinaryCommand(string cmd)
+    private async Task<CommandBinaryResult> MpdBinarySendBinaryCommand(string cmd, AlbumImage albumCover)
     {
         CommandBinaryResult ret = new();
 
@@ -594,10 +594,11 @@ public class BinaryDownloader : IBinaryDownloader
 
                 if (isBinaryFound)
                 {
-                    return ParseAlbumImageData(bin);
+                    return ParseAlbumImageData(bin, albumCover);
                 }
                 else
                 {
+                    ret.IsNoBinaryFound = true;
                     ret.ErrorMessage = "No binary data found. AlbumArt doesn't exists or ... needs to be a albumart command instead of readpicture? (@MpdBinarySendBinaryCommand)";
                     ret.IsSuccess = false;
                     return ret;
@@ -639,7 +640,7 @@ public class BinaryDownloader : IBinaryDownloader
         }
     }
 
-    private CommandBinaryResult ParseAlbumImageData(byte[] data)
+    private static CommandBinaryResult ParseAlbumImageData(byte[] data, AlbumImage albumCover)
     {
         CommandBinaryResult r = new();
 
@@ -650,23 +651,23 @@ public class BinaryDownloader : IBinaryDownloader
             Debug.WriteLine("**ParseAlbumImageData: binary file size too big: " + data.Length.ToString());
             r.IsSuccess = false;
             r.ErrorMessage = "ParseAlbumImageData: binary file size too big: \" + data.Length.ToString()";
-            _albumCover.IsDownloading = false;
+            albumCover.IsDownloading = false;
             return r;
         }
 
-        if (string.IsNullOrEmpty(_albumCover.SongFilePath))
+        if (string.IsNullOrEmpty(albumCover.SongFilePath))
         {
             Debug.WriteLine("**ParseAlbumImageData: File path is not set.");
 
-            _albumCover.IsDownloading = false;
+            albumCover.IsDownloading = false;
             return r;
         }
 
-        if (!_albumCover.IsDownloading)
+        if (!albumCover.IsDownloading)
         {
             Debug.WriteLine("**ParseAlbumImageData: IsDownloading = false. Downloading canceld? .");
 
-            _albumCover.IsDownloading = false;
+            albumCover.IsDownloading = false;
             return r;
         }
 
@@ -778,9 +779,9 @@ public class BinaryDownloader : IBinaryDownloader
 
             if (binSize > 20000000)
             {
-                Debug.WriteLine("binary file too big: " + binSize.ToString() + " " + _albumCover.SongFilePath);
+                Debug.WriteLine("binary file too big: " + binSize.ToString() + " " + albumCover.SongFilePath);
 
-                _albumCover.IsDownloading = false;
+                albumCover.IsDownloading = false;
 
                 return r;
             }
@@ -789,7 +790,7 @@ public class BinaryDownloader : IBinaryDownloader
             {
                 Debug.WriteLine("binary file size is Zero: " + binSize.ToString() + ", " + binResSize.ToString() + ", " + data.Length.ToString());
 
-                _albumCover.IsDownloading = false;
+                albumCover.IsDownloading = false;
 
                 return r;
             }
@@ -798,7 +799,7 @@ public class BinaryDownloader : IBinaryDownloader
             {
                 Debug.WriteLine("binary file size mismatch: " + binSize.ToString() + ", [" + binResSize.ToString() + ", " + (data.Length - gabStart - gabEnd) + "], " + data.Length.ToString());
 
-                _albumCover.IsDownloading = false;
+                albumCover.IsDownloading = false;
 
                 return r;
             }
@@ -821,7 +822,7 @@ public class BinaryDownloader : IBinaryDownloader
             Debug.WriteLine("Error@ParseAlbumImageData (l): " + ex.Message);
             r.IsSuccess = false;
             r.ErrorMessage = ex.Message;
-            _albumCover.IsDownloading = false;
+            albumCover.IsDownloading = false;
             return r;
         }
     }
@@ -846,6 +847,7 @@ public class BinaryDownloader : IBinaryDownloader
             return f;
         }
 
+        /*
         if (_albumCover.IsDownloading)
         {
             CommandImageResult f = new()
@@ -855,9 +857,16 @@ public class BinaryDownloader : IBinaryDownloader
             };
             return f;
         }
-  
+        
         _albumCover.SongFilePath = uri;
         _albumCover.IsDownloading = true;
+        */
+
+        var albm = new AlbumImage
+        {
+            SongFilePath = uri,
+            IsDownloading = true
+        };
 
         uri = Regex.Escape(uri);
 
@@ -866,14 +875,14 @@ public class BinaryDownloader : IBinaryDownloader
             if (CompareVersionString(MpdVersion, "0.22.0") >= 0)
                 cmd = "readpicture \"" + uri + "\" 0" + "\n";
 
-        CommandBinaryResult result = await MpdBinarySendBinaryCommand(cmd);
+        CommandBinaryResult result = await MpdBinarySendBinaryCommand(cmd, albm);
 
         CommandImageResult b = new();
         bool r = false;
 
         if (result.IsSuccess)
         {
-            _albumCover.BinaryData = result.BinaryData;
+            albm.BinaryData = result.BinaryData;
 
             if ((result.WholeSize != 0) && (result.WholeSize == result.ChunkSize))
             {
@@ -884,40 +893,40 @@ public class BinaryDownloader : IBinaryDownloader
                 });
                 */
 
-                if (_albumCover.BinaryData is not null)
+                if (albm.BinaryData is not null)
                 {
                     //_albumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
-                    b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(_albumCover.BinaryData);
+                    b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(albm.BinaryData);
                 }
 
                 //if (_albumCover.AlbumImageSource is not null)
                 if (b.AlbumCover.AlbumImageSource is not null)
                 {
-                    _albumCover.IsSuccess = true;
+                    albm.IsSuccess = true;
                 }
                 else
                 {
                     Debug.WriteLine("_albumCover.IsSuccess == false; BitmaSourceFromByteArray@MpdQueryAlbumArt");
-                    _albumCover.IsSuccess = false;
+                    albm.IsSuccess = false;
                 }
 
-                _albumCover.IsDownloading = false;
+                albm.IsDownloading = false;
 
-                r = _albumCover.IsSuccess;
+                r = albm.IsSuccess;
             }
             else
             {
                 if ((result.WholeSize != 0) && (result.WholeSize > result.ChunkSize))
                 {
-                    if (result.IsSuccess && (_albumCover.BinaryData is not null))
+                    if (result.IsSuccess && (albm.BinaryData is not null))
                     {
                         // TODO:
-                        while ((result.WholeSize > _albumCover.BinaryData.Length) && result.IsSuccess)
+                        while ((result.WholeSize > albm.BinaryData.Length) && result.IsSuccess)
                         {
-                            result = await MpdReQueryAlbumArt(_albumCover.SongFilePath, _albumCover.BinaryData.Length, isUsingReadpicture);
+                            result = await MpdReQueryAlbumArt(albm.SongFilePath, albm.BinaryData.Length, isUsingReadpicture, albm);
 
                             if (result.IsSuccess && (result.BinaryData is not null))
-                                _albumCover.BinaryData = CombineByteArray(_albumCover.BinaryData, result.BinaryData);
+                                albm.BinaryData = CombineByteArray(albm.BinaryData, result.BinaryData);
                             else
                                 break;
                         }
@@ -930,24 +939,24 @@ public class BinaryDownloader : IBinaryDownloader
 
                             });
                             */
-                            if (_albumCover.BinaryData is not null)
+                            if (albm.BinaryData is not null)
                             {
                                 //_albumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
-                                b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(_albumCover.BinaryData);
+                                b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(albm.BinaryData);
                             }
 
                             //if (_albumCover.AlbumImageSource is not null)
                             if (b.AlbumCover.AlbumImageSource is not null)
                             {
-                                _albumCover.IsSuccess = true;
+                                albm.IsSuccess = true;
                             }
                             else
                             {
                                 result.ErrorMessage = "BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.";
                                 Debug.WriteLine("BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.");
-                                _albumCover.IsSuccess = false;
+                                albm.IsSuccess = false;
                             }
-                            _albumCover.IsDownloading = false;
+                            albm.IsDownloading = false;
 
                             r = true;
                         }
@@ -959,8 +968,8 @@ public class BinaryDownloader : IBinaryDownloader
                             {
                             });
                             */
-                            _albumCover.IsSuccess = false;
-                            _albumCover.IsDownloading = false;
+                            albm.IsSuccess = false;
+                            albm.IsDownloading = false;
                         }
                     }
                     else
@@ -978,6 +987,7 @@ public class BinaryDownloader : IBinaryDownloader
         }
         else
         {
+            b.IsNoBinaryFound = result.IsNoBinaryFound;
             b.IsTimeOut = result.IsTimeOut;
         }
 
@@ -986,19 +996,19 @@ public class BinaryDownloader : IBinaryDownloader
         {
             b.ErrorMessage = result.ErrorMessage;
         }
-        b.AlbumCover.SongFilePath = _albumCover.SongFilePath;
+        b.AlbumCover.SongFilePath = albm.SongFilePath;
         b.AlbumCover.IsDownloading = false;
         b.AlbumCover.IsSuccess = r;
         //b.ErrorMessage = result.ErrorMessage;
 
         //_albumCover.AlbumImageSource = null; // Clear the image source to free memory.
         //_albumCover.IsDownloading = false;
-        _albumCover = new AlbumImage(); // Reset the album cover for next use.
+        //_albumCover = new AlbumImage(); // Reset the album cover for next use.
 
         return b;
     }
 
-    private async Task<CommandBinaryResult> MpdReQueryAlbumArt(string uri, int offset, bool isUsingReadpicture)
+    private async Task<CommandBinaryResult> MpdReQueryAlbumArt(string uri, int offset, bool isUsingReadpicture, AlbumImage albumCover)
     {
         if (string.IsNullOrEmpty(uri))
         {
@@ -1010,21 +1020,23 @@ public class BinaryDownloader : IBinaryDownloader
             return f;
         }
 
-        if (!_albumCover.IsDownloading)
+        if (!albumCover.IsDownloading)
         {
             CommandBinaryResult f = new()
             {
+                ErrorMessage = "!IsDownloading @MpdReQueryAlbumArt",
                 IsSuccess = false
             };
             return f;
         }
 
-        if (_albumCover.SongFilePath != uri)
+        if (albumCover.SongFilePath != uri)
         {
-            _albumCover.IsDownloading = false;
+            albumCover.IsDownloading = false;
 
             CommandBinaryResult f = new()
             {
+                ErrorMessage = "_albumCover.SongFilePath != uri @MpdReQueryAlbumArt",
                 IsSuccess = false
             };
             return f;
@@ -1037,7 +1049,7 @@ public class BinaryDownloader : IBinaryDownloader
             if (CompareVersionString(MpdVersion, "0.22.0") >= 0)
                 cmd = "readpicture \"" + uri + "\" " + offset.ToString() + "\n";
 
-        return await MpdBinarySendBinaryCommand(cmd);
+        return await MpdBinarySendBinaryCommand(cmd, albumCover);
     }
 
     private static int CompareVersionString(string a, string b)

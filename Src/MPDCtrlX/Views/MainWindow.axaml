@@ -103,9 +103,9 @@
 				<Button Grid.Column="5" Name="CurrentSongMoreMenuButton" Opacity="0.6" Background="Transparent" Margin="6,0,0,0" Width="24" Height="20" BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding IsCurrentSongNotNull,Mode=OneWay}">
 					<Button.Flyout>
 						<MenuFlyout>
+							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_GoToAlbumPage}" Command="{Binding JumpToAlbumPageCommand}" />
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_GoToArtistPage}" Command="{Binding JumpToArtistPageCommand}"/>
-							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
 						</MenuFlyout>
 					</Button.Flyout>
 					<Viewbox Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">

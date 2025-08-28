@@ -5,7 +5,7 @@ namespace MPDCtrlX.Services.Contracts;
 
 public interface IBinaryDownloader
 {
-    AlbumImage AlbumCover { get; }
+    //AlbumImage AlbumCover { get; }
 
     void MpdBinaryConnectionDisconnect();
     Task<bool> MpdBinaryConnectionStart(string host, int port, string password);

@@ -5,6 +5,7 @@ namespace MPDCtrlX.Models;
 
 public class Result
 {
+    public bool IsWaitFailed = false;
     public bool IsSuccess = false;
     public string ErrorMessage = "";
 }
@@ -21,6 +22,7 @@ public class CommandResult : Result
 
 public class CommandBinaryResult : Result
 {
+    public bool IsNoBinaryFound = false;
     public bool IsTimeOut = false;
     public int WholeSize;
     public int ChunkSize;
@@ -30,6 +32,7 @@ public class CommandBinaryResult : Result
 
 public class  CommandImageResult : Result
 {
+    public bool IsNoBinaryFound = false;
     public bool IsTimeOut = false;
     public AlbumImage AlbumCover = new();
 }
