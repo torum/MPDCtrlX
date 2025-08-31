@@ -19,10 +19,9 @@ public partial class SearchPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public SearchPage() { }
-
-    public SearchPage(MainViewModel viewmodel)
+    public SearchPage()
     {
+        var viewmodel = App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();

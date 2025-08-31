@@ -4136,6 +4136,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler<string>? PlaylistRenameToDialogShow;
 
 
+    //public event EventHandler<NodeTree>? GoToSelectedPage;
     //public delegate void NavigationViewMenuItemsLoadedEventHandler();
     //public event NavigationViewMenuItemsLoadedEventHandler? NavigationViewMenuItemsLoaded;
     //
@@ -8505,7 +8506,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         Directory.CreateDirectory(strDirPath);
                         album?.AlbumImageSource?.Save(filePath, 100);
-                        Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist},{strAlbum}");
+                        //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
                     }
                     catch (Exception e)
                     {
@@ -8515,7 +8516,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else
             {
-                Debug.WriteLine($"NOT ({current?.File} == {album?.SongFilePath})");
+                //Debug.WriteLine($"NOT ({current?.File} == {album?.SongFilePath})");
             }
         });
 
@@ -9515,9 +9516,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (CurrentSong is null) return;
         if (Queue.Count < CurrentSong.Index + 1) return;
 
-        // should I?
-        //SelectedQueueSong = CurrentSong;
-
+        _mainMenuItems.QueueDirectory.Selected = true;
         ScrollIntoView?.Invoke(this, CurrentSong.Index);
     }
 
@@ -10194,6 +10193,26 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             RenamedSelectPendingPlaylistName = string.Empty;
+            _playlistPageSubTitleSongCount = ""; 
+            NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
+
+            /*
+            foreach (var fuga in _mainMenuItems.PlaylistsDirectory.Children)
+            {
+                if (fuga is NodeMenuPlaylistItem)
+                {
+                    if (string.Equals(playlist, fuga.Name))
+                    {
+                        Debug.WriteLine($"{playlist} is now selected....");
+                        IsNavigationViewMenuOpen = true;
+                        fuga.Selected = true;
+                        SelectedNodeMenu = fuga;
+                        SelectedPlaylistName = fuga.Name;
+                        break;
+                    }
+                }
+            }
+            */
 
             foreach (var hoge in MainMenuItems)
             {
@@ -11976,6 +11995,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     private void GoToAlbumPage()
     {
+        IsNavigationViewMenuOpen = true;
+        _mainMenuItems.AlbumsDirectory.Selected = true;
+        //GoToSelectedPage?.Invoke(this, _mainMenuItems.AlbumsDirectory);
+
+        /*
         foreach (var hoge in MainMenuItems)
         {
             if (hoge is not NodeMenuLibrary) continue;
@@ -11987,6 +12011,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 break;
             }
         }
+        */
     }
 
     public IRelayCommand JumpToArtistPageCommand { get; set; }
@@ -12020,6 +12045,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     private void GoToArtistPage()
     {
+        IsNavigationViewMenuOpen = true;
+        _mainMenuItems.ArtistsDirectory.Selected = true;
+        //GoToSelectedPage?.Invoke(this, _mainMenuItems.ArtistsDirectory);
+        /*
         foreach (var hoge in MainMenuItems)
         {
             if (hoge is not NodeMenuLibrary) continue;
@@ -12031,10 +12060,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 break;
             }
         }
+        */
     }
 
     #endregion
-
 
     #endregion
 }

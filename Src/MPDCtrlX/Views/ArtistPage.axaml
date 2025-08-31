@@ -11,15 +11,10 @@
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainDummyViewModel />
-	</Design.DataContext>
-
 	<!-- Artists -->
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="1"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
@@ -29,11 +24,13 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		
+		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Artists page title and menus -->
-		<Grid Grid.Row="0" Margin="0,0,0,12" Grid.ColumnSpan="3">
+		<Grid Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="48"></ColumnDefinition>
+				<ColumnDefinition Width="12"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
@@ -47,7 +44,7 @@
 			</StackPanel>
 		</Grid>
 
-        <Grid Grid.Row="1" Grid.Column="0">
+        <Grid Grid.Row="2" Grid.Column="0">
 			<!-- 
 			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border> -->
 			<Border Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
@@ -86,9 +83,9 @@
 			</ListBox>
         </Grid>
 
-		<Border Grid.Row="1" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<Border Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected artists -->
-		<Grid Grid.Row="1" Grid.Column="2" Margin="8,0,0,0">
+		<Grid Grid.Row="2" Grid.Column="2" Margin="8,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>

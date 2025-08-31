@@ -6,7 +6,6 @@
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels.Dialogs"
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-             x:DataType="vm:DialogViewModel"
              x:Class="MPDCtrlX.Views.Dialogs.SaveToDialog">
 	<Grid>
 		<StackPanel Margin="10" Width="250">

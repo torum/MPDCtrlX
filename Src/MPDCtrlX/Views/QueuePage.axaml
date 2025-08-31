@@ -5,26 +5,20 @@
              mc:Ignorable="d" 
              d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:sng="clr-namespace:MPDCtrlX.Models"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
              x:Class="MPDCtrlX.Views.QueuePage"
              x:DataType="vm:MainViewModel"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-             x:CompileBindings="True"
-			 Name="QueueList">
+             x:CompileBindings="True">
 
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainDummyViewModel />
-	</Design.DataContext>
-
-	<Grid RowDefinitions="Auto,*">
-
+	<Grid RowDefinitions="1,Auto,*">
+		<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		
 		<!-- Queue page title and menus -->
-		<Border Grid.Row="0" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-		<Grid Grid.Row="0" Margin="0,0,0,12">
+		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Grid Grid.Row="1" Margin="0,0,0,12">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="48"></ColumnDefinition>
+				<ColumnDefinition Width="12"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
@@ -146,7 +140,7 @@
 		</Grid>
 
 		<!-- Queue ListBox  Margin="16,4,0,0"-->
-		<Grid Grid.Row="1" RowDefinitions="1,Auto,1,*">
+		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 			<ScrollViewer Grid.Row="1" x:Name="QueueListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
@@ -301,7 +295,7 @@
 					</ItemsPanelTemplate>
 				</ListBox.ItemsPanel>
 				<ListBox.ItemTemplate>
-					<DataTemplate x:DataType="sng:SongInfoEx">
+					<DataTemplate x:DataType="mod:SongInfoEx">
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -448,7 +442,7 @@
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 				<ListBox.Styles>
-					<Style Selector="ListBoxItem" x:DataType="sng:SongInfoEx">
+					<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
 						<Setter Property="Height" Value="36"/>
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
@@ -492,7 +486,7 @@
 							</ItemsPanelTemplate>
 						</ListBox.ItemsPanel>
 						<ListBox.ItemTemplate>
-							<DataTemplate x:DataType="sng:SongInfoEx">
+							<DataTemplate x:DataType="mod:SongInfoEx">
 								<StackPanel>
 									<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FontWeight="Bold" Margin="0" Padding="12 0 3 0" />
 									<!--
@@ -508,7 +502,7 @@
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 						<ListBox.Styles>
-							<Style Selector="ListBoxItem" x:DataType="sng:SongInfoEx">
+							<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
 								<Setter Property="Height" Value="36"/>
 								<Setter Property="MinHeight" Value="32"/>
 								<Setter Property="Padding" Value="0,0,0,0"/>

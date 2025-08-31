@@ -98,6 +98,12 @@
 		<Compile Update="Views\SettingsPage.axaml.cs">
 			<DependentUpon>SettingsPage.axaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\MainView.axaml.cs">
+			<DependentUpon>MainView.axaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\MainWindow.axaml.cs">
+			<DependentUpon>MainWindow.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -20,10 +20,9 @@ public partial class FilesPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public FilesPage() { }
-
-    public FilesPage(MainViewModel viewmodel)
+    public FilesPage()
     {
+        var viewmodel = App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();

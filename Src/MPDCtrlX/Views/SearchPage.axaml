@@ -11,23 +11,18 @@
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:CompileBindings="True">
 	
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainDummyViewModel />
-	</Design.DataContext>
-
-	<Grid RowDefinitions="Auto,*">
-
-		<Border Grid.Row="0" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+	<Grid RowDefinitions="1,Auto,*">
+		<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		
+		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Search page title and menus -->
-		<Grid Grid.Row="0" Margin="0,0,0,12">
+		<Grid Grid.Row="1" Margin="0,0,0,12">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="48"></ColumnDefinition>
+				<ColumnDefinition Width="12"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
@@ -129,7 +124,7 @@
 
 			</StackPanel>
 
-			<Grid Grid.Row="1" Grid.Column="2" Height="48" Margin="12,0,12,0" HorizontalAlignment="Stretch">
+			<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="48" Margin="12,0,12,0" HorizontalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -170,7 +165,7 @@
 		</Grid>
 
 		<!-- Search ListBox -->
-		<Grid Grid.Row="1" RowDefinitions="1,Auto,1,*">
+		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 			<ScrollViewer Grid.Row="1" x:Name="SearchListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">

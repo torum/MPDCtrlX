@@ -149,6 +149,15 @@ public class MenuTreeBuilder : NodeTree
         }
     }
 
+    private readonly NodeMenuQueue _queueDirectory;
+    public NodeMenuQueue QueueDirectory
+    {
+        get
+        {
+            return _queueDirectory;
+        }
+    }
+
     public MenuTreeBuilder(string name) : base(name)
     {
         NodeMenuQueue queue = new(Properties.Resources.MenuTreeItem_Queue)
@@ -160,6 +169,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(queue);
+        _queueDirectory = queue;
 
         NodeMenuLibrary browse = new(Properties.Resources.MenuTreeItem_Library)
         {
@@ -169,44 +179,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(browse);
-
         _libraryDirectory = browse;
-
-
-        NodeMenuAlbum albums = new(Properties.Resources.MenuTreeItem_Albums)
-        {
-            Selected = false,
-            Expanded = false,
-
-            Parent = this
-        };
-        browse.Children.Add(albums);
-
-        _albumsDirectory = albums;
-
-
-        NodeMenuArtist artists = new(Properties.Resources.MenuTreeItem_Artists)
-        {
-            Selected = false,
-            Expanded = false,
-
-            Parent = this
-        };
-        browse.Children.Add(artists);
-
-        _artistsDirectory = artists;
-
-
-        NodeMenuFiles files = new(Properties.Resources.MenuTreeItem_Files)
-        {
-            Selected = false,
-            Expanded = false,
-
-            Parent = this
-        };
-        browse.Children.Add(files);
-
-        _filesDirectory = files;
 
 
         NodeMenuSearch search = new(Properties.Resources.MenuTreeItem_Search)
@@ -217,8 +190,40 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         browse.Children.Add(search);
-
         _searchDirectory = search;
+
+
+        NodeMenuFiles files = new(Properties.Resources.MenuTreeItem_Files)
+        {
+            Selected = false,
+            Expanded = false,
+
+            Parent = this
+        };
+        browse.Children.Add(files);
+        _filesDirectory = files;
+
+
+        NodeMenuArtist artists = new(Properties.Resources.MenuTreeItem_Artists)
+        {
+            Selected = false,
+            Expanded = false,
+
+            Parent = this
+        };
+        browse.Children.Add(artists);
+        _artistsDirectory = artists;
+
+
+        NodeMenuAlbum albums = new(Properties.Resources.MenuTreeItem_Albums)
+        {
+            Selected = false,
+            Expanded = false,
+
+            Parent = this
+        };
+        browse.Children.Add(albums);
+        _albumsDirectory = albums;
 
 
         NodeMenuPlaylists playlists = new(Properties.Resources.MenuTreeItem_Playlists)
@@ -229,7 +234,6 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(playlists);
-
         _playlistsDirectory = playlists;
     }
 }

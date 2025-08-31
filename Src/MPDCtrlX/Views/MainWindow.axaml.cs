@@ -7,6 +7,7 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
+using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
@@ -20,71 +21,43 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace MPDCtrlX.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
-    private readonly MainView? _shellPage;
-    private readonly SettingsPage? _settingsPage;
-
-    //private NavigationViewItem? _navigationViewSelectedItem;
-
-    public MainWindow() { }
-
-    public MainWindow(MainView shellPage, MainViewModel vm, SettingsPage settingsPage)
+    public MainWindow()
     {
-        _shellPage = shellPage;
-        _settingsPage = settingsPage;
-
-        this.DataContext = vm;
-
-        //this.Icon = new WindowIcon(new Bitmap())
-
-        #region == This must be before InitializeComponent() ==
-
-        if ((vm.WindowLeft > 0) && (vm.WindowTop > 0)) 
+        var vm = App.GetService<MainViewModel>();
+        if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
         {
             this.Position = new PixelPoint(vm.WindowLeft, vm.WindowTop);
         }
-        
+
         if (vm.WindowHeight >= 120)
         {
             this.Height = vm.WindowHeight;
         }
-        //else { this.Height = 180; }
 
         if (vm.WindowWidth >= 480)
         {
             this.Width = vm.WindowWidth;
         }
-        //else { this.Width = 740; }
 
-        #endregion
+        this.DataContext = vm;
 
         InitializeComponent();
 
-        this.navigateView.Content = shellPage;
+
+        this.NavigateViewControl.Content = App.GetService<MainView>();
+
+
+        //_settingsPage = App.GetService<SettingsPage>();
+
+        //this.Icon = new WindowIcon(new Bitmap())
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
 
-        //vm.NavigationViewMenuItemsLoaded += (sender, args) => NavigationViewLoaded();
-
-
-        //this.ContentRendered += vm.OnContentRendered;
-        //vm.CurrentSongChanged += (sender, arg) => OnCurrentSongChanged(arg);
-        /*
-        Unloaded += (sender, e) =>
-        {
-            this.Loaded -= vm.OnWindowLoaded;
-            this.Closing -= vm.OnWindowClosing;
-        };
-        */
-
-
-
-        //
         /*
         var os = Environment.OSVersion;
         Debug.WriteLine("Current OS Information:");
@@ -129,12 +102,16 @@ public partial class MainWindow : Window//AppWindow//
 
     }
 
-    /*
-    private void OnCurrentSongChanged(string msg)
+
+    private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        //this.Title = msg;
+        //
     }
-    */
+
+    private void Window_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
+    {
+        //
+    }
 
     private void NavigationView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -143,50 +120,58 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        if (this.navigateView is null)
+        if (this.NavigateViewControl is null)
+        {
+            return;
+        }
+        /*
+        if (this.NavigationFrame.Navigate(typeof(QueuePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))//, args.RecommendedNavigationTransitionInfo //new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft }
+        {
+            //_currentPage = typeof(QueuePage);
+        }
+        */
+
+        if (this.DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        if (this.DataContext is MainViewModel vm)
+        vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
+        if (vm.SelectedNodeMenu != null)
         {
-            vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
-            if (vm.SelectedNodeMenu != null)
-            {
-                vm.SelectedNodeMenu.Selected = true;
-            }
+            vm.SelectedNodeMenu.Selected = true;
+        }
 
-            /*
-             * Debug.WriteLine(this.navigateView.MenuItems.Count.ToString());
-            var hoge = this.navigateView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
-            //var hoge = this.navigateView.MenuItems.FirstOrDefault();
-            //if (hoge != null)
-            if (hoge is NavigationViewItem nvi)
-            {
-                nvi.IsSelected = true;
+        /*
+         * Debug.WriteLine(this.navigateView.MenuItems.Count.ToString());
+        var hoge = this.navigateView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
+        //var hoge = this.navigateView.MenuItems.FirstOrDefault();
+        //if (hoge != null)
+        if (hoge is NavigationViewItem nvi)
+        {
+            nvi.IsSelected = true;
 
-                Debug.WriteLine(nvi.Name + " hoge");
-                //
-                //_navigationViewSelectedItem = hoge;
-            }
-            else
+            Debug.WriteLine(nvi.Name + " hoge");
+            //
+            //_navigationViewSelectedItem = hoge;
+        }
+        else
+        {
+            Debug.WriteLine("not item " + hoge?.ToString());
+        }
+        */
+
+        if (vm.IsNavigationViewMenuOpen)
+        {
+            foreach (var fuga in vm.MainMenuItems)
             {
-                Debug.WriteLine("not item " + hoge?.ToString());
-            }
-            */
-            
-            if (vm.IsNavigationViewMenuOpen)
-            {
-                foreach (var fuga in vm.MainMenuItems)
+                if (fuga is NodeMenuLibrary lib)
                 {
-                    if (fuga is NodeMenuLibrary lib)
-                    {
-                        lib.Expanded = true;
-                    }
-                    else if (fuga is NodeMenuPlaylists plt)
-                    {
-                        plt.Expanded = true;
-                    }
+                    lib.Expanded = true;
+                }
+                else if (fuga is NodeMenuPlaylists plt)
+                {
+                    plt.Expanded = true;
                 }
             }
         }
@@ -199,94 +184,183 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        if (this.DataContext is MainViewModel vm)
+        if (this.DataContext is not MainViewModel vm)
         {
-            if (e.SelectedItem is NodeMenuPlaylists)
+            return;
+        }
+
+        if (e.SelectedItem is NodeMenuPlaylists)
+        {
+            // don't change page here.
+            if (vm.SelectedNodeMenu != null)
             {
-                // don't change page here.
-                //pl.Selected = false;
-                if (vm.SelectedNodeMenu != null)
-                {
-                    //vm.SelectedNodeMenu.Selected = true;
-                }
+                //vm.SelectedNodeMenu.Selected = true;
             }
-            else if (e.SelectedItem is NodeMenuLibrary)
+        }
+        else if (e.SelectedItem is NodeMenuLibrary)
+        {
+            // don't change page here.
+            if (vm.SelectedNodeMenu != null)
             {
-                // don't change page here.
-                //lb.Selected = false;
-                if (vm.SelectedNodeMenu != null)
-                {
-                    //vm.SelectedNodeMenu.Selected = true;
-                }
+                //vm.SelectedNodeMenu.Selected = true;
+            }
+        }
+        else
+        {
+            if (e.SelectedItem is not null)
+            {
+                vm.SelectedNodeMenu = e.SelectedItem as NodeTree;
             }
             else
             {
-                if (e.SelectedItem is not null)
-                {
-                    vm.SelectedNodeMenu = e.SelectedItem as NodeTree;
-                }
-                else
-                {
-                    vm.SelectedNodeMenu = null;
-                }
+                vm.SelectedNodeMenu = null;
             }
         }
     }
 
     private void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.NavigationViewItemInvokedEventArgs e)
     {
-        if (sender is NavigationView nv)
+        if (sender is not NavigationView nv)
         {
-            if (e.IsSettingsInvoked == true)
-            {
-                nv.Content = _settingsPage;
-                return;
-            }
-
-            if (nv.Content != _shellPage)
-            {
-                nv.Content = _shellPage;
-            }
-
-            /*
-            if (nv.SelectedItem is NodeMenuPlaylists)
-            {
-                // don't change page here.
-                //nv.SelectedItem = _navigationViewSelectedItem;
-                return;
-            }
-            else if (nv.SelectedItem is NodeMenuLibrary)
-            {
-                // don't change page here.
-                //nv.SelectedItem = _navigationViewSelectedItem;
-                return;
-            }
-
-            _navigationViewSelectedItem = nv.SelectedItem as NavigationViewItem;
-            */
+            return;
         }
+
+        if (e.IsSettingsInvoked == true)
+        {
+            nv.Content = App.GetService<SettingsPage>();
+            return;
+        }
+
+        var mainView = App.GetService<MainView>();
+        if (nv.Content != mainView)
+        {
+            nv.Content = mainView;
+        }
+
+        //
+        /*
+        if (sender is not NavigationView)
+        {
+            return;
+        }
+
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (e.InvokedItemContainer is NavigationViewItem item)
+        {
+            if (item.DataContext is NodeMenuQueue nt)
+            {
+                if (this.NavigationFrame.Navigate(typeof(QueuePage), null, e.RecommendedNavigationTransitionInfo))//, args.RecommendedNavigationTransitionInfo //new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft }
+                {
+                    //_currentPage = typeof(QueuePage);
+                    vm.SelectedNodeMenu = nt;
+                }
+            }
+            else if (item.DataContext is NodeMenuLibrary)
+            {
+                // Do nothing.
+            }
+            else if (item.DataContext is NodeMenuAlbum)
+            {
+                if (this.NavigationFrame.Navigate(typeof(AlbumPage), null, e.RecommendedNavigationTransitionInfo))
+                {
+                    //_currentPage = typeof(AlbumPage);
+                }
+            }
+            else if (item.DataContext is NodeMenuArtist)
+            {
+                if (this.NavigationFrame.Navigate(typeof(ArtistPage), null, e.RecommendedNavigationTransitionInfo))
+                {
+                    //_currentPage = typeof(ArtistPage);
+                }
+            }
+            else if (item.DataContext is NodeMenuFiles)
+            {
+                if (this.NavigationFrame.Navigate(typeof(FilesPage), null, e.RecommendedNavigationTransitionInfo))
+                {
+                    //_currentPage = typeof(FilesPage);
+                }
+            }
+            else if (item.DataContext is NodeMenuSearch)
+            {
+                if (this.NavigationFrame.Navigate(typeof(SearchPage), null, e.RecommendedNavigationTransitionInfo))
+                {
+                    //_currentPage = typeof(SearchPage);
+                }
+            }
+            else if (item.DataContext is NodeMenuPlaylists)
+            {
+                // Do nothing.
+            }
+            else if (item.DataContext is NodeMenuPlaylistItem)
+            {
+                if (this.NavigationFrame.Navigate(typeof(PlaylistItemPage), null, e.RecommendedNavigationTransitionInfo))
+                {
+                    //_currentPage = typeof(PlaylistItemPage);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("Not NodeMenu");
+            }
+        }
+        else
+        {
+            Debug.WriteLine("Not NavigationViewItem @NavigationView_ItemInvoked:" + e.InvokedItem.ToString());
+        }
+        */
+        //
+
+
+        /*
+        if (nv.Content != _shellPage)
+        {
+            nv.Content = _shellPage;
+        }
+        */
+
+        /*
+        if (nv.SelectedItem is NodeMenuPlaylists)
+        {
+            // don't change page here.
+            //nv.SelectedItem = _navigationViewSelectedItem;
+            return;
+        }
+        else if (nv.SelectedItem is NodeMenuLibrary)
+        {
+            // don't change page here.
+            //nv.SelectedItem = _navigationViewSelectedItem;
+            return;
+        }
+
+        _navigationViewSelectedItem = nv.SelectedItem as NavigationViewItem;
+        */
     }
 
     private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
     {
         if (this.Width < 580)
         {
-            this.SeekSlider.Width = 250;
+            //this.SeekSlider.Width = 250;
         }
         else
         {
-            this.SeekSlider.Width = 380;
+            //this.SeekSlider.Width = 380;
         }
 
         if (this.Width < 630)
         {
-            this.AlbumCoverBorder.IsVisible = false;
+            //this.AlbumCoverBorder.IsVisible = false;
 
-            HeaderOverlayColSpaceLeft.Width = 24;
-            HeaderOverlayColSpaceRight.Width = 24;
+            //HeaderOverlayColSpaceLeft.Width = 24;
+            //HeaderOverlayColSpaceRight.Width = 24;
         }
         else
         {
+            /*
             if (this.ContentsSplitView.IsPaneOpen)
             {
                 this.AlbumCoverBorder.IsVisible = false;
@@ -295,57 +369,19 @@ public partial class MainWindow : Window//AppWindow//
             {
                 this.AlbumCoverBorder.IsVisible = true;
             }
+            */
 
-            HeaderOverlayColSpaceLeft.Width = 170;
-            HeaderOverlayColSpaceRight.Width = 170;
+            //HeaderOverlayColSpaceLeft.Width = 170;
+            //HeaderOverlayColSpaceRight.Width = 170;
         }
     }
 
-    private void OverLayShowHideToggleButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    /*
+    private void OnCurrentSongChanged(string msg)
     {
-        if (this.ContentsSplitView.IsPaneOpen)
-        {
-            this.ContentsSplitView.IsPaneOpen = false;
-
-            if (this.Width >= 630)
-            {
-                this.AlbumCoverBorder.IsVisible = true;
-            }
-            else
-            {
-                this.AlbumCoverBorder.IsVisible = false;
-            }
-        }
-        else
-        {
-            if (this.Width >= 630)
-            {
-                this.AlbumCoverBorder.IsVisible = true;
-            }
-            else
-            {
-                this.AlbumCoverBorder.IsVisible = false;
-            }
-        }
+        //this.Title = msg;
     }
+    */
 
-    private void SplitView_PaneClosed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (this.Width >= 630)
-        {
-            this.AlbumCoverBorder.IsVisible = true;
-        }
-        else
-        {
-            this.AlbumCoverBorder.IsVisible = false;
-        }
-    }
 
-    private void SplitView_PaneOpened(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (this.ContentsSplitView.IsPaneOpen)
-        {
-            this.AlbumCoverBorder.IsVisible = false;
-        }
-    }
 }

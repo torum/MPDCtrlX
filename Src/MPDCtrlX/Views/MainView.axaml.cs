@@ -12,20 +12,19 @@ namespace MPDCtrlX.Views;
 
 public partial class MainView : UserControl
 {
-    public MainView() { }
-
-    public MainView(MainViewModel? vm)
+    public MainView()
     {
-        DataContext = vm;//App.GetService<MainViewModel>();//new MainViewModel();
+        var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
 
-        if (vm is not null)
-        {
-            vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
-            vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
-            vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
-        }
+
+        vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
+        vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
+        vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
+
+
         /*
         Unloaded += (sender, e) =>
         {
@@ -70,22 +69,6 @@ public partial class MainView : UserControl
         DebugIdleTextBox.CaretIndex = DebugIdleTextBox.Text.Length;
     }
 
-    /*
-    public void OnAckWindowOutput(string arg)
-    {
-        // AppendText() is much faster than data binding.
-        AckTextBox.AppendText(arg);
-
-        AckTextBox.CaretIndex = AckTextBox.Text.Length;
-        AckTextBox.ScrollToEnd();
-    }
-
-    public void OnAckWindowClear()
-    {
-        //AckTextBox.Clear();
-    }
-    */
-
     public void OnDebugWindowShowHide()
     {
         if (this.DebugWindow.IsVisible)
@@ -98,46 +81,112 @@ public partial class MainView : UserControl
         }
     }
 
-
-    private void TreeView_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    private void HeaderGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
     {
-        /*
-        NodeMenu? value = ((sender as TreeView)?.SelectedItem as NodeMenu);
-        if (value == null)
+        if (!e.WidthChanged)
         {
             return;
         }
-        
-        if (value is NodeMenuQueue)
+
+        if (e.NewSize.Width < 580)
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<QueuePage>();
         }
-        else if (value is NodeMenuPlaylists)
+        else
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<PlaylistsPage>();
         }
-        else if (value is NodeMenuPlaylistItem)
+
+        if (e.NewSize.Width < 740)
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<PlaylistItemPage>();
+            //this.SeekSlider.Width = 250;
+            //this.SeekSlider.Width = 380;
+            this.AlbumCoverBorder.IsVisible = false;
+
+            //HeaderOverlayColSpaceLeft.Width = 24;
+            //HeaderOverlayColSpaceRight.Width = 24;
         }
-        else if (value is NodeMenuLibrary)
+        else
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<LibraryPage>();
+            this.AlbumCoverBorder.IsVisible = true;
+
+            //HeaderOverlayColSpaceLeft.Width = 170;
+            //HeaderOverlayColSpaceRight.Width = 170;
         }
-        else if (value is NodeMenuSearch)
+    }
+
+    /*
+    private void OnGoToSelectedPage(NodeTree? selectedNodeTree)
+    {
+        if (this.DataContext is not MainViewModel vm)
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<SearchPage>();
+            return;
         }
-        else if (value is NodeMenuAlbum)
+
+        if (selectedNodeTree is null)
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<AlbumPage>();
+            return;
         }
-        else if (value is NodeMenuArtist)
+
+        if (vm.SelectedNodeMenu != selectedNodeTree)
         {
-            this.ContentFrame.Content = (App.Current as App)?.AppHost.Services.GetRequiredService<ArtistPage>();
+            // just in case
+            vm.SelectedNodeMenu = selectedNodeTree;
         }
-        */
+
+        if (selectedNodeTree is NodeMenuQueue)
+        {
+            if (NavigationFrame.Navigate(typeof(QueuePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))//, args.RecommendedNavigationTransitionInfo //new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft }
+            {
+                //_currentPage = typeof(QueuePage);
+            }
+        }
+        else if (selectedNodeTree is NodeMenuLibrary)
+        {
+            // Do nothing.
+        }
+        else if (selectedNodeTree is NodeMenuAlbum)
+        {
+            if (NavigationFrame.Navigate(typeof(AlbumPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))
+            {
+                //_currentPage = typeof(AlbumPage);
+            }
+        }
+        else if (selectedNodeTree is NodeMenuArtist)
+        {
+            if (NavigationFrame.Navigate(typeof(ArtistPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))
+            {
+                //_currentPage = typeof(ArtistPage);
+            }
+        }
+        else if (selectedNodeTree is NodeMenuFiles)
+        {
+            if (NavigationFrame.Navigate(typeof(FilesPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))
+            {
+                //_currentPage = typeof(FilesPage);
+            }
+        }
+        else if (selectedNodeTree is NodeMenuSearch)
+        {
+            if (NavigationFrame.Navigate(typeof(SearchPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))
+            {
+                //_currentPage = typeof(SearchPage);
+            }
+        }
+        else if (selectedNodeTree is NodeMenuPlaylists)
+        {
+            // Do nothing.
+        }
+        else if (selectedNodeTree is NodeMenuPlaylistItem)
+        {
+            if (NavigationFrame.Navigate(typeof(PlaylistItemPage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))
+            {
+                //_currentPage = typeof(PlaylistItemPage);
+            }
+        }
+        else
+        {
+            Debug.WriteLine("Not NodeMenu");
+        }
     }
     
-
+        */
 }

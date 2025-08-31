@@ -2,6 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -87,6 +88,7 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            Dispatcher.UIThread.UnhandledException += OnUnhandledException;
             /*
             desktop.MainWindow = new MainWindow()
             {
@@ -104,6 +106,18 @@ public partial class App : Application
     // Log file.
     private static readonly StringBuilder _errortxt = new();
     private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
+
+    private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        // Prevent the application from crashing
+        e.Handled = true;
+
+        // Log the exception for debugging
+        //Console.WriteLine($"An unhandled exception occurred: {e.Exception}");
+        AppendErrorLog("DispatcherUnhandledException", e.Exception.ToString());
+
+        SaveErrorLog();
+    }
 
     public static void AppendErrorLog(string errorTxt, string kindTxt)
     {

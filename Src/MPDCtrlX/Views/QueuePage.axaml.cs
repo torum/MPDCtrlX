@@ -4,7 +4,6 @@ using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using MPDCtrlX.ViewModels.Dialogs;
 using MPDCtrlX.Views.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -21,11 +20,9 @@ public partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public QueuePage() { }
-
-    public QueuePage(MainViewModel viewmodel)
+    public QueuePage()
     {
-        //App.GetService<MainViewModel>();
+        var viewmodel = App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();
@@ -400,16 +397,18 @@ public partial class QueuePage : UserControl
             }
         };
 
-        if (dialog.Content is SaveToDialog asdf)
+        if (dialog.Content is not SaveToDialog dialogContent)
         {
-            // Sort
-            CultureInfo ci = CultureInfo.CurrentCulture;
-            StringComparer comp = StringComparer.Create(ci, true);
-
-            //asdf.PlaylistListBox.ItemsSource = vm?.Playlists;
-            //asdf.PlaylistListBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
-            asdf.PlaylistComboBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
+            return;
         }
+
+        // Sort
+        CultureInfo ci = CultureInfo.CurrentCulture;
+        StringComparer comp = StringComparer.Create(ci, true);
+
+        //asdf.PlaylistListBox.ItemsSource = vm?.Playlists;
+        //asdf.PlaylistListBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
+        dialogContent.PlaylistComboBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
 
         var result = await dialog.ShowAsync();
 

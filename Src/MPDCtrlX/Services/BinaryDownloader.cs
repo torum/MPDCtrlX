@@ -781,6 +781,8 @@ public class BinaryDownloader : IBinaryDownloader
             {
                 Debug.WriteLine("binary file too big: " + binSize.ToString() + " " + albumCover.SongFilePath);
 
+                r.IsSuccess = false;
+                r.ErrorMessage = "ParseAlbumImageData: binary file too big: " + binSize.ToString() + " " + albumCover.SongFilePath;
                 albumCover.IsDownloading = false;
 
                 return r;
@@ -790,6 +792,8 @@ public class BinaryDownloader : IBinaryDownloader
             {
                 Debug.WriteLine("binary file size is Zero: " + binSize.ToString() + ", " + binResSize.ToString() + ", " + data.Length.ToString());
 
+                r.IsSuccess = false;
+                r.ErrorMessage = "ParseAlbumImageData: binary file size is Zero.";
                 albumCover.IsDownloading = false;
 
                 return r;
@@ -798,7 +802,8 @@ public class BinaryDownloader : IBinaryDownloader
             if (binResSize != ((data.Length - gabStart) - gabEnd))
             {
                 Debug.WriteLine("binary file size mismatch: " + binSize.ToString() + ", [" + binResSize.ToString() + ", " + (data.Length - gabStart - gabEnd) + "], " + data.Length.ToString());
-
+                r.IsSuccess = false;
+                r.ErrorMessage = "ParseAlbumImageData: binary file size mismatch.";
                 albumCover.IsDownloading = false;
 
                 return r;

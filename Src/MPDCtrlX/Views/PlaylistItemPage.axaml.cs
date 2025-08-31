@@ -13,10 +13,9 @@ public partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public PlaylistItemPage() { }
-
-    public PlaylistItemPage(MainViewModel viewmodel)
+    public PlaylistItemPage()
     {
+        var viewmodel = App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();

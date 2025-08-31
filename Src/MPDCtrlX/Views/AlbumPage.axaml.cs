@@ -17,10 +17,9 @@ public partial class AlbumPage : UserControl
     //private ScrollViewer? _scrollViewer;
     //private WrapPanel? _wrapPanel;
 
-    public AlbumPage() { }
-
-    public AlbumPage(MainViewModel viewmodel)
+    public AlbumPage()
     {
+        var viewmodel = App.GetService<MainViewModel>();
         DataContext = viewmodel;
 
         InitializeComponent();

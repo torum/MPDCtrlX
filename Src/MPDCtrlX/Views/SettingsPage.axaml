@@ -11,21 +11,20 @@
              x:CompileBindings="True"
              x:Class="MPDCtrlX.Views.SettingsPage">
 
-	<ScrollViewer Padding="20,12,20,24">
+	<ScrollViewer Padding="24,24,24,24">
 
 		<StackPanel Spacing="24">
 			<StackPanel>
-				<TextBlock Text="{x:Static prop:Resources.Settings_PageTitle}" Theme="{StaticResource TitleTextBlockStyle}" Margin="28,0,0,10"/>
+				<TextBlock Text="{x:Static prop:Resources.Settings_PageTitle}" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
 				<Separator/>
 			</StackPanel>
 
-			<StackPanel Spacing="6" Margin="6,0,0,0">
+			<StackPanel Spacing="6" Margin="0,0,0,0">
 				<StackPanel Orientation="Vertical" Spacing="12">
 					<TextBlock Text="MPDCtrlX" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
 					<TextBlock Text="{Binding AppVersion}" Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
 				</StackPanel>
 			</StackPanel>
-
 
 			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
 
@@ -95,8 +94,6 @@
 
 			</ui:SettingsExpander>
 
-
-			<!-- IconSource="DarkTheme" -->
 			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
 
 				<ui:SettingsExpanderItem>
@@ -117,7 +114,6 @@
 
 			</ui:SettingsExpander>
 
-
 			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 				<!--
 				<ui:SettingsExpanderItem>
@@ -133,7 +129,6 @@
 
 			</ui:SettingsExpander>
 
-
 			<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
 
 				<ui:SettingsExpanderItem>
@@ -144,7 +139,6 @@
 				</ui:SettingsExpander.Footer>
 
 			</ui:SettingsExpander>
-
 
 			<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
 
@@ -157,9 +151,7 @@
 
 			</ui:SettingsExpander>
 
-
 		</StackPanel>
 	</ScrollViewer>
-
 
 </UserControl>
