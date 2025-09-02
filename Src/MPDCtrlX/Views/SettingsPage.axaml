@@ -47,8 +47,7 @@
 
 			</ui:SettingsExpander>
 
-			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}">
-
+			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}" Footer="{Binding MpdVersion}">
 
 				<ui:SettingsExpanderItem>
 					<StackPanel Spacing="3" HorizontalAlignment="Left">

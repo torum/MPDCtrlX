@@ -169,9 +169,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 switch (hoge)
                 {
+                    /*
                     case NodeMenuLibrary lib:
                         lib.Expanded = _isNavigationViewMenuOpen;
                         break;
+                    */
                     case NodeMenuPlaylists plt:
                         plt.Expanded = _isNavigationViewMenuOpen;
                         break;
@@ -201,6 +203,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderPositionVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderPositionVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -238,6 +241,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderNowPlayingVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderNowPlayingVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -293,6 +297,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderTimeVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderTimeVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -329,6 +334,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderArtistVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderArtistVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -365,6 +371,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderAlbumVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderAlbumVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -401,6 +408,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderDiscVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderDiscVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -437,6 +445,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderTrackVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderTrackVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -474,6 +483,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderGenreVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderGenreVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -510,6 +520,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isQueueColumnHeaderLastModifiedVisible = value;
 
             NotifyPropertyChanged(nameof(IsQueueColumnHeaderLastModifiedVisible));
+            QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -536,43 +547,64 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Files column headers == 
 
-    private double _libraryColumnHeaderTitleWidth = 260;
-    public double LibraryColumnHeaderTitleWidth
+    private double _filesColumnHeaderTitleWidth = 260;
+    public double FilesColumnHeaderTitleWidth
     {
         get
         {
-            return _libraryColumnHeaderTitleWidth;
+            return _filesColumnHeaderTitleWidth;
         }
         set
         {
-            if (value == _libraryColumnHeaderTitleWidth)
+            if (value == _filesColumnHeaderTitleWidth)
                 return;
 
             if (value > 12)
-                _libraryColumnHeaderTitleWidth = value;
+                _filesColumnHeaderTitleWidth = value;
 
-            NotifyPropertyChanged(nameof(LibraryColumnHeaderTitleWidth));
+            NotifyPropertyChanged(nameof(FilesColumnHeaderTitleWidth));
         }
     }
 
-    private double _libraryColumnHeaderFilePathWidth = 250;
-    public double LibraryColumnHeaderFilePathWidth
+    private double _filesColumnHeaderFilePathWidth = 250;
+    public double FilesColumnHeaderFilePathWidth
     {
         get
         {
-            return _libraryColumnHeaderFilePathWidth;
+            return _filesColumnHeaderFilePathWidth;
         }
         set
         {
-            if (value == _libraryColumnHeaderFilePathWidth)
+            if (value == _filesColumnHeaderFilePathWidth)
                 return;
 
             if (value > 12)
-                _libraryColumnHeaderFilePathWidth = value;
+                _filesColumnHeaderFilePathWidth = value;
 
-            NotifyPropertyChanged(nameof(LibraryColumnHeaderFilePathWidth));
+            NotifyPropertyChanged(nameof(FilesColumnHeaderFilePathWidth));
         }
     }
+
+    private bool _isFilesColumnHeaderFilePathVisible = true;
+    public bool IsFilesColumnHeaderFilePathVisible
+    {
+        get
+        {
+            return _isFilesColumnHeaderFilePathVisible;
+        }
+        set
+        {
+            if (value == _isFilesColumnHeaderFilePathVisible)
+                return;
+
+            _isFilesColumnHeaderFilePathVisible = value;
+
+            NotifyPropertyChanged(nameof(IsFilesColumnHeaderFilePathVisible));
+            // Notify code behind to do some work around ...
+            FilesHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     #endregion
 
     #region == Search column headers ==
@@ -592,6 +624,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderPositionVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderPositionVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -646,6 +680,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderTimeVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderTimeVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -682,6 +718,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderArtistVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderArtistVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -718,6 +756,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderAlbumVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderAlbumVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -754,6 +794,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderDiscVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderDiscVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -790,6 +832,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderTrackVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderTrackVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -826,6 +870,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderGenreVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderGenreVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -862,6 +908,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isSearchColumnHeaderLastModifiedVisible = value;
 
             NotifyPropertyChanged(nameof(IsSearchColumnHeaderLastModifiedVisible));
+            // Notify code behind to do some work around ...
+            SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -903,6 +951,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderPositionVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderPositionVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -957,6 +1007,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderTimeVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTimeVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -993,6 +1045,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderArtistVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderArtistVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -1029,6 +1083,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderAlbumVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderAlbumVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -1065,6 +1121,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderDiscVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderDiscVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -1101,6 +1159,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderTrackVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTrackVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }
@@ -1137,6 +1197,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderGenreVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderGenreVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
     }
@@ -1173,6 +1235,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             _isPlaylistColumnHeaderLastModifiedVisible = value;
 
             NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderLastModifiedVisible));
+            // Notify code behind to do some work around ...
+            PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -1463,10 +1527,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isBusy = value;
             NotifyPropertyChanged(nameof(IsBusy));
-
             NotifyPropertyChanged(nameof(IsProfileSwitchOK));
 
-            
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
             //Dispatcher.UIThread.Post(async () => { CommandManager.InvalidateRequerySuggested()});
         }
@@ -1486,11 +1548,31 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isWorking = value;
             NotifyPropertyChanged(nameof(IsWorking));
-
             NotifyPropertyChanged(nameof(IsProfileSwitchOK));
 
-            
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
+        }
+    }
+
+    private bool _isShowInfoWindow;
+    public bool IsShowInfoWindow
+
+    {
+        get { return _isShowInfoWindow; }
+        set
+        {
+            if (_isShowInfoWindow == value)
+                return;
+
+            _isShowInfoWindow = value;
+
+            if (!_isShowInfoWindow)
+            {
+                InfoBarInfoTitle = string.Empty;
+                InfoBarInfoMessage = string.Empty;
+            }
+
+            NotifyPropertyChanged(nameof(IsShowInfoWindow));
         }
     }
 
@@ -1617,7 +1699,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             NotifyPropertyChanged(nameof(IsCurrentSongArtistNotNull));
             NotifyPropertyChanged(nameof(IsCurrentSongAlbumNotNull));
 
-            //NotifyPropertyChanged(nameof(CurrentSongStringForWindowTitle));
             CurrentSongChanged?.Invoke(this, CurrentSongStringForWindowTitle);
 
             if (value is null)
@@ -1951,6 +2032,41 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _time = value;
             NotifyPropertyChanged(nameof(Time));
+            NotifyPropertyChanged(nameof(TimeFormatted));
+        }
+    }
+
+    public string TimeFormatted
+    {
+        get
+        {
+            int sec, min, hour, s;
+
+            sec = Time / 10;
+
+            min = sec / 60;
+            s = sec % 60;
+            hour = min / 60;
+            min %= 60;
+            /*
+            if ((hour == 0) && min == 0)
+            {
+                _timeFormatted = String.Format("{0}", s);
+            }
+            else if ((hour == 0) && (min != 0))
+            {
+                _timeFormatted = String.Format("{0}:{1:00}", min, s);
+            }
+            else if ((hour != 0) && (min != 0))
+            {
+                _timeFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            }
+            else if (hour != 0)
+            {
+                _timeFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            }
+            */
+            return string.Format("{0}:{1:00}:{2:00}", hour, min, s);
         }
     }
 
@@ -1967,6 +2083,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 _elapsed = value;
                 NotifyPropertyChanged(nameof(Elapsed));
+                NotifyPropertyChanged(nameof(ElapsedFormatted));
 
                 // If we have a timer and we are in this event handler, a user is still interact with the slider
                 // we stop the timer
@@ -1987,6 +2104,40 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 _elapsedDelayTimer.Start();
             }
+        }
+    }
+
+    public string ElapsedFormatted
+    {
+        get
+        {
+            int sec, min, hour, s;
+
+            sec = _elapsed / 10;
+
+            min = sec / 60;
+            s = sec % 60;
+            hour = min / 60;
+            min %= 60;
+            /*
+            if ((hour == 0) && min == 0)
+            {
+                _elapsedFormatted = String.Format("{0}", s);
+            }
+            else if ((hour == 0) && (min != 0))
+            {
+                _elapsedFormatted = String.Format("{0}:{1:00}", min, s);
+            }
+            else if ((hour != 0) && (min != 0))
+            {
+                _elapsedFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            }
+            else if (hour != 0)
+            {
+                _elapsedFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            }
+            */
+            return string.Format("{0}:{1:00}:{2:00}", hour, min, s);
         }
     }
 
@@ -2098,11 +2249,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 CurrentPage = App.GetService<SearchPage>();
             }
+            /*
             else if (value is NodeMenuLibrary)
             {
                 // Do nothing.
             }
-
+            */
             else if (value is NodeMenuArtist nma)
             {
                 CurrentPage = App.GetService<ArtistPage>();
@@ -3732,6 +3884,34 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private string _infoBarInfoTitle = "";
+    public string InfoBarInfoTitle
+    {
+        get
+        {
+            return _infoBarInfoTitle;
+        }
+        set
+        {
+            _infoBarInfoTitle = value;
+            NotifyPropertyChanged(nameof(InfoBarInfoTitle));
+        }
+    }
+
+    private string _infoBarInfoMessage = "";
+    public string InfoBarInfoMessage
+    {
+        get
+        {
+            return _infoBarInfoMessage;
+        }
+        set
+        {
+            _infoBarInfoMessage = value;
+            NotifyPropertyChanged(nameof(InfoBarInfoMessage));
+        }
+    }
+
     private string _infoBarAckTitle = "";
     public string InfoBarAckTitle
     {
@@ -4129,6 +4309,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     public event EventHandler? SearchHeaderVisibilityChanged;
     public event EventHandler? PlaylistHeaderVisibilityChanged;
+    public event EventHandler? FilesHeaderVisibilityChanged;
 
     public event EventHandler<List<string>>? SearchPageAddToPlaylistDialogShow;
     public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
@@ -5066,7 +5247,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         {
                                             try
                                             {
-                                                LibraryColumnHeaderTitleWidth = Double.Parse(s);
+                                                FilesColumnHeaderTitleWidth = Double.Parse(s);
                                             }
                                             catch
                                             {
@@ -5085,7 +5266,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                         {
                                             try
                                             {
-                                                LibraryColumnHeaderFilePathWidth = Double.Parse(s);
+                                                FilesColumnHeaderFilePathWidth = Double.Parse(s);
                                             }
                                             catch
                                             {
@@ -5813,14 +5994,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsFullyRendered = true;
 
         // This is a dirty work around for AvaloniaUI.
-        QueuePage? qp = App.GetService<QueuePage>();
-        qp?.SaveQueueHeaderWidth();
-        FilesPage? fp = App.GetService<FilesPage>();
-        fp?.SaveFilesHeaderWidth();
-        PlaylistItemPage? pp = App.GetService<PlaylistItemPage>();
-        pp?.SavePlaylistItemsHeaderWidth();
-        SearchPage? sp = App.GetService<SearchPage>();
-        sp?.SaveSearchHeaderWidth();
+        //QueuePage? qp = App.GetService<QueuePage>();
+        //qp?.SaveQueueHeaderWidth();
+        //FilesPage? fp = App.GetService<FilesPage>();
+        //fp?.SaveFilesHeaderWidth();
+        //PlaylistItemPage? pp = App.GetService<PlaylistItemPage>();
+        //pp?.SavePlaylistItemsHeaderWidth();
+        //SearchPage? sp = App.GetService<SearchPage>();
+        //sp?.SaveSearchHeaderWidth();
 
         double windowWidth = 780;
 
@@ -5965,7 +6146,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             XmlElement headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
 
             #region == Queue header ==
-
+            /*
             // Queue page
             XmlElement queueHeader;
             XmlElement queueHeaderColumn;
@@ -6101,11 +6282,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //
             headers.AppendChild(queueHeader);
-
+            */
             #endregion
 
             #region == Files header ==
-
+            /*
             // FilesPage
             XmlElement filesHeader;
             XmlElement filesHeaderColumn;
@@ -6114,11 +6295,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             filesHeader = doc.CreateElement(string.Empty, "Files", string.Empty);
 
             filesHeaderColumn = doc.CreateElement(string.Empty, "FileName", string.Empty);
-            /*
-            fAttrs = doc.CreateAttribute("Visible");
-            fAttrs.Value = 
-            filesHeaderColumn.SetAttributeNode(fAttrs);
-            */
+
             fAttrs = doc.CreateAttribute("Width");
             fAttrs.Value = LibraryColumnHeaderTitleWidth.ToString();
             filesHeaderColumn.SetAttributeNode(fAttrs);
@@ -6127,11 +6304,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
 
             filesHeaderColumn = doc.CreateElement(string.Empty, "FilePath", string.Empty);
-            /*
-            fAttrs = doc.CreateAttribute("Visible");
-            fAttrs.Value = 
-            filesHeaderColumn.SetAttributeNode(fAttrs);
-            */
+
             fAttrs = doc.CreateAttribute("Width");
             fAttrs.Value = LibraryColumnHeaderFilePathWidth.ToString();
             filesHeaderColumn.SetAttributeNode(fAttrs);
@@ -6140,11 +6313,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //
             headers.AppendChild(filesHeader);
-
+            */
             #endregion
 
             #region == Playlist header ==
-
+            /*
             // Playlist page
             XmlElement PlaylistHeader;
             XmlElement PlaylistHeaderColumn;
@@ -6280,11 +6453,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //
             headers.AppendChild(PlaylistHeader);
-
+            */
             #endregion
 
             #region == Search header == 
-
+            /*
             // Search page
             XmlElement SearchHeader;
             XmlElement SearchHeaderColumn;
@@ -6420,7 +6593,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //
             headers.AppendChild(SearchHeader);
-
+            */
             #endregion
             
             // TODO: more
@@ -6653,7 +6826,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 // TODO::
                 ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
-                StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
+                //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
+
+                InfoBarAckTitle = "Error";
+                InfoBarAckMessage = "Could not retrive IP Address from the hostname.";
+                IsShowAckWindow = true;
+
                 return;
             }
         }
@@ -6661,7 +6839,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             // TODO::
             ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
-            StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
+            //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
+
+            InfoBarAckTitle = "Error";
+            InfoBarAckMessage = "Could not retrive IP Address from the hostname.";
+            IsShowAckWindow = true;
+
             return;
         }
 
@@ -6817,28 +7000,34 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
                         // AlbumArt
-                        if (!String.IsNullOrEmpty(CurrentSong.File))
+                        if (!string.IsNullOrEmpty(CurrentSong.File))
                         {
                             if (IsDownloadAlbumArt)
                             {
                                 //Debug.WriteLine("getting album cover. @UpdateStatus()");
                                 var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
 
-                                if (res.AlbumCover?.SongFilePath == CurrentSong.File)
+                                if (res != null) 
                                 {
-                                    if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
+                                    if (res.IsSuccess && (res.AlbumCover?.SongFilePath != null) && (CurrentSong.File != null))
                                     {
-                                        Dispatcher.UIThread.Post(() =>
+                                        if (res.AlbumCover?.SongFilePath == CurrentSong.File)
                                         {
-                                            AlbumCover = res.AlbumCover;
-                                            AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
-                                            //IsAlbumArtVisible = true;
-                                            SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
-                                        });
+                                            if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
+                                            {
+                                                Dispatcher.UIThread.Post(() =>
+                                                {
+                                                    AlbumCover = res.AlbumCover;
+                                                    AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                                    //IsAlbumArtVisible = true;
+                                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                });
+                                            }
+                                        }
+                                        CurrentSong.IsAlbumCoverNeedsUpdate = false;
                                     }
                                 }
 
-                                CurrentSong.IsAlbumCoverNeedsUpdate = false;
                             }
                         }
                     }
@@ -6946,10 +7135,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
                 {
                     // no need to care about "double" updates for time.
-                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime * 10);
-
-                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed * 10);
-
+                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
+                    Time *= 10;
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed);
+                    _elapsed *= 10;
                     if (!_elapsedTimer.Enabled)
                         _elapsedTimer.Start();
                 }
@@ -6958,9 +7147,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     _elapsedTimer.Stop();
 
                     // no need to care about "double" updates for time.
-                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime * 10);
-
-                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed * 10);
+                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
+                    Time *= 10;
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed); 
+                    _elapsed *= 10;
                     NotifyPropertyChanged(nameof(Elapsed));
                 }
 
@@ -7046,18 +7236,20 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 */
 
                                 var res = await _mpc.MpdQueryAlbumArt(_mpc.MpdCurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-
-                                if (res.AlbumCover?.SongFilePath == _mpc.MpdCurrentSong.File)
+                                if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
                                 {
-                                    if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
+                                    if (res.AlbumCover?.SongFilePath == _mpc.MpdCurrentSong.File)
                                     {
-                                        Dispatcher.UIThread.Post(() =>
+                                        if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
                                         {
-                                            AlbumCover = res.AlbumCover;
-                                            AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
-                                            //IsAlbumArtVisible = true;
-                                            SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
-                                        });
+                                            Dispatcher.UIThread.Post(() =>
+                                            {
+                                                AlbumCover = res.AlbumCover;
+                                                AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                                //IsAlbumArtVisible = true;
+                                                SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -7485,7 +7677,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 Debug.WriteLine("Exception@UpdateCurrentQueue: " + e.Message);
 
-                StatusBarMessage = "Exception@UpdateCurrentQueue: " + e.Message;
+                //StatusBarMessage = "Exception@UpdateCurrentQueue: " + e.Message;
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -8481,45 +8673,43 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (current?.File == album?.SongFilePath)
-            {
-                // save album cover to cache.
-                var strAlbum = current?.Album ?? string.Empty;
-                if (!string.IsNullOrEmpty(strAlbum.Trim()))
-                {
-                    var aat = current?.AlbumArtist.Trim();
-                    if (string.IsNullOrEmpty(aat))
-                    {
-                        aat = current?.Artist.Trim();
-                    }
-                    var strArtist = aat;
-                    if (string.IsNullOrEmpty(strArtist))
-                    {
-                        strArtist = "Unknown Artist";
-                    }
-                    strArtist = EscapeFilePathNames(strArtist).Trim();
-                    strAlbum = EscapeFilePathNames(strAlbum).Trim();
-
-                    string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
-                    string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
-                    try
-                    {
-                        Directory.CreateDirectory(strDirPath);
-                        album?.AlbumImageSource?.Save(filePath, 100);
-                        //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("SaveAlbumCoverImage: Exception while saving album art: " + e.Message);
-                    }
-                }
-            }
-            else
+            if ((current?.File) != (album?.SongFilePath))
             {
                 //Debug.WriteLine($"NOT ({current?.File} == {album?.SongFilePath})");
+                return;
+            }
+
+            // save album cover to cache.
+            var strAlbum = current?.Album ?? string.Empty;
+            if (!string.IsNullOrEmpty(strAlbum.Trim()))
+            {
+                var aat = current?.AlbumArtist.Trim();
+                if (string.IsNullOrEmpty(aat))
+                {
+                    aat = current?.Artist.Trim();
+                }
+                var strArtist = aat;
+                if (string.IsNullOrEmpty(strArtist))
+                {
+                    strArtist = "Unknown Artist";
+                }
+                strArtist = EscapeFilePathNames(strArtist).Trim();
+                strAlbum = EscapeFilePathNames(strAlbum).Trim();
+
+                string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
+                string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+                try
+                {
+                    Directory.CreateDirectory(strDirPath);
+                    album?.AlbumImageSource?.Save(filePath, 100);
+                    //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("SaveAlbumCoverImage: Exception while saving album art: " + e.Message);
+                }
             }
         });
-
     }
 
     private static string EscapeFilePathNames(string str)
@@ -8672,6 +8862,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         StatusButton = _pathErrorInfoButton;
 
         StatusBarMessage = ConnectionStatusMessage;
+
+        InfoBarAckTitle = MPDCtrlX.Properties.Resources.ConnectionStatus_ConnectionError;
+        InfoBarAckMessage = msg;
+        IsShowAckWindow = true;
     }
 
     private void OnConnectionStatusChanged(MpcService sender, MpcService.ConnectionStatus status)
@@ -8833,20 +9027,20 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (origin.Equals("Command"))
         {
-            InfoBarAckTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandError;
+            InfoBarInfoTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandError;
         }
         else if (origin.Equals("Idle"))
         {
-            InfoBarAckTitle = MpdVersion;// + " " + MPDCtrlX.Properties.Resources.MPD_StatusError; // TODO:
+            InfoBarInfoTitle = MpdVersion;// + " " + MPDCtrlX.Properties.Resources.MPD_StatusError; // TODO:
         }
         else
         {
-            InfoBarAckTitle = MpdVersion;
+            InfoBarInfoTitle = MpdVersion;
         }
 
-        InfoBarAckMessage = s;
+        InfoBarInfoMessage = s;
 
-        IsShowAckWindow = true;
+        IsShowInfoWindow = true;
     }
 
     private void OnMpdFatalError(MpcService sender, string errMsg, string origin)
@@ -8914,6 +9108,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             _elapsed += 1;
             NotifyPropertyChanged(nameof(Elapsed));
+            NotifyPropertyChanged(nameof(ElapsedFormatted));
             //Debug.WriteLine($"ElapsedTimer: {_elapsed}/{_time}");
         }
         else
@@ -11228,9 +11423,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             IsQueueColumnHeaderPositionVisible = true;
             QueueColumnHeaderPositionWidth = 60;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderNowPlayingShowHideCommand { get; }
@@ -11249,9 +11441,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderNowPlayingVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderTimeShowHideCommand { get; }
@@ -11271,9 +11460,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderTimeVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderArtistShowHideCommand { get; }
@@ -11292,9 +11478,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderArtistVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderAlbumShowHideCommand { get; }
@@ -11313,9 +11496,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderAlbumVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderDiscShowHideCommand { get; }
@@ -11334,9 +11514,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderDiscVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderTrackShowHideCommand { get; }
@@ -11355,9 +11532,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderTrackVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderGenreShowHideCommand { get; }
@@ -11376,9 +11550,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderGenreVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand QueueColumnHeaderLastModifiedShowHideCommand { get; }
@@ -11397,9 +11568,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsQueueColumnHeaderLastModifiedVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion
@@ -11423,9 +11591,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             IsPlaylistColumnHeaderPositionVisible = true;
             PlaylistColumnHeaderPositionWidth = 60;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /*
@@ -11468,9 +11633,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderTimeVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderArtistShowHideCommand { get; }
@@ -11489,9 +11651,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderArtistVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderAlbumShowHideCommand { get; }
@@ -11510,9 +11669,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderAlbumVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderDiscShowHideCommand { get; }
@@ -11531,9 +11687,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderDiscVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderTrackShowHideCommand { get; }
@@ -11552,9 +11705,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderTrackVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderGenreShowHideCommand { get; }
@@ -11573,9 +11723,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderGenreVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand PlaylistColumnHeaderLastModifiedShowHideCommand { get; }
@@ -11594,11 +11741,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsPlaylistColumnHeaderLastModifiedVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
-
 
     #endregion
 
@@ -11621,9 +11764,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             IsSearchColumnHeaderPositionVisible = true;
             SearchColumnHeaderPositionWidth = 60;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /*
@@ -11666,9 +11806,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderTimeVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderArtistShowHideCommand { get; }
@@ -11687,9 +11824,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderArtistVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderAlbumShowHideCommand { get; }
@@ -11708,9 +11842,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderAlbumVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderDiscShowHideCommand { get; }
@@ -11729,9 +11860,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderDiscVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderTrackShowHideCommand { get; }
@@ -11750,9 +11878,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderTrackVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderGenreShowHideCommand { get; }
@@ -11771,9 +11896,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderGenreVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public IRelayCommand SearchColumnHeaderLastModifiedShowHideCommand { get; }
@@ -11792,9 +11914,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             IsSearchColumnHeaderLastModifiedVisible = true;
         }
-
-        // Notify code behind to do some work around ...
-        SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
     }
 
 

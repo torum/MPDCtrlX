@@ -26,17 +26,13 @@ public partial class SearchPage : UserControl
 
         InitializeComponent();
 
+        viewmodel.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
         viewmodel.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
         viewmodel.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
         if (_isHeaderWidthInitialized)
         {
             // Everytime page is changed back, this loaded is called. So.
@@ -64,17 +60,17 @@ public partial class SearchPage : UserControl
         //this.Column1.IsVisible = true;
         this.SearchColumn1x.Width = 80;//vm.PlaylistColumnHeaderPositionWidth
         this.DummyHeader.ColumnDefinitions[0].Width = GridLength.Auto;
-
+        /*
         // Title
         this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(vm.SearchColumnHeaderTitleWidth);
         this.SearchColumn3.IsVisible = true;
         this.SearchColumn3x.Width = vm.SearchColumnHeaderTitleWidth;
         this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Auto;
-
+        */
         UpdateColumHeaders();
     }
 
-    // ListBox dummy header Visibility option change.
+    // ListBox dummy header Visibility option change
     private void OnSearchHeaderVisibilityChanged(object? sender, System.EventArgs e)
     {
         UpdateColumHeaders();
@@ -89,6 +85,80 @@ public partial class SearchPage : UserControl
 
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
+        // Title
+
+        // Time
+        if (vm.IsSearchColumnHeaderTimeVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(70);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(0);
+        }
+
+        // Artist
+        if (vm.IsSearchColumnHeaderArtistVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Parse("3*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(0);
+        }
+
+        // Album
+        if (vm.IsSearchColumnHeaderAlbumVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[5].Width = GridLength.Parse("3*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[5].Width = new GridLength(0);
+        }
+
+        // Disc
+        if (vm.IsSearchColumnHeaderDiscVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(65);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
+        }
+
+        // Track
+        if (vm.IsSearchColumnHeaderTrackVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(65);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(0);
+        }
+
+        // Genre
+        if (vm.IsSearchColumnHeaderGenreVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Parse("2*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
+        }
+
+        // Last modified
+        if (vm.IsSearchColumnHeaderLastModifiedVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[9].Width = GridLength.Parse("2*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[9].Width = new GridLength(0);
+        }
+
+
+        /*
         // Time
         if (vm.IsSearchColumnHeaderTimeVisible)
         {
@@ -228,31 +298,93 @@ public partial class SearchPage : UserControl
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
         }
+        */
     }
 
-    // Called on window closing to save dummy header sizes.
-    public void SaveSearchHeaderWidth()
+    private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
     {
+        if (!e.WidthChanged)
+        {
+            return;
+        }
+
         if (DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        if (!_isHeaderWidthInitialized)
+        if (e.NewSize.Width < 340)
         {
-            return;
+            vm.IsSearchColumnHeaderTimeVisible = false;
+            vm.IsSearchColumnHeaderArtistVisible = false;
+            vm.IsSearchColumnHeaderAlbumVisible = false;
+            vm.IsSearchColumnHeaderDiscVisible = false;
+            vm.IsSearchColumnHeaderTrackVisible = false;
+            vm.IsSearchColumnHeaderGenreVisible = false;
+            vm.IsSearchColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
         }
-
-        vm.SearchColumnHeaderPositionWidth = this.SearchColumn1.Bounds.Size.Width;
-        // = this.PlaylistColumn2.Bounds.Size.Width;
-        vm.SearchColumnHeaderTitleWidth = this.SearchColumn3.Bounds.Size.Width;
-        vm.SearchColumnHeaderTimeWidth = this.SearchColumn4.Bounds.Size.Width;
-        vm.SearchColumnHeaderArtistWidth = this.SearchColumn5.Bounds.Size.Width;
-        vm.SearchColumnHeaderAlbumWidth = this.SearchColumn6.Bounds.Size.Width;
-        vm.SearchColumnHeaderDiscWidth = this.SearchColumn7.Bounds.Size.Width;
-        vm.SearchColumnHeaderTrackWidth = this.SearchColumn8.Bounds.Size.Width;
-        vm.SearchColumnHeaderGenreWidth = this.SearchColumn9.Bounds.Size.Width;
-        vm.SearchColumnHeaderLastModifiedWidth = this.SearchColumn10.Bounds.Size.Width;
+        else if (e.NewSize.Width < 740)
+        {
+            vm.IsSearchColumnHeaderTimeVisible = true;
+            vm.IsSearchColumnHeaderArtistVisible = false;
+            vm.IsSearchColumnHeaderAlbumVisible = false;
+            vm.IsSearchColumnHeaderDiscVisible = false;
+            vm.IsSearchColumnHeaderTrackVisible = false;
+            vm.IsSearchColumnHeaderGenreVisible = false;
+            vm.IsSearchColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 1008)
+        {
+            vm.IsSearchColumnHeaderTimeVisible = true;
+            vm.IsSearchColumnHeaderArtistVisible = true;
+            vm.IsSearchColumnHeaderAlbumVisible = true;
+            vm.IsSearchColumnHeaderDiscVisible = false;
+            vm.IsSearchColumnHeaderTrackVisible = false;
+            vm.IsSearchColumnHeaderGenreVisible = false;
+            vm.IsSearchColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 1320)
+        {
+            vm.IsSearchColumnHeaderTimeVisible = true;
+            vm.IsSearchColumnHeaderArtistVisible = true;
+            vm.IsSearchColumnHeaderAlbumVisible = true;
+            vm.IsSearchColumnHeaderDiscVisible = true;
+            vm.IsSearchColumnHeaderTrackVisible = true;
+            vm.IsSearchColumnHeaderGenreVisible = true;
+            vm.IsSearchColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 2000)
+        {
+            vm.IsSearchColumnHeaderTimeVisible = true;
+            vm.IsSearchColumnHeaderArtistVisible = true;
+            vm.IsSearchColumnHeaderAlbumVisible = true;
+            vm.IsSearchColumnHeaderDiscVisible = true;
+            vm.IsSearchColumnHeaderTrackVisible = true;
+            vm.IsSearchColumnHeaderGenreVisible = true;
+            vm.IsSearchColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else
+        {
+            vm.IsSearchColumnHeaderTimeVisible = true;
+            vm.IsSearchColumnHeaderArtistVisible = true;
+            vm.IsSearchColumnHeaderAlbumVisible = true;
+            vm.IsSearchColumnHeaderDiscVisible = true;
+            vm.IsSearchColumnHeaderTrackVisible = true;
+            vm.IsSearchColumnHeaderGenreVisible = true;
+            vm.IsSearchColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.
@@ -338,4 +470,5 @@ public partial class SearchPage : UserControl
             }
         }
     }
+
 }

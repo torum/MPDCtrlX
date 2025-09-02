@@ -11,18 +11,21 @@
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 	
-	<Grid RowDefinitions="1,Auto,*">
-		<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
+		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		
 		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- PlaylistItem page title and menus -->
 		<Grid Grid.Row="1" Margin="0,0,0,12">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="12"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 
+			<!-- Size changes from codebehind depending on page size -->
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+			
 			<!-- PlaylistItem page title  -->
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<!--			
@@ -137,97 +140,80 @@
 		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-			<ScrollViewer Grid.Row="1" x:Name="PlaylistItemListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+			<ScrollViewer Grid.Row="1" x:Name="PlaylistItemListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
 				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
 				<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="28"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="80"></ColumnDefinition>
+						<ColumnDefinition Width="0"></ColumnDefinition>
+						<ColumnDefinition Width="6*"></ColumnDefinition>
+						<ColumnDefinition Width="70"></ColumnDefinition>
+						<ColumnDefinition Width="3*"></ColumnDefinition>
+						<ColumnDefinition Width="3*"></ColumnDefinition>
+						<ColumnDefinition Width="65"></ColumnDefinition>
+						<ColumnDefinition Width="65"></ColumnDefinition>
+						<ColumnDefinition Width="2*"></ColumnDefinition>
+						<ColumnDefinition Width="2*"></ColumnDefinition>
 
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
+						<ColumnDefinition Width="24"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-
-					<Grid Grid.Column="0" Name="PlaylistColumn1" Width="48">
-						<Label Name="PlaylistColumn1x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn1}" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
+					
+					<Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="0" Name="PlaylistColumn1" Width="80">
+						<TextBlock Name="PlaylistColumn1x" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" IsVisible="False"/>
-					<Grid Grid.Column="2" Name="PlaylistColumn2" IsVisible="False">
-						<Label Name="PlaylistColumn2x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn2}" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
+					<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" IsVisible="False"/>
+					<Grid Grid.Column="1" Name="PlaylistColumn2" IsVisible="False">
 					</Grid>
 
-					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
-					<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4" IsVisible="False"/>
-					<Grid Grid.Column="4" Name="PlaylistColumn3">
-						<Label Name="PlaylistColumn3x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn3}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Title}"></Label>
+					<Border Grid.Column="2" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="2" Name="PlaylistColumn3">
+						<TextBlock Name="PlaylistColumn3x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Title}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderTimeVisible}" -->
-					<Grid Grid.Column="6" Name="PlaylistColumn4">
-						<Label Name="PlaylistColumn4x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn4}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Time}"></Label>
+					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="3" Name="PlaylistColumn4" IsVisible="{Binding IsPlaylistColumnHeaderTimeVisible}">
+						<TextBlock Name="PlaylistColumn4x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Time}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderArtistVisible}" -->
-					<Grid Grid.Column="8" Name="PlaylistColumn5">
-						<Label Name="PlaylistColumn5x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn5}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Artist}"></Label>
+					<Border Grid.Column="4" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="4" Name="PlaylistColumn5" IsVisible="{Binding IsPlaylistColumnHeaderArtistVisible}">
+						<TextBlock Name="PlaylistColumn5x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Artist}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderAlbumVisible}" -->
-					<Grid Grid.Column="10" Name="PlaylistColumn6">
-						<Label Name="PlaylistColumn6x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn6}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Album}"></Label>
+					<Border Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="5" Name="PlaylistColumn6" IsVisible="{Binding IsPlaylistColumnHeaderAlbumVisible}">
+						<TextBlock Name="PlaylistColumn6x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Album}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderDiscVisible}" -->
-					<Grid Grid.Column="12" Name="PlaylistColumn7">
-						<Label Name="PlaylistColumn7x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn7}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Disc}"></Label>
+					<Border Grid.Column="6" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="6" Name="PlaylistColumn7" IsVisible="{Binding IsPlaylistColumnHeaderDiscVisible}">
+						<TextBlock Name="PlaylistColumn7x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Disc}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderTrackVisible}" -->
-					<Grid Grid.Column="14" Name="PlaylistColumn8">
-						<Label Name="PlaylistColumn8x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn8}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Track}"></Label>
+					<Border Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="7" Name="PlaylistColumn8" IsVisible="{Binding IsPlaylistColumnHeaderTrackVisible}">
+						<TextBlock Name="PlaylistColumn8x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Track}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderGenreVisible}" -->
-					<Grid Grid.Column="16" Name="PlaylistColumn9">
-						<Label Name="PlaylistColumn9x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn9}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Genre}"></Label>
+					<Border Grid.Column="8" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="8" Name="PlaylistColumn9" IsVisible="{Binding IsPlaylistColumnHeaderGenreVisible}">
+						<TextBlock Name="PlaylistColumn9x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Genre}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsPlaylistColumnHeaderLastModifiedVisible}" -->
-					<Grid Grid.Column="18" Name="PlaylistColumn10">
-						<Label Name="PlaylistColumn10x" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn10}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_LastModified}"></Label>
+					<Border Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="9" Name="PlaylistColumn10" IsVisible="{Binding IsPlaylistColumnHeaderLastModifiedVisible}">
+						<TextBlock Name="PlaylistColumn10x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_LastModified}"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+					<Border Grid.Column="10" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
 
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
@@ -278,27 +264,18 @@
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
-								<ColumnDefinition Width="28"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
+								<ColumnDefinition Width="Auto"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
 
-								<ColumnDefinition Width="4"></ColumnDefinition>
-								<ColumnDefinition Width="*"></ColumnDefinition>
+								<ColumnDefinition Width="24"></ColumnDefinition>
+								<ColumnDefinition Width="Auto"></ColumnDefinition>
 								<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 							</Grid.ColumnDefinitions>
 
@@ -317,32 +294,26 @@
 								</Button>
 							</StackPanel>
 
-							<Viewbox Grid.Column="2" Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center" IsVisible="False">
+							<Grid Grid.Column="1" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn2}">
+								<Viewbox Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
+								</Viewbox>
+							</Grid>
 
-							</Viewbox>
-							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-
+							<TextBlock Grid.Column="2" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderTimeVisible}" -->
+							<TextBlock Grid.Column="3" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn4}" Text="{Binding TimeFormated}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderTimeVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderArtistVisible}" -->
+							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn5}" Text="{Binding Artist}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderArtistVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderAlbumVisible}" -->
+							<TextBlock Grid.Column="5" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn6}" Text="{Binding Album}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderAlbumVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="12" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderDiscVisible}" -->
+							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn7}" Text="{Binding Disc}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderDiscVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="14" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderTrackVisible}" -->
+							<TextBlock Grid.Column="7" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn8}" Text="{Binding Track}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderTrackVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderGenreVisible}" -->
+							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn9}" Text="{Binding Genre}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderGenreVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
-							<TextBlock Grid.Column="18" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderLastModifiedVisible}" -->
+							<TextBlock Grid.Column="9" Width="{Binding Bounds.Size.Width, ElementName=PlaylistColumn10}" Text="{Binding LastModifiedFormated}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsPlaylistColumnHeaderLastModifiedVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 							</TextBlock>
 
 						</Grid>
@@ -350,7 +321,7 @@
 				</ListBox.ItemTemplate>
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem" x:DataType="mod:SongInfo">
-						<Setter Property="Height" Value="36"/>
+						<Setter Property="Height" Value="38"/>
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>

@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MPDCtrlX.ViewModels;
 using System;
+using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace MPDCtrlX.Models;

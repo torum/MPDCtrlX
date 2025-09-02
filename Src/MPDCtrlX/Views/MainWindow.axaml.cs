@@ -25,9 +25,12 @@ namespace MPDCtrlX.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
-    public MainWindow()
+    public MainWindow() { }
+    public MainWindow(MainViewModel vm)
     {
-        var vm = App.GetService<MainViewModel>();
+        //var vm = App.GetService<MainViewModel>();
+        this.DataContext = vm;
+
         if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
         {
             this.Position = new PixelPoint(vm.WindowLeft, vm.WindowTop);
@@ -43,20 +46,21 @@ public partial class MainWindow : Window//AppWindow//
             this.Width = vm.WindowWidth;
         }
 
-        this.DataContext = vm;
-
         InitializeComponent();
 
-
         this.NavigateViewControl.Content = App.GetService<MainView>();
-
-
-        //_settingsPage = App.GetService<SettingsPage>();
 
         //this.Icon = new WindowIcon(new Bitmap())
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
+
+
+        vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
+        vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
+        vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
+
+
 
         /*
         var os = Environment.OSVersion;
@@ -165,11 +169,14 @@ public partial class MainWindow : Window//AppWindow//
         {
             foreach (var fuga in vm.MainMenuItems)
             {
+                /*
                 if (fuga is NodeMenuLibrary lib)
                 {
                     lib.Expanded = true;
                 }
-                else if (fuga is NodeMenuPlaylists plt)
+                else 
+                */
+                if (fuga is NodeMenuPlaylists plt)
                 {
                     plt.Expanded = true;
                 }
@@ -197,6 +204,7 @@ public partial class MainWindow : Window//AppWindow//
                 //vm.SelectedNodeMenu.Selected = true;
             }
         }
+        /*
         else if (e.SelectedItem is NodeMenuLibrary)
         {
             // don't change page here.
@@ -205,6 +213,7 @@ public partial class MainWindow : Window//AppWindow//
                 //vm.SelectedNodeMenu.Selected = true;
             }
         }
+        */
         else
         {
             if (e.SelectedItem is not null)
@@ -342,46 +351,75 @@ public partial class MainWindow : Window//AppWindow//
 
     private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
     {
-        if (this.Width < 580)
+        if (this.Width < 340)
         {
-            //this.SeekSlider.Width = 250;
+            //
+            PlaybackOptions.IsVisible = false;
+            this.NavigateViewControl.OpenPaneLength = 280;
+        }
+        else if (this.Width < 740)
+        {
+            //
+            PlaybackOptions.IsVisible = false;
+            this.NavigateViewControl.OpenPaneLength = 280;
+        }
+        else if (this.Width < 1008)
+        {
+            //
+            PlaybackOptions.IsVisible = true;
+            this.NavigateViewControl.OpenPaneLength = 280;
+        }
+        else if (this.Width < 1800)
+        {
+            //
+            PlaybackOptions.IsVisible = true;
+            this.NavigateViewControl.OpenPaneLength = 280;
         }
         else
         {
-            //this.SeekSlider.Width = 380;
-        }
-
-        if (this.Width < 630)
-        {
-            //this.AlbumCoverBorder.IsVisible = false;
-
-            //HeaderOverlayColSpaceLeft.Width = 24;
-            //HeaderOverlayColSpaceRight.Width = 24;
-        }
-        else
-        {
-            /*
-            if (this.ContentsSplitView.IsPaneOpen)
-            {
-                this.AlbumCoverBorder.IsVisible = false;
-            }
-            else
-            {
-                this.AlbumCoverBorder.IsVisible = true;
-            }
-            */
-
-            //HeaderOverlayColSpaceLeft.Width = 170;
-            //HeaderOverlayColSpaceRight.Width = 170;
+            //
+            PlaybackOptions.IsVisible = true;
+            this.NavigateViewControl.OpenPaneLength = 320;
         }
     }
 
-    /*
-    private void OnCurrentSongChanged(string msg)
+    private readonly StringBuilder _sbCommandOutput = new();
+    public void OnDebugCommandOutput(string arg)
     {
-        //this.Title = msg;
+        // AppendText() is much faster than data binding.
+        //DebugCommandTextBox.AppendText(arg);
+
+        _sbCommandOutput.Append(arg);
+        DebugCommandTextBox.Text = _sbCommandOutput.ToString();
+        DebugCommandTextBox.CaretIndex = DebugCommandTextBox.Text.Length;
     }
-    */
 
+    private readonly StringBuilder _sbIdleOutput = new();
+    public void OnDebugIdleOutput(string arg)
+    {
+        /*
+        // AppendText() is much faster than data binding.
+        DebugIdleTextBox.AppendText(arg);
 
+        DebugIdleTextBox.CaretIndex = DebugIdleTextBox.Text.Length;
+        DebugIdleTextBox.ScrollToEnd();
+        */
+
+        //_sbIdleOutput.Append(DebugIdleTextBox.Text);
+        _sbIdleOutput.Append(arg);
+        DebugIdleTextBox.Text = _sbIdleOutput.ToString();
+        DebugIdleTextBox.CaretIndex = DebugIdleTextBox.Text.Length;
+    }
+
+    public void OnDebugWindowShowHide()
+    {
+        if (this.DebugWindow.IsVisible)
+        {
+            this.DebugWindow.IsVisible = false;
+        }
+        else
+        {
+            this.DebugWindow.IsVisible = true;
+        }
+    }
 }

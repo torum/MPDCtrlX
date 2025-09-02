@@ -11,7 +11,7 @@
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 
-	<Grid>
+	<Grid SizeChanged="PageGrid_SizeChanged">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -23,17 +23,20 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 
 		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Files page title and menus -->
 		<Grid Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="12"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			
+
+			<!-- Size changes from codebehind depending on page size -->
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<!-- page title-->
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Files}" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
@@ -132,37 +135,35 @@
 			<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,Auto,1,*" Margin="0,0,0,0">
 				<Border Grid.Row="0" BorderThickness="1,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 				<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-				<ScrollViewer Grid.Row="1" x:Name="FilesListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+				<ScrollViewer Grid.Row="1" x:Name="FilesListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
-					<Grid Height="34" Margin="1,0,0,0">
+					<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="80"></ColumnDefinition>
+							<ColumnDefinition Width="1*"></ColumnDefinition>
+							<ColumnDefinition Width="1*"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
-							<ColumnDefinition Width="4"></ColumnDefinition>
-							<ColumnDefinition Width="Auto"></ColumnDefinition>
-							<ColumnDefinition Width="4"></ColumnDefinition>
-							<ColumnDefinition Width="Auto"></ColumnDefinition>
-							<ColumnDefinition Width="4"></ColumnDefinition>
-							<ColumnDefinition Width="*"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 
+						<Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
 						<Grid Grid.Column="0" Width="76" Name="Column1">
-							<Label Name="Library0x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></Label>
+							<TextBlock Name="Library0x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center"></TextBlock>
 						</Grid>
 
-						<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
-						<Grid Grid.Column="2" Name="Library1">
-							<Label Name="Library1x" Width="{Binding Bounds.Size.Width, ElementName=Library1}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.FilesListviewColumnHeader_FileName}"></Label>
+						<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+						<Grid Grid.Column="1" Name="Library1">
+							<TextBlock Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.FilesListviewColumnHeader_FileName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 						</Grid>
-						<GridSplitter Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-						<Grid Grid.Column="4" Name="Library2">
-							<Label Name="Library2x" Width="{Binding Bounds.Size.Width, ElementName=Library2}" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.FilesListviewColumnHeader_FilePath}"></Label>
+						<Border Grid.Column="2" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+						<Grid Grid.Column="2" Name="Library2" IsVisible="{Binding IsFilesColumnHeaderFilePathVisible}">
+							<TextBlock Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.FilesListviewColumnHeader_FilePath}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 						</Grid>
-						<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
+						<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
 
 					</Grid>
 					</ScrollViewer>
 				<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 					<ListBox.Resources>
 						<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
@@ -213,12 +214,9 @@
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
-									<ColumnDefinition Width="4"></ColumnDefinition>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
-									<ColumnDefinition Width="4"></ColumnDefinition>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
-									<ColumnDefinition Width="4"></ColumnDefinition>
-									<ColumnDefinition Width="*"></ColumnDefinition>
+									<ColumnDefinition Width="Auto"></ColumnDefinition>
 									<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 								</Grid.ColumnDefinitions>
 
@@ -237,17 +235,18 @@
 									</Button>
 								</StackPanel>
 								
-								<TextBlock Grid.Column="2" Width="{Binding Bounds.Size.Width, ElementName=Library1}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+								<TextBlock Grid.Column="1" Width="{Binding Bounds.Size.Width, ElementName=Library1}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								</TextBlock>
-								<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=Library2}" Text="{Binding FilePath}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+								<TextBlock Grid.Column="2" Width="{Binding Bounds.Size.Width, ElementName=Library2}" Text="{Binding FilePath}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsFilesColumnHeaderFilePathVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								</TextBlock>
 							</Grid>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 					<ListBox.Styles>
 						<Style Selector="ListBoxItem">
-							<Setter Property="Height" Value="36"/>
+							<Setter Property="Height" Value="38"/>
 							<Setter Property="MinHeight" Value="32"/>
+							<Setter Property="VerticalAlignment" Value="Center"/>
 							<Setter Property="Padding" Value="0,0,6,0" />
 							<Setter Property="ContextFlyout">
 								<Setter.Value>

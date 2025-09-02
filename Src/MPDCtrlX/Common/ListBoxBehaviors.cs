@@ -48,6 +48,8 @@ public class ListBoxBehaviors
             {
                 // Subscribe to the scroll event to update the visible items.
                 scrollViewer.ScrollChanged += (s, args) => UpdateVisibleItems(listBox, scrollViewer, wrapPanel);
+                // .. size changed event too.
+                scrollViewer.SizeChanged += (s, args) => UpdateVisibleItems(listBox, scrollViewer, wrapPanel);
 
                 // Call it once initially to set the property.
                 UpdateVisibleItems(listBox, scrollViewer, wrapPanel);

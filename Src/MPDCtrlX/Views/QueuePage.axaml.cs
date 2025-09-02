@@ -50,7 +50,7 @@ public partial class QueuePage : UserControl
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel)
         {
             return;
         }
@@ -68,15 +68,16 @@ public partial class QueuePage : UserControl
         // Position - hidden up/down
         this.DummyHeader.ColumnDefinitions[0].Width = new GridLength(80);//vm.QueueColumnHeaderPositionWidth
         //this.Column1.IsVisible = true;
-        this.Column1X.Width = 80;//vm.QueueColumnHeaderPositionWidth
+        //this.Column1X.Width = 80;//vm.QueueColumnHeaderPositionWidth
+        this.Column1.Width = 80;
         this.DummyHeader.ColumnDefinitions[0].Width = GridLength.Auto;
-
+        /*
         // Title
         this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(vm.QueueColumnHeaderTitleWidth);
         this.Column3.IsVisible = true;
         this.Column3X.Width = vm.QueueColumnHeaderTitleWidth;
         this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Auto;
-
+        */
         UpdateColumHeaders();
     }
 
@@ -95,171 +96,77 @@ public partial class QueuePage : UserControl
 
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
+        // Title
+
         // Time
         if (vm.IsQueueColumnHeaderTimeVisible)
         {
-            if (vm.QueueColumnHeaderTimeWidth <= 0)
-            {
-                //vm.QueueColumnHeaderTimeWidth = 80; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(vm.QueueColumnHeaderTimeWidth);
-            this.Column4.IsVisible = true;
-            this.Column4X.Width = vm.QueueColumnHeaderTimeWidth;
-            this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(70);
         }
         else
         {
-            //this.Column4.IsVisible = false;
-            this.Column4X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[6].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(0);
         }
 
         // Artist
         if (vm.IsQueueColumnHeaderArtistVisible)
         {
-            if (vm.QueueColumnHeaderArtistWidth <= 0)
-            {
-                //vm.QueueColumnHeaderArtistWidth = 120; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(vm.QueueColumnHeaderArtistWidth);
-            this.Column5.IsVisible = true;
-            this.Column5X.Width = vm.QueueColumnHeaderArtistWidth;
-            this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Parse("3*");
         }
         else
         {
-            //this.Column5.IsVisible = false;
-            this.Column5X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(0);
         }
 
         // Album
         if (vm.IsQueueColumnHeaderAlbumVisible)
         {
-            if (vm.QueueColumnHeaderAlbumWidth <= 0)
-            {
-                //vm.QueueColumnHeaderAlbumWidth = 120; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(vm.QueueColumnHeaderAlbumWidth);
-            this.Column6.IsVisible = true;
-            this.Column6X.Width = vm.QueueColumnHeaderAlbumWidth;
-            this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[5].Width = GridLength.Parse("3*");
         }
         else
         {
-            //this.Column6.IsVisible = false;
-            this.Column6X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[10].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[10].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[5].Width = new GridLength(0);
         }
 
         // Disc
         if (vm.IsQueueColumnHeaderDiscVisible)
         {
-            if (vm.QueueColumnHeaderDiscWidth <= 0)
-            {
-                //vm.QueueColumnHeaderDiscWidth = 62; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(vm.QueueColumnHeaderDiscWidth);
-            this.Column7.IsVisible = true;
-            this.Column7X.Width = vm.QueueColumnHeaderDiscWidth;
-            this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(65);
         }
         else
         {
-            //this.Column7.IsVisible = false;
-            this.Column7X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[12].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[12].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
         }
 
         // Track
         if (vm.IsQueueColumnHeaderTrackVisible)
         {
-            if (vm.QueueColumnHeaderTrackWidth <= 0)
-            {
-                //vm.QueueColumnHeaderTrackWidth = 62; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(vm.QueueColumnHeaderTrackWidth);
-            this.Column8.IsVisible = true;
-            this.Column8X.Width = vm.QueueColumnHeaderTrackWidth;
-            this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(65);
         }
         else
         {
-            //this.Column8.IsVisible = false;
-            this.Column8X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[14].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[14].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(0);
         }
 
         // Genre
         if (vm.IsQueueColumnHeaderGenreVisible)
         {
-            if (vm.QueueColumnHeaderGenreWidth <= 0)
-            {
-                //vm.QueueColumnHeaderGenreWidth = 80; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(vm.QueueColumnHeaderGenreWidth);//
-            this.Column9.IsVisible = true;
-            this.Column9X.Width = vm.QueueColumnHeaderGenreWidth;
-            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Parse("2*");
         }
         else
         {
-            //this.Column9.IsVisible = false;
-            this.Column9X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[16].Width = new GridLength(0);//
-            this.DummyHeader.ColumnDefinitions[16].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
         }
 
         // Last modified
         if (vm.IsQueueColumnHeaderLastModifiedVisible)
         {
-            if (vm.QueueColumnHeaderLastModifiedWidth <= 0)
-            {
-                //vm.QueueColumnHeaderLastModifiedWidth = 120; // Default width if not set
-            }
-            this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(vm.QueueColumnHeaderLastModifiedWidth);
-            this.Column10.IsVisible = true;
-            this.Column10X.Width = vm.QueueColumnHeaderLastModifiedWidth;
-            this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[9].Width = GridLength.Parse("2*");
         }
         else
         {
-            //this.Column10.IsVisible = false;
-            this.Column10X.Width = 0;
-            this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
-            this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
+            this.DummyHeader.ColumnDefinitions[9].Width = new GridLength(0);
         }
-    }
-
-    // Called on window closing to save dummy header sizes.
-    public void SaveQueueHeaderWidth()
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        if (!_isHeaderWidthInitialized)
-        {
-            return;
-        }
-
-        // This is a dirty workaround for AvaloniaUI.
-        vm.QueueColumnHeaderPositionWidth = this.Column1.Bounds.Size.Width;
-        vm.QueueColumnHeaderNowPlayingWidth = this.Column2.Bounds.Size.Width;
-        vm.QueueColumnHeaderTitleWidth = this.Column3.Bounds.Size.Width;
-        vm.QueueColumnHeaderTimeWidth = this.Column4.Bounds.Size.Width;
-        vm.QueueColumnHeaderArtistWidth = this.Column5.Bounds.Size.Width;
-        vm.QueueColumnHeaderAlbumWidth = this.Column6.Bounds.Size.Width;
-        vm.QueueColumnHeaderDiscWidth = this.Column7.Bounds.Size.Width;
-        vm.QueueColumnHeaderTrackWidth = this.Column8.Bounds.Size.Width;
-        vm.QueueColumnHeaderGenreWidth = this.Column9.Bounds.Size.Width;//.Width;
-        vm.QueueColumnHeaderLastModifiedWidth = this.Column10.Bounds.Size.Width;//.Width;
     }
 
     private async void OnScrollIntoView(int ind)
@@ -503,4 +410,89 @@ public partial class QueuePage : UserControl
         }
     }
 
+    private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
+    {
+        if (!e.WidthChanged)
+        {
+            return;
+        }
+        
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (e.NewSize.Width < 340)
+        {
+            vm.IsQueueColumnHeaderTimeVisible = false;
+            vm.IsQueueColumnHeaderArtistVisible = false;
+            vm.IsQueueColumnHeaderAlbumVisible = false;
+            vm.IsQueueColumnHeaderDiscVisible = false;
+            vm.IsQueueColumnHeaderTrackVisible = false;
+            vm.IsQueueColumnHeaderGenreVisible = false;
+            vm.IsQueueColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 740)
+        {
+            vm.IsQueueColumnHeaderTimeVisible = true;
+            vm.IsQueueColumnHeaderArtistVisible = false;
+            vm.IsQueueColumnHeaderAlbumVisible = false;
+            vm.IsQueueColumnHeaderDiscVisible = false;
+            vm.IsQueueColumnHeaderTrackVisible = false;
+            vm.IsQueueColumnHeaderGenreVisible = false;
+            vm.IsQueueColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 1008)
+        {
+            vm.IsQueueColumnHeaderTimeVisible = true;
+            vm.IsQueueColumnHeaderArtistVisible = true;
+            vm.IsQueueColumnHeaderAlbumVisible = true;
+            vm.IsQueueColumnHeaderDiscVisible = false;
+            vm.IsQueueColumnHeaderTrackVisible = false;
+            vm.IsQueueColumnHeaderGenreVisible = false;
+            vm.IsQueueColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 1320)
+        {
+            vm.IsQueueColumnHeaderTimeVisible = true;
+            vm.IsQueueColumnHeaderArtistVisible = true;
+            vm.IsQueueColumnHeaderAlbumVisible = true;
+            vm.IsQueueColumnHeaderDiscVisible = true;
+            vm.IsQueueColumnHeaderTrackVisible = true;
+            vm.IsQueueColumnHeaderGenreVisible = true;
+            vm.IsQueueColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 2000)
+        {
+            vm.IsQueueColumnHeaderTimeVisible = true;
+            vm.IsQueueColumnHeaderArtistVisible = true;
+            vm.IsQueueColumnHeaderAlbumVisible = true;
+            vm.IsQueueColumnHeaderDiscVisible = true;
+            vm.IsQueueColumnHeaderTrackVisible = true;
+            vm.IsQueueColumnHeaderGenreVisible = true;
+            vm.IsQueueColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else
+        {
+            vm.IsQueueColumnHeaderTimeVisible = true;
+            vm.IsQueueColumnHeaderArtistVisible = true;
+            vm.IsQueueColumnHeaderAlbumVisible = true;
+            vm.IsQueueColumnHeaderDiscVisible = true;
+            vm.IsQueueColumnHeaderTrackVisible = true;
+            vm.IsQueueColumnHeaderGenreVisible = true;
+            vm.IsQueueColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+    }
 }

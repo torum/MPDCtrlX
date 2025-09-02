@@ -20,17 +20,13 @@ public partial class PlaylistItemPage : UserControl
 
         InitializeComponent();
 
+        viewmodel.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
         viewmodel.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
         viewmodel.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
         if (_isHeaderWidthInitialized)
         {
             // Everytime page is changed back, this loaded is called. So.
@@ -44,15 +40,15 @@ public partial class PlaylistItemPage : UserControl
         // Position - hidden up/down
         this.DummyHeader.ColumnDefinitions[0].Width = new GridLength(80);//vm.PlaylistColumnHeaderPositionWidth
         //this.Column1.IsVisible = true;
-        this.PlaylistColumn1x.Width = 80;//vm.PlaylistColumnHeaderPositionWidth
+        this.PlaylistColumn1.Width = 80;//this.PlaylistColumn1x.Width = 80;//vm.PlaylistColumnHeaderPositionWidth
         this.DummyHeader.ColumnDefinitions[0].Width = GridLength.Auto;
-
+        /*
         // Title
         this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(vm.PlaylistColumnHeaderTitleWidth);
         this.PlaylistColumn3.IsVisible = true;
         this.PlaylistColumn3x.Width = vm.PlaylistColumnHeaderTitleWidth;
         this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Auto;
-
+        */
         UpdateColumHeaders();
     }
 
@@ -71,6 +67,81 @@ public partial class PlaylistItemPage : UserControl
 
         // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
+        // Title
+
+        // Time
+        if (vm.IsPlaylistColumnHeaderTimeVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(70);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[3].Width = new GridLength(0);
+        }
+
+        // Artist
+        if (vm.IsPlaylistColumnHeaderArtistVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[4].Width = GridLength.Parse("3*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(0);
+        }
+
+        // Album
+        if (vm.IsPlaylistColumnHeaderAlbumVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[5].Width = GridLength.Parse("3*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[5].Width = new GridLength(0);
+        }
+
+        // Disc
+        if (vm.IsPlaylistColumnHeaderDiscVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(65);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[6].Width = new GridLength(0);
+        }
+
+        // Track
+        if (vm.IsPlaylistColumnHeaderTrackVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(65);
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[7].Width = new GridLength(0);
+        }
+
+        // Genre
+        if (vm.IsPlaylistColumnHeaderGenreVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[8].Width = GridLength.Parse("2*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[8].Width = new GridLength(0);
+        }
+
+        // Last modified
+        if (vm.IsPlaylistColumnHeaderLastModifiedVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[9].Width = GridLength.Parse("2*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[9].Width = new GridLength(0);
+        }
+
+
+        // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
+        /*
         // Time
         if (vm.IsPlaylistColumnHeaderTimeVisible)
         {
@@ -210,31 +281,93 @@ public partial class PlaylistItemPage : UserControl
             this.DummyHeader.ColumnDefinitions[18].Width = new GridLength(0);
             this.DummyHeader.ColumnDefinitions[18].Width = GridLength.Auto;
         }
+        */
     }
 
-    // Called on window closing to save dummy header sizes.
-    public void SavePlaylistItemsHeaderWidth()
+    private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
     {
+        if (!e.WidthChanged)
+        {
+            return;
+        }
+
         if (DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        if (!_isHeaderWidthInitialized)
+        if (e.NewSize.Width < 340)
         {
-            return;
+            vm.IsPlaylistColumnHeaderTimeVisible = false;
+            vm.IsPlaylistColumnHeaderArtistVisible = false;
+            vm.IsPlaylistColumnHeaderAlbumVisible = false;
+            vm.IsPlaylistColumnHeaderDiscVisible = false;
+            vm.IsPlaylistColumnHeaderTrackVisible = false;
+            vm.IsPlaylistColumnHeaderGenreVisible = false;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
         }
-
-        vm.PlaylistColumnHeaderPositionWidth = this.PlaylistColumn1.Bounds.Size.Width;
-        // = this.PlaylistColumn2.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderTitleWidth = this.PlaylistColumn3.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderTimeWidth = this.PlaylistColumn4.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderArtistWidth = this.PlaylistColumn5.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderAlbumWidth = this.PlaylistColumn6.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderDiscWidth = this.PlaylistColumn7.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderTrackWidth = this.PlaylistColumn8.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderGenreWidth = this.PlaylistColumn9.Bounds.Size.Width;
-        vm.PlaylistColumnHeaderLastModifiedWidth = this.PlaylistColumn10.Bounds.Size.Width;
+        else if (e.NewSize.Width < 740)
+        {
+            vm.IsPlaylistColumnHeaderTimeVisible = true;
+            vm.IsPlaylistColumnHeaderArtistVisible = false;
+            vm.IsPlaylistColumnHeaderAlbumVisible = false;
+            vm.IsPlaylistColumnHeaderDiscVisible = false;
+            vm.IsPlaylistColumnHeaderTrackVisible = false;
+            vm.IsPlaylistColumnHeaderGenreVisible = false;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 1008)
+        {
+            vm.IsPlaylistColumnHeaderTimeVisible = true;
+            vm.IsPlaylistColumnHeaderArtistVisible = true;
+            vm.IsPlaylistColumnHeaderAlbumVisible = true;
+            vm.IsPlaylistColumnHeaderDiscVisible = false;
+            vm.IsPlaylistColumnHeaderTrackVisible = false;
+            vm.IsPlaylistColumnHeaderGenreVisible = false;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 1320)
+        {
+            vm.IsPlaylistColumnHeaderTimeVisible = true;
+            vm.IsPlaylistColumnHeaderArtistVisible = true;
+            vm.IsPlaylistColumnHeaderAlbumVisible = true;
+            vm.IsPlaylistColumnHeaderDiscVisible = true;
+            vm.IsPlaylistColumnHeaderTrackVisible = true;
+            vm.IsPlaylistColumnHeaderGenreVisible = true;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 2000)
+        {
+            vm.IsPlaylistColumnHeaderTimeVisible = true;
+            vm.IsPlaylistColumnHeaderArtistVisible = true;
+            vm.IsPlaylistColumnHeaderAlbumVisible = true;
+            vm.IsPlaylistColumnHeaderDiscVisible = true;
+            vm.IsPlaylistColumnHeaderTrackVisible = true;
+            vm.IsPlaylistColumnHeaderGenreVisible = true;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else
+        {
+            vm.IsPlaylistColumnHeaderTimeVisible = true;
+            vm.IsPlaylistColumnHeaderArtistVisible = true;
+            vm.IsPlaylistColumnHeaderAlbumVisible = true;
+            vm.IsPlaylistColumnHeaderDiscVisible = true;
+            vm.IsPlaylistColumnHeaderTrackVisible = true;
+            vm.IsPlaylistColumnHeaderGenreVisible = true;
+            vm.IsPlaylistColumnHeaderLastModifiedVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.

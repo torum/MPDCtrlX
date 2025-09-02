@@ -27,17 +27,12 @@ public partial class FilesPage : UserControl
 
         InitializeComponent();
 
+        viewmodel.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
         viewmodel.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
-
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
         if (_isHeaderWidthInitialized)
         {
             // Everytime page is changed back, this loaded is called. So.
@@ -46,25 +41,32 @@ public partial class FilesPage : UserControl
 
         _isHeaderWidthInitialized = true;
 
-        this.Library1x.Width = vm.LibraryColumnHeaderTitleWidth;
-        this.Library2x.Width = vm.LibraryColumnHeaderFilePathWidth;
+        UpdateColumHeaders();
     }
 
-    // Called on window closing to save dummy header sizes.
-    public void SaveFilesHeaderWidth()
+    private void OnFilesHeaderVisibilityChanged(object? sender, System.EventArgs e)
+    {
+        UpdateColumHeaders();
+    }
+
+    private void UpdateColumHeaders()
     {
         if (DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        if (!_isHeaderWidthInitialized)
-        {
-            return;
-        }
+        // This is a dirty workaround for AvaloniaUI which does not have ListView control at this moment.
 
-        vm.LibraryColumnHeaderTitleWidth = this.Library1.Bounds.Size.Width;
-        vm.LibraryColumnHeaderFilePathWidth = this.Library2.Bounds.Size.Width;
+        // FilePath
+        if (vm.IsFilesColumnHeaderFilePathVisible)
+        {
+            this.DummyHeader.ColumnDefinitions[2].Width = GridLength.Parse("1*");
+        }
+        else
+        {
+            this.DummyHeader.ColumnDefinitions[2].Width = new GridLength(0);
+        }
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.
@@ -163,6 +165,56 @@ public partial class FilesPage : UserControl
             {
                 FilesFilterQueryTextBox.Focus(NavigationMethod.Unspecified, KeyModifiers.None);
             });
+        }
+    }
+
+    private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
+    {
+        if (!e.WidthChanged)
+        {
+            return;
+        }
+
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (e.NewSize.Width < 340)
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 740)
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = false;
+            //
+            this.HeaderGridSpacer.Width = 48;
+        }
+        else if (e.NewSize.Width < 1008)
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 1320)
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else if (e.NewSize.Width < 2000)
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
+        }
+        else
+        {
+            vm.IsFilesColumnHeaderFilePathVisible = true;
+            //
+            this.HeaderGridSpacer.Width = 12;
         }
     }
 }

@@ -11,18 +11,21 @@
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:CompileBindings="True">
 
-	<Grid RowDefinitions="1,Auto,*">
-		<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
+		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		
 		<!-- Queue page title and menus -->
 		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-		<Grid Grid.Row="1" Margin="0,0,0,12">
+		<Grid Grid.Row="1" Margin="0,0,0,12" x:Name="HeaderGrid">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="12"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			
+
+			<!-- Size changes from codebehind depending on page size -->
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<!-- page title-->
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Queue}" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
@@ -143,108 +146,91 @@
 		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
-			<ScrollViewer Grid.Row="1" x:Name="QueueListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
+			<ScrollViewer Grid.Row="1" x:Name="QueueListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
 				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
 				<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
 						<ColumnDefinition Width="28"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="Auto"></ColumnDefinition>
+						<ColumnDefinition Width="6*"></ColumnDefinition>
+						<ColumnDefinition Width="70"></ColumnDefinition>
+						<ColumnDefinition Width="3*"></ColumnDefinition>
+						<ColumnDefinition Width="3*"></ColumnDefinition>
+						<ColumnDefinition Width="65"></ColumnDefinition>
+						<ColumnDefinition Width="65"></ColumnDefinition>
+						<ColumnDefinition Width="2*"></ColumnDefinition>
+						<ColumnDefinition Width="2*"></ColumnDefinition>
 
-						<ColumnDefinition Width="4"></ColumnDefinition>
-						<ColumnDefinition Width="*"></ColumnDefinition>
+						<ColumnDefinition Width="24"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
-					<!--
-					<Grid Grid.Column="0" Name="Column1" IsVisible="False">
-						<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}">#</Label>
-					</Grid>
-					-->
+
+					<Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
 					<Grid Grid.Column="0" Name="Column1" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
-							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							<PathIcon Opacity="0.7" Background="Transparent" Width="NaN" Height="NaN"
 								Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
 							</PathIcon>
 						</Viewbox>
-						<Label Name="Column1X" Opacity="1" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}"></Label>
 					</Grid>
 
-					<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}"/>
-					<Grid Grid.Column="2" Name="Column2">
-						<Label Name="Column2X" Opacity="0.7" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column2}"></Label>
+					<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="1" Name="Column2">
+						<Viewbox Width="14" Height="14" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+							<PathIcon Opacity="0.7" Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Margin="0" Padding="0">
+							</PathIcon>
+						</Viewbox>
 					</Grid>
 
-					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" MaxWidth="4"/>
-					<Grid Grid.Column="4" Name="Column3">
-						<Label Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Title}" Width="{Binding Bounds.Size.Width, ElementName=Column3}"></Label>
+					<Border Grid.Column="2" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="2" Name="Column3">
+						<TextBlock Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns" MaxWidth="4"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderTimeVisible}" -->
-					<Grid Grid.Column="6" Name="Column4">
-						<Label Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column4}" Content="{x:Static prop:Resources.ListviewColumnHeader_Time}"></Label>
+					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="3" Name="Column4" IsVisible="{Binding IsQueueColumnHeaderTimeVisible}">
+						<TextBlock Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Time}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderArtistVisible}" -->
-					<Grid Grid.Column="8" Name="Column5">
-						<Label Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column5}" Content="{x:Static prop:Resources.ListviewColumnHeader_Artist}"></Label>
+					<Border Grid.Column="4" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="4" Name="Column5" IsVisible="{Binding IsQueueColumnHeaderArtistVisible}">
+						<TextBlock Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderAlbumVisible}" -->
-					<Grid Grid.Column="10" Name="Column6">
-						<Label Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column6}" Content="{x:Static prop:Resources.ListviewColumnHeader_Album}"></Label>
+					<Border Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="5" Name="Column6" IsVisible="{Binding IsQueueColumnHeaderAlbumVisible}">
+						<TextBlock Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="11" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderDiscVisible}" -->
-					<Grid Grid.Column="12" Name="Column7">
-						<Label Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column7}" Content="{x:Static prop:Resources.ListviewColumnHeader_Disc}"></Label>
+					<Border Grid.Column="6" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="6" Name="Column7" IsVisible="{Binding IsQueueColumnHeaderDiscVisible}">
+						<TextBlock Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="13" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderTrackVisible}" -->
-					<Grid Grid.Column="14" Name="Column8">
-						<Label Name="Column8X" Width="{Binding Bounds.Size.Width, ElementName=Column8}" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Content="{x:Static prop:Resources.ListviewColumnHeader_Track}"></Label>
+					<Border Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="7" Name="Column8" IsVisible="{Binding IsQueueColumnHeaderTrackVisible}">
+						<TextBlock Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="15" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderGenreVisible}" -->
-					<Grid Grid.Column="16" Name="Column9">
-						<Label Name="Column9X" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Content="{x:Static prop:Resources.ListviewColumnHeader_Genre}"></Label>
+					<Border Grid.Column="8" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="8" Name="Column9" IsVisible="{Binding IsQueueColumnHeaderGenreVisible}">
+						<TextBlock Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Text="{x:Static prop:Resources.ListviewColumnHeader_Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="17" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<!--  IsVisible="{Binding IsQueueColumnHeaderLastModifiedVisible}" -->
-					<Grid Grid.Column="18" Name="Column10">
-						<Label Name="Column10X" Width="{Binding Bounds.Size.Width, ElementName=Column10}" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Content="{x:Static prop:Resources.ListviewColumnHeader_LastModified}"></Label>
+					<Border Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="9" Name="Column10" IsVisible="{Binding IsQueueColumnHeaderLastModifiedVisible}">
+						<TextBlock Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Text="{x:Static prop:Resources.ListviewColumnHeader_LastModified}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
-					<GridSplitter Grid.Column="19" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5" ResizeDirection="Columns"/>
-					<Grid Grid.Column="20" Name="Column11" MinWidth="24">
+					<Border Grid.Column="10" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
+					<Grid Grid.Column="10" Name="Column11" MinWidth="24">
 
 					</Grid>
 
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" x:Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="Multiple" AutoScrollToSelectedItem="False" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Loaded="ListBox_Loaded">
+			<ListBox Grid.Row="3" x:Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="Multiple" AutoScrollToSelectedItem="False" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
 				<ListBox.Resources>
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
@@ -291,7 +277,7 @@
 				</ListBox.KeyBindings>
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
-						<VirtualizingStackPanel />
+						<VirtualizingStackPanel/>
 					</ItemsPanelTemplate>
 				</ListBox.ItemsPanel>
 				<ListBox.ItemTemplate>
@@ -299,31 +285,22 @@
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="28"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
-								<ColumnDefinition Width="4"></ColumnDefinition>
 								<ColumnDefinition Width="Auto"></ColumnDefinition>
 
-								<ColumnDefinition Width="4"></ColumnDefinition>
-								<ColumnDefinition Width="*"></ColumnDefinition>
+								<ColumnDefinition Width="24"></ColumnDefinition>
+								<ColumnDefinition Width="Auto"></ColumnDefinition>
 								<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 							</Grid.ColumnDefinitions>
 							
-							<StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Width="{Binding Bounds.Size.Width, ElementName=Column1}" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
+							<StackPanel Grid.Column="0" Orientation="Horizontal" Width="{Binding Bounds.Size.Width, ElementName=Column1}" HorizontalAlignment="Center" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
 								<Button Margin="2,0,0,0" Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).QueueListviewMoveUpCommand}" CommandParameter="{Binding}" ToolTip.Tip="{x:Static prop:Resources.ListViewItemContextMenu_MoveUp}" Background="Transparent" BorderThickness="0">
 									<Viewbox Width="12" Height="12" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 										<PathIcon Data="M7.5 13.5C7.5 13.7761 7.72386 14 8 14C8.27614 14 8.5 13.7761 8.5 13.5V3.80298L12.1283 7.83448C12.3131 8.03974 12.6292 8.05638 12.8345 7.87165C13.0397 7.68692 13.0564 7.37077 12.8716 7.16552L8.37165 2.16552C8.27683 2.06016 8.14174 2 8 2C7.85826 2 7.72317 2.06016 7.62835 2.16552L3.12836 7.16552C2.94363 7.37077 2.96027 7.68692 3.16552 7.87165C3.37078 8.05638 3.68692 8.03974 3.87165 7.83448L7.5 3.80298V13.5Z" Width="NaN" Height="NaN" Margin="0" Padding="0">
@@ -337,113 +314,126 @@
 									</Viewbox>
 								</Button>
 							</StackPanel>
-							
-							<Viewbox Grid.Column="2" Width="14" Height="14" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center">
-								<PathIcon Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Foreground="{DynamicResource AccentFillColorDefaultBrush}" Margin="0" Padding="0">
+							<Grid Grid.Column="1" Width="{Binding Bounds.Size.Width, ElementName=Column2}">
+								<Viewbox Width="14" Height="14" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+									<PathIcon Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Foreground="{DynamicResource AccentFillColorDefaultBrush}" Margin="0" Padding="0">
+										<Interaction.Behaviors>
+											<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+												<ChangePropertyAction PropertyName="IsVisible" Value="True" />
+											</DataTriggerBehavior>
+											<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+												<ChangePropertyAction PropertyName="IsVisible" Value="False" />
+											</DataTriggerBehavior>
+										</Interaction.Behaviors>
+									</PathIcon>
+								</Viewbox>
+							</Grid>
+							<Grid Grid.Column="2" Width="{Binding Bounds.Size.Width, ElementName=Column3}">
+								<TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 									<Interaction.Behaviors>
 										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-											<ChangePropertyAction PropertyName="IsVisible" Value="True" />
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
 										</DataTriggerBehavior>
 										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-											<ChangePropertyAction PropertyName="IsVisible" Value="False" />
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
 										</DataTriggerBehavior>
 									</Interaction.Behaviors>
-								</PathIcon>
-							</Viewbox>
-							<TextBlock Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=Column3}" Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=Column4}" Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderTimeVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=Column5}" Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderArtistVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=Column6}" Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderAlbumVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="12" Width="{Binding Bounds.Size.Width, ElementName=Column7}" Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderDiscVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="14" Width="{Binding Bounds.Size.Width, ElementName=Column8}" Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderTrackVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="16" Width="{Binding Bounds.Size.Width, ElementName=Column9}" Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderGenreVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-							<TextBlock Grid.Column="18" Width="{Binding Bounds.Size.Width, ElementName=Column10}" Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
-								<!--  IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderLastModifiedVisible}" -->
-								<Interaction.Behaviors>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
-										<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
-									</DataTriggerBehavior>
-									<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
-										<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
-									</DataTriggerBehavior>
-								</Interaction.Behaviors>
-							</TextBlock>
-
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="3" Width="{Binding Bounds.Size.Width, ElementName=Column4}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderTimeVisible}">
+								<TextBlock Text="{Binding TimeFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="4" Width="{Binding Bounds.Size.Width, ElementName=Column5}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderArtistVisible}">
+								<TextBlock Text="{Binding Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="5" Width="{Binding Bounds.Size.Width, ElementName=Column6}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderAlbumVisible}">
+								<TextBlock Text="{Binding Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="6" Width="{Binding Bounds.Size.Width, ElementName=Column7}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderDiscVisible}">
+								<TextBlock Text="{Binding Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="7" Width="{Binding Bounds.Size.Width, ElementName=Column8}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderTrackVisible}">
+								<TextBlock Text="{Binding Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="8" Width="{Binding Bounds.Size.Width, ElementName=Column9}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderGenreVisible}">
+								<TextBlock Text="{Binding Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="9" Width="{Binding Bounds.Size.Width, ElementName=Column10}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsQueueColumnHeaderLastModifiedVisible}">
+								<TextBlock Text="{Binding LastModifiedFormated}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+									<Interaction.Behaviors>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="True">
+											<ChangePropertyAction PropertyName="FontWeight" Value="SemiBold" />
+										</DataTriggerBehavior>
+										<DataTriggerBehavior Binding="{Binding IsPlaying}" ComparisonCondition="Equal" Value="False">
+											<ChangePropertyAction PropertyName="FontWeight" Value="Normal" />
+										</DataTriggerBehavior>
+									</Interaction.Behaviors>
+								</TextBlock>
+							</Grid>
+							<Grid Grid.Column="10" Width="{Binding Bounds.Size.Width, ElementName=Column11}">
+								<TextBlock Text="" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
+								</TextBlock>
+							</Grid>
 						</Grid>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 				<ListBox.Styles>
 					<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
-						<Setter Property="Height" Value="36"/>
+						<Setter Property="Height" Value="38"/>
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
