@@ -8,10 +8,11 @@ namespace MPDCtrlX.Views;
 
 public partial class ArtistPage : UserControl
 {
-    public ArtistPage()
+    public ArtistPage(){}
+    public ArtistPage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
     }

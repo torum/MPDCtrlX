@@ -169,14 +169,11 @@ public partial class MainWindow : Window//AppWindow//
         {
             foreach (var fuga in vm.MainMenuItems)
             {
-                /*
                 if (fuga is NodeMenuLibrary lib)
                 {
                     lib.Expanded = true;
                 }
-                else 
-                */
-                if (fuga is NodeMenuPlaylists plt)
+                else if (fuga is NodeMenuPlaylists plt)
                 {
                     plt.Expanded = true;
                 }
@@ -204,7 +201,6 @@ public partial class MainWindow : Window//AppWindow//
                 //vm.SelectedNodeMenu.Selected = true;
             }
         }
-        /*
         else if (e.SelectedItem is NodeMenuLibrary)
         {
             // don't change page here.
@@ -213,7 +209,6 @@ public partial class MainWindow : Window//AppWindow//
                 //vm.SelectedNodeMenu.Selected = true;
             }
         }
-        */
         else
         {
             if (e.SelectedItem is not null)

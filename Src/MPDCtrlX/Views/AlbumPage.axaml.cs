@@ -16,11 +16,11 @@ public partial class AlbumPage : UserControl
 {
     //private ScrollViewer? _scrollViewer;
     //private WrapPanel? _wrapPanel;
-
-    public AlbumPage()
+    public AlbumPage() { }
+    public AlbumPage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
     }
@@ -95,33 +95,65 @@ public partial class AlbumPage : UserControl
             return;
         }
 
+        var ugrid = this.AlbumsListBox.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.UniformGrid>().FirstOrDefault();
+
         if (e.NewSize.Width < 340)
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = 1;
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 340 = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 48;
         }
         else if (e.NewSize.Width < 740)
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 740 = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 48;
         }
         else if (e.NewSize.Width < 1008)
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1008 = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 12;
         }
         else if (e.NewSize.Width < 1320)
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1320 = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 12;
         }
         else if (e.NewSize.Width < 2000)
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 2000 = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 12;
         }
         else
         {
+            if (ugrid is not null)
+            {
+                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
+                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)} else  = {ugrid.Columns}");
+            }
             //
             this.HeaderGridSpacer.Width = 12;
         }

@@ -17,32 +17,53 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Common;
 
-public class ListBoxBehaviors
+public class ItemsControlStackPanelBehaviors
 {
-    // The target is ListBox, and the value is an IEnumerable of objects.
+    // The target is ScrollViewer(with ItemsControl inside), and the value is an IEnumerable of objects.
     public static readonly AttachedProperty<IEnumerable<object>> VisibleItemsProperty =
-        AvaloniaProperty.RegisterAttached<ListBoxBehaviors, ListBox, IEnumerable<object>>("VisibleItems");
+        AvaloniaProperty.RegisterAttached<ItemsControlStackPanelBehaviors, ScrollViewer, IEnumerable<object>>("VisibleItems");
 
-    public static IEnumerable<object> GetVisibleItems(ListBox element)
+    public static IEnumerable<object> GetVisibleItems(ScrollViewer element)
     {
         return element.GetValue(VisibleItemsProperty);
     }
 
-    public static void SetVisibleItems(ListBox element, IEnumerable<object> value)
+    public static void SetVisibleItems(ScrollViewer element, IEnumerable<object> value)
     {
         element.SetValue(VisibleItemsProperty, value);
     }
 
-    static ListBoxBehaviors()
+    static ItemsControlStackPanelBehaviors()
     {
+        //Debug.WriteLine("ItemsControlStackPanelBehaviors");
+
         // This class handler is triggered whenever a ListBox is loaded into the visual tree.
-        ListBox.LoadedEvent.AddClassHandler<ListBox>((sender, e) =>
+        ScrollViewer.LoadedEvent.AddClassHandler<ScrollViewer>((sender, e) =>
         {
-            var listBox = sender;
+            //var listBox = sender;
+            var scrollViewer = sender;
 
-            var scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+            if (scrollViewer.Tag != null)
+            {
+                //Debug.WriteLine("(listBox.Tag != null) @ItemsControlStackPanelBehaviors");
+                return;
+            }
 
-            var wrapPanel = listBox.GetVisualDescendants().OfType<WrapPanel>().FirstOrDefault();
+            scrollViewer.Tag = "LoadedEvent_ItemsControlStackPanelBehaviors";
+
+            //var scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+            var listBox = scrollViewer.GetVisualDescendants().OfType<ItemsControl>().FirstOrDefault();
+            if (listBox is null)
+            {
+                return;
+            }
+
+            //var wrapPanel = listBox.GetVisualDescendants().OfType<WrapPanel>().FirstOrDefault();
+            var wrapPanel = listBox.GetVisualDescendants().OfType<StackPanel>().FirstOrDefault();
+            if (wrapPanel is null)
+            {
+                return;
+            }
 
             if ((scrollViewer != null) && (wrapPanel != null))
             {
@@ -57,7 +78,7 @@ public class ListBoxBehaviors
         });
     }
 
-    private static void UpdateVisibleItems(ListBox listBox, ScrollViewer scrollViewer, WrapPanel wrapPanel)
+    private static void UpdateVisibleItems(ItemsControl listBox, ScrollViewer scrollViewer, StackPanel wrapPanel)
     {
         //var _scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
         if (scrollViewer == null) return;

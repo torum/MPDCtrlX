@@ -1,14 +1,19 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using MPDCtrlX.ViewModels;
 using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
 public partial class SettingsPage : UserControl
 {
-    public SettingsPage()
+    public SettingsPage() { }
+    public SettingsPage(MainViewModel vm)
     {
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
+
         InitializeComponent();
     }
     /*

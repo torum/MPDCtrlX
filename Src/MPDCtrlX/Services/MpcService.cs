@@ -109,6 +109,9 @@ public partial class MpcService : IMpcService
         }
     }
 
+    private static readonly CancellationTokenSource cts = new();
+    private static readonly CancellationToken token = cts.Token;
+
     // TODO: Not really used...
     public bool IsMpdCommandConnected { get; set; }
     public bool IsMpdIdleConnected { get; set; }
@@ -169,6 +172,7 @@ public partial class MpcService : IMpcService
     public MpcService(IBinaryDownloader binaryDownloader)
     {
         _binaryDownloader = binaryDownloader;
+
     }
 
     #region == Idle Connection ==
@@ -784,7 +788,7 @@ public partial class MpcService : IMpcService
                 if (MpdStop)
                     break;
 
-                string? line = await _idleReader.ReadLineAsync();
+                string? line = await _idleReader.ReadLineAsync(token);
 
                 if (line is not null)
                 {
@@ -889,6 +893,7 @@ public partial class MpcService : IMpcService
             if ((ConnectionState == ConnectionStatus.Disconnecting) || (ConnectionState == ConnectionStatus.DisconnectedByUser) || (ConnectionState == ConnectionStatus.Connecting))
             {
                 // no problem
+                Debug.WriteLine("System.IO.IOException @MpdIdle -> Null return due to ConnectionStatus.Disconnecting, now exiting.");
             }
             else
             {
@@ -899,6 +904,18 @@ public partial class MpcService : IMpcService
                 ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
 
                 ConnectionError?.Invoke(this, "The connection (idle) has been terminated. Exception: " + e.Message);
+            }
+        }
+        catch (System.OperationCanceledException e)
+        {
+            if ((ConnectionState == ConnectionStatus.Disconnecting) || (ConnectionState == ConnectionStatus.DisconnectedByUser) || (ConnectionState == ConnectionStatus.Connecting))
+            {
+                // no problem
+                Debug.WriteLine("ReadLineAsync canceled due to ConnectionStatus.Disconnecting, now exiting.");
+            }
+            else
+            {
+                Debug.WriteLine("[OperationCanceledException@MpdIdle] ({0}):\n{1}", "ReadLineAsync: " + ConnectionState.ToString(), e.Message);
             }
         }
         catch (System.InvalidOperationException e)
@@ -2066,7 +2083,6 @@ public partial class MpcService : IMpcService
 
                 if (res.IsSuccess)
                 {
-
                     //await Task.Delay(200);
                     //MpdAlbumArtChanged?.Invoke(this);
                 }
@@ -2078,40 +2094,7 @@ public partial class MpcService : IMpcService
                     //await Task.Delay(200);
                     //MpdAlbumArtChanged?.Invoke(this);
 
-                    if (res.IsTimeOut)
-                    {
-                        if ((ConnectionState == ConnectionStatus.Disconnecting) || (ConnectionState == ConnectionStatus.DisconnectedByUser))
-                        {
 
-                            Debug.WriteLine("MpdQueryAlbumArt@Timeout. Disconnecting...");
-                            IsBusy?.Invoke(this, false);
-
-                            return res;
-                        }
-                        else
-                        {
-                            DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting...");
-                            // re-connect
-                            var b = await _binaryDownloader.MpdBinaryConnectionStart(MpdHost, MpdPort, MpdPassword);
-                            if (b)
-                            {
-                                Debug.WriteLine("MpdQueryAlbumArt@Timeout. Reconnecting success.");
-                                DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting success.");
-                                // retry for the timeout.
-                                _semaphoreBinary.Release();
-                                return await MpdQueryAlbumArtForAlbumView(uri, isUsingReadpicture);
-                            }
-                            else
-                            {
-                                Debug.WriteLine("MpdQueryAlbumArt@Timeout. Reconnecting failed.");
-                                DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting failed.");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("MpdQueryAlbumArt failed.");
-                    }
                     /*
                     Dispatcher.UIThread.Post(() =>
                     {
@@ -2119,8 +2102,6 @@ public partial class MpcService : IMpcService
                     });
                     */
                 }
-
-
             }
             finally
             {
@@ -2132,6 +2113,40 @@ public partial class MpcService : IMpcService
             //Debug.WriteLine("WaitAsync failed. @MpdQueryAlbumArtForAlbumView");
             res.IsWaitFailed = true;
             res.ErrorMessage = "WaitAsync failed. @MpdQueryAlbumArtForAlbumView";
+        }
+
+        if ((!res.IsSuccess) && res.IsTimeOut)
+        {
+            if ((ConnectionState == ConnectionStatus.Disconnecting) || (ConnectionState == ConnectionStatus.DisconnectedByUser))
+            {
+                Debug.WriteLine("MpdQueryAlbumArt@Timeout. Disconnecting...");
+                IsBusy?.Invoke(this, false);
+
+                return res;
+            }
+            else
+            {
+                DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting...");
+                // re-connect
+                var b = await _binaryDownloader.MpdBinaryConnectionStart(MpdHost, MpdPort, MpdPassword);
+                if (b)
+                {
+                    Debug.WriteLine("MpdQueryAlbumArt@Timeout. Reconnecting success.");
+                    DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting success.");
+                    // retry for the timeout.
+                    //_semaphoreBinary.Release();
+                    return await MpdQueryAlbumArtForAlbumView(uri, isUsingReadpicture);
+                }
+                else
+                {
+                    Debug.WriteLine("MpdQueryAlbumArt@Timeout. Reconnecting failed.");
+                    DebugCommandOutput?.Invoke(this, "MpdQueryAlbumArt@Timeout. Reconnecting failed.");
+                }
+            }
+        }
+        else
+        {
+            //Debug.WriteLine("MpdQueryAlbumArt failed.");
         }
 
         return res;
@@ -4245,6 +4260,8 @@ public partial class MpcService : IMpcService
             IsBusy?.Invoke(this, true);
 
             ConnectionState = ConnectionStatus.Disconnecting;
+            //
+            cts.Cancel();
 
             _idleConnection.Client?.Shutdown(SocketShutdown.Both);
             _idleConnection.Close();

@@ -19,16 +19,17 @@ public partial class SearchPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public SearchPage()
+    public SearchPage() { }
+    public SearchPage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
 
-        viewmodel.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
-        viewmodel.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
-        viewmodel.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
+        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
+        vm.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
+        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

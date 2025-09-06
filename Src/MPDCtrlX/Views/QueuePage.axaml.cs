@@ -20,19 +20,20 @@ public partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public QueuePage()
+    public QueuePage() { }
+    public QueuePage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
 
-        viewmodel.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
-        viewmodel.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-        viewmodel.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
-        viewmodel.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
-        viewmodel.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
-        viewmodel.QueueFindWindowVisibilityChanged_SetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
+        vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
+        vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+        vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
+        vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
+        vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
+        vm.QueueFindWindowVisibilityChanged_SetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
         /*
         Unloaded += (sender, e) =>
         {
@@ -172,7 +173,7 @@ public partial class QueuePage : UserControl
     private async void OnScrollIntoView(int ind)
     {
         await Task.Yield();
-        await Task.Delay(100); // Wait for UI to update
+        //await Task.Delay(100); // Wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
             if (this.QueueListBox is ListBox lb)
@@ -186,7 +187,7 @@ public partial class QueuePage : UserControl
     private async void OnScrollIntoViewAndSelect(int ind)
     {
         await Task.Yield();
-        await Task.Delay(800); // Need to wait for UI to update
+        //await Task.Delay(800); // Need to wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
             if (this.QueueListBox is ListBox lb)

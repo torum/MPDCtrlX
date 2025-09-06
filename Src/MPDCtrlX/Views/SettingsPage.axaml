@@ -88,9 +88,6 @@
 
 				</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpander.Footer>
-				</ui:SettingsExpander.Footer>
-
 			</ui:SettingsExpander>
 
 			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">

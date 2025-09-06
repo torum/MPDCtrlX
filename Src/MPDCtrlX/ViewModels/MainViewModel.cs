@@ -12,7 +12,6 @@ using FluentAvalonia.Styling;
 using FluentAvalonia.UI.Data;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.VisualBasic;
 using MPDCtrlX.Common;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services;
@@ -45,19 +44,8 @@ using System.Xml.Linq;
 
 namespace MPDCtrlX.ViewModels;
 
-public class MainDummyViewModel
-{
-   public MainDummyViewModel()
-    {
-        // This is a dummy view model for the MainView.
-        // It is used to avoid a build error in the xaml preview.
-        // It is not used in the application.
-    }
-}
-
 public partial class MainViewModel : ViewModelBase //ObservableObject
 {
-
     private string _appVersion = string.Empty;
     public string AppVersion
     {
@@ -169,11 +157,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 switch (hoge)
                 {
-                    /*
                     case NodeMenuLibrary lib:
                         lib.Expanded = _isNavigationViewMenuOpen;
                         break;
-                    */
                     case NodeMenuPlaylists plt:
                         plt.Expanded = _isNavigationViewMenuOpen;
                         break;
@@ -3043,7 +3029,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _visibleViewportItemsAlbumEx = value;
 
-            NotifyPropertyChanged(nameof(VisibleViewportItemsAlbumEx));
+            //NotifyPropertyChanged(nameof(VisibleViewportItemsAlbumEx));
 
             if (VisibleViewportItemsAlbumEx is null)
             {
@@ -7002,7 +6988,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         // AlbumArt
                         if (!string.IsNullOrEmpty(CurrentSong.File))
                         {
-                            if (IsDownloadAlbumArt)
+                            if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
                             {
                                 //Debug.WriteLine("getting album cover. @UpdateStatus()");
                                 var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
@@ -7021,10 +7007,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                     AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
                                                     //IsAlbumArtVisible = true;
                                                     SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
                                                 });
                                             }
                                         }
-                                        CurrentSong.IsAlbumCoverNeedsUpdate = false;
                                     }
                                 }
 
@@ -7247,7 +7233,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                                 AlbumCover = res.AlbumCover;
                                                 AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
                                                 //IsAlbumArtVisible = true;
-                                                SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                if (CurrentSong is not null)
+                                                {
+                                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                                                }
                                             });
                                         }
                                     }
@@ -7363,7 +7353,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 #region == better way ==
 
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
 
@@ -7461,13 +7451,27 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         CurrentSong = curitem;
                         CurrentSong.IsPlaying = true;
-                        
+
                         // Don't. because it's not like song is changed.
                         /*
                         if (IsAutoScrollToNowPlaying)
                             // ScrollIntoView while don't change the selection 
                             ScrollIntoView?.Invoke(this, CurrentSong.Index);
                         */
+                        if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
+                        {
+                            var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
+                            if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
+                            {
+                                if (res.AlbumCover?.SongFilePath == CurrentSong.File)
+                                {
+                                    AlbumCover = res.AlbumCover;
+                                    AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -7531,7 +7535,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             try
             {
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
 
@@ -7573,18 +7577,20 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                             ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
 
                                         // AlbumArt
-                                        /*
-                                        if (_mpc.AlbumCover.SongFilePath != curitem.File)
+                                        if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
                                         {
-                                            //IsAlbumArtVisible = false;
-                                            //AlbumArt = _albumArtDefault;
-
-                                            if (!String.IsNullOrEmpty(CurrentSong.File))
+                                            var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
+                                            if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
                                             {
-                                                //isAlbumArtChanged = true;
+                                                if (res.AlbumCover?.SongFilePath == CurrentSong.File)
+                                                {
+                                                    AlbumCover = res.AlbumCover;
+                                                    AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                                                }
                                             }
                                         }
-                                        */
                                     }
                                     /*
                                     // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
@@ -8003,7 +8009,10 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 if (MusicDirectories.Count > 0)
                 {
                     if (MusicDirectories[0] is NodeDirectory nd)
+                    {
                         _selectedNodeDirectory = nd;
+                        NotifyPropertyChanged(nameof(SelectedNodeDirectory));
+                    }
                 }
 
                 /*
@@ -9834,7 +9843,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-
                     this.SearchResult = new ObservableCollection<SongInfo>(res.SearchResult); // COPY ON PURPOSE
                 });
             }

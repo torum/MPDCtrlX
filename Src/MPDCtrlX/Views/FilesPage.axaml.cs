@@ -20,15 +20,16 @@ public partial class FilesPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public FilesPage()
+    public FilesPage() { }
+    public FilesPage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
 
-        viewmodel.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
-        viewmodel.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
+        vm.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
+        vm.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

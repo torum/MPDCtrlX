@@ -13,16 +13,17 @@ public partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public PlaylistItemPage()
+    public PlaylistItemPage() { }
+    public PlaylistItemPage(MainViewModel vm)
     {
-        var viewmodel = App.GetService<MainViewModel>();
-        DataContext = viewmodel;
+        //var vm = App.GetService<MainViewModel>();
+        DataContext = vm;
 
         InitializeComponent();
 
-        viewmodel.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
-        viewmodel.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
-        viewmodel.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
+        vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
+        vm.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
+        vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

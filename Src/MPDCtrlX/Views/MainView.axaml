@@ -16,8 +16,8 @@
 		<TransitioningContentControl x:Name="ContentFrame" Content="{Binding CurrentPage}" Margin="0">
 			<TransitioningContentControl.PageTransition>
 				<CompositePageTransition>
-					<CrossFade Duration="0:00:00.200" />
-					<PageSlide Duration="0:00:00.200" Orientation="Vertical" />
+					<CrossFade Duration="0:00:00.120" />
+					<PageSlide Duration="0:00:00.120" Orientation="Vertical" />
 				</CompositePageTransition>
 			</TransitioningContentControl.PageTransition>
 		</TransitioningContentControl>

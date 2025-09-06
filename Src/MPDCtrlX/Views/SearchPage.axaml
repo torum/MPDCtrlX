@@ -138,7 +138,7 @@
 				<!-- Search tag combobox -->
 				<ComboBox Grid.Column="0" SelectedIndex="0" MinWidth="140" Margin="6,0,0,0" ItemsSource="{Binding SearchTagList,Mode=OneWay}" SelectedItem="{Binding SelectedSearchTag,Mode=TwoWay}" VerticalAlignment="Bottom">
 					<ComboBox.ItemTemplate>
-						<DataTemplate>
+						<DataTemplate x:DataType="mod:SearchOption">
 							<TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
@@ -147,7 +147,7 @@
 				<!-- Search Shiki combobox -->
 				<ComboBox Grid.Column="1" SelectedIndex="0" MinWidth="140" Margin="6,0,0,0" ItemsSource="{Binding SearchShikiList,Mode=OneWay}" SelectedItem="{Binding SelectedSearchShiki,Mode=TwoWay}" VerticalAlignment="Bottom">
 					<ComboBox.ItemTemplate>
-						<DataTemplate>
+						<DataTemplate x:DataType="mod:SearchWith">
 							<TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>

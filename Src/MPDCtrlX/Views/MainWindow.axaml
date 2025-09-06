@@ -14,7 +14,6 @@
 		x:Name="ThisMainWindow"
         Title="MPDCtrlX"
 		Icon="/Assets/MPDCtrlX.ico"
-		WindowStartupLocation="Manual" 
 		MinWidth="320" 
 		MinHeight="460" 
 		SizeChanged="Window_SizeChanged" 

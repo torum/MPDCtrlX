@@ -102,14 +102,17 @@
 		<TreeView Grid.Row="2" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.ItemTemplate>
 				<TreeDataTemplate ItemsSource="{Binding Path=Children}" x:DataType="mod:NodeTree">
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-
-						<Viewbox Width="18" Height="18">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Viewbox Grid.Column="0" Width="18" Height="18">
 							<PathIcon Width="NaN" Height="NaN" Margin="0 0 4 2" Data="{Binding Path=PathIcon}"/>
 						</Viewbox>
 
-						<TextBlock Text="{Binding Path=Name}" Padding="4"/>
-					</StackPanel>
+						<TextBlock Grid.Column="1" Text="{Binding Path=Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Padding="6"/>
+					</Grid>
 				</TreeDataTemplate>
 			</TreeView.ItemTemplate>
 			<TreeView.Styles>
