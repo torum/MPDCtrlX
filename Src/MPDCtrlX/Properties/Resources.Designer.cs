@@ -853,11 +853,20 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Command Response に類似しているローカライズされた文字列を検索します。
+        ///   MPD Command Response に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string MPD_CommandError {
+        public static string MPD_CommandResponse {
             get {
-                return ResourceManager.GetString("MPD_CommandError", resourceCulture);
+                return ResourceManager.GetString("MPD_CommandResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   MPD Response に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MPD_IdleResponse {
+            get {
+                return ResourceManager.GetString("MPD_IdleResponse", resourceCulture);
             }
         }
         

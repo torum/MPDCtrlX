@@ -13,10 +13,10 @@
 		-->
 		<!--
 		-->
-		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="True"/>
+		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="False"/>
 		
 		<StyleInclude Source="avares://MPDCtrlX/Styles/Styles.axaml" />
-		
+
 	</Application.Styles>
 
 	<Application.Resources>

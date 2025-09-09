@@ -109,8 +109,8 @@ public partial class MpcService : IMpcService
         }
     }
 
-    private static readonly CancellationTokenSource cts = new();
-    private static readonly CancellationToken token = cts.Token;
+    private static readonly CancellationTokenSource _cts = new();
+    //private static readonly CancellationToken token = _cts.Token;
 
     // TODO: Not really used...
     public bool IsMpdCommandConnected { get; set; }
@@ -788,7 +788,7 @@ public partial class MpcService : IMpcService
                 if (MpdStop)
                     break;
 
-                string? line = await _idleReader.ReadLineAsync(token);
+                string? line = await _idleReader.ReadLineAsync(_cts.Token);
 
                 if (line is not null)
                 {
@@ -4261,10 +4261,12 @@ public partial class MpcService : IMpcService
 
             ConnectionState = ConnectionStatus.Disconnecting;
             //
-            cts.Cancel();
+            _cts.Cancel();
 
             _idleConnection.Client?.Shutdown(SocketShutdown.Both);
             _idleConnection.Close();
+
+            _cts.Dispose();
         }
         catch { }
         finally

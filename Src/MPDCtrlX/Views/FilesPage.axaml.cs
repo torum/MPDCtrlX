@@ -197,25 +197,25 @@ public partial class FilesPage : UserControl
         {
             vm.IsFilesColumnHeaderFilePathVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
             vm.IsFilesColumnHeaderFilePathVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
             vm.IsFilesColumnHeaderFilePathVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else
         {
             vm.IsFilesColumnHeaderFilePathVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
     }
 }

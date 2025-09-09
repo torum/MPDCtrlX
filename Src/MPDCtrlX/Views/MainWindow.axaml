@@ -18,7 +18,8 @@
 		MinHeight="460" 
 		SizeChanged="Window_SizeChanged" 
 		Loaded="Window_Loaded" 
-		Closing="Window_Closing">
+		Closing="Window_Closing"
+		KeyDown="Window_KeyDown" KeyUp="Window_KeyUp_1">
 	<!-- Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
@@ -38,8 +39,8 @@
 	</Interaction.Behaviors>
 	<Window.KeyBindings>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Play" />
-		<KeyBinding Command="{Binding PlayCommand}" Gesture="Ctrl+Space" />
 		<!--
+		<KeyBinding Command="{Binding PlayCommand}" Gesture="Ctrl+Space" />
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Space"/>
 		-->
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Ctrl+P"/>
@@ -209,21 +210,21 @@
 						<ColumnDefinition Width="*"></ColumnDefinition>
 					</Grid.ColumnDefinitions>
 
-					<Button Grid.Row="0" Grid.Column="0" x:Name="PlaybackPrev" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" Command="{Binding PlayPrevCommand}" Focusable="False" Width="30" Height="30" CornerRadius="3" Background="Transparent" BorderThickness="0" Margin="18,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="0">
+					<Button Grid.Row="0" Grid.Column="0" x:Name="PlaybackPrev" AutomationProperties.AccessKey="B" ToolTip.Tip="{x:Static prop:Resources.Playback_BackButton}" Command="{Binding PlayPrevCommand}" Focusable="False" Width="30" Height="30" CornerRadius="3" Background="Transparent" BorderThickness="0" Margin="18,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Padding="0">
 						<Viewbox Width="18" Height="18">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="M3 20.25a.75.75 0 0 0 1.5 0V3.75a.75.75 0 1 0-1.5 0v16.5ZM18.23 20.475c1.158.83 2.77.002 2.77-1.422V4.83c0-1.384-1.53-2.22-2.695-1.473l-10.47 6.716a1.75 1.75 0 0 0-.074 2.895l10.47 7.507Zm1.27-1.422a.25.25 0 0 1-.396.203l-10.47-7.507a.25.25 0 0 1 .011-.413l10.47-6.717a.25.25 0 0 1 .385.21v14.224Z">
 							</PathIcon>
 						</Viewbox>
 					</Button>
-					<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" Command="{Binding PlayCommand}" Focusable="False" Width="54" Height="54" CornerRadius="27" Background="Transparent" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0">
+					<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" HotKey="Ctrl+Space" AutomationProperties.AccessKey="P" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" Command="{Binding PlayCommand}" Focusable="False" Width="54" Height="54" CornerRadius="27" Background="Transparent" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0">
 						<Viewbox Width="46" Height="46">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="{Binding PlayButton, Mode=OneWay}">
 							</PathIcon>
 						</Viewbox>
 					</Button>
-					<Button Grid.Row="0" Grid.Column="2" x:Name="PlaybackBack" ToolTip.Tip="{x:Static prop:Resources.Playback_NextButton}" Command="{Binding PlayNextCommand}" Focusable="False" Width="30" Height="30" CornerRadius="3" Background="Transparent" BorderThickness="0" Margin="0,0,18,0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0">
+					<Button Grid.Row="0" Grid.Column="2" x:Name="PlaybackBack" AutomationProperties.AccessKey="N" ToolTip.Tip="{x:Static prop:Resources.Playback_NextButton}" Command="{Binding PlayNextCommand}" Focusable="False" Width="30" Height="30" CornerRadius="3" Background="Transparent" BorderThickness="0" Margin="0,0,18,0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0">
 						<Viewbox Width="18" Height="18">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="M21 3.75a.75.75 0 0 0-1.5 0v16.5a.75.75 0 0 0 1.5 0V3.75ZM5.77 3.525C4.612 2.695 3 3.523 3 4.947V19.17c0 1.384 1.53 2.22 2.695 1.473l10.47-6.716a1.75 1.75 0 0 0 .074-2.895L5.77 3.525ZM4.5 4.947a.25.25 0 0 1 .396-.203l10.47 7.507a.25.25 0 0 1-.011.413l-10.47 6.717a.25.25 0 0 1-.385-.21V4.946Z">

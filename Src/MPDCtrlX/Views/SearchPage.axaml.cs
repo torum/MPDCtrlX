@@ -348,7 +348,7 @@ public partial class SearchPage : UserControl
             vm.IsSearchColumnHeaderGenreVisible = false;
             vm.IsSearchColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
@@ -360,7 +360,7 @@ public partial class SearchPage : UserControl
             vm.IsSearchColumnHeaderGenreVisible = true;
             vm.IsSearchColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
@@ -372,7 +372,7 @@ public partial class SearchPage : UserControl
             vm.IsSearchColumnHeaderGenreVisible = true;
             vm.IsSearchColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else
         {
@@ -384,7 +384,7 @@ public partial class SearchPage : UserControl
             vm.IsSearchColumnHeaderGenreVisible = true;
             vm.IsSearchColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
     }
 

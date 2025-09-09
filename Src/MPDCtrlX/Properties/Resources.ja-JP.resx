@@ -279,8 +279,8 @@ SOFTWARE.</value>
   <data name="MenuTreeItem_Search" xml:space="preserve">
     <value>検索</value>
   </data>
-  <data name="MPD_CommandError" xml:space="preserve">
-    <value>コマンド応答</value>
+  <data name="MPD_CommandResponse" xml:space="preserve">
+    <value>MPD コマンド応答</value>
   </data>
   <data name="MPD_StatusError" xml:space="preserve">
     <value>ステータス通知</value>
@@ -572,7 +572,7 @@ SOFTWARE.</value>
     <value>その他</value>
   </data>
   <data name="PageMenu_ReverseSort" xml:space="preserve">
-    <value>逆順にソート</value>
+    <value>逆順に並べ替え</value>
   </data>
   <data name="PageMenu_PlayAll" xml:space="preserve">
     <value>すべて再生</value>
@@ -666,5 +666,8 @@ SOFTWARE.</value>
   </data>
   <data name="PlaylistPage_SubTitle_SongCount" xml:space="preserve">
     <value>{0}曲</value>
+  </data>
+  <data name="MPD_IdleResponse" xml:space="preserve">
+    <value>MPD 応答</value>
   </data>
 </root>

@@ -8,6 +8,7 @@
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
 			 xmlns:common="clr-namespace:MPDCtrlX.Common"
+			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Views.AlbumPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
@@ -26,7 +27,7 @@
 			</Grid.ColumnDefinitions>
 			
 			<!-- Size changes from codebehind depending on page size -->
-			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="24"></Grid>
 			
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Albums}" Theme="{DynamicResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
@@ -166,6 +167,50 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<!--  Content="{Binding CurrentAlbumSongs}" -->
 								<!-- " SelectedItem="{Binding SelectedSong}" -->
 								<ListBox Grid.Row="1" Name="AlbumSongsListBox" ItemsSource="{Binding SelectedAlbumSongs, Mode=OneWay}" SelectionMode="Single" BorderThickness="0" Margin="16,24,0,0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto">
+									<ListBox.Resources>
+										<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
+										<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+											<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+											<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+											<Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+											<Setter Property="BorderThickness" Value="{DynamicResource ListBoxBorderThemeThickness}" />
+											<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+											<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+											<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+											<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+											<Setter Property="Template">
+												<ControlTemplate>
+													<Border Name="border"
+															ClipToBounds="{TemplateBinding ClipToBounds}"
+															Background="{TemplateBinding Background}"
+															BorderBrush="{TemplateBinding BorderBrush}"
+															BorderThickness="{TemplateBinding BorderThickness}"
+															CornerRadius="{TemplateBinding CornerRadius}">
+														<ScrollViewer Name="PART_ScrollViewer"
+																	  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+																	  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+																	  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+																	  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+																	  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+																	  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+																	  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+																	  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+																	  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+
+															<Interaction.Behaviors>
+																<ia:VerticalScrollViewerAnimatedBehavior/>
+															</Interaction.Behaviors>
+
+															<ItemsPresenter Name="PART_ItemsPresenter"
+																			ItemsPanel="{TemplateBinding ItemsPanel}"
+																			Margin="{TemplateBinding Padding}"/>
+														</ScrollViewer>
+													</Border>
+												</ControlTemplate>
+											</Setter>
+										</ControlTheme>
+									</ListBox.Resources>
+									
 									<!--<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
 													<VirtualizingStackPanel />
@@ -228,6 +273,49 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="6,3,6,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
+							
+							<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
+							<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
+								<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+								<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+								<Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+								<Setter Property="BorderThickness" Value="{DynamicResource ListBoxBorderThemeThickness}" />
+								<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+								<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+								<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+								<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+								<Setter Property="Template">
+									<ControlTemplate>
+										<Border Name="border"
+												ClipToBounds="{TemplateBinding ClipToBounds}"
+												Background="{TemplateBinding Background}"
+												BorderBrush="{TemplateBinding BorderBrush}"
+												BorderThickness="{TemplateBinding BorderThickness}"
+												CornerRadius="{TemplateBinding CornerRadius}">
+											<ScrollViewer Name="PART_ScrollViewer"
+														  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+														  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+														  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+														  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+														  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+														  IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+														  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+														  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+														  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+												
+												<Interaction.Behaviors>
+													<ia:VerticalScrollViewerAnimatedBehavior/>
+												</Interaction.Behaviors>
+												
+												<ItemsPresenter Name="PART_ItemsPresenter"
+																ItemsPanel="{TemplateBinding ItemsPanel}"
+																Margin="{TemplateBinding Padding}"/>
+											</ScrollViewer>
+										</Border>
+									</ControlTemplate>
+								</Setter>
+							</ControlTheme>
+
 							<!-- Edit: sets selection indicator to visible=false. -->
 							<!-- 	<x:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">False</x:Boolean> -->
 							<!-- Edit: padding changed. -->

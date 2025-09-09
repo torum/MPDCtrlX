@@ -1,12 +1,13 @@
 # Build and publish
 
-# MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet build -c Release -r linux-x64 -f net9.0
+
 MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net9.0
+# MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet build -c Release -r linux-x64 -f net9.0
 # MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish -c Release -r linux-x64 --self-contained true
 
 # Grab published binaries
 
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/ja-JP
+# MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/ja-JP
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libHarfBuzzSharp.so
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libSkiaSharp.so
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX.Desktop

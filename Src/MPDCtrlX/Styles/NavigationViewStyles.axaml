@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia">
+                    xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated">
 
     <Design.PreviewWith>
         <Border Padding="40" >
@@ -13,7 +14,8 @@
             </ui:NavigationView>
         </Border>
     </Design.PreviewWith>
-
+	
+	<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 	<!-- Changed: ItemsContainerGrid margin=0 for footer buttom margin -->
 	<!-- Added to TogglePaneButton: Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonWidth}" -->
 	
@@ -314,7 +316,12 @@
                                                       VerticalAlignment="Stretch"
                                                       HorizontalScrollBarVisibility="Disabled"
                                                       VerticalScrollBarVisibility="Auto">
-                                            <ui:ItemsRepeater Name="MenuItemsHost">
+
+											<Interaction.Behaviors>
+												<ia:VerticalScrollViewerAnimatedBehavior/>
+											</Interaction.Behaviors>
+
+											<ui:ItemsRepeater Name="MenuItemsHost">
                                                 <ui:ItemsRepeater.Layout>
                                                     <ui:StackLayout />
                                                 </ui:ItemsRepeater.Layout>

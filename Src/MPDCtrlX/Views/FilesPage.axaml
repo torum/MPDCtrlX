@@ -7,6 +7,7 @@
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Views.FilesPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
@@ -35,7 +36,7 @@
 			</Grid.ColumnDefinitions>
 
 			<!-- Size changes from codebehind depending on page size -->
-			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="24"></Grid>
 
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
 				<!-- page title-->
@@ -100,6 +101,41 @@
 		-->
 		<Border Grid.Row="2" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<TreeView Grid.Row="2" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+			<TreeView.Resources>
+				<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
+				<ControlTheme TargetType="TreeView" x:Key="{x:Type TreeView}">
+					<Setter Property="Background" Value="Transparent" />
+					<Setter Property="BorderBrush" Value="Transparent" />
+					<Setter Property="BorderThickness" Value="0" />
+					<Setter Property="Padding" Value="0" />
+					<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+					<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+					<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
+					<Setter Property="Template">
+						<ControlTemplate>
+							<Border BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="{TemplateBinding BorderThickness}">
+								<ScrollViewer Background="{TemplateBinding Background}"
+											  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+											  VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+											  IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+											  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+											  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}">
+
+									<Interaction.Behaviors>
+										<ia:VerticalScrollViewerAnimatedBehavior/>
+									</Interaction.Behaviors>
+									
+									<ItemsPresenter Name="PART_ItemsPresenter"
+													ItemsPanel="{TemplateBinding ItemsPanel}"
+													Margin="{TemplateBinding Padding}" />
+								</ScrollViewer>
+							</Border>
+						</ControlTemplate>
+					</Setter>
+				</ControlTheme>
+			</TreeView.Resources>
+			
 			<TreeView.ItemTemplate>
 				<TreeDataTemplate ItemsSource="{Binding Path=Children}" x:DataType="mod:NodeTree">
 					<Grid>
@@ -169,6 +205,7 @@
 				<ListBox Grid.Row="3" ItemsSource="{Binding MusicEntriesFiltered}" SelectionMode="Multiple" Loaded="ListBox_Loaded" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 					<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 					<ListBox.Resources>
+						<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 						<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
 						<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
 							<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
@@ -198,6 +235,11 @@
 													  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
 													  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
 													  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+
+											<Interaction.Behaviors>
+												<ia:VerticalScrollViewerAnimatedBehavior/>
+											</Interaction.Behaviors>
+
 											<ItemsPresenter Name="PART_ItemsPresenter"
 															ItemsPanel="{TemplateBinding ItemsPanel}"
 															Margin="{TemplateBinding Padding}"/>

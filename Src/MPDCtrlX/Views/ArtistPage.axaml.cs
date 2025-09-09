@@ -60,22 +60,22 @@ public partial class ArtistPage : UserControl
         else if (e.NewSize.Width < 1008)
         {
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else
         {
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
     }
 }

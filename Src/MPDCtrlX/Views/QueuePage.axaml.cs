@@ -434,6 +434,8 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderLastModifiedVisible = false;
             //
             this.HeaderGridSpacer.Width = 48;
+            this.FindFilterButtonStackPanel.IsVisible = false;
+            this.SortToggleSplitButton.IsVisible = false;
         }
         else if (e.NewSize.Width < 740)
         {
@@ -446,6 +448,8 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderLastModifiedVisible = false;
             //
             this.HeaderGridSpacer.Width = 48;
+            this.FindFilterButtonStackPanel.IsVisible = false;
+            this.SortToggleSplitButton.IsVisible = false;
         }
         else if (e.NewSize.Width < 1008)
         {
@@ -457,7 +461,9 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderGenreVisible = false;
             vm.IsQueueColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
+            this.FindFilterButtonStackPanel.IsVisible = true;
+            this.SortToggleSplitButton.IsVisible = true;
         }
         else if (e.NewSize.Width < 1320)
         {
@@ -469,7 +475,9 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderGenreVisible = true;
             vm.IsQueueColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
+            this.FindFilterButtonStackPanel.IsVisible = true;
+            this.SortToggleSplitButton.IsVisible = true;
         }
         else if (e.NewSize.Width < 2000)
         {
@@ -481,7 +489,9 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderGenreVisible = true;
             vm.IsQueueColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
+            this.FindFilterButtonStackPanel.IsVisible = true;
+            this.SortToggleSplitButton.IsVisible = true;
         }
         else
         {
@@ -493,7 +503,9 @@ public partial class QueuePage : UserControl
             vm.IsQueueColumnHeaderGenreVisible = true;
             vm.IsQueueColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
+            this.FindFilterButtonStackPanel.IsVisible = true;
+            this.SortToggleSplitButton.IsVisible = true;
         }
     }
 }

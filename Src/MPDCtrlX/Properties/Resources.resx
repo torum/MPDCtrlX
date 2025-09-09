@@ -282,8 +282,8 @@ SOFTWARE.</value>
   <data name="MenuTreeItem_Search" xml:space="preserve">
     <value>Search</value>
   </data>
-  <data name="MPD_CommandError" xml:space="preserve">
-    <value>Command Response</value>
+  <data name="MPD_CommandResponse" xml:space="preserve">
+    <value>MPD Command Response</value>
   </data>
   <data name="MPD_StatusError" xml:space="preserve">
     <value>Status Notification</value>
@@ -673,5 +673,8 @@ SOFTWARE.</value>
   </data>
   <data name="PlaylistPage_SubTitle_SongCount" xml:space="preserve">
     <value>{0} songs</value>
+  </data>
+  <data name="MPD_IdleResponse" xml:space="preserve">
+    <value>MPD Response</value>
   </data>
 </root>

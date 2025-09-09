@@ -2,8 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="using:FluentAvalonia.UI.Controls">
     <Styles.Resources>
+
         <ResourceDictionary>
 
+			<!-- Temp workaround for https://github.com/AvaloniaUI/Avalonia/issues/19592  -->
+			<FontFamily x:Key="ContentControlThemeFontFamily">Inter</FontFamily>
+			
 			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">0,0,0,0</CornerRadius>
 			<Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
 			<Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>

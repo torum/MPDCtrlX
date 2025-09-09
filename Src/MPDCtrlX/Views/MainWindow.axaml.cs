@@ -417,4 +417,14 @@ public partial class MainWindow : Window//AppWindow//
             this.DebugWindow.IsVisible = true;
         }
     }
+
+    private void Window_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        //
+    }
+
+    private void Window_KeyUp_1(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        //
+    }
 }

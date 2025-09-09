@@ -331,7 +331,7 @@ public partial class PlaylistItemPage : UserControl
             vm.IsPlaylistColumnHeaderGenreVisible = false;
             vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
@@ -343,7 +343,7 @@ public partial class PlaylistItemPage : UserControl
             vm.IsPlaylistColumnHeaderGenreVisible = true;
             vm.IsPlaylistColumnHeaderLastModifiedVisible = false;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
@@ -355,7 +355,7 @@ public partial class PlaylistItemPage : UserControl
             vm.IsPlaylistColumnHeaderGenreVisible = true;
             vm.IsPlaylistColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else
         {
@@ -367,7 +367,7 @@ public partial class PlaylistItemPage : UserControl
             vm.IsPlaylistColumnHeaderGenreVisible = true;
             vm.IsPlaylistColumnHeaderLastModifiedVisible = true;
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
     }
 

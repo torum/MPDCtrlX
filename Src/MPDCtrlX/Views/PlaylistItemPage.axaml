@@ -7,6 +7,7 @@
 			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Views.PlaylistItemPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
@@ -24,7 +25,7 @@
 			</Grid.ColumnDefinitions>
 
 			<!-- Size changes from codebehind depending on page size -->
-			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="12"></Grid>
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="24"></Grid>
 			
 			<!-- PlaylistItem page title  -->
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
@@ -216,6 +217,7 @@
 			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
+					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
 						<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
@@ -245,6 +247,11 @@
 												  IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
 												  AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
 												  BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+
+										<Interaction.Behaviors>
+											<ia:VerticalScrollViewerAnimatedBehavior/>
+										</Interaction.Behaviors>
+
 										<ItemsPresenter Name="PART_ItemsPresenter"
 														ItemsPanel="{TemplateBinding ItemsPanel}"
 														Margin="{TemplateBinding Padding}"/>

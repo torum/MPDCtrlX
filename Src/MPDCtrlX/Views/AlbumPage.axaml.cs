@@ -125,7 +125,7 @@ public partial class AlbumPage : UserControl
                 //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1008 = {ugrid.Columns}");
             }
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
@@ -135,7 +135,7 @@ public partial class AlbumPage : UserControl
                 //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1320 = {ugrid.Columns}");
             }
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
@@ -145,7 +145,7 @@ public partial class AlbumPage : UserControl
                 //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 2000 = {ugrid.Columns}");
             }
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
         else
         {
@@ -155,7 +155,7 @@ public partial class AlbumPage : UserControl
                 //Debug.WriteLine($"{Math.Round(e.NewSize.Width)} else  = {ugrid.Columns}");
             }
             //
-            this.HeaderGridSpacer.Width = 12;
+            this.HeaderGridSpacer.Width = 24;
         }
     }
 }
