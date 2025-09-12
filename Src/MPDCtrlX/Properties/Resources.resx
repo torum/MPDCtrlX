@@ -677,4 +677,13 @@ SOFTWARE.</value>
   <data name="MPD_IdleResponse" xml:space="preserve">
     <value>MPD Response</value>
   </data>
+  <data name="ArtistPage_SubTitle_ArtistCount" xml:space="preserve">
+    <value>{0} artists</value>
+  </data>
+  <data name="ListviewItemContextMenu_GoToAlbumPage" xml:space="preserve">
+    <value>Go to album page</value>
+  </data>
+  <data name="ListviewItemContextMenu_GoToArtistPage" xml:space="preserve">
+    <value>Go to artist page</value>
+  </data>
 </root>

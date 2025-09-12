@@ -1435,8 +1435,13 @@ public partial class MpcService : IMpcService
                         DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
                         Debug.WriteLine(string.Format("Reconnecting Success.  @IOExceptionOfWriteAsync"));
 
+                        ConnectionState = ConnectionStatus.Connected;
 
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+
+                        // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
+                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
+
                         //}
                     }
 
@@ -1631,9 +1636,17 @@ public partial class MpcService : IMpcService
                         DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @isNullReturn" + Environment.NewLine + Environment.NewLine));
                         Debug.WriteLine(string.Format("Reconnecting Success. @isNullReturn, RetryCount=" + reTryCount.ToString() + Environment.NewLine));
 
+                        ConnectionState = ConnectionStatus.Connected;
+
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+
+                        // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
+                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
+
                         //}
                     }
+
+                    ConnectionState = ConnectionStatus.Connected;
                 }
                 else
                 {
@@ -1765,6 +1778,9 @@ public partial class MpcService : IMpcService
                         ConnectionState = ConnectionStatus.Connected;
 
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+
+                        // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
+                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
                         //}
                     }
 
@@ -2176,7 +2192,7 @@ public partial class MpcService : IMpcService
         {
             // stop
         }
-        /*
+
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2194,16 +2210,6 @@ public partial class MpcService : IMpcService
 
             return result;
         }
-        */
-
-        string cmdList = "command_list_begin" + "\n";
-        cmdList = cmdList + cmd + "\n";
-        cmdList = cmdList + "setvol " + volume.ToString() + "\n";
-        cmdList = cmdList + "command_list_end" + "\n";
-
-        CommandResult result = await MpdCommandSendCommand(cmdList);
-
-        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackPause()
@@ -2215,7 +2221,6 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackResume(int volume)
     {
-        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("pause 0");
@@ -2233,16 +2238,6 @@ public partial class MpcService : IMpcService
 
             return result;
         }
-        */
-
-        string cmd = "command_list_begin" + "\n";
-        cmd += "pause 0\n";
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        cmd = cmd + "command_list_end" + "\n";
-
-        CommandResult result = await MpdCommandSendCommand(cmd);
-
-        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackStop()
@@ -2254,7 +2249,6 @@ public partial class MpcService : IMpcService
 
     public async Task<CommandResult> MpdPlaybackNext(int volume)
     {
-        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("next");
@@ -2264,28 +2258,18 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd += "next\n";
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
-        */
-        string cmd = "command_list_begin" + "\n";
-        cmd += "next\n";
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        cmd = cmd + "command_list_end" + "\n";
-
-        CommandResult result = await MpdCommandSendCommand(cmd);
-
-        return result;
     }
 
     public async Task<CommandResult> MpdPlaybackPrev(int volume)
     {
-        /*
         if (MpdStatus.MpdVolumeIsSet)
         {
             CommandResult result = await MpdCommandSendCommand("previous");
@@ -2295,23 +2279,14 @@ public partial class MpcService : IMpcService
         else
         {
             string cmd = "command_list_begin" + "\n";
-            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd += "previous\n";
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
             cmd = cmd + "command_list_end" + "\n";
 
             CommandResult result = await MpdCommandSendCommand(cmd);
 
             return result;
         }
-        */
-        string cmd = "command_list_begin" + "\n";
-        cmd += "previous\n";
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        cmd = cmd + "command_list_end" + "\n";
-
-        CommandResult result = await MpdCommandSendCommand(cmd);
-
-        return result;
     }
 
     public async Task<CommandResult> MpdSetVolume(int v)
@@ -2604,10 +2579,10 @@ public partial class MpcService : IMpcService
             cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         }
         cmd = cmd + "play" + "\n";
-        // if (!MpdStatus.MpdVolumeIsSet)
-        //{
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        //}
+        if (!MpdStatus.MpdVolumeIsSet)
+        {
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
+        }
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
@@ -2636,10 +2611,10 @@ public partial class MpcService : IMpcService
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
         cmd = cmd + "play" + "\n";
-        //if (!MpdStatus.MpdVolumeIsSet)
-        //{
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        //}
+        if (!MpdStatus.MpdVolumeIsSet)
+        {
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
+        }
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
@@ -2671,10 +2646,10 @@ public partial class MpcService : IMpcService
         cmd = cmd + "clear" + "\n";
         cmd = cmd + "load \"" + playlistName + "\"\n";
         cmd = cmd + "play" + "\n";
-        //if (!MpdStatus.MpdVolumeIsSet)
-        //{
-        cmd = cmd + "setvol " + volume.ToString() + "\n";
-        //}
+        if (!MpdStatus.MpdVolumeIsSet)
+        {
+            cmd = cmd + "setvol " + volume.ToString() + "\n";
+        }
         cmd = cmd + "currentsong" + "\n";
         cmd = cmd + "command_list_end" + "\n";
 
@@ -2875,227 +2850,211 @@ public partial class MpcService : IMpcService
         try
         {
             IsBusy?.Invoke(this, true);
-
+            /*
             //Application.Current.Dispatcher.Invoke(() =>
             Dispatcher.UIThread.Post(() =>
             {
-                MpdStatus.Reset();
 
-                foreach (string line in resultLines)
-                {
-                    string[] StatusValuePair = line.Split(':');
-                    if (StatusValuePair.Length > 1)
-                    {
-                        if (MpdStatusValues.ContainsKey(StatusValuePair[0].Trim()))
-                        {
-                            // new
-
-                            MpdStatusValues[StatusValuePair[0].Trim()] = line.Replace(StatusValuePair[0].Trim() + ": ", "");
-                        }
-                        else
-                        {
-                            MpdStatusValues.Add(StatusValuePair[0].Trim(), line.Replace(StatusValuePair[0].Trim() + ": ", ""));
-                        }
-                    }
-                }
-
-                // Play state
-                if (MpdStatusValues.TryGetValue("state", out var valueState))
-                {
-                    switch (valueState)
-                    {
-                        case "play":
-                            {
-                                MpdStatus.MpdState = Status.MpdPlayState.Play;
-                                break;
-                            }
-                        case "pause":
-                            {
-                                MpdStatus.MpdState = Status.MpdPlayState.Pause;
-                                break;
-                            }
-                        case "stop":
-                            {
-                                MpdStatus.MpdState = Status.MpdPlayState.Stop;
-                                break;
-                            }
-                        default:
-                            //throw new ArgumentOutOfRangeException("state");
-                            break;
-                    }
-                }
-
-                // Volume
-                if (MpdStatusValues.TryGetValue("volume", out var valueVolume))
-                {
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(valueVolume))
-                        {
-                            MpdStatus.MpdVolume = Int32.Parse(valueVolume);
-
-                            MpdStatus.MpdVolumeIsSet = true;
-                        }
-                        else
-                        {
-                            //Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
-                            MpdStatus.MpdVolume = 20;
-                            MpdStatus.MpdVolumeIsSet = false;
-                        }
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-                else
-                {
-                    //Debug.WriteLine("MpdStatusValues does not contain 'volume' key. Setting MpdVolume to 20.");
-                    MpdStatus.MpdVolume = 20;
-                    MpdStatus.MpdVolumeIsSet = false;
-                }
-
-                // songID
-                MpdStatus.MpdSongID = "";
-                if (MpdStatusValues.TryGetValue("songid", out string? value))
-                {
-                    MpdStatus.MpdSongID = value;
-                }
-
-                // Repeat opt bool.
-                if (MpdStatusValues.ContainsKey("repeat"))
-                {
-                    try
-                    {
-                        if (MpdStatusValues["repeat"] == "1")
-                        {
-                            MpdStatus.MpdRepeat = true;
-                        }
-                        else
-                        {
-                            MpdStatus.MpdRepeat = false;
-                        }
-
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-
-                // Random opt bool.
-                if (MpdStatusValues.ContainsKey("random"))
-                {
-                    try
-                    {
-                        if (Int32.Parse(MpdStatusValues["random"]) > 0)
-                        {
-                            MpdStatus.MpdRandom = true;
-                        }
-                        else
-                        {
-                            MpdStatus.MpdRandom = false;
-                        }
-
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-
-                // Consume opt bool.
-                if (MpdStatusValues.ContainsKey("consume"))
-                {
-                    try
-                    {
-                        if (Int32.Parse(MpdStatusValues["consume"]) > 0)
-                        {
-                            MpdStatus.MpdConsume = true;
-                        }
-                        else
-                        {
-                            MpdStatus.MpdConsume = false;
-                        }
-
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-
-                // Single opt bool.
-                if (MpdStatusValues.ContainsKey("single"))
-                {
-                    try
-                    {
-                        if (Int32.Parse(MpdStatusValues["single"]) > 0)
-                        {
-                            MpdStatus.MpdSingle = true;
-                        }
-                        else
-                        {
-                            MpdStatus.MpdSingle = false;
-                        }
-
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-
-                // Song time. deprecated. 
-                if (MpdStatusValues.ContainsKey("time"))
-                {
-                    try
-                    {
-                        if (MpdStatusValues["time"].Split(':').Length > 1)
-                        {
-                            MpdStatus.MpdSongTime = Double.Parse(MpdStatusValues["time"].Split(':')[1].Trim());
-                            MpdStatus.MpdSongElapsed = Double.Parse(MpdStatusValues["time"].Split(':')[0].Trim());
-                        }
-                    }
-                    catch (FormatException e)
-                    {
-                        System.Diagnostics.Debug.WriteLine(e.Message);
-                    }
-                }
-
-                // Song time elapsed.
-                if (MpdStatusValues.TryGetValue("elapsed", out string? value1))
-                {
-                    try
-                    {
-                        MpdStatus.MpdSongElapsed = Double.Parse(value1);
-                    }
-                    catch { }
-                }
-
-                // Song duration.
-                if (MpdStatusValues.TryGetValue("duration", out string? value2))
-                {
-                    try
-                    {
-                        MpdStatus.MpdSongTime = Double.Parse(value2);
-                    }
-                    catch { }
-                }
-
-                // Error
-                if (MpdStatusValues.ContainsKey("error"))
-                {
-                    MpdStatus.MpdError = MpdStatusValues["error"];
-                }
-                else
-                {
-                    MpdStatus.MpdError = "";
-                }
-
-
-                // TODO: more?
             });
+            */
+
+            MpdStatus.Reset();
+
+            foreach (string line in resultLines)
+            {
+                string[] StatusValuePair = line.Split(':');
+                if (StatusValuePair.Length > 1)
+                {
+                    if (MpdStatusValues.ContainsKey(StatusValuePair[0].Trim()))
+                    {
+                        // new
+
+                        MpdStatusValues[StatusValuePair[0].Trim()] = line.Replace(StatusValuePair[0].Trim() + ": ", "");
+                    }
+                    else
+                    {
+                        MpdStatusValues.Add(StatusValuePair[0].Trim(), line.Replace(StatusValuePair[0].Trim() + ": ", ""));
+                    }
+                }
+            }
+
+            // Play state
+            if (MpdStatusValues.TryGetValue("state", out var valueState))
+            {
+                switch (valueState)
+                {
+                    case "play":
+                        {
+                            MpdStatus.MpdState = Status.MpdPlayState.Play;
+                            break;
+                        }
+                    case "pause":
+                        {
+                            MpdStatus.MpdState = Status.MpdPlayState.Pause;
+                            break;
+                        }
+                    case "stop":
+                        {
+                            MpdStatus.MpdState = Status.MpdPlayState.Stop;
+                            break;
+                        }
+                    default:
+                        //throw new ArgumentOutOfRangeException("state");
+                        break;
+                }
+            }
+
+            // Volume
+            if (MpdStatusValues.TryGetValue("volume", out var valueVolume))
+            {
+                if (!string.IsNullOrEmpty(valueVolume))
+                {
+                    MpdStatus.MpdVolume = Int32.Parse(valueVolume);
+
+                    //MpdStatus.MpdVolumeIsSet = true;
+                }
+            }
+
+            // songID
+            MpdStatus.MpdSongID = "";
+            if (MpdStatusValues.TryGetValue("songid", out string? value))
+            {
+                MpdStatus.MpdSongID = value;
+            }
+
+            // Repeat opt bool.
+            if (MpdStatusValues.ContainsKey("repeat"))
+            {
+                try
+                {
+                    if (MpdStatusValues["repeat"] == "1")
+                    {
+                        MpdStatus.MpdRepeat = true;
+                    }
+                    else
+                    {
+                        MpdStatus.MpdRepeat = false;
+                    }
+
+                }
+                catch (FormatException e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            // Random opt bool.
+            if (MpdStatusValues.ContainsKey("random"))
+            {
+                try
+                {
+                    if (Int32.Parse(MpdStatusValues["random"]) > 0)
+                    {
+                        MpdStatus.MpdRandom = true;
+                    }
+                    else
+                    {
+                        MpdStatus.MpdRandom = false;
+                    }
+
+                }
+                catch (FormatException e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            // Consume opt bool.
+            if (MpdStatusValues.ContainsKey("consume"))
+            {
+                try
+                {
+                    if (Int32.Parse(MpdStatusValues["consume"]) > 0)
+                    {
+                        MpdStatus.MpdConsume = true;
+                    }
+                    else
+                    {
+                        MpdStatus.MpdConsume = false;
+                    }
+
+                }
+                catch (FormatException e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            // Single opt bool.
+            if (MpdStatusValues.ContainsKey("single"))
+            {
+                try
+                {
+                    if (Int32.Parse(MpdStatusValues["single"]) > 0)
+                    {
+                        MpdStatus.MpdSingle = true;
+                    }
+                    else
+                    {
+                        MpdStatus.MpdSingle = false;
+                    }
+
+                }
+                catch (FormatException e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            // Song time. deprecated. 
+            if (MpdStatusValues.ContainsKey("time"))
+            {
+                try
+                {
+                    if (MpdStatusValues["time"].Split(':').Length > 1)
+                    {
+                        MpdStatus.MpdSongTime = Double.Parse(MpdStatusValues["time"].Split(':')[1].Trim());
+                        MpdStatus.MpdSongElapsed = Double.Parse(MpdStatusValues["time"].Split(':')[0].Trim());
+                    }
+                }
+                catch (FormatException e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            // Song time elapsed.
+            if (MpdStatusValues.TryGetValue("elapsed", out string? value1))
+            {
+                try
+                {
+                    MpdStatus.MpdSongElapsed = Double.Parse(value1);
+                }
+                catch { }
+            }
+
+            // Song duration.
+            if (MpdStatusValues.TryGetValue("duration", out string? value2))
+            {
+                try
+                {
+                    MpdStatus.MpdSongTime = Double.Parse(value2);
+                }
+                catch { }
+            }
+
+            // Error
+            if (MpdStatusValues.ContainsKey("error"))
+            {
+                MpdStatus.MpdError = MpdStatusValues["error"];
+            }
+            else
+            {
+                MpdStatus.MpdError = "";
+            }
+
+
+            // TODO: more?
 
         }
         catch (Exception ex)

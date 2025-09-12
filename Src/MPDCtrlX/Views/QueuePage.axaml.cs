@@ -30,8 +30,8 @@ public partial class QueuePage : UserControl
 
         vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
         vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-        vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
-        vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
+        //vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
+        //vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
         vm.QueueFindWindowVisibilityChanged_SetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
         /*
@@ -281,133 +281,6 @@ public partial class QueuePage : UserControl
         if (sender is Avalonia.Controls.ScrollViewer sv)
         {
             this.QueueListViewHeaderScrollViewer.Offset = sv.Offset;
-        }
-    }
-
-    private async void QueueSaveToDialogShowAsync(object? sender, System.EventArgs e)
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        var dialog = new ContentDialog
-        {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
-            IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
-            IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.SaveToDialog()
-            {
-                //DataContext = new DialogViewModel()
-            }
-        };
-
-        if (dialog.Content is not SaveToDialog dialogContent)
-        {
-            return;
-        }
-
-        // Sort
-        CultureInfo ci = CultureInfo.CurrentCulture;
-        StringComparer comp = StringComparer.Create(ci, true);
-
-        //asdf.PlaylistListBox.ItemsSource = vm?.Playlists;
-        //asdf.PlaylistListBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
-        dialogContent.PlaylistComboBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
-
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
-        {
-
-            if (dlg.CreateNewCheckBox.IsChecked is true)
-            {
-                var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
-
-                if (!string.IsNullOrEmpty(str.Trim()))
-                {
-                    vm?.QueueSaveToDialog_Execute(str.Trim());
-                }
-            }
-            else
-            {
-                var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-                if (plselitem is Models.Playlist pl)
-                {
-                    if (string.IsNullOrWhiteSpace(pl.Name))
-                    {
-                        return;
-                    }
-
-                    vm?.QueueSaveToDialog_Execute(pl.Name.Trim());
-                }
-            }
-        }
-    }
-
-    private async void QueueListviewSaveToDialogShowAsync(object? sender, List<string> list)
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        var dialog = new ContentDialog
-        {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
-            IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
-            IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.SaveToDialog()
-            {
-                //DataContext = new DialogViewModel()
-            }
-        };
-
-        if (dialog.Content is SaveToDialog asdf)
-        {
-            // Sort
-            CultureInfo ci = CultureInfo.CurrentCulture;
-            StringComparer comp = StringComparer.Create(ci, true);
-
-            asdf.PlaylistComboBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
-        }
-
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
-        {
-            if (dlg.CreateNewCheckBox.IsChecked is true)
-            {
-                var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
-
-                // TODO; check if already exists?
-
-                if (!string.IsNullOrEmpty(str.Trim()))
-                {
-                    vm?.AddToPlaylist_Execute(str.Trim(), list);
-                }
-            }
-            else
-            {
-                var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-                if (plselitem is Models.Playlist pl)
-                {
-                    if (string.IsNullOrWhiteSpace(pl.Name))
-                    {
-                        return;
-                    }
-
-                    vm?.AddToPlaylist_Execute(pl.Name.Trim(), list);
-                }
-            }
         }
     }
 

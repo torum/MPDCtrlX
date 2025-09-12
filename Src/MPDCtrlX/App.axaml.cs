@@ -48,6 +48,7 @@ public partial class App : Application
                     services.AddSingleton<MainViewModel>();
                     services.AddSingleton<IMpcService, MpcService>();
                     services.AddTransient<IBinaryDownloader, BinaryDownloader>();
+                    services.AddSingleton<IDialogService, DialogService>();
 
                     services.AddSingleton<QueuePage>(); 
                     services.AddSingleton<SearchPage>(); 

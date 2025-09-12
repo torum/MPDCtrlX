@@ -41,9 +41,12 @@
 			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="24"></Grid>
 
 			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
+				<!-- page title-->
 				<TextBlock Text="{x:Static prop:Resources.MenuTreeItem_Artists}" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0"/>
-
+				<!-- song count -->
+				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" Text="{Binding ArtistPageSubTitleArtistCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
+
 			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 
 			</StackPanel>

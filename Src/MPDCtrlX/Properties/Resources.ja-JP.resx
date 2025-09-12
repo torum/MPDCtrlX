@@ -670,4 +670,13 @@ SOFTWARE.</value>
   <data name="MPD_IdleResponse" xml:space="preserve">
     <value>MPD 応答</value>
   </data>
+  <data name="ArtistPage_SubTitle_ArtistCount" xml:space="preserve">
+    <value>{0}アーティスト</value>
+  </data>
+  <data name="ListviewItemContextMenu_GoToAlbumPage" xml:space="preserve">
+    <value>アルバムページへ移動</value>
+  </data>
+  <data name="ListviewItemContextMenu_GoToArtistPage" xml:space="preserve">
+    <value>アーティストページへ移動</value>
+  </data>
 </root>

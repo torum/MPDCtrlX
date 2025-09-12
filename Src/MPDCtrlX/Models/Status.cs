@@ -31,6 +31,7 @@ public class Status
         set
         {
             _volume = value;
+            MpdVolumeIsSet = true;
         }
     }
 

@@ -79,6 +79,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   {0} artists に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ArtistPage_SubTitle_ArtistCount {
+            get {
+                return ResourceManager.GetString("ArtistPage_SubTitle_ArtistCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Cancel {
@@ -732,6 +741,24 @@ namespace MPDCtrlX.Properties {
         public static string ListviewItemContextMenu_AddToQueue {
             get {
                 return ResourceManager.GetString("ListviewItemContextMenu_AddToQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Go to album page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ListviewItemContextMenu_GoToAlbumPage {
+            get {
+                return ResourceManager.GetString("ListviewItemContextMenu_GoToAlbumPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Go to artist page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ListviewItemContextMenu_GoToArtistPage {
+            get {
+                return ResourceManager.GetString("ListviewItemContextMenu_GoToArtistPage", resourceCulture);
             }
         }
         

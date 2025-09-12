@@ -28,7 +28,7 @@ public partial class SearchPage : UserControl
         InitializeComponent();
 
         vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
-        vm.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
+        //vm.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
         vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
     }
 
@@ -396,80 +396,4 @@ public partial class SearchPage : UserControl
             this.SearchListViewHeaderScrollViewer.Offset = sv.Offset;
         }
     }
-
-    private async void OnAddToPlaylistDialogShowAsync(object? sender, List<string> list)
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        var dialog = new ContentDialog
-        {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
-            IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
-            IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.SaveToDialog()
-            {
-                //DataContext = new DialogViewModel()
-            }
-        };
-
-        if (dialog.Content is SaveToDialog asdf)
-        {
-            // Sort
-            CultureInfo ci = CultureInfo.CurrentCulture;
-            StringComparer comp = StringComparer.Create(ci, true);
-
-            asdf.PlaylistComboBox.ItemsSource = new ObservableCollection<Playlist>(vm.Playlists.OrderBy(x => x.Name, comp));
-        }
-
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
-        {
-            /*
-            var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-            if (plselitem is Models.Playlist pl)
-            {
-                if (string.IsNullOrWhiteSpace(pl.Name))
-                {
-                    return;
-                }
-
-                vm?.AddToPlaylist_Execute(pl.Name.Trim(), list);
-            }
-            */
-            if (dlg.CreateNewCheckBox.IsChecked is true)
-            {
-                var str = dlg.TextBoxPlaylistName.Text ?? string.Empty;
-
-                // TODO; check if already exists?
-
-                if (!string.IsNullOrEmpty(str.Trim()))
-                {
-                    vm?.AddToPlaylist_Execute(str.Trim(), list);
-                }
-            }
-            else
-            {
-                var plselitem = dlg.PlaylistComboBox.SelectedItem;
-
-                if (plselitem is Models.Playlist pl)
-                {
-                    if (string.IsNullOrWhiteSpace(pl.Name))
-                    {
-                        return;
-                    }
-
-                    vm?.AddToPlaylist_Execute(pl.Name.Trim(), list);
-                }
-            }
-        }
-    }
-
 }

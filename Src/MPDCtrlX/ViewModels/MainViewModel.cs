@@ -2028,7 +2028,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             int sec, min, hour, s;
 
-            sec = Time / 10;
+            sec = Time / _elapsedTimeMultiplier;
 
             min = sec / 60;
             s = sec % 60;
@@ -2056,6 +2056,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
+    private readonly int _elapsedTimeMultiplier = 1;// or 10
     private int _elapsed = 0;
     public int Elapsed
     {
@@ -2099,7 +2100,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             int sec, min, hour, s;
 
-            sec = _elapsed / 10;
+            sec = _elapsed / _elapsedTimeMultiplier;
 
             min = sec / 60;
             s = sec % 60;
@@ -2895,6 +2896,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _artists = value;
             NotifyPropertyChanged(nameof(Artists));
+            NotifyPropertyChanged(nameof(ArtistPageSubTitleArtistCount));
+        }
+    }
+
+    private string _artistPageSubTitleArtistCount = "";
+    public string ArtistPageSubTitleArtistCount
+    {
+        get
+        {
+            _artistPageSubTitleArtistCount = string.Format(MPDCtrlX.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
+            return _artistPageSubTitleArtistCount;
         }
     }
 
@@ -4287,8 +4299,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler<string>? CurrentSongChanged;
 
     //public event EventHandler? QueueSaveAsDialogShow;
-    public event EventHandler? QueueSaveToDialogShow;
-    public event EventHandler<List<string>>? QueueListviewSaveToDialogShow;
+    //public event EventHandler? QueueSaveToDialogShow;
+    //public event EventHandler<List<string>>? QueueListviewSaveToDialogShow;
     
     public event EventHandler? QueueHeaderVisibilityChanged;
     public event EventHandler? QueueFindWindowVisibilityChanged_SetFocus;
@@ -4297,8 +4309,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public event EventHandler? PlaylistHeaderVisibilityChanged;
     public event EventHandler? FilesHeaderVisibilityChanged;
 
-    public event EventHandler<List<string>>? SearchPageAddToPlaylistDialogShow;
-    public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
+    //public event EventHandler<List<string>>? SearchPageAddToPlaylistDialogShow;
+    //public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
 
     public event EventHandler<string>? PlaylistRenameToDialogShow;
 
@@ -4319,12 +4331,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #endregion
 
     private readonly InitWindow _initWin;
+    private readonly IDialogService _dialog;
 
-    public MainViewModel(IMpcService mpcService, InitWindow initWin)
+    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService)
     {
         // MPD Service dependency injection.
         _mpc = mpcService;
         _initWin = initWin;
+        _dialog = dialogService;
 
         #region == Init commands ==
 
@@ -4500,6 +4514,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         TryConnectCommand = new RelayCommand(TryConnectCommand_Execute, TryConnectCommand_CanExecute);
 
+        ListviewGoToAlbumPageCommand = new GenericRelayCommand<SongInfo>(param => ListviewGoToAlbumPageCommand_Execute(param), param => ListviewGoToAlbumPageCommand_CanExecute());
+        ListviewGoToArtistPageCommand = new GenericRelayCommand<SongInfo>(param => ListviewGoToArtistPageCommand_Execute(param), param => ListviewGoToArtistPageCommand_CanExecute());
+
         #endregion
 
         #region == Subscribe to events ==
@@ -4534,7 +4551,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         #region == Init Song's time elapsed timer. ==  
 
         // Init Song's time elapsed timer.
-        _elapsedTimer = new System.Timers.Timer(100);
+        _elapsedTimer = new System.Timers.Timer(1000); // adjust this when _elapsedTimeMultiplier value is not 1.
         _elapsedTimer.Elapsed += new System.Timers.ElapsedEventHandler(ElapsedTimer);
 
         #endregion
@@ -7123,9 +7140,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 {
                     // no need to care about "double" updates for time.
                     Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
-                    Time *= 10;
+                    Time *= _elapsedTimeMultiplier;
                     _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed);
-                    _elapsed *= 10;
+                    _elapsed *= _elapsedTimeMultiplier;
                     if (!_elapsedTimer.Enabled)
                         _elapsedTimer.Start();
                 }
@@ -7135,9 +7152,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                     // no need to care about "double" updates for time.
                     Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
-                    Time *= 10;
+                    Time *= _elapsedTimeMultiplier;
                     _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed); 
-                    _elapsed *= 10;
+                    _elapsed *= _elapsedTimeMultiplier;
                     NotifyPropertyChanged(nameof(Elapsed));
                 }
 
@@ -9359,7 +9376,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public async void SetSeekCommand_ExecuteAsync()
     {
-        double elapsed = _elapsed / 10;
+        double elapsed = _elapsed / _elapsedTimeMultiplier;
         await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, elapsed);
     }
 
@@ -9438,14 +9455,49 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         */
         return true;
     }
-    public void QueueSaveToCommand_ExecuteAsync()
+    public async void QueueSaveToCommand_ExecuteAsync()
     {
         if (Queue.Count == 0)
             return;
 
-        QueueSaveToDialogShow?.Invoke(this, EventArgs.Empty);
+        var result = await _dialog.ShowAddToDialog(this);
+
+        if (result is null)
+        {
+            return;
+        }
+
+#pragma warning disable IDE0305
+        _ = AddTo(result.PlaylistName, Queue.Select(s => s.File).ToList());
+#pragma warning restore IDE0305
+
+        //QueueSaveToDialogShow?.Invoke(this, EventArgs.Empty);
     }
 
+    public async Task AddTo(string playlistName, List<string> uris)
+    {
+        if (string.IsNullOrEmpty(playlistName))
+            return;
+        if (uris.Count == 0)
+            return;
+
+        await _mpc.MpdPlaylistAdd(playlistName, uris);
+    }
+
+    /*
+    // common used by many
+    public async void AddToPlaylist_Execute(string playlistName, List<string> list)
+    {
+        if (string.IsNullOrEmpty(playlistName))
+            return;
+
+        if (list.Count < 1)
+            return;
+
+        await _mpc.MpdPlaylistAdd(playlistName, list);
+    }
+    */
+    /*
     // called from code behind.
     public async void QueueSaveToDialog_Execute(string playlistName)
     {
@@ -9457,6 +9509,55 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 #pragma warning disable IDE0305
         await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.File).ToList());
 #pragma warning restore IDE0305
+    }
+    */
+
+
+    // Add selected to playlist
+    public IRelayCommand QueueListviewSaveSelectedToCommand { get; }
+    public static bool QueueListviewSaveSelectedToCommand_CanExecute()
+    {
+        /*
+        if (IsBusy) return false;
+        if (IsWorking) return false;
+        if (Queue.Count == 0) return false;
+        if (SelectedQueueSong is null) return false;
+        */
+        return true;
+    }
+    public async void QueueListviewSaveSelectedToCommand_Execute(object obj)
+    {
+        if (obj is null)
+        {
+            return;
+        }
+
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        var collection = items.Cast<SongInfoEx>();
+
+        List<string> selectedList = [];
+
+        foreach (var item in collection)
+        {
+            selectedList.Add(item.File);
+        }
+
+        //QueueListviewSaveToDialogShow?.Invoke(this, selectedList);
+
+        var result = await _dialog.ShowAddToDialog(this);
+
+        if (result is null)
+        {
+            return;
+        }
+
+        _ = AddTo(result.PlaylistName, selectedList);
     }
 
     // TODO:  Enter or double click from code behind.
@@ -9723,44 +9824,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         await _mpc.MpdMoveId(idToNewPos);
     }
 
-    // Add selected to playlist
-    public IRelayCommand QueueListviewSaveSelectedToCommand { get; }
-    public static bool QueueListviewSaveSelectedToCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
-        */
-        return true;
-    }
-    public void QueueListviewSaveSelectedToCommand_Execute(object obj)
-    {
-        if (obj is null)
-        {
-            return;
-        }
-
-        System.Collections.IList items = (System.Collections.IList)obj;
-
-        if (items.Count == 0)
-        {
-            return;
-        }
-
-        var collection = items.Cast<SongInfoEx>();
-
-        List<string> selectedList = [];
-
-        foreach (var item in collection)
-        {
-            selectedList.Add(item.File);
-        }
-
-        QueueListviewSaveToDialogShow?.Invoke(this, selectedList);
-    }
-
     // ScrollIntoNowPlaying
     public IRelayCommand ScrollIntoNowPlayingCommand { get; }
     public bool ScrollIntoNowPlayingCommand_CanExecute()
@@ -9926,7 +9989,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         //if (SearchResult.Count == 0) return false;
         return true;
     }
-    public void SearchListviewSaveSelectedToCommand_Execute(object obj)
+    public async void SearchListviewSaveSelectedToCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -9943,7 +10006,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         if (uriList.Count > 0)
         {
-            SearchPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+            //SearchPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+
+            var result = await _dialog.ShowAddToDialog(this);
+
+            if (result is null)
+            {
+                return;
+            }
+
+            _ = AddTo(result.PlaylistName, uriList);
         }
     }
 
@@ -9953,7 +10025,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         return true;
     }
-    public void SearchPageSongsAddToPlaylistCommand_Execute(object obj)
+    public async void SearchPageSongsAddToPlaylistCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -9968,7 +10040,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (uriList.Count > 0)
             {
-                SearchPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+                //SearchPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+                var result = await _dialog.ShowAddToDialog(this);
+
+                if (result is null)
+                {
+                    return;
+                }
+
+                _ = AddTo(result.PlaylistName, uriList);
             }
         }
     }
@@ -10017,7 +10097,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         return true;
     }
-    public void FilesListviewSaveSelectedToCommand_Execute(object obj)
+    public async void FilesListviewSaveSelectedToCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -10032,10 +10112,21 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             uriList.Add(item.OriginalFileUri);
         }
 
-        if (uriList.Count > 0)
+        if (uriList.Count == 0)
         {
-            FilesPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+            return;
         }
+
+        //FilesPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+
+        var result = await _dialog.ShowAddToDialog(this);
+
+        if (result is null)
+        {
+            return;
+        }
+
+        _ = AddTo(result.PlaylistName, uriList);
     }
 
     // Play all
@@ -10113,7 +10204,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         return true;
     }
-    public void FilesPageFilesAddToPlaylistCommand_Execute(object obj)
+    public async void FilesPageFilesAddToPlaylistCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -10128,7 +10219,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             if (uriList.Count > 0)
             {
-                FilesPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+                //FilesPageAddToPlaylistDialogShow?.Invoke(this, uriList);
+
+                var result = await _dialog.ShowAddToDialog(this);
+
+                if (result is null)
+                {
+                    return;
+                }
+
+                _ = AddTo(result.PlaylistName, uriList);
             }
         }
     }
@@ -10552,6 +10652,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // Clear listview 
             PlaylistSongs.Clear();
             //CurrentPage = App.GetService<QueuePage>();
+
+            _playlistPageSubTitleSongCount = string.Empty;
+            NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
         }
     }
 
@@ -10746,19 +10849,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 await _mpc.MpdAdd(si.File);
                 break;
         }
-    }
-
-
-    // common used by many
-    public async void AddToPlaylist_Execute(string playlistName, List<string> list)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-            return;
-
-        if (list.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlistName, list);
     }
 
     public IRelayCommand SongsListviewPlayThisCommand { get; set; }
@@ -12241,6 +12331,90 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     #endregion
+
+    public IRelayCommand ListviewGoToAlbumPageCommand { get; }
+    public static bool ListviewGoToAlbumPageCommand_CanExecute()
+    {
+        return true;
+    }
+    public void ListviewGoToAlbumPageCommand_Execute(SongInfo song)
+    {
+        Debug.WriteLine("ListviewGoToAlbumPageCommand_Execute");
+
+        if (song is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(song.Album.Trim()))
+        {
+            return;
+        }
+
+        var items = Albums.Where(i => i.Name == song.Album);
+        if (items is null) return;
+        var asdf = song.AlbumArtist;
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            asdf = song.Artist;
+        }
+
+        // no artist name
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            var hoge = items.FirstOrDefault(x => x.Name == song.Album);
+            // found it
+            SelectedAlbum = hoge;
+            if (SelectedAlbum is not null)
+            {
+                GoToAlbumPage();
+            }
+        }
+        else
+        {
+            foreach (var item in items)
+            {
+                if (item.AlbumArtist != asdf) continue;
+                // found it
+                SelectedAlbum = item;
+                if (SelectedAlbum is not null)
+                {
+                    GoToAlbumPage();
+                }
+                break;
+            }
+        }
+    }
+
+    public IRelayCommand ListviewGoToArtistPageCommand { get; }
+    public static bool ListviewGoToArtistPageCommand_CanExecute()
+    {
+        return true;
+    }
+    public void ListviewGoToArtistPageCommand_Execute(SongInfo song)
+    {
+        if (song is null)
+        {
+            return;
+        }
+
+        var asdf = song.AlbumArtist;
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            asdf = song.Artist;
+        }
+
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            return;
+        }
+
+        var item = Artists.FirstOrDefault(i => i.Name == asdf);
+        if (item is null) return;
+        SelectedAlbumArtist = item;
+        GoToArtistPage();
+    }
+
 
     #endregion
 }
