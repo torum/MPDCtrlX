@@ -7088,7 +7088,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         //_pathStopButton
                 }
 
-                if (_mpc.MpdStatus.MpdVolumeIsSet)
+                if (_mpc.MpdStatus.MpdVolumeIsReturned)
                 {
                     //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
 
@@ -7099,28 +7099,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         _volume = tmpVol;
                         NotifyPropertyChanged(nameof(Volume));
 
-                        // save
-                        if (_currentProfile is not null)
-                        {
-                            _currentProfile.Volume = _volume;
-                        }
                     }
-                }
-                else
-                {
-                    //Debug.WriteLine("Volume is NOT set. @UpdateButtonStatus()");
-
-                    if (_currentProfile is not null)
-                    {
-                        //Debug.WriteLine($"Volume is set to _currentProfile {_currentProfile.Volume}. @UpdateButtonStatus()");
-                        //_volume = _currentProfile.Volume;
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("Volume is set to default 20. @UpdateButtonStatus()");
-                        //_volume = 20; // default volume.
-                    }
-                    //NotifyPropertyChanged(nameof(Volume));
                 }
 
                 _random = _mpc.MpdStatus.MpdRandom;

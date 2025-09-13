@@ -1440,7 +1440,7 @@ public partial class MpcService : IMpcService
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
-                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
+                        //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
 
                         //}
                     }
@@ -1641,7 +1641,7 @@ public partial class MpcService : IMpcService
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
-                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
+                        //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
 
                         //}
                     }
@@ -1780,7 +1780,7 @@ public partial class MpcService : IMpcService
                         ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
-                        ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
+                        //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
                         //}
                     }
 
@@ -2911,8 +2911,16 @@ public partial class MpcService : IMpcService
                 {
                     MpdStatus.MpdVolume = Int32.Parse(valueVolume);
 
-                    //MpdStatus.MpdVolumeIsSet = true;
+                    MpdStatus.MpdVolumeIsReturned = true;
                 }
+                else
+                {
+                    MpdStatus.MpdVolumeIsReturned = false;
+                }
+            }
+            else
+            {
+                MpdStatus.MpdVolumeIsReturned = false;
             }
 
             // songID

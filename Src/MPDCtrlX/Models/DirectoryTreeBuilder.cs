@@ -58,7 +58,7 @@ public class DirectoryTreeBuilder : NodeTree
 
     public bool IsCanceled { get; set; }
 
-    public void Load(ObservableCollection<string> dirs)
+    public async Task Load(ObservableCollection<string> dirs)
     {
         if (dirs is null)
             return;
@@ -80,7 +80,7 @@ public class DirectoryTreeBuilder : NodeTree
             // for responsivenesss.
             //await Task.Delay(1); //<- not good practice, but Avalonia's TreeView does not support virtualization..
 
-            //await Task.Yield();
+            await Task.Yield();
 
             // changed profile etc.
             if (IsCanceled)
@@ -142,7 +142,7 @@ public class DirectoryTreeBuilder : NodeTree
                             NodeDirectory hoge = new(asdf.Trim(), new Uri(@"file:///" + pathDir.Trim()))
                             {
                                 Selected = false,
-                                Expanded = true,
+                                Expanded = false,
                                 Parent = parent
                             };
                             //parent.Children.Add(hoge);
@@ -165,7 +165,7 @@ public class DirectoryTreeBuilder : NodeTree
                     NodeDirectory hoge = new(ValuePair[0].Trim(), new Uri(@"file:///" + pathDir.Trim()))
                     {
                         Selected = false,
-                        Expanded = true,
+                        Expanded = false,
                         Parent = root
                     };
                     //root.Children.Add(hoge);

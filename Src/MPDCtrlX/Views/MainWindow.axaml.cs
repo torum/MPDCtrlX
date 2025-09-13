@@ -378,18 +378,21 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    private readonly StringBuilder _sbCommandOutput = new();
+    //private readonly StringBuilder _sbCommandOutput = new();
     public void OnDebugCommandOutput(string arg)
     {
         // AppendText() is much faster than data binding.
         //DebugCommandTextBox.AppendText(arg);
+        //DebugCommandTextBox.CaretIndex = DebugCommandTextBox.Text.Length;
+        //DebugCommandTextBox.ScrollToEnd();
 
-        _sbCommandOutput.Append(arg);
-        DebugCommandTextBox.Text = _sbCommandOutput.ToString();
+        //_sbCommandOutput.Append(arg);
+        //DebugCommandTextBox.Text = _sbCommandOutput.ToString();
+        DebugCommandTextBox.Text += arg;
         DebugCommandTextBox.CaretIndex = DebugCommandTextBox.Text.Length;
     }
 
-    private readonly StringBuilder _sbIdleOutput = new();
+    //private readonly StringBuilder _sbIdleOutput = new();
     public void OnDebugIdleOutput(string arg)
     {
         /*
@@ -400,9 +403,9 @@ public partial class MainWindow : Window//AppWindow//
         DebugIdleTextBox.ScrollToEnd();
         */
 
-        //_sbIdleOutput.Append(DebugIdleTextBox.Text);
-        _sbIdleOutput.Append(arg);
-        DebugIdleTextBox.Text = _sbIdleOutput.ToString();
+        //_sbIdleOutput.Append(arg);
+        //DebugIdleTextBox.Text = _sbIdleOutput.ToString();
+        DebugIdleTextBox.Text += arg;
         DebugIdleTextBox.CaretIndex = DebugIdleTextBox.Text.Length;
     }
 
