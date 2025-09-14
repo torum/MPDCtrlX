@@ -82,10 +82,10 @@ public partial class MpcService : IMpcService
         Connected,
         DisconnectedByUser,
         DisconnectedByHost,
-        ConnectFail_Timeout,
-        ReceiveFail_Timeout,
-        SendFail_Timeout,
-        SendFail_NotConnected,
+        ConnectFailTimeout,
+        ReceiveFailTimeout,
+        SendFailTimeout,
+        SendFailNotConnected,
         Disconnecting,
         Disconnected,
         SeeConnectionErrorEvent
@@ -1403,7 +1403,7 @@ public partial class MpcService : IMpcService
             }
             else
             {
-                ConnectionState = ConnectionStatus.ConnectFail_Timeout;
+                ConnectionState = ConnectionStatus.ConnectFailTimeout;
                 DebugCommandOutput?.Invoke(this, string.Format("################ Error@{0}, Reason:{1}, Data:{2}, {3} Exception: {4} {5}", "WriteAsync@MpdSendCommand", "IOException", cmd.Trim(), Environment.NewLine, e.Message, Environment.NewLine + Environment.NewLine));
 
                 // タイムアウトしていたらここで「も」エラーになる模様。
@@ -1742,7 +1742,7 @@ public partial class MpcService : IMpcService
             }
             else
             {
-                ConnectionState = ConnectionStatus.ConnectFail_Timeout;
+                ConnectionState = ConnectionStatus.ConnectFailTimeout;
 
                 DebugCommandOutput?.Invoke(this, string.Format("################ Error: @{0}Reason: {1}Data: {2}{3}Exception: {4} {5}", "ReadLineAsync@MpdCommandSendCommand" + Environment.NewLine, "IOException" + Environment.NewLine, cmd.Trim() + Environment.NewLine, Environment.NewLine, e.Message, Environment.NewLine));
 

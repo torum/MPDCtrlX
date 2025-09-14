@@ -95,7 +95,7 @@
 				<ui:SettingsExpanderItem>
 					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UpdateDatabaseOnStartup}" IsChecked="{Binding IsUpdateOnStartup}" Margin="0"></CheckBox>
 				</ui:SettingsExpanderItem>
-				<ui:SettingsExpanderItem>
+				<ui:SettingsExpanderItem IsVisible="False">
 					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
 				</ui:SettingsExpanderItem>
 				<ui:SettingsExpanderItem>

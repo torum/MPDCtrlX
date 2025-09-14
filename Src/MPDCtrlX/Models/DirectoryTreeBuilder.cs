@@ -98,6 +98,8 @@ public class DirectoryTreeBuilder : NodeTree
                     {
                         if (string.IsNullOrEmpty(asdf)) continue;
 
+                        await Task.Yield();
+
                         // LINQ may be slower in this case.
                         /*
                         var fuga = parent.Children.FirstOrDefault(i => i.Name == asdf);
@@ -128,6 +130,8 @@ public class DirectoryTreeBuilder : NodeTree
                         bool found = false;
                         foreach (var child in parent.Children)
                         {
+                            await Task.Yield();
+
                             if (child.Name.ToLower() == asdf.ToLower())
                             {
                                 // set parent node

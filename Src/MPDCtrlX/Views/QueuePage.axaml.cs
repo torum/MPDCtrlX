@@ -33,7 +33,7 @@ public partial class QueuePage : UserControl
         //vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
         //vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
-        vm.QueueFindWindowVisibilityChanged_SetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
+        vm.QueueFindWindowVisibilityChangedSetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
         /*
         Unloaded += (sender, e) =>
         {
