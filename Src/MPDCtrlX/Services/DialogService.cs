@@ -6,6 +6,7 @@ using MPDCtrlX.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -85,6 +86,85 @@ public class DialogService : IDialogService
 
                 }
             }
+        }
+
+        return null;
+    }
+
+    public async Task ShowProfileEditDialog(Profile slectedProfile)
+    {
+        if (slectedProfile is null)
+        {
+            return;
+        }
+
+        var dialog = new ContentDialog
+        {
+            Title = "EDIT",
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.ProfileDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        if (dialog.Content is not Views.Dialogs.ProfileDialog dlg)
+        {
+            return;
+        }
+
+        dlg.SetProfile(slectedProfile);
+
+        var result = await dialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary)
+        {
+            return;
+        }
+
+        var ret = dlg.GetProfile();
+        if (ret is not null)
+        {
+            slectedProfile = ret;
+        }
+    }
+
+    public async Task<Profile?> ShowProfileAddDialog()
+    {
+        var dialog = new ContentDialog
+        {
+            Title = "ADD",
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            DefaultButton = ContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            Content = new Views.Dialogs.ProfileDialog()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        if (dialog.Content is not Views.Dialogs.ProfileDialog dlg)
+        {
+            return null;
+        }
+
+        var result = await dialog.ShowAsync();
+
+        if (result != ContentDialogResult.Primary)
+        {
+            return null;
+        }
+
+        var ret = dlg.GetProfileAsNew();
+        if (ret is not null)
+        {
+            return ret;
         }
 
         return null;

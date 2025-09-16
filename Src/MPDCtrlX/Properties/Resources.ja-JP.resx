@@ -617,10 +617,10 @@ SOFTWARE.</value>
     <value>その他オプション</value>
   </data>
   <data name="Settings_ProjectPage" xml:space="preserve">
-    <value>プロジェクトページ</value>
+    <value>プロジェクト情報</value>
   </data>
   <data name="Settings_ProjectPage_Description" xml:space="preserve">
-    <value>オープンソースコラボレーション @GitHub</value>
+    <value>オープンソースプロジェクトとして GitHubでホスティングされています。</value>
   </data>
   <data name="Dialog_TextBox_Watermark_EnterNewPlaylistName" xml:space="preserve">
     <value>新規プレイリスト名の入力</value>

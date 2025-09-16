@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+             x:Class="MPDCtrlX.Views.Dialogs.ProfileDialog">
+	<Grid>
+		<StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
+				<TextBox x:Name="HostTextBox" Text="" Watermark="IP address or PC name" Width="250"></TextBox>
+				<!--  (127.0.0.1 or localhost for Local PC) -->
+			</StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
+				<TextBox x:Name="PortTextBox" Text="" Watermark="Default is 6600" Width="250"></TextBox>
+			</StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
+				<StackPanel Spacing="24" Orientation="Horizontal">
+					<TextBox x:Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="" Width="250"></TextBox>
+					<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Spacing="3" HorizontalAlignment="Left">
+				<CheckBox x:Name="IsDefaultCheckBox" Content="IsDefault" HorizontalAlignment="Left" />
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</UserControl>

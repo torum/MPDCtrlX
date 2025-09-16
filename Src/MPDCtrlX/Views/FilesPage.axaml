@@ -99,7 +99,7 @@
 		<!--
 		<TreeDataGrid Grid.Row="0" Grid.Column="0" BorderThickness="0 0 0 0" Source="{Binding MusicDirectoriesSource, Mode=TwoWay}" />
 		-->
-		<Border Grid.Row="2" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6" Background="{DynamicResource NavigationViewDefaultPaneBackground}"></Border>
 		<TreeView Grid.Row="2" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.Resources>
 				<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
@@ -296,9 +296,30 @@
 							<Setter Property="ContextFlyout">
 								<Setter.Value>
 									<MenuFlyout>
-										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToQueue}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<!--
+										<MenuItem Header="{x:Static prop:Resources.ListViewItemContextMenu_Play}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).SongsListviewPlayThisCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}">
+											<MenuItem.Icon>
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+		Data="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm8.856-3.845A1.25 1.25 0 0 0 9 9.248v5.504a1.25 1.25 0 0 0 1.856 1.093l5.757-3.189a.75.75 0 0 0 0-1.312l-5.757-3.189Z">
+												</PathIcon>
+											</MenuItem.Icon>
+										</MenuItem>
+										-->
+										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToQueue}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewAddSelectedToQueueCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}">
+											<MenuItem.Icon>
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+		Data="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 5a.75.75 0 0 0-.743.648l-.007.102v3.5h-3.5a.75.75 0 0 0-.102 1.493l.102.007h3.5v3.5a.75.75 0 0 0 1.493.102l.007-.102v-3.5h3.5a.75.75 0 0 0 .102-1.493l-.102-.007h-3.5v-3.5A.75.75 0 0 0 12 7Z">
+												</PathIcon>
+											</MenuItem.Icon>
+										</MenuItem>
 										<Separator/>
-										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToPlaylist}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}"/>
+										<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_AddToPlaylist}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).FilesListviewSaveSelectedToCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItems}">
+											<MenuItem.Icon>
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+		Data="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 5a.75.75 0 0 0-.743.648l-.007.102v3.5h-3.5a.75.75 0 0 0-.102 1.493l.102.007h3.5v3.5a.75.75 0 0 0 1.493.102l.007-.102v-3.5h3.5a.75.75 0 0 0 .102-1.493l-.102-.007h-3.5v-3.5A.75.75 0 0 0 12 7Z">
+												</PathIcon>
+											</MenuItem.Icon>
+										</MenuItem>
 									</MenuFlyout>
 								</Setter.Value>
 							</Setter>

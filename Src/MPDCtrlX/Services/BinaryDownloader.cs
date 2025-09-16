@@ -950,6 +950,15 @@ public class BinaryDownloader : IBinaryDownloader
                             {
                                 //_albumCover.AlbumImageSource = BitmaSourceFromByteArray(_albumCover.BinaryData);
                                 b.AlbumCover.AlbumImageSource = BitmapSourceFromByteArray(albm.BinaryData);
+
+                                if (b.AlbumCover.AlbumImageSource is null)
+                                {
+                                    Debug.WriteLine("BitmaSourceFromByteArray(_albumCover.BinaryData) returned null. @MpdQueryAlbumArt");
+                                }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("albm.BinaryData is null. @MpdQueryAlbumArt");
                             }
 
                             //if (_albumCover.AlbumImageSource is not null)
@@ -959,8 +968,7 @@ public class BinaryDownloader : IBinaryDownloader
                             }
                             else
                             {
-                                result.ErrorMessage = "BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.";
-                                Debug.WriteLine("BitmaSourceFromByteArray(_albumCover.BinaryData) returned null.");
+                                result.ErrorMessage = "AlbumCover.AlbumImageSource is null. @MpdQueryAlbumArt";
                                 albm.IsSuccess = false;
                             }
                             albm.IsDownloading = false;
@@ -1090,9 +1098,13 @@ public class BinaryDownloader : IBinaryDownloader
             // A huge bug in Skia dll for linux. 1 out of 3 won't work on Linux. 
             //return Bitmap.DecodeToWidth(stream, 400);
 
+            // SKBitmap.Decode also fails often.
+            // https://github.com/mono/SkiaSharp/issues/2429
+
             using var skbit = SKBitmap.Decode(stream);
             if (skbit is null)
             {
+                Debug.WriteLine("SKBitmap.Decode(stream) failed @BitmapSourceFromByteArray");
                 return null;
             }
 
@@ -1108,6 +1120,7 @@ public class BinaryDownloader : IBinaryDownloader
             }
             else
             {
+                Debug.WriteLine("stm is null @BitmapSourceFromByteArray");
                 return null;
             }
         }

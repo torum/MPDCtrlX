@@ -622,10 +622,10 @@ SOFTWARE.</value>
     <value>A few preferences</value>
   </data>
   <data name="Settings_ProjectPage" xml:space="preserve">
-    <value>Project page</value>
+    <value>Project info</value>
   </data>
   <data name="Settings_ProjectPage_Description" xml:space="preserve">
-    <value>Open source collaboration @GitHub</value>
+    <value>This project is hosted at GitHub as a open source project.</value>
   </data>
   <data name="Dialog_TextBox_Watermark_EnterNewPlaylistName" xml:space="preserve">
     <value>Enter a new playlist name</value>
@@ -639,7 +639,7 @@ SOFTWARE.</value>
     <value>Initial configuration</value>
   </data>
   <data name="InitialSetupWindow_Description" xml:space="preserve">
-    <value>MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as service (aka daemon).</value>
+    <value>MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as a service (aka daemon).</value>
   </data>
   <data name="InitialSetupWindow_RememberThis" xml:space="preserve">
     <value>Remember this</value>

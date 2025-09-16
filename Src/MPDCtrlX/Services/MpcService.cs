@@ -109,7 +109,7 @@ public partial class MpcService : IMpcService
         }
     }
 
-    private static readonly CancellationTokenSource _cts = new();
+    private CancellationTokenSource? _cts;// = new();
     //private static readonly CancellationToken token = _cts.Token;
 
     // TODO: Not really used...
@@ -198,6 +198,8 @@ public partial class MpcService : IMpcService
 
     public async Task<ConnectionResult> MpdIdleConnect(string host, int port)
     {
+        _cts = new CancellationTokenSource();
+
         ConnectionResult result = new();
 
         IsMpdIdleConnected = false;
@@ -272,20 +274,18 @@ public partial class MpcService : IMpcService
                     }
                     else
                     {
-                        DebugIdleOutput?.Invoke(this, "TCP Idle Connection: MPD did not respond with proper respose." + "\n" + "\n");
-
+                        Debug.WriteLine("TCP Idle Connection: MPD did not respond with proper respose (Not OK). @MpdIdleConnect");
                         ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
-
+                        DebugIdleOutput?.Invoke(this, "TCP Idle Connection: MPD did not respond with proper respose." + "\n" + "\n");
                         ConnectionError?.Invoke(this, "TCP connection error: MPD did not respond with proper respose.");
                     }
                 }
 
                 else
                 {
-                    DebugIdleOutput?.Invoke(this, "TCP Idle Connection: MPD did not respond with proper respose." + "\n" + "\n");
-
+                    Debug.WriteLine("TCP Idle Connection: MPD did not respond with proper respose (Response null). @MpdIdleConnect");
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
-
+                    DebugIdleOutput?.Invoke(this, "TCP Idle Connection: MPD did not respond with proper respose." + "\n" + "\n");
                     ConnectionError?.Invoke(this, "TCP connection error: MPD did not respond with proper respose.");
                 }
             }
@@ -308,6 +308,7 @@ public partial class MpcService : IMpcService
 
             //e.SocketErrorCode
 
+            Debug.WriteLine($"TCP Idle Connection: Error while connecting. Fail to connect: {e.Message}. @MpdIdleConnect");
             DebugIdleOutput?.Invoke(this, "TCP Idle Connection: Error while connecting. Fail to connect: " + e.Message + "\n" + "\n");
 
             ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -317,6 +318,8 @@ public partial class MpcService : IMpcService
         catch (Exception e)
         {
             // TODO: Test.
+
+            Debug.WriteLine($"TCP Idle Connection: Error while connecting. Fail to connect: {e.Message}. @MpdIdleConnect");
 
             DebugIdleOutput?.Invoke(this, "TCP Idle Connection: Error while connecting. Fail to connect: " + e.Message + "\n" + "\n");
 
@@ -431,6 +434,8 @@ public partial class MpcService : IMpcService
             }
             else
             {
+                Debug.WriteLine($"The connection (idle) has been terminated (IOException): {e.Message}. @MpdIdleSendCommand_idleWriter.WriteAsync");
+
                 DebugIdleOutput?.Invoke(this, string.Format("################ Error@{0}, Reason:{1}, Data:{2}, {3} Exception: {4} {5}", "WriteAsync@MpdIdleSendCommand", "IOException", cmd.Trim(), Environment.NewLine, e.Message, Environment.NewLine + Environment.NewLine));
 
                 ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -712,6 +717,9 @@ public partial class MpcService : IMpcService
         if (MpdStop)
             return;
 
+        if (_cts is null)
+            return;
+
         if (_idleConnection.Client is null)
         {
             Debug.WriteLine("@MpdIdle: " + "TcpClient.Client is null");
@@ -921,6 +929,7 @@ public partial class MpcService : IMpcService
         catch (System.InvalidOperationException e)
         {
             // The stream is currently in use by a previous operation on the stream.
+            Debug.WriteLine("[InvalidOperationException@MpdIdle] ReadLineAsync: " + e.Message);
 
             DebugIdleOutput?.Invoke(this, string.Format("################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "ReadLineAsync@MpdIdle", "InvalidOperationException", cmd.Trim(), Environment.NewLine, e.Message, Environment.NewLine + Environment.NewLine));
 
@@ -1154,6 +1163,8 @@ public partial class MpcService : IMpcService
                     }
                     else
                     {
+                        Debug.WriteLine("TCP Command Connection: MPD did not respond with proper respose (Not OK). @MpdCommandConnect");
+
                         DebugCommandOutput?.Invoke(this, "TCP Command Connection: MPD did not respond with proper respose." + "\n" + "\n");
 
                         ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -1163,6 +1174,8 @@ public partial class MpcService : IMpcService
                 }
                 else
                 {
+                    Debug.WriteLine("TCP Command Connection: MPD did not respond with proper respose null. @MpdCommandConnect");
+
                     DebugCommandOutput?.Invoke(this, "TCP Command Connection: MPD did not respond with proper respose." + "\n" + "\n");
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -1188,6 +1201,7 @@ public partial class MpcService : IMpcService
             // TODO: Test.
 
             //e.SocketErrorCode
+            Debug.WriteLine($"TCP Command Connection: SocketException Error while connecting. Fail to connect: {e.Message}. @MpdCommandConnect");
 
             DebugCommandOutput?.Invoke(this, "TCP Command Connection: Error while connecting. Fail to connect: " + e.Message + "\n" + "\n");
 
@@ -1197,6 +1211,8 @@ public partial class MpcService : IMpcService
         }
         catch (Exception e)
         {
+            Debug.WriteLine($"TCP Command Connection: Exception Error while connecting. Fail to connect: {e.Message}. @MpdCommandConnect");
+
             DebugCommandOutput?.Invoke(this, "TCP Command Connection: Error while connecting. Fail to connect (Exception): " + e.Message + "\n" + "\n");
 
             ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -1449,6 +1465,8 @@ public partial class MpcService : IMpcService
                 }
                 else
                 {
+                    Debug.WriteLine(string.Format("Reconnecting Failed.  @IOExceptionOfWriteAsync"));
+
                     DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -1595,7 +1613,6 @@ public partial class MpcService : IMpcService
             {
                 Debug.WriteLine("@MpdCommandSendCommand ReadLineAsync isNullReturn");
 
-
                 DebugCommandOutput?.Invoke(this, string.Format("################ Error @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "ReadLineAsync@MpdSendCommand", "ReadLineAsync received null data", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
 
                 ret.ResultText = stringBuilder.ToString();
@@ -1651,6 +1668,8 @@ public partial class MpcService : IMpcService
                 else
                 {
                     // 
+                    Debug.WriteLine("@MpdCommandSendCommand Reconnecting Failed");
+
                     DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
@@ -4204,7 +4223,7 @@ public partial class MpcService : IMpcService
 
     #endregion
 
-    public void MpdDisconnect()
+    public void MpdDisconnect(bool isReconnect)
     {
         try
         {
@@ -4227,13 +4246,25 @@ public partial class MpcService : IMpcService
             IsBusy?.Invoke(this, true);
 
             ConnectionState = ConnectionStatus.Disconnecting;
-            //
-            _cts.Cancel();
+
+            if (_cts is not null)
+            {
+                _cts.Cancel();
+            }
 
             _idleConnection.Client?.Shutdown(SocketShutdown.Both);
             _idleConnection.Close();
 
-            _cts.Dispose();
+            if (_cts is not null)
+            {
+                _cts.Dispose(); // don't 
+            }
+
+            if (isReconnect)
+            {
+                _cts = new CancellationTokenSource();
+            }
+
         }
         catch { }
         finally

@@ -50,6 +50,9 @@ public partial class MainWindow : Window//AppWindow//
 
         this.NavigateViewControl.Content = App.GetService<MainView>();
 
+        // Temp
+        //GoToSettingsPage(null,EventArgs.Empty);
+
         //this.Icon = new WindowIcon(new Bitmap())
 
         this.Loaded += vm.OnWindowLoaded;
@@ -59,7 +62,7 @@ public partial class MainWindow : Window//AppWindow//
         vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
         vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
-
+        vm.GoToSettingsPage +=  GoToSettingsPage;
 
 
         /*
@@ -421,6 +424,18 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
+    public void GoToSettingsPage(object? sender, System.EventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        vm.SelectedNodeMenu = null;
+        this.NavigateViewControl.SelectedItem = null;
+        this.NavigateViewControl.Content = App.GetService<SettingsPage>();
+        return;
+    }
+
     private void Window_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         //
@@ -429,5 +444,45 @@ public partial class MainWindow : Window//AppWindow//
     private void Window_KeyUp_1(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         //
+    }
+
+    private void VolumeSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)
+    {
+        // Adjust the Slider's Value based on the mouse wheel delta
+        // e.Delta.Y typically indicates vertical scroll, positive for up, negative for down.
+        // You might want to adjust the step size based on your requirements.
+        double step = 1.0; // Adjust this value as needed for the desired scroll sensitivity
+
+        if (e.Delta.Y > 0) // Scroll up
+        {
+            VolumeSlider.Value = Math.Min(VolumeSlider.Maximum, VolumeSlider.Value + step);
+        }
+        else if (e.Delta.Y < 0) // Scroll down
+        {
+            VolumeSlider.Value = Math.Max(VolumeSlider.Minimum, VolumeSlider.Value - step);
+        }
+
+        // Mark the event as handled to prevent further processing by other controls
+        e.Handled = true;
+    }
+
+    private void SeekSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)
+    {
+        // Adjust the Slider's Value based on the mouse wheel delta
+        // e.Delta.Y typically indicates vertical scroll, positive for up, negative for down.
+        // You might want to adjust the step size based on your requirements.
+        double step = 10.0; // Adjust this value as needed for the desired scroll sensitivity
+
+        if (e.Delta.Y > 0) // Scroll up
+        {
+            SeekSlider.Value = Math.Min(SeekSlider.Maximum, SeekSlider.Value + step);
+        }
+        else if (e.Delta.Y < 0) // Scroll down
+        {
+            SeekSlider.Value = Math.Max(SeekSlider.Minimum, SeekSlider.Value - step);
+        }
+
+        // Mark the event as handled to prevent further processing by other controls
+        e.Handled = true;
     }
 }

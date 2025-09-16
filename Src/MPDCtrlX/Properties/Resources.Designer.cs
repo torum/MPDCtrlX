@@ -556,7 +556,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as service (aka daemon). に類似しているローカライズされた文字列を検索します。
+        ///   MPDCtrlX requires MPD (Music Player Daemon) to be installed (localy or remotely) and running preferably as a service (aka daemon). に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string InitialSetupWindow_Description {
             get {
@@ -1582,7 +1582,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Project page に類似しているローカライズされた文字列を検索します。
+        ///   Project info に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_ProjectPage {
             get {
@@ -1591,7 +1591,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Open source collaboration @GitHub に類似しているローカライズされた文字列を検索します。
+        ///   This project is hosted at GitHub as a open source project. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_ProjectPage_Description {
             get {

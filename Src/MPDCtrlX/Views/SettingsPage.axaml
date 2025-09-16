@@ -11,143 +11,250 @@
              x:CompileBindings="True"
              x:Class="MPDCtrlX.Views.SettingsPage">
 
-	<ScrollViewer Padding="24,24,24,24">
+	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
+		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 
-		<StackPanel Spacing="24">
-			<StackPanel>
-				<TextBlock Text="{x:Static prop:Resources.Settings_PageTitle}" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
-				<Separator/>
+		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+
+		<!-- PlaylistItem page title and menus -->
+		<Grid Grid.Row="1" Margin="0,0,0,12">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+
+			<!-- Size changes from codebehind depending on page size -->
+			<Grid Grid.Column="0" x:Name="HeaderGridSpacer" Width="24"></Grid>
+
+			<!-- page title  -->
+			<StackPanel Grid.Column="1" Height="48" Spacing="24" Margin="0" Orientation="Horizontal" HorizontalAlignment="Left">
+				<TextBlock Text="{x:Static prop:Resources.Settings_PageTitle}" Theme="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Bottom"/>
 			</StackPanel>
 
-			<StackPanel Spacing="6" Margin="0,0,0,0">
-				<StackPanel Orientation="Vertical" Spacing="12">
-					<TextBlock Text="MPDCtrlX" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
-					<TextBlock Text="{Binding AppVersion}" Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
-				</StackPanel>
+			<!-- Page command menu buttons (filter, more) -->
+			<StackPanel Grid.Column="2" Height="48" Spacing="6" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+
 			</StackPanel>
 
-			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
+		</Grid>
 
-				<ui:SettingsExpander.Footer>
-					<ComboBox MinWidth="150" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme, Mode=TwoWay}">
-						<ComboBox.ItemTemplate>
-							<DataTemplate x:DataType="mod:Theme">
-								<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-									<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
-										<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-											Data="{Binding IconData}">
-										</PathIcon>
-									</Viewbox>
-									<TextBlock Text="{Binding Label}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
-								</StackPanel>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
-				</ui:SettingsExpander.Footer>
+		<Grid Grid.Row="2" RowDefinitions="1,*">
+			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+			<ScrollViewer Grid.Row="1" Padding="24,0,24,24" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 
-			</ui:SettingsExpander>
+				<StackPanel Spacing="24" Margin="0,12,0,0">
 
-			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}" Footer="{Binding MpdVersion}">
-
-				<ui:SettingsExpanderItem>
-					<StackPanel Spacing="3" HorizontalAlignment="Left">
-						<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
-						<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="IP address or PC name" Width="250"></TextBox>
-						<!--  (127.0.0.1 or localhost for Local PC) -->
-					</StackPanel>
-				</ui:SettingsExpanderItem>
-
-				<ui:SettingsExpanderItem>
-					<StackPanel Spacing="3" HorizontalAlignment="Left">
-						<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
-						<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="Default is 6600" Width="250"></TextBox>
-					</StackPanel>
-				</ui:SettingsExpanderItem>
-
-				<ui:SettingsExpanderItem>
-					<StackPanel Spacing="3" HorizontalAlignment="Left">
-						<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
-						<StackPanel Spacing="24" Orientation="Horizontal">
-							<TextBox Name="PasswordBox" Watermark="Optional unless configred otherwise" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
-							<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
+					<StackPanel Spacing="6" Margin="0,0,0,0">
+						<StackPanel Orientation="Vertical" Spacing="12">
+							<TextBlock Text="MPDCtrlX" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
+							<TextBlock Text="{Binding AppVersion}" Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
 						</StackPanel>
 					</StackPanel>
-				</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem>
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_MPD_RememberThis}" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
-				</ui:SettingsExpanderItem>
+					<!-- Themes -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
 
-				<ui:SettingsExpanderItem>
-					<StackPanel Spacing="3" Margin="0,12,0,0" HorizontalAlignment="Right">
-						<Button Content="{x:Static prop:Resources.Settings_Opts_MPD_Connect}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
+						<ui:SettingsExpander.Footer>
+							<ComboBox MinWidth="150" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme, Mode=TwoWay}" Height="42">
+								<ComboBox.ItemTemplate>
+									<DataTemplate x:DataType="mod:Theme">
+										<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+											<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+													Data="{Binding IconData}">
+												</PathIcon>
+											</Viewbox>
+											<TextBlock Text="{Binding Label}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
+										</StackPanel>
+									</DataTemplate>
+								</ComboBox.ItemTemplate>
+							</ComboBox>
+						</ui:SettingsExpander.Footer>
+
+					</ui:SettingsExpander>
+
+					<!-- MPD connection and opts -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" IsExpanded="False" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}">
+
+						<ui:SettingsExpanderItem>
+
+							<Grid ColumnDefinitions="Auto,*">
+
+								<!-- Connection Profile -->
+								<StackPanel Grid.Column="0" Spacing="12" Orientation="Horizontal" HorizontalAlignment="Left">
+
+									<ComboBox MinWidth="150" Width="250" Height="42" ItemsSource="{Binding Profiles, Mode=OneWay}" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+										<ComboBox.ItemTemplate>
+											<DataTemplate x:DataType="mod:Profile">
+												<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+													<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+														<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" IsVisible="{Binding Path=IsDefault, Mode=OneWay}"></PathIcon>
+													</Viewbox>
+													<TextBlock Text="{Binding Name, Mode=OneWay}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
+												</StackPanel>
+											</DataTemplate>
+										</ComboBox.ItemTemplate>
+									</ComboBox>
+
+									<Button Command="{Binding ShowProfileEditDialogCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="39" Height="36">
+										<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+											<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="m13.94 5 5.061 5.06-.962.962a6.5 6.5 0 0 0-7.016 7.016l-1.96 1.96a2.25 2.25 0 0 1-1 .58l-5.115 1.395a.75.75 0 0 1-.92-.92l1.394-5.116a2.25 2.25 0 0 1 .58-1L13.94 5Zm7.091-2.03a3.579 3.579 0 0 1 0 5.06l-.97.97L15 3.94l.97-.97a3.578 3.578 0 0 1 5.061 0ZM14.28 13.974a2 2 0 0 1-1.441 2.497l-.584.144a5.729 5.729 0 0 0 .006 1.807l.54.13a2 2 0 0 1 1.45 2.51l-.187.632c.44.386.94.699 1.484.921l.494-.518a2 2 0 0 1 2.899 0l.498.525a5.28 5.28 0 0 0 1.483-.913l-.198-.686a2 2 0 0 1 1.442-2.496l.583-.144a5.729 5.729 0 0 0-.006-1.808l-.54-.13a2 2 0 0 1-1.45-2.51l.187-.63a5.28 5.28 0 0 0-1.484-.923l-.493.519a2 2 0 0 1-2.9 0l-.498-.525c-.544.22-1.044.53-1.483.912l.198.686ZM17.501 19c-.8 0-1.45-.672-1.45-1.5 0-.829.65-1.5 1.45-1.5.8 0 1.45.671 1.45 1.5 0 .828-.65 1.5-1.45 1.5Z"></PathIcon>
+										</Viewbox>
+									</Button>
+
+									<Button Command="{Binding ShowProfileRemoveNoneDialogCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="39" Height="36">
+										<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+											<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm-4.25 9.25a.75.75 0 0 0-.102 1.493l.102.007h8.5a.75.75 0 0 0 .102-1.493l-.102-.007h-8.5Z"></PathIcon>
+										</Viewbox>
+									</Button>
+
+									<Button Command="{Binding ShowProfileAddDialogCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="39" Height="36">
+										<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+											<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="M11.883 3.007 12 3a1 1 0 0 1 .993.883L13 4v7h7a1 1 0 0 1 .993.883L21 12a1 1 0 0 1-.883.993L20 13h-7v7a1 1 0 0 1-.883.993L12 21a1 1 0 0 1-.993-.883L11 20v-7H4a1 1 0 0 1-.993-.883L3 12a1 1 0 0 1 .883-.993L4 11h7V4a1 1 0 0 1 .883-.993L12 3l-.117.007Z"></PathIcon>
+										</Viewbox>
+									</Button>
+
+
+								</StackPanel>
+
+								<!-- Connect button -->
+								<StackPanel Grid.Column="1" Spacing="12" Orientation="Horizontal" HorizontalAlignment="Right">
+									<Button MinWidth="84" Width="150" Height="36" Content="{x:Static prop:Resources.Settings_Opts_MPD_Connect}" Command="{Binding ReConnectWithSelectedProfileCommand}" IsEnabled="{Binding IsConnectButtonEnabled,Mode=OneWay}" IsDefault="False" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
+								</StackPanel>
+								
+							</Grid>
+
+						</ui:SettingsExpanderItem>
+						<ui:SettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UpdateDatabaseOnStartup}" IsChecked="{Binding IsUpdateOnStartup}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+						<ui:SettingsExpanderItem IsVisible="False">
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+						<ui:SettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+
+
+						<ui:SettingsExpander.Footer>
+							<!-- Footer connection status with MPD protocol version -->
+							<TextBlock Text="{Binding ShortStatusWIthMpdVersion, Mode=OneWay}"></TextBlock>
+						</ui:SettingsExpander.Footer>
+
+					</ui:SettingsExpander>
+
+					<!-- Option -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
+
+
+						<ui:SettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
+
+					</ui:SettingsExpander>
+
+					<ui:SettingsExpander Header="Local storage usage" Description="Cache folder/directory for album cover/art images">
+
+						<ui:SettingsExpanderItem>
+							<Grid ColumnDefinitions="*,Auto">
+								<StackPanel Orientation="Horizontal" Grid.Column="0">
+									<HyperlinkButton NavigateUri="{Binding AlbumCacheFolderPath, Mode=OneTime}" Content="{Binding AlbumCacheFolderPath, Mode=OneTime}"></HyperlinkButton>
+									<TextBlock Text="{Binding AlbumCacheFolderSizeFormatted, Mode=OneWay}" VerticalAlignment="Center" MinWidth="84"></TextBlock>
+								</StackPanel>
+								<Button Grid.Column="1" Content="Clear" Command="{Binding ClearAlbumCacheFolderCommand}" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+							</Grid>
+
+						</ui:SettingsExpanderItem>
+
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
+
+					</ui:SettingsExpander>
+
+
+					<!-- Project info -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 						<!--
-							<Button Content="{x:Static prop:Resources.Connect}" IsEnabled="{Binding Path=IsNotConnecting}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding ElementName=PasswordBox}" IsDefault="False"></Button>
-							-->
-					</StackPanel>
-
-				</ui:SettingsExpanderItem>
-
-			</ui:SettingsExpander>
-
-			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
-
-				<ui:SettingsExpanderItem>
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UpdateDatabaseOnStartup}" IsChecked="{Binding IsUpdateOnStartup}" Margin="0"></CheckBox>
-				</ui:SettingsExpanderItem>
-				<ui:SettingsExpanderItem IsVisible="False">
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
-				</ui:SettingsExpanderItem>
-				<ui:SettingsExpanderItem>
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="0"></CheckBox>
-				</ui:SettingsExpanderItem>
-				<ui:SettingsExpanderItem>
-					<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
-				</ui:SettingsExpanderItem>
-
-				<ui:SettingsExpander.Footer>
-				</ui:SettingsExpander.Footer>
-
-			</ui:SettingsExpander>
-
-			<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
-				<!--
 				<ui:SettingsExpanderItem>
 					<HyperlinkButton NavigateUri="https://torum.github.io/MPDCtrlX">https://torum.github.io/MPDCtrlX</HyperlinkButton>
 				</ui:SettingsExpanderItem>
 				-->
-				<ui:SettingsExpanderItem>
-					<HyperlinkButton NavigateUri="https://github.com/torum/MPDCtrlX">https://github.com/torum/MPDCtrlX</HyperlinkButton>
-				</ui:SettingsExpanderItem>
+						<ui:SettingsExpanderItem>
+							<HyperlinkButton NavigateUri="https://github.com/torum/MPDCtrlX">https://github.com/torum/MPDCtrlX</HyperlinkButton>
+						</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpander.Footer>
-				</ui:SettingsExpander.Footer>
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
 
-			</ui:SettingsExpander>
+					</ui:SettingsExpander>
 
-			<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
+					<!-- PrivacyPolicy -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
 
-				<ui:SettingsExpanderItem>
-					<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
-				</ui:SettingsExpanderItem>
+						<ui:SettingsExpanderItem>
+							<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
+						</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpander.Footer>
-				</ui:SettingsExpander.Footer>
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
 
-			</ui:SettingsExpander>
+					</ui:SettingsExpander>
+					
+					<!-- License -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
 
-			<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
+						<ui:SettingsExpanderItem>
+							<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
+						</ui:SettingsExpanderItem>
 
-				<ui:SettingsExpanderItem>
-					<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
-				</ui:SettingsExpanderItem>
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
 
-				<ui:SettingsExpander.Footer>
-				</ui:SettingsExpander.Footer>
+					</ui:SettingsExpander>
 
-			</ui:SettingsExpander>
+					<!-- Third party -->
+					<ui:SettingsExpander Header="Third-party libraries" Description="Built with C#/.NET">
 
-		</StackPanel>
-	</ScrollViewer>
+						<ui:SettingsExpanderItem>
+							<StackPanel>
+								<TextBlock>
+									<Bold>Avalonia</Bold> by <Italic>Avalonia Team</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>CommunityToolkit.Mvvm</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>Egolds.Xaml.Behaviors.Interactions.Animated</Bold> by <Italic>Egolds</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>FluentAvaloniaUI</Bold> by <Italic>amwx</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>System.Security.Cryptography.ProtectedData</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+							</StackPanel>
+						</ui:SettingsExpanderItem>
+
+						<ui:SettingsExpander.Footer>
+						</ui:SettingsExpander.Footer>
+
+					</ui:SettingsExpander>
+					
+					
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+	</Grid>
 
 </UserControl>

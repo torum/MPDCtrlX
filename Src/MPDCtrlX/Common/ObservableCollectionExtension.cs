@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPDCtrlX.Helpers;
+namespace MPDCtrlX.Common;
 
 // Sort extension method for ObservableCollection. This does not break binding or lose current selection of items because it just move items internaly.
 public static class ObservableCollection

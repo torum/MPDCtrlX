@@ -6,7 +6,6 @@
              <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
 	<Application.Styles>
-
 		<!--
 		<FluentTheme />
 		<SimpleTheme/>
@@ -16,18 +15,5 @@
 		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="False"/>
 		
 		<StyleInclude Source="avares://MPDCtrlX/Styles/Styles.axaml" />
-
 	</Application.Styles>
-
-	<Application.Resources>
-		<ResourceDictionary>
-
-
-		
-			<ResourceDictionary.MergedDictionaries>
-
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Application.Resources>
-
 </Application>

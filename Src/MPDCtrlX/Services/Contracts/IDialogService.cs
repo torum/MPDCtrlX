@@ -1,5 +1,6 @@
-﻿using MPDCtrlX.ViewModels;
+﻿using MPDCtrlX.Models;
 using MPDCtrlX.Services;
+using MPDCtrlX.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,4 +13,8 @@ namespace MPDCtrlX.Services.Contracts;
 public interface IDialogService
 {
     Task<AddToDialogResult?> ShowAddToDialog(MainViewModel vm);
+
+    Task ShowProfileEditDialog(Profile slectedProfile);
+
+    Task<Profile?> ShowProfileAddDialog();
 }

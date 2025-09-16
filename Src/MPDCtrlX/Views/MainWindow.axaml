@@ -12,15 +12,15 @@
 		x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
 		x:Name="ThisMainWindow"
-        Title="MPDCtrlX"
-		Icon="/Assets/MPDCtrlX.ico"
+        Title=""
+		 Icon="/Assets/Untitled.ico"
 		MinWidth="320" 
 		MinHeight="460" 
 		SizeChanged="Window_SizeChanged" 
 		Loaded="Window_Loaded" 
 		Closing="Window_Closing"
 		KeyDown="Window_KeyDown" KeyUp="Window_KeyUp_1">
-	<!-- Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
+	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
 	<Interaction.Behaviors>
@@ -63,7 +63,9 @@
 		 Not good for contentdialogs. this steals escape key.
 		<KeyBinding Command="{Binding EscapeCommand}" Gesture="Escape" />
 		-->
+		<!--
 		<KeyBinding Command="{Binding ShowSettingsCommand}" Gesture="Ctrl+S"/>
+		-->
 		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
 		<!--
 		<KeyBinding Gesture="Alt+D" Command="{Binding DevCenterViewActivation}">
@@ -85,9 +87,33 @@
 		</Grid.RowDefinitions>
 
 		<!-- NavigationView -->
-		<ui:NavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="True" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+		<ui:NavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 			<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
 			<ui:NavigationView.PaneHeader>
+				<Grid ColumnDefinitions="*,Auto">
+
+					<Border HorizontalAlignment="Center" VerticalAlignment="Center">
+						<TextBlock Text="MPDCtrlX" Opacity="0.6"></TextBlock>
+					</Border>
+
+					<!-- More options button -->
+					<Button x:Name="MoreButton" Grid.Column="1" Margin="3,0,4,0" Width="39" Height="36" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip.Tip="{x:Static prop:Resources.PageMenu_More}" BorderThickness="0" Background="Transparent">
+						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+								Data="M10 6C9.30964 6 8.75 5.44036 8.75 4.75C8.75 4.05964 9.30964 3.5 10 3.5C10.6904 3.5 11.25 4.05964 11.25 4.75C11.25 5.44036 10.6904 6 10 6ZM10 11.25C9.30964 11.25 8.75 10.6904 8.75 10C8.75 9.30964 9.30964 8.75 10 8.75C10.6904 8.75 11.25 9.30964 11.25 10C11.25 10.6904 10.6904 11.25 10 11.25ZM8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14C9.30964 14 8.75 14.5596 8.75 15.25Z">
+							</PathIcon>
+						</Viewbox>
+						<Button.Flyout>
+							<MenuFlyout>
+								<MenuItem Header="Preference" Command="{Binding GoToSettingsCommand}">
+									<MenuItem.Icon>
+										<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="M12.012 2.25c.734.008 1.465.093 2.182.253a.75.75 0 0 1 .582.649l.17 1.527a1.384 1.384 0 0 0 1.927 1.116l1.401-.615a.75.75 0 0 1 .85.174 9.792 9.792 0 0 1 2.204 3.792.75.75 0 0 1-.271.825l-1.242.916a1.381 1.381 0 0 0 0 2.226l1.243.915a.75.75 0 0 1 .272.826 9.797 9.797 0 0 1-2.204 3.792.75.75 0 0 1-.848.175l-1.407-.617a1.38 1.38 0 0 0-1.926 1.114l-.169 1.526a.75.75 0 0 1-.572.647 9.518 9.518 0 0 1-4.406 0 .75.75 0 0 1-.572-.647l-.168-1.524a1.382 1.382 0 0 0-1.926-1.11l-1.406.616a.75.75 0 0 1-.849-.175 9.798 9.798 0 0 1-2.204-3.796.75.75 0 0 1 .272-.826l1.243-.916a1.38 1.38 0 0 0 0-2.226l-1.243-.914a.75.75 0 0 1-.271-.826 9.793 9.793 0 0 1 2.204-3.792.75.75 0 0 1 .85-.174l1.4.615a1.387 1.387 0 0 0 1.93-1.118l.17-1.526a.75.75 0 0 1 .583-.65c.717-.159 1.45-.243 2.201-.252ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/>
+									</MenuItem.Icon>
+								</MenuItem>
+							</MenuFlyout>
+						</Button.Flyout>
+					</Button>
+				</Grid>
 			</ui:NavigationView.PaneHeader>
 			<ui:NavigationView.PaneCustomContent>
 			</ui:NavigationView.PaneCustomContent>
@@ -148,7 +174,7 @@
 					<TextBlock Text="{Binding ElapsedFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,18,0"></TextBlock>
 				</Grid>
 				<Border Grid.Row="0" Grid.Column="1" Margin="6,0,6,0">
-					<Slider x:Name="SeekSlider" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderSeek}" Maximum="{Binding Mode=OneWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Minimum="0" Margin="0" Padding="0"></Slider>
+					<Slider x:Name="SeekSlider" PointerWheelChanged="SeekSlider_PointerWheelChanged" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderSeek}" Maximum="{Binding Mode=OneWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Minimum="0" Margin="0" Padding="0"></Slider>
 				</Border>
 				<Grid Grid.Row="0" Grid.Column="2">
 					<TextBlock Text="{Binding TimeFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="18,0,14,0"></TextBlock>
@@ -267,7 +293,7 @@
 							</ToggleButton>
 						</WrapPanel>
 
-						<Slider Orientation="Vertical" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderVolume}" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,0,10,10"></Slider>
+						<Slider x:Name="VolumeSlider" PointerWheelChanged="VolumeSlider_PointerWheelChanged" Orientation="Vertical" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderVolume}" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,0,10,10"></Slider>
 
 					</StackPanel>
 				</Grid>
