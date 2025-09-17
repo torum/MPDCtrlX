@@ -31,8 +31,9 @@ public partial class App : Application
     public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
 
     // Temp album cover cache folder.
-    private static readonly string _envCacheFolder = System.IO.Path.GetTempPath();
-    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envCacheFolder, AppName + "_AlbumCoverCache");
+    private static readonly string _envAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local. //System.IO.Path.GetTempPath();
+    private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, _appDeveloper)), AppName);
+    public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
 
     public IHost AppHost { get; private set; }
 
@@ -96,7 +97,7 @@ public partial class App : Application
                 
             };
             */
-
+            
             desktop.MainWindow = App.GetService<MainWindow>();
             //desktop.MainWindow.Show();
         }

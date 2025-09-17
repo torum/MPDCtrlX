@@ -615,8 +615,8 @@ SOFTWARE.</value>
   <data name="Settings_Opts_MPD_RememberThis" xml:space="preserve">
     <value>Remember this</value>
   </data>
-  <data name="Settings_Opts_MPD_Connect" xml:space="preserve">
-    <value>Connect</value>
+  <data name="Settings_Opts_MPD_Reconnect" xml:space="preserve">
+    <value>Reconnect</value>
   </data>
   <data name="Settings_Opts_Options_Description" xml:space="preserve">
     <value>A few preferences</value>

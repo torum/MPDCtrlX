@@ -610,8 +610,8 @@ SOFTWARE.</value>
   <data name="Settings_Opts_MPD_RememberThis" xml:space="preserve">
     <value>記憶する</value>
   </data>
-  <data name="Settings_Opts_MPD_Connect" xml:space="preserve">
-    <value>接続する</value>
+  <data name="Settings_Opts_MPD_Reconnect" xml:space="preserve">
+    <value>再接続する</value>
   </data>
   <data name="Settings_Opts_Options_Description" xml:space="preserve">
     <value>その他オプション</value>

@@ -62,11 +62,11 @@ public partial class FilesPage : UserControl
         // FilePath
         if (vm.IsFilesColumnHeaderFilePathVisible)
         {
-            this.DummyHeader.ColumnDefinitions[2].Width = GridLength.Parse("1*");
+            //this.DummyHeader.ColumnDefinitions[2].Width = GridLength.Parse("1*");
         }
         else
         {
-            this.DummyHeader.ColumnDefinitions[2].Width = new GridLength(0);
+            //this.DummyHeader.ColumnDefinitions[2].Width = new GridLength(0);
         }
     }
 

@@ -37,11 +37,13 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
-//using CommunityToolkit.WinUI.Converters;
+using Path = System.IO.Path;
+//using CommunityToolkit.WinUI.Converters; // this is bad one.
 
 namespace MPDCtrlX.ViewModels;
 
@@ -3290,7 +3292,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Settings ==
 
-    public string AlbumCacheFolderPath
+    public static string AlbumCacheFolderPath
     {
         get => App.AppDataCacheFolder;
     }
@@ -4536,10 +4538,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         UpdateProfileCommand = new GenericRelayCommand<object>(param => UpdateProfileCommand_Execute(param), param => UpdateProfileCommand_CanExecute());
         ChangeConnectionProfileCommand = new GenericRelayCommand<object>(param => ChangeConnectionProfileCommand_Execute(param), param => ChangeConnectionProfileCommand_CanExecute());
         ReConnectWithSelectedProfileCommand = new RelayCommand(ReConnectWithSelectedProfileCommand_Execute, ReConnectWithSelectedProfileCommand_CanExecute);
-
-        ShowChangePasswordDialogCommand = new GenericRelayCommand<object>(param => ShowChangePasswordDialogCommand_Execute(param), param => ShowChangePasswordDialogCommand_CanExecute());
-        ChangePasswordDialogOKCommand = new GenericRelayCommand<object>(param => ChangePasswordDialogOKCommand_Execute(param), param => ChangePasswordDialogOKCommand_CanExecute());
-        ChangePasswordDialogCancelCommand = new RelayCommand(ChangePasswordDialogCancelCommand_Execute, ChangePasswordDialogCancelCommand_CanExecute);
 
         EscapeCommand = new RelayCommand(EscapeCommand_ExecuteAsync, EscapeCommand_CanExecute);
 
@@ -8467,11 +8465,23 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     continue;
                 }
 
-                var strArtist = EscapeFilePathNames(album.AlbumArtist).Trim();
-                var strAlbum = EscapeFilePathNames(album.Name).Trim();
+                var strArtist = album.AlbumArtist.Trim();
+                var strAlbum = album.Name.Trim();
                 if (string.IsNullOrEmpty(strArtist))
                 {
                     strArtist = "Unknown Artist";
+                }
+                else
+                {
+                    strArtist = SanitizeFilename(strArtist);
+                }
+                if (string.IsNullOrEmpty(strAlbum))
+                {
+                    strAlbum = "Unknown Album";
+                }
+                else
+                {
+                    strAlbum = SanitizeFilename(strAlbum);
                 }
 
                 string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
@@ -8829,38 +8839,63 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
 
             // save album cover to cache.
-            var strAlbum = current?.Album ?? string.Empty;
+            //var strAlbum = current?.Album ?? string.Empty;
+
+            /*
             if (!string.IsNullOrEmpty(strAlbum.Trim()))
             {
-                var aat = current?.AlbumArtist.Trim();
-                if (string.IsNullOrEmpty(aat))
-                {
-                    aat = current?.Artist.Trim();
-                }
-                var strArtist = aat;
-                if (string.IsNullOrEmpty(strArtist))
-                {
-                    strArtist = "Unknown Artist";
-                }
-                strArtist = EscapeFilePathNames(strArtist).Trim();
-                strAlbum = EscapeFilePathNames(strAlbum).Trim();
 
-                string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
-                string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
-                try
-                {
-                    Directory.CreateDirectory(strDirPath);
-                    album?.AlbumImageSource?.Save(filePath, 100);
-                    //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("SaveAlbumCoverImage: Exception while saving album art: " + e.Message);
-                }
+            }
+
+            var aat = current?.AlbumArtist.Trim();
+            if (string.IsNullOrEmpty(aat))
+            {
+                aat = current?.Artist.Trim();
+            }
+            var strArtist = aat;
+            if (string.IsNullOrEmpty(strArtist))
+            {
+                strArtist = "Unknown Artist";
+            }
+            strArtist = SanitizeFilename(strArtist).Trim();
+            strAlbum = SanitizeFilename(strAlbum).Trim();
+            */
+
+            var strArtist = current?.AlbumArtist.Trim();
+            var strAlbum = current?.Album ?? string.Empty;
+            if (string.IsNullOrEmpty(strArtist))
+            {
+                strArtist = "Unknown Artist";
+            }
+            else
+            {
+                strArtist = SanitizeFilename(strArtist);
+            }
+            if (string.IsNullOrEmpty(strAlbum))
+            {
+                strAlbum = "Unknown Album";
+            }
+            else
+            {
+                strAlbum = SanitizeFilename(strAlbum);
+            }
+
+            string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
+            string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+            try
+            {
+                Directory.CreateDirectory(strDirPath);
+                album?.AlbumImageSource?.Save(filePath, 100);
+                //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("SaveAlbumCoverImage: Exception while saving album art: " + e.Message);
             }
         });
     }
 
+    /*
     private static string EscapeFilePathNames(string str)
     {
         string s = str.Replace("<", "LT");
@@ -8876,13 +8911,45 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         return s;
     }
+    */
+    public static string SanitizeFilename(string name)
+    {
+        // 1. Get the list of invalid characters for the current system
+        // and add additional common invalid path characters.
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+
+        // 2. Create a regex pattern to match invalid characters.
+        // We escape the characters to ensure they are interpreted literally.
+        string invalidCharsPattern = "[" + Regex.Escape(new string(invalidChars)) + "]";
+
+        // 3. Replace all invalid characters with the replacement character.
+        string sanitizedName = Regex.Replace(name, invalidCharsPattern, "_");
+
+        // 4. Handle reserved Windows filenames (e.g., CON, PRN, NUL).
+        string[] reservedNames = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"];
+        if (Array.Exists(reservedNames, s => s.Equals(sanitizedName, StringComparison.OrdinalIgnoreCase)))
+        {
+            sanitizedName = $"_{sanitizedName}_";
+        }
+
+        // 5. Trim trailing periods and spaces, which are invalid on Windows.
+        sanitizedName = sanitizedName.TrimEnd('.', ' ');
+
+        // 6. Ensure the filename isn't empty after sanitizing.
+        if (string.IsNullOrWhiteSpace(sanitizedName))
+        {
+            return "Untitled";
+        }
+
+        return sanitizedName;
+    }
 
     private static int CompareVersionString(string a, string b)
     {
         return (new System.Version(a)).CompareTo(new System.Version(b));
     }
 
-    private async Task<long> GetFolderSize(string path)
+    private static async Task<long> GetFolderSize(string path)
     {
         long totalSize = 0;
 
@@ -8891,7 +8958,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return totalSize;
         }
 
-        DirectoryInfo directoryInfo = new DirectoryInfo(path);
+        DirectoryInfo directoryInfo = new(path);
 
         // Add the size of files in the current directory
         foreach (FileInfo file in directoryInfo.GetFiles())
@@ -9202,7 +9269,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             StatusButton = _pathConnectingButton;
 
             StatusBarMessage = ConnectionStatusMessage;
-            Debug.WriteLine("ConnectionStatus_Disconnecting");
+            //Debug.WriteLine("ConnectionStatus_Disconnecting");
         }
         else if (status == MpcService.ConnectionStatus.DisconnectedByUser)
         {
@@ -9211,7 +9278,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             IsNotConnectingNorConnected = true;
             //IsConnectionSettingShow = true;
 
-            Debug.WriteLine("ConnectionStatus_DisconnectedByUser");
+            //Debug.WriteLine("ConnectionStatus_DisconnectedByUser");
             ConnectionStatusMessage = MPDCtrlX.Properties.Resources.ConnectionStatus_DisconnectedByUser;
             StatusButton = _pathDisconnectedButton;
 
@@ -11052,7 +11119,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     #region == Settings ==
 
     public IRelayCommand ShowProfileEditDialogCommand { get; }
-    public bool ShowProfileEditDialogCommand_CanExecute()
+    public static bool ShowProfileEditDialogCommand_CanExecute()
     {
         return true;
     }
@@ -11088,7 +11155,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     public IRelayCommand ShowProfileAddDialogCommand { get; }
-    public bool ShowProfileAddDialogCommand_CanExecute()
+    public static bool ShowProfileAddDialogCommand_CanExecute()
     {
         return true;
     }
@@ -11128,7 +11195,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     public IRelayCommand ShowProfileRemoveNoneDialogCommand { get; }
-    public bool ShowProfileRemoveNoneDialogCommand_CanExecute()
+    public static bool ShowProfileRemoveNoneDialogCommand_CanExecute()
     {
         return true;
     }
@@ -11336,7 +11403,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         return true;
     }
 
-    public async void ReConnectWithSelectedProfileCommand_Execute()
+    public void ReConnectWithSelectedProfileCommand_Execute()
     {
         if (IsBusy) return;
         if (IsConnecting) return;
@@ -11405,11 +11472,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        Dispatcher.UIThread.Post(() =>
-        {
-
-        });
-
+        Start(_host, _port);
+        /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
         if (r.IsSuccess)
@@ -11422,6 +11486,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 SelectedNodeMenu = MainMenuItems[0];
             }
         }
+        */
 
         //IsSwitchingProfile = false;
         IsBusy = false;
@@ -11833,97 +11898,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public void TryConnectCommand_Execute()
     {
         Start(_host, _port);
-    }
-
-    #endregion
-
-    #region == Dialogs ==
-
-    public IRelayCommand ShowChangePasswordDialogCommand { get; }
-    public bool ShowChangePasswordDialogCommand_CanExecute()
-    {
-        //if (SelectedProfile is null) return false;
-        if (string.IsNullOrEmpty(Host)) return false;
-        if (_port == 0) return false;
-        return true;
-    }
-    public void ShowChangePasswordDialogCommand_Execute(object obj)
-    {
-        /*
-        if (IsChangePasswordDialogShow)
-        {
-            IsChangePasswordDialogShow = false;
-        }
-        else
-        {
-            if (obj is null) return;
-
-            IsChangePasswordDialogShow = true;
-        }
-        */
-    }
-
-    public IRelayCommand ChangePasswordDialogOKCommand { get; }
-    public bool ChangePasswordDialogOKCommand_CanExecute()
-    {
-        //if (SelectedProfile is null) return false;
-        if (string.IsNullOrEmpty(Host)) return false;
-        if (_port == 0) return false;
-        return true;
-    }
-    public static void ChangePasswordDialogOKCommand_Execute(object obj)
-    {
-        if (obj is null) return;
-        /*
-        // MultipleCommandParameterConverter!
-        var values = (object[])obj;
-        
-        if ((values[0] is PasswordBox) && (values[1] is PasswordBox))
-        {
-            if ((values[0] as PasswordBox)?.Password == _password)
-            {
-                if (SelectedProfile is not null)
-                {
-                    SelectedProfile.Password = (values[1] as PasswordBox)?.Password ?? ""; //allow empty string.
-
-                    Password = SelectedProfile.Password;
-                    NotifyPropertyChanged(nameof(IsPasswordSet));
-                    NotifyPropertyChanged(nameof(IsNotPasswordSet));
-                }
-
-                if (values[0] is PasswordBox pss1)
-                    pss1.Password = "";
-                if (values[1] is PasswordBox pss2)
-                    pss2.Password = "";
-
-                // TODO:
-                if (SelectedProfile == CurrentProfile)
-                {
-                    //_mpc.MpdPassword = SelectedProfile.Password;
-                }
-
-                SettingProfileEditMessage = MPDCtrlX.Properties.Resources.ChangePasswordDialog_PasswordUpdated;
-
-            }
-            else
-            {
-                ChangePasswordDialogMessage = MPDCtrlX.Properties.Resources.ChangePasswordDialog_CurrentPasswordMismatch;
-                return;
-            }
-
-            IsChangePasswordDialogShow = false;
-        }
-        */
-    }
-
-    public IRelayCommand ChangePasswordDialogCancelCommand { get; }
-    public static bool ChangePasswordDialogCancelCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ChangePasswordDialogCancelCommand_Execute()
-    {
-        //IsChangePasswordDialogShow = false;
     }
 
     #endregion

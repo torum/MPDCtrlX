@@ -21,7 +21,7 @@
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="1*"/>
 			<ColumnDefinition Width="1"/>
-			<ColumnDefinition Width="3*"/>
+			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 
 		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
@@ -179,9 +179,13 @@
 					<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="80"></ColumnDefinition>
+							<ColumnDefinition Width="*"></ColumnDefinition>
+							<!-- 
+							<ColumnDefinition Width="80"></ColumnDefinition>
 							<ColumnDefinition Width="1*"></ColumnDefinition>
 							<ColumnDefinition Width="1*"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							-->
 						</Grid.ColumnDefinitions>
 
 						<Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
@@ -193,12 +197,13 @@
 						<Grid Grid.Column="1" Name="Library1">
 							<TextBlock Name="Library1x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.FilesListviewColumnHeader_FileName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 						</Grid>
+						<!--					
 						<Border Grid.Column="2" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
 						<Grid Grid.Column="2" Name="Library2" IsVisible="{Binding IsFilesColumnHeaderFilePathVisible}">
 							<TextBlock Name="Library2x" Opacity="0.5" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.FilesListviewColumnHeader_FilePath}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 						</Grid>
 						<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-
+						-->
 					</Grid>
 					</ScrollViewer>
 				<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
@@ -258,10 +263,14 @@
 						<DataTemplate x:DataType="mod:NodeFile">
 							<Grid>
 								<Grid.ColumnDefinitions>
+									<!--
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
 									<ColumnDefinition Width="Auto"></ColumnDefinition>
+									-->
+									<ColumnDefinition Width="80"></ColumnDefinition>
+									<ColumnDefinition Width="*"></ColumnDefinition>
 									<!-- Width="{Binding Width, ElementName=test3}" MinWidth="{Binding MinWidth, ElementName=test3}" MaxWidth="{Binding MaxWidth, ElementName=test3}" -->
 								</Grid.ColumnDefinitions>
 
@@ -282,8 +291,10 @@
 								
 								<TextBlock Grid.Column="1" Width="{Binding Bounds.Size.Width, ElementName=Library1}" Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								</TextBlock>
+								<!--
 								<TextBlock Grid.Column="2" Width="{Binding Bounds.Size.Width, ElementName=Library2}" Text="{Binding FilePath}" IsVisible="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsFilesColumnHeaderFilePathVisible}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="12,0,0,0" Opacity="0.9">
 								</TextBlock>
+								-->
 							</Grid>
 						</DataTemplate>
 					</ListBox.ItemTemplate>

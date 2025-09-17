@@ -116,12 +116,11 @@
 										</Viewbox>
 									</Button>
 
-
 								</StackPanel>
 
-								<!-- Connect button -->
+								<!-- Reconnect button -->
 								<StackPanel Grid.Column="1" Spacing="12" Orientation="Horizontal" HorizontalAlignment="Right">
-									<Button MinWidth="84" Width="150" Height="36" Content="{x:Static prop:Resources.Settings_Opts_MPD_Connect}" Command="{Binding ReConnectWithSelectedProfileCommand}" IsEnabled="{Binding IsConnectButtonEnabled,Mode=OneWay}" IsDefault="False" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
+									<Button MinWidth="84" Width="150" Height="36" Content="{x:Static prop:Resources.Settings_Opts_MPD_Reconnect}" Command="{Binding ReConnectWithSelectedProfileCommand}" IsEnabled="{Binding IsConnectButtonEnabled,Mode=OneWay}" IsDefault="False" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
 								</StackPanel>
 								
 							</Grid>

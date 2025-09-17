@@ -93,7 +93,7 @@
 				<Grid ColumnDefinitions="*,Auto">
 
 					<Border HorizontalAlignment="Center" VerticalAlignment="Center">
-						<TextBlock Text="MPDCtrlX" Opacity="0.6"></TextBlock>
+						<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold"></TextBlock>
 					</Border>
 
 					<!-- More options button -->

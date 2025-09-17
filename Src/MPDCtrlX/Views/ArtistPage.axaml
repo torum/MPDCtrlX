@@ -55,7 +55,7 @@
         <Grid Grid.Row="2" Grid.Column="0">
 			<!-- 
 			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border> -->
-			<Border Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.6"></Border>
 			<ListBox Margin="3,0,3,4" MinWidth="182" ItemsSource="{Binding Artists}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" SelectionMode="Single" Loaded="ListBox_Loaded" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->

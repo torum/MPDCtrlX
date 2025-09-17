@@ -1411,20 +1411,20 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Connect に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string Settings_Opts_MPD_Connect {
-            get {
-                return ResourceManager.GetString("Settings_Opts_MPD_Connect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Connection setting に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_Opts_MPD_Description {
             get {
                 return ResourceManager.GetString("Settings_Opts_MPD_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Reconnect に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_MPD_Reconnect {
+            get {
+                return ResourceManager.GetString("Settings_Opts_MPD_Reconnect", resourceCulture);
             }
         }
         
