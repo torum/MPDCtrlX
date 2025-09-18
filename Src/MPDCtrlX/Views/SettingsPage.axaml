@@ -234,13 +234,16 @@
 									<Bold>FluentAvaloniaUI</Bold> by <Italic>amwx</Italic> <Run>(MIT)</Run>.
 								</TextBlock>
 								<TextBlock>
-									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
 									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
 								</TextBlock>
 								<TextBlock>
+									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
 									<Bold>System.Security.Cryptography.ProtectedData</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
+								</TextBlock>
+								<TextBlock>
+									<Bold>Xaml.Behaviors.Avalonia</Bold> by <Italic>Wiesław Šoltés</Italic> <Run>(MIT)</Run>.
 								</TextBlock>
 							</StackPanel>
 						</ui:SettingsExpanderItem>

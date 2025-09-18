@@ -196,6 +196,12 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
+        if (e.SelectedItem is null)
+        {
+            vm.SelectedNodeMenu = null;
+            return;
+        }
+
         if (e.SelectedItem is NodeMenuPlaylists)
         {
             // don't change page here.
@@ -234,7 +240,14 @@ public partial class MainWindow : Window//AppWindow//
 
         if (e.IsSettingsInvoked == true)
         {
+            if (this.DataContext is MainViewModel vm)
+            {
+                //_ = Task.Run(GetCacheFolderSize);
+                vm.GetCacheFolderSize();
+            }
+
             nv.Content = App.GetService<SettingsPage>();
+
             return;
         }
 
@@ -430,6 +443,10 @@ public partial class MainWindow : Window//AppWindow//
         {
             return;
         }
+        
+        //_ = Task.Run(GetCacheFolderSize);
+        vm.GetCacheFolderSize();
+
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;
         this.NavigateViewControl.Content = App.GetService<SettingsPage>();

@@ -18,8 +18,8 @@ public partial class SettingsPage : UserControl
 
         InitializeComponent();
 
-        //_ = Task.Run(GetCacheFolderSize);
-        vm.GetCacheFolderSize();
+        // do this in shell page on navigate to settings page.
+        //vm.GetCacheFolderSize();
     }
 
     private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)

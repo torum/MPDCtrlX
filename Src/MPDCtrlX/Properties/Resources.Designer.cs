@@ -1231,7 +1231,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   MPDCtrl allows you to access your music player via specified IP address with optional user credentials. None of the data is transmitted anywhere besides your specified music player and your settings are stored on your device only. に類似しているローカライズされた文字列を検索します。
+        ///   MPDCtrlX allows you to access your music player via specified IP address with optional user credentials. None of the data is transmitted anywhere besides your specified music player and your settings are stored on your device only. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PrivacyPolicyText {
             get {
