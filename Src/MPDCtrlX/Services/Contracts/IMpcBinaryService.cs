@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Services.Contracts;
 
-public interface IBinaryDownloader
+public interface IMpcBinaryService
 {
     //AlbumImage AlbumCover { get; }
 

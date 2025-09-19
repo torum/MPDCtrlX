@@ -21,7 +21,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MPDCtrlX.Services;
 
-public class BinaryDownloader : IBinaryDownloader
+public class MpcBinaryService : IMpcBinaryService
 {
     private static TcpClient _binaryConnection = new();
     private StreamReader? _binaryReader;
@@ -35,7 +35,7 @@ public class BinaryDownloader : IBinaryDownloader
 
     private string? MpdVersion { get; set; }
 
-    public BinaryDownloader()
+    public MpcBinaryService()
     {
 
     }
