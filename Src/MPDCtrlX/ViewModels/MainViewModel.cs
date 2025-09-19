@@ -11138,7 +11138,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             return;
         }
 
-        await _dialog.ShowProfileEditDialog(SelectedProfile);
+        var res = await _dialog.ShowProfileEditDialog(SelectedProfile);
+
+        if (res is null)
+        {
+            return;
+        }
+
+        SelectedProfile = res;
 
         if (SelectedProfile.IsDefault)
         {

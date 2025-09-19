@@ -91,11 +91,11 @@ public class DialogService : IDialogService
         return null;
     }
 
-    public async Task ShowProfileEditDialog(Profile slectedProfile)
+    public async Task<Profile?> ShowProfileEditDialog(Profile selectedProfile)
     {
-        if (slectedProfile is null)
+        if (selectedProfile is null)
         {
-            return;
+            return null;
         }
 
         var dialog = new ContentDialog
@@ -114,23 +114,25 @@ public class DialogService : IDialogService
 
         if (dialog.Content is not Views.Dialogs.ProfileDialog dlg)
         {
-            return;
+            return null;
         }
 
-        dlg.SetProfile(slectedProfile);
+        dlg.SetProfile(selectedProfile);
 
         var result = await dialog.ShowAsync();
 
         if (result != ContentDialogResult.Primary)
         {
-            return;
+            return null;
         }
 
-        var ret = dlg.GetProfile();
+        return dlg.GetProfile();
+        /*
         if (ret is not null)
         {
-            slectedProfile = ret;
+            selectedProfile = ret;
         }
+        */
     }
 
     public async Task<Profile?> ShowProfileAddDialog()

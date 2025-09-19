@@ -5,7 +5,6 @@
 		<LangVersion>latest</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<ApplicationIcon>Assets\MPDCtrlX.ico</ApplicationIcon>
-		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<ErrorReport>none</ErrorReport>
 

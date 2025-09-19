@@ -14,7 +14,7 @@ public interface IDialogService
 {
     Task<AddToDialogResult?> ShowAddToDialog(MainViewModel vm);
 
-    Task ShowProfileEditDialog(Profile slectedProfile);
+    Task<Profile?> ShowProfileEditDialog(Profile slectedProfile);
 
     Task<Profile?> ShowProfileAddDialog();
 }
