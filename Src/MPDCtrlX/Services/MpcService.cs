@@ -167,9 +167,9 @@ public partial class MpcService : IMpcService
     private static readonly System.Threading.SemaphoreSlim _semaphoreCommand = new(1, 1);
     private static readonly System.Threading.SemaphoreSlim _semaphoreBinary = new(1, 1);
 
-    private readonly IBinaryDownloader _binaryDownloader;
+    private readonly IMpcBinaryService _binaryDownloader;
 
-    public MpcService(IBinaryDownloader binaryDownloader)
+    public MpcService(IMpcBinaryService binaryDownloader)
     {
         _binaryDownloader = binaryDownloader;
 
@@ -4247,24 +4247,17 @@ public partial class MpcService : IMpcService
 
             ConnectionState = ConnectionStatus.Disconnecting;
 
-            if (_cts is not null)
-            {
-                _cts.Cancel();
-            }
+            _cts?.Cancel();
 
             _idleConnection.Client?.Shutdown(SocketShutdown.Both);
             _idleConnection.Close();
 
-            if (_cts is not null)
-            {
-                _cts.Dispose(); // don't 
-            }
+            _cts?.Dispose();
 
             if (isReconnect)
             {
                 _cts = new CancellationTokenSource();
             }
-
         }
         catch { }
         finally
