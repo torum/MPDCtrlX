@@ -4728,7 +4728,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Startup and Shutdown ==
 
-    public void LoadSettings()
+    private void LoadSettings()
     {
         #region == Load app setting  ==
         try
@@ -6116,8 +6116,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         IsFullyRendered = true;
     }
 
-    // Closing
-    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    private void SaveSettings(Window sender)
     {
         // Make sure Window and settings have been fully loaded and not overriding with empty data.
         if (!IsFullyLoaded)
@@ -6728,7 +6727,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             headers.AppendChild(SearchHeader);
             */
             #endregion
-            
+
             // TODO: more
 
 
@@ -6879,7 +6878,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         // TODO:
         if (IsRememberAsProfile)
         {
-            
+
         }
         root.AppendChild(xProfiles);
 
@@ -6941,6 +6940,15 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         #endregion
+    }
+
+    // Closing
+    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    {
+        if (sender is Window w)
+        {
+            SaveSettings(w);
+        }
     }
 
     #endregion
