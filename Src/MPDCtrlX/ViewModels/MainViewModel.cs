@@ -29,6 +29,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -2288,7 +2289,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                         SelectedAlbumArtist = Artists[0];
                     });
                 }
-
                 // Get album pictures.
                 /*
                 if (!IsAlbumArtsDownLoaded)
@@ -2299,9 +2299,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else if (value is NodeMenuAlbum nmb)
             {
-                //IsWorking = true;
-                CurrentPage = App.GetService<AlbumPage>();
-                //IsWorking = false;
+                Dispatcher.UIThread.Post(async () =>
+                {
+                    IsWorking = true;
+                    await Task.Yield();
+
+                    CurrentPage = App.GetService<AlbumPage>();
+
+                    await Task.Yield();
+                    IsWorking = false;
+                });
 
                 // Get album pictures.
                 /*
@@ -2313,12 +2320,24 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             else if (value is NodeMenuFiles nml)
             {
-                CurrentPage = App.GetService<FilesPage>();
-
-                if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                Dispatcher.UIThread.Post(async () =>
                 {
-                    GetFiles(nml);
-                }
+                    if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                    {
+                        IsWorking = true;
+                        await Task.Yield();
+                    }
+
+                    CurrentPage = App.GetService<FilesPage>();
+
+                    if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                    {
+                        GetFiles(nml);
+                    }
+
+                    await Task.Yield();
+                    IsWorking = false;
+                });
             }
             else if (value is NodeMenuPlaylists)
             {
@@ -2329,18 +2348,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 CurrentPage = App.GetService<PlaylistItemPage>();
 
-                Dispatcher.UIThread.Post(() =>
-                {
-                    SelectedPlaylistSong = null;
-                    PlaylistSongs = nmpli.PlaylistSongs;
-                    SelectedPlaylistName = nmpli.Name;
+                SelectedPlaylistSong = null;
+                PlaylistSongs = nmpli.PlaylistSongs;
+                SelectedPlaylistName = nmpli.Name;
 
-                    if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
-                    {
-                        GetPlaylistSongs(nmpli);
-                    }
-                });
-                
+                if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                {
+                    GetPlaylistSongs(nmpli);
+                }
             }
             else if (value is NodeMenu)
             {
@@ -2960,8 +2975,17 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
                
-                GetArtistSongs(_selectedAlbumArtist);
-                GetAlbumPictures(SelectedArtistAlbums);
+                Task.Run(async () =>
+                {
+                    IsWorking = true;
+                    await Task.Yield();
+
+                    GetArtistSongs(_selectedAlbumArtist);
+                    GetAlbumPictures(SelectedArtistAlbums);
+
+                    IsWorking = false;
+                    await Task.Yield();
+                });
             }
         }
     }
@@ -3597,7 +3621,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             //ClearError(nameof(Host));
             _host = value;
-
+            /*
             // Validate input.
             if (value == "")
             {
@@ -3625,6 +3649,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     //SetError(nameof(Host), MPDCtrlX.Properties.Resources.Settings_ErrorHostInvalidAddressFormat);
                 }
             }
+            */
 
             NotifyPropertyChanged(nameof(Host));
         }
@@ -6082,7 +6107,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
 
     // Startup
-    public void OnWindowLoaded(object? sender, EventArgs e)
+    public async void OnWindowLoaded(object? sender, EventArgs e)
     {
         if (CurrentProfile is null)
         {
@@ -6094,7 +6119,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             //var InitWin = new InitWindow();// use DI.
             _initWin.DataContext = this;
-            _initWin.ShowDialog(owner: App.GetService<MainWindow>());
+            await _initWin.ShowDialog(owner: App.GetService<MainWindow>());
 
             return;
         }
@@ -6960,10 +6985,16 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         HostIpAddress = null;
         try
         {
-            var addresses = await Dns.GetHostAddressesAsync(host);
+            var addresses = await Dns.GetHostAddressesAsync(host, AddressFamily.InterNetwork);
             if (addresses.Length > 0)
             {
                 HostIpAddress = addresses[0];
+
+                Debug.WriteLine($"IP addresses for {host}: {HostIpAddress}");
+                foreach (var ip in addresses)
+                {
+                    Debug.WriteLine(ip);
+                }
             }
             else
             {
@@ -8272,6 +8303,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 IsWorking = true;
             });
+            await Task.Yield();
 
             CommandResult result = await _mpc.MpdQueryListAll().ConfigureAwait(false);
             if (result.IsSuccess)
@@ -8313,27 +8345,35 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
             }
 
+            IsWorking = true;
+            await Task.Yield();
+
             var r = await SearchArtistSongs(artist.Name).ConfigureAwait(ConfigureAwaitOptions.None);
 
-
             UpdateProgress?.Invoke(this, "");
-
 
             if (!r.IsSuccess)
             {
                 Debug.WriteLine("GetArtistSongs: SearchArtistSongs returned false, returning.");
+
+                IsWorking = false;
+                await Task.Yield();
                 return;
             }
             if (artist is null)
             {
                 Debug.WriteLine("GetArtistSongs: SelectedAlbumArtist is null, returning.");
+
+                IsWorking = false;
+                await Task.Yield();
                 return;
             }
-
 
             if (r.SearchResult is null)
             {
                 Debug.WriteLine("GetArtistSongs: SearchResult is null, returning.");
+                IsWorking = false;
+                await Task.Yield();
                 return;
             }
 
@@ -8368,6 +8408,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
                 slbm.IsSongsAcquired = true;
             }
+
+            IsWorking = false;
+            await Task.Yield();
         });
     }
 
@@ -11578,7 +11621,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         HostIpAddress = null;
         try
         {
-            var addresses = await Dns.GetHostAddressesAsync(Host);
+            var addresses = await Dns.GetHostAddressesAsync(Host, AddressFamily.InterNetwork);
             if (addresses.Length > 0)
             {
                 HostIpAddress = addresses[0];
@@ -11859,7 +11902,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         try
         {
-            var addresses = await Dns.GetHostAddressesAsync(Host);
+            var addresses = await Dns.GetHostAddressesAsync(Host, AddressFamily.InterNetwork);
             if (addresses.Length > 0)
             {
                 HostIpAddress = addresses[0];
@@ -11912,6 +11955,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void TryConnectCommand_Execute()
     {
+        Debug.WriteLine("_host: "+ _host);
         Start(_host, _port);
     }
 
