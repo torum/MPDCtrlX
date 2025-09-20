@@ -29,7 +29,7 @@ public partial class SettingsPage : UserControl
             return;
         }
 
-        if (DataContext is not MainViewModel vm)
+        if (DataContext is not MainViewModel)
         {
             return;
         }

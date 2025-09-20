@@ -99,21 +99,24 @@
 				<Separator/>
 				<StackPanel Spacing="24" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="24,24,24,24">
 
-					<Button Content="{x:Static prop:Resources.InitialSetupWindow_Connect}" IsDefault="True" Command="{Binding TryConnectCommand}" Classes="Accent" MinWidth="120">
+					<Button Content="{x:Static prop:Resources.InitialSetupWindow_Connect}" IsDefault="True" Command="{Binding TryConnectCommand}" MinWidth="120">
+						<!--
+						 Classes="Accent"
 						<Button.Styles>
 							<Style Selector="Button.Accent">
-								<Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
-								<Setter Property="Foreground" Value="{DynamicResource ThemeAccentColorForeground}" />
+								<Setter Property="Background" Value="{StaticResource SystemAccentColor}" />
+								<Setter Property="Foreground" Value="{StaticResource ThemeAccentColorForeground}" />
 							</Style>
 
 							<Style Selector="Button.Accent:pointerover /template/ ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+								<Setter Property="Background" Value="{StaticResource SystemAccentColor}" />
 							</Style>
 
 							<Style Selector="Button.Accent:pressed /template/ ContentPresenter">
-								<Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+								<Setter Property="Background" Value="{StaticResource SystemAccentColor}" />
 							</Style>
 						</Button.Styles>
+						-->
 					</Button>	
 					
 					<Button Content="{x:Static prop:Resources.Cancel}" Click="Button_Click" HotKey="Escape" MinWidth="120"></Button>
