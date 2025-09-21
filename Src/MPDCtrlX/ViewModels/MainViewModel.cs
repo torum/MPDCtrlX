@@ -2322,11 +2322,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 Dispatcher.UIThread.Post(async () =>
                 {
-                    if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
-                    {
-                        IsWorking = true;
-                        await Task.Yield();
-                    }
+                    IsWorking = true;
+                    await Task.Yield();
 
                     CurrentPage = App.GetService<FilesPage>();
 
