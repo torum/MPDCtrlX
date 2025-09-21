@@ -6989,12 +6989,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (addresses.Length > 0)
             {
                 HostIpAddress = addresses[0];
-
+                /*
                 Debug.WriteLine($"IP addresses for {host}: {HostIpAddress}");
                 foreach (var ip in addresses)
                 {
                     Debug.WriteLine(ip);
                 }
+                */
             }
             else
             {
@@ -8517,7 +8518,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
 
                 var strArtist = album.AlbumArtist.Trim();
-                var strAlbum = album.Name.Trim();
                 if (string.IsNullOrEmpty(strArtist))
                 {
                     strArtist = "Unknown Artist";
@@ -8526,6 +8526,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 {
                     strArtist = SanitizeFilename(strArtist);
                 }
+
+                var strAlbum = album.Name.Trim();
                 if (string.IsNullOrEmpty(strAlbum))
                 {
                     strAlbum = "Unknown Album";
@@ -8892,36 +8894,18 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // save album cover to cache.
             //var strAlbum = current?.Album ?? string.Empty;
 
-            /*
-            if (!string.IsNullOrEmpty(strAlbum.Trim()))
-            {
-
-            }
-
-            var aat = current?.AlbumArtist.Trim();
-            if (string.IsNullOrEmpty(aat))
-            {
-                aat = current?.Artist.Trim();
-            }
-            var strArtist = aat;
-            if (string.IsNullOrEmpty(strArtist))
-            {
-                strArtist = "Unknown Artist";
-            }
-            strArtist = SanitizeFilename(strArtist).Trim();
-            strAlbum = SanitizeFilename(strAlbum).Trim();
-            */
-
             var strArtist = current?.AlbumArtist.Trim();
-            var strAlbum = current?.Album ?? string.Empty;
             if (string.IsNullOrEmpty(strArtist))
             {
-                strArtist = "Unknown Artist";
+                strArtist = current?.Artist.Trim();
+                if (string.IsNullOrEmpty(strArtist))
+                {
+                    strArtist = "Unknown Artist";
+                }
             }
-            else
-            {
-                strArtist = SanitizeFilename(strArtist);
-            }
+            strArtist = SanitizeFilename(strArtist);
+
+            var strAlbum = current?.Album ?? string.Empty;
             if (string.IsNullOrEmpty(strAlbum))
             {
                 strAlbum = "Unknown Album";
