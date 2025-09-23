@@ -9,12 +9,11 @@
 		<ErrorReport>none</ErrorReport>
 
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<IsAotCompatible>True</IsAotCompatible>
 
 		<VersionPrefix>1.0.0.0</VersionPrefix>
 		<VersionSuffix>RC7</VersionSuffix>
 		<FileVersion>1.0.0.0</FileVersion>
-		
+
 	</PropertyGroup>
 
 
