@@ -62,7 +62,7 @@ public partial class MainWindow : Window//AppWindow//
         vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
         vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
-        vm.GoToSettingsPage +=  GoToSettingsPage;
+        vm.GoToSettingsPage +=  OnGoToSettingsPage;
 
 
         /*
@@ -231,7 +231,7 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    private void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.NavigationViewItemInvokedEventArgs e)
+    private async void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.NavigationViewItemInvokedEventArgs e)
     {
         if (sender is not NavigationView nv)
         {
@@ -242,8 +242,7 @@ public partial class MainWindow : Window//AppWindow//
         {
             if (this.DataContext is MainViewModel vm)
             {
-                //_ = Task.Run(GetCacheFolderSize);
-                vm.GetCacheFolderSize();
+                await vm.GetCacheFolderSize();
             }
 
             nv.Content = App.GetService<SettingsPage>();
@@ -437,15 +436,14 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    public void GoToSettingsPage(object? sender, System.EventArgs e)
+    public async void OnGoToSettingsPage(object? sender, System.EventArgs e)
     {
         if (this.DataContext is not MainViewModel vm)
         {
             return;
         }
         
-        //_ = Task.Run(GetCacheFolderSize);
-        vm.GetCacheFolderSize();
+        await vm.GetCacheFolderSize();
 
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;

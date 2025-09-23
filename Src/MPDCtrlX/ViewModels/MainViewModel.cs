@@ -6128,7 +6128,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         NotifyPropertyChanged(nameof(Volume));
 
         // start the connection
-        Start(CurrentProfile.Host, CurrentProfile.Port);
+        _ = Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port));
 
     }
 
@@ -6977,7 +6977,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
     #region == Methods ==
 
-    private async void Start(string host, int port)
+    private async Task Start(string host, int port)
     {
         HostIpAddress = null;
         try
@@ -7024,7 +7024,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         _ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
     }
 
-    private async void LoadInitialData()
+    private async Task LoadInitialData()
     {
         IsBusy = true;
 
@@ -9043,7 +9043,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
     }
 
-    public async void GetCacheFolderSize()
+    public async Task GetCacheFolderSize()
     {
         AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSize(App.AppDataCacheFolder).ConfigureAwait(true));
     }
@@ -11291,16 +11291,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         return true;
     }
-    public void ClearAlbumCacheFolderCommand_Execute()
+    public async void ClearAlbumCacheFolderCommand_Execute()
     {
         DeleteAllContents(App.AppDataCacheFolder);
 
         // Update folder size.
-        GetCacheFolderSize();
+        await GetCacheFolderSize();
     }
-
-
-
 
     public IRelayCommand SaveProfileCommand { get; }
     public bool SaveProfileCommand_CanExecute()
@@ -11511,7 +11508,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        Start(_host, _port);
+        _ = Task.Run(() => Start(_host, _port));
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -11937,7 +11934,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     public void TryConnectCommand_Execute()
     {
         Debug.WriteLine("_host: "+ _host);
-        Start(_host, _port);
+        _ = Task.Run(() => Start(_host, _port));
     }
 
     #endregion
