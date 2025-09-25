@@ -686,4 +686,7 @@ SOFTWARE.</value>
   <data name="ListviewItemContextMenu_GoToArtistPage" xml:space="preserve">
     <value>Go to artist page</value>
   </data>
+  <data name="PageMenu_Preference" xml:space="preserve">
+    <value>Preference</value>
+  </data>
 </root>

@@ -679,4 +679,7 @@ SOFTWARE.</value>
   <data name="ListviewItemContextMenu_GoToArtistPage" xml:space="preserve">
     <value>アーティストページへ移動</value>
   </data>
+  <data name="PageMenu_Preference" xml:space="preserve">
+    <value>設定</value>
+  </data>
 </root>
