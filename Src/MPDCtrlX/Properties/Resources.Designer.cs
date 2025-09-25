@@ -970,6 +970,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Preference に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageMenu_Preference {
+            get {
+                return ResourceManager.GetString("PageMenu_Preference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Queue all に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMenu_QueueAll {
