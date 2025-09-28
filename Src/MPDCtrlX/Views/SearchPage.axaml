@@ -156,7 +156,13 @@
 
 				<!--Search query input textbox -->
 				<StackPanel Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-					<TextBox MinWidth="100" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="6,0,0,0" HorizontalAlignment="Stretch"></TextBox>
+					<TextBox MinWidth="100" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="6,0,0,0" HorizontalAlignment="Stretch">
+						<Interaction.Behaviors>
+							<EventTriggerBehavior EventName="Loaded">
+								<FocusControlAction />
+							</EventTriggerBehavior>
+						</Interaction.Behaviors>
+					</TextBox>
 				</StackPanel>
 
 				<!-- Search button -->

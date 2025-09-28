@@ -8463,11 +8463,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         return res;
     }
     
-    private void GetAlbumPictures(IEnumerable<object>? AlbumExItems)
+    private void GetAlbumPictures(IEnumerable<object>? albumExItems)
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            if (AlbumExItems is null)
+            if (albumExItems is null)
             {
                 return;
             }
@@ -8482,7 +8482,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //IsBusy = true;
             //IsWorking = true;
 
-            foreach (var item in AlbumExItems)
+            foreach (var item in albumExItems)
             {
                 await Task.Yield();
 
