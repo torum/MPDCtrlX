@@ -102,9 +102,10 @@ public partial class ProfileDialog : UserControl
 
     public Profile? GetProfileAsNew()
     {
-        Profile pro = new();
-
-        pro.Host = this.HostTextBox.Text ?? string.Empty;
+        Profile pro = new()
+        {
+            Host = this.HostTextBox.Text ?? string.Empty
+        };
 
         if (string.IsNullOrEmpty(this.PortTextBox.Text))
         {
