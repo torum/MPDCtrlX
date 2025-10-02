@@ -6173,7 +6173,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         XmlAttribute attrs;
 
         // MainWindow
-        if (sender is Window w)
+        if (sender is MainWindow w)
         {
             #region == Window settings ==
 
@@ -6183,51 +6183,47 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //Window w = (sender as Window);
             // Main Window attributes
             attrs = doc.CreateAttribute("height");
-            if (w.WindowState == WindowState.Maximized)
+            if (w.WindowState == WindowState.Normal)
             {
-                //attrs.Value = w.RestoreBounds.Height.ToString();
+                attrs.Value = w.Height.ToString();
             }
             else
             {
-                attrs.Value = w.Height.ToString();
+                attrs.Value = w.WinRestoreHeight.ToString();
             }
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("width");
-            if (w.WindowState == WindowState.Maximized)
-            {
-                //attrs.Value = w.RestoreBounds.Width.ToString();
-                //windowWidth = w.RestoreBounds.Width;
-            }
-            else
+            if (w.WindowState == WindowState.Normal)
             {
                 attrs.Value = w.Width.ToString();
                 windowWidth = w.Width;
-
+            }
+            else
+            {
+                attrs.Value = w.WinRestoreWidth.ToString();
             }
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("top");
-            if (w.WindowState == WindowState.Maximized)
+            if (w.WindowState == WindowState.Normal)
             {
-                //attrs.Value = w.RestoreBounds.Top.ToString();
+                attrs.Value = w.Position.Y.ToString();
             }
             else
             {
-                //attrs.Value = w.Top.ToString();
-                attrs.Value = w.Position.Y.ToString();
+                attrs.Value = w.WinRestoreTop.ToString();
             }
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("left");
-            if (w.WindowState == WindowState.Maximized)
+            if (w.WindowState == WindowState.Normal)
             {
-                //attrs.Value = w.RestoreBounds.Left.ToString();
+                attrs.Value = w.Position.X.ToString();
             }
             else
             {
-                //attrs.Value = w.Left.ToString();
-                attrs.Value = w.Position.X.ToString();
+                attrs.Value = w.WinRestoreLeft.ToString();
             }
             mainWindow.SetAttributeNode(attrs);
 
@@ -12724,8 +12720,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     }
     public void ListviewGoToAlbumPageCommand_Execute(SongInfo song)
     {
-        Debug.WriteLine("ListviewGoToAlbumPageCommand_Execute");
-
         if (song is null)
         {
             return;

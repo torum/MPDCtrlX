@@ -25,6 +25,28 @@ namespace MPDCtrlX.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
+    private int _winRestoreWidth = 1024;//1024;
+    private int _winRestoreHeight = 768;//768;
+    private int _winRestoreTop = 100;
+    private int _winRestoreLeft = 100;
+
+    public int WinRestoreWidth
+    {
+        get { return _winRestoreWidth; }
+    }
+    public int WinRestoreHeight
+    {
+        get { return _winRestoreHeight; }
+    }
+    public int WinRestoreTop
+    {
+        get { return _winRestoreTop; }
+    }
+    public int WinRestoreLeft
+    {
+        get { return _winRestoreLeft; }
+    }
+
     public MainWindow() { }
     public MainWindow(MainViewModel vm)
     {
@@ -390,6 +412,20 @@ public partial class MainWindow : Window//AppWindow//
             //
             PlaybackOptions.IsVisible = true;
             this.NavigateViewControl.OpenPaneLength = 320;
+        }
+
+        if (this.WindowState == WindowState.Maximized)
+        {
+        }
+        else if (this.WindowState == WindowState.Minimized)
+        {
+        }
+        else
+        {
+            _winRestoreHeight = (int)this.Height;
+            _winRestoreWidth = (int)this.Width;
+            _winRestoreTop = (int)this.Position.X;
+            _winRestoreLeft = (int)this.Position.X;
         }
     }
 
