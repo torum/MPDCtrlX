@@ -8,7 +8,7 @@
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:Class="MPDCtrlX.Views.Dialogs.ProfileDialog">
 	<Grid>
-		<StackPanel>
+		<StackPanel Spacing="24">
 			<StackPanel Spacing="3" HorizontalAlignment="Left">
 				<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
 				<TextBox x:Name="HostTextBox" Text="" Watermark="IP address or PC name" Width="250"></TextBox>

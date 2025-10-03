@@ -4736,8 +4736,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         #endregion
 
-        IsShowDebugWindow = false;
-
 #if DEBUG
         IsSaveLog = true;
         IsEnableDebugWindow = true;

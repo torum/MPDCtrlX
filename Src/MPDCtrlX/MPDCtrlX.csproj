@@ -66,6 +66,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AvaloniaResource Update="Assets\MPDCtrlX-24.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AvaloniaResource>
+	</ItemGroup>
+
+	<ItemGroup>
 		<AvaloniaXaml Update="Styles\AppWindowStyles.axaml">
 			<CopyToOutputDirectory></CopyToOutputDirectory>
 		</AvaloniaXaml>

@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
+using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +21,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MPDCtrlX.Views;
 
@@ -86,6 +88,10 @@ public partial class MainWindow : Window//AppWindow//
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
         vm.GoToSettingsPage +=  OnGoToSettingsPage;
 
+        //
+
+        Bitmap bitmap = new Bitmap(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
+        ImageAppIcon.Source = bitmap;
 
         /*
         var os = Environment.OSVersion;
