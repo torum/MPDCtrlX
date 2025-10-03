@@ -162,10 +162,12 @@
 						<ui:SettingsExpanderItem>
 							<Grid ColumnDefinitions="*,Auto">
 								<StackPanel Orientation="Horizontal" Grid.Column="0">
-									<HyperlinkButton NavigateUri="{Binding AlbumCacheFolderPath, Mode=OneTime}" Content="{Binding AlbumCacheFolderPath, Mode=OneTime}"></HyperlinkButton>
-									<TextBlock Text="{Binding AlbumCacheFolderSizeFormatted, Mode=OneWay}" VerticalAlignment="Center" MinWidth="84"></TextBlock>
+									<HyperlinkButton NavigateUri="{Binding AlbumCacheFolderPath, Mode=OneTime}" Content="{Binding AlbumCacheFolderPath, Mode=OneTime}" Click="HyperlinkButton_AlbumCacheFolderPath_Click" Margin="0,0,24,0"></HyperlinkButton>
 								</StackPanel>
-								<Button Grid.Column="1" Content="Clear" Command="{Binding ClearAlbumCacheFolderCommand}" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+								<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+									<TextBlock Text="{Binding AlbumCacheFolderSizeFormatted, Mode=OneWay}" VerticalAlignment="Center" MinWidth="84"></TextBlock>
+									<Button Content="Clear" Command="{Binding ClearAlbumCacheFolderCommand}" VerticalAlignment="Center" HorizontalAlignment="Right"></Button>
+								</StackPanel>
 							</Grid>
 
 						</ui:SettingsExpanderItem>

@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using MPDCtrlX.ViewModels;
 using System.Diagnostics;
 using System.IO;
@@ -64,5 +65,23 @@ public partial class SettingsPage : UserControl
             //
             this.HeaderGridSpacer.Width = 24;
         }
+    }
+
+    private async void HyperlinkButton_AlbumCacheFolderPath_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var dir = App.AppDataCacheFolder;
+
+        var mainWin = App.GetService<MainWindow>();
+        var launcher = TopLevel.GetTopLevel(mainWin)?.Launcher;
+        if (launcher is null)
+        {
+            return;
+        }
+
+        // Open in default app.
+        //await launcher.LaunchFileInfoAsync(new FileInfo(_currentFile));
+
+        // Open in explorer
+        await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(dir));
     }
 }
