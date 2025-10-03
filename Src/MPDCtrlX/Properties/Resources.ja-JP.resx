@@ -235,7 +235,7 @@
     <value>ライセンス</value>
   </data>
   <data name="LicenseText" xml:space="preserve">
-    <value>Copyright (c) 2020 torum
+    <value>Copyright (c) 2018~ torum
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -361,7 +361,7 @@ SOFTWARE.</value>
     <value>プライバシーポリシー</value>
   </data>
   <data name="PrivacyPolicyText" xml:space="preserve">
-    <value>MPDCtrlは、指定されたIPアドレスとオプションの認証情報を利用してネットワーク上のMPDにアクセスします。
+    <value>MPDCtrlXは、指定されたIPアドレスとオプションの認証情報を利用してネットワーク上のMPDにアクセスします。
 情報は、指定されたMPD以外、他へ一切送信されることは無く、設定情報はローカルのデバイスのみに保存されます。</value>
   </data>
   <data name="Profile" xml:space="preserve">

@@ -619,7 +619,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Copyright (c) 2025 torum
+        ///   Copyright (c) 2018~ torum
         ///
         ///Permission is hereby granted, free of charge, to any person obtaining a copy
         ///of this software and associated documentation files (the &quot;Software&quot;), to deal
@@ -628,7 +628,7 @@ namespace MPDCtrlX.Properties {
         ///copies of the Software, and to permit persons to whom the Software is
         ///furnished to do so, subject to the following conditions:
         ///
-        ///The above copyright notice and this permiss [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
+        ///The above copyright notice and this permis [残りの文字列は切り詰められました]&quot;; に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LicenseText {
             get {

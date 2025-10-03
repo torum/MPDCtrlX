@@ -157,6 +157,7 @@
 
 					</ui:SettingsExpander>
 
+					<!-- Local storage -->
 					<ui:SettingsExpander Header="Local storage usage" Description="Cache folder/directory for album cover/art images">
 
 						<ui:SettingsExpanderItem>
@@ -177,7 +178,6 @@
 
 					</ui:SettingsExpander>
 
-
 					<!-- Project info -->
 					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 						<!--
@@ -194,11 +194,11 @@
 
 					</ui:SettingsExpander>
 
-					<!-- PrivacyPolicy -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
+					<!-- License -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
 
 						<ui:SettingsExpanderItem>
-							<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
+							<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
 						</ui:SettingsExpanderItem>
 
 						<ui:SettingsExpander.Footer>
@@ -206,11 +206,11 @@
 
 					</ui:SettingsExpander>
 					
-					<!-- License -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
+					<!-- PrivacyPolicy -->
+					<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
 
 						<ui:SettingsExpanderItem>
-							<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
+							<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
 						</ui:SettingsExpanderItem>
 
 						<ui:SettingsExpander.Footer>
