@@ -24,6 +24,13 @@ public partial class PlaylistItemPage : UserControl
         vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
         vm.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
         vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
+
+        this.DetachedFromVisualTree += (s, e) =>
+        {
+            vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
+            vm.PlaylistRenameToDialogShow -= this.OnPlaylistRenameToDialogShowAsync;
+            vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
+        };
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

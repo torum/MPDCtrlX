@@ -2302,21 +2302,14 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
-                    await Task.Yield();
+                    //await Task.Yield();
+                    await Task.Delay(10);
 
                     CurrentPage = App.GetService<AlbumPage>();
 
-                    await Task.Yield();
+                    await Task.Delay(20);
                     IsWorking = false;
                 });
-
-                // Get album pictures.
-                /*
-                if (!IsAlbumArtsDownLoaded)
-                {
-                    GetAlbumPictures(_albums);
-                }
-                */
             }
             else if (value is NodeMenuFiles nml)
             {
@@ -4661,6 +4654,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         FilesAddToQueueCommand = new GenericRelayCommand<object>(param => FilesAddToQueueCommand_Execute(param), param => FilesAddToQueueCommand_CanExecute());
         FilesPageFilesAddToPlaylistCommand = new GenericRelayCommand<object>(param => FilesPageFilesAddToPlaylistCommand_Execute(param), param => FilesPageFilesAddToPlaylistCommand_CanExecute());
         FilesListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => FilesListviewSaveSelectedToCommand_Execute(param), param => FilesListviewSaveSelectedToCommand_CanExecute());
+        FilesListviewCopySelectedFilePathCommand = new GenericRelayCommand<object>(param => FilesListviewCopySelectedFilePathCommand_Execute(param), param => FilesListviewCopySelectedFilePathCommand_CanExecute());
 
         FilesListviewPlayThisCommand = new GenericRelayCommand<object>(param => FilesListviewPlayThisCommand_Execute(param), param => FilesListviewPlayThisCommand_CanExecute());
         FilesListviewAddThisCommand = new GenericRelayCommand<object>(param => FilesListviewAddThisCommand_Execute(param), param => FilesListviewAddThisCommand_CanExecute());
@@ -10383,6 +10377,36 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         _ = AddTo(result.PlaylistName, uriList);
+    }
+
+    public IRelayCommand FilesListviewCopySelectedFilePathCommand { get; }
+    public static bool FilesListviewCopySelectedFilePathCommand_CanExecute()
+    {
+        return true;
+    }
+    public async void FilesListviewCopySelectedFilePathCommand_Execute(object obj)
+    {
+        if (obj is null) return;
+
+        if (obj is not NodeFile file)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(file.FilePath))
+        {
+            return;
+        }
+
+        var mainWin = App.GetService<MainWindow>();
+        var clipboard = TopLevel.GetTopLevel(mainWin)?.Clipboard;
+        if (clipboard != null)
+        {
+            string originalString = file.FilePath;
+            string newString = originalString.Replace('/', System.IO.Path.DirectorySeparatorChar);
+
+            await clipboard.SetTextAsync(newString);
+        }
     }
 
     // Play all

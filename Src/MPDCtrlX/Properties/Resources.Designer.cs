@@ -745,6 +745,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Copy File Path に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ListviewItemContextMenu_CopyFilePath {
+            get {
+                return ResourceManager.GetString("ListviewItemContextMenu_CopyFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Go to album page に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ListviewItemContextMenu_GoToAlbumPage {

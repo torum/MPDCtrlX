@@ -689,4 +689,7 @@ SOFTWARE.</value>
   <data name="PageMenu_Preference" xml:space="preserve">
     <value>Preference</value>
   </data>
+  <data name="ListviewItemContextMenu_CopyFilePath" xml:space="preserve">
+    <value>Copy File Path</value>
+  </data>
 </root>

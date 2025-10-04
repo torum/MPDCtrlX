@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
@@ -29,7 +30,11 @@ public partial class FilesPage : UserControl
         InitializeComponent();
 
         vm.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
-        //vm.FilesPageAddToPlaylistDialogShow += this.AddToPlaylistDialogShowAsync;
+
+        this.DetachedFromVisualTree += (s, e) =>
+        {
+            vm.FilesHeaderVisibilityChanged -= this.OnFilesHeaderVisibilityChanged;
+        };
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

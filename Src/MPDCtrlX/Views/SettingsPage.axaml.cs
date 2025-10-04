@@ -81,7 +81,17 @@ public partial class SettingsPage : UserControl
         // Open in default app.
         //await launcher.LaunchFileInfoAsync(new FileInfo(_currentFile));
 
-        // Open in explorer
-        await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(dir));
+        // Open in explorer/file manager.
+        if (await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(dir)))
+        {
+            // ok
+        }
+        else
+        {
+            // TODO: show error message.
+
+            // This failes in Debug session when the app is attached VSCode from Snap packages on Linux. 
+        }
+
     }
 }

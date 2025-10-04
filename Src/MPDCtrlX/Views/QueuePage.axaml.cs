@@ -30,23 +30,16 @@ public partial class QueuePage : UserControl
 
         vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
         vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-        //vm.QueueSaveToDialogShow += this.QueueSaveToDialogShowAsync;
-        //vm.QueueListviewSaveToDialogShow += this.QueueListviewSaveToDialogShowAsync;
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
         vm.QueueFindWindowVisibilityChangedSetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
-        /*
-        Unloaded += (sender, e) =>
+
+        this.DetachedFromVisualTree += (s, e) =>
         {
-            if (vm != null)
-            {
-                vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
-                vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-                vm.QueueSaveAsDialogShow -= this.QueueSaveAsDialogShowAsync;
-                vm.QueueSaveToDialogShow -= this.QueueSaveToDialogShowAsync;
-                vm.QueueHeaderVisivilityChanged -= this.OnQueueHeaderVisivilityChanged;
-            }
+            vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
+            vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+            vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
+            vm.QueueFindWindowVisibilityChangedSetFocus -= this.OnQueueFindWindowVisibilityChanged_SetFocus;
         };
-        */
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

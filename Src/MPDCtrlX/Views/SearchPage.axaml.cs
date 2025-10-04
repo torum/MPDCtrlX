@@ -28,8 +28,13 @@ public partial class SearchPage : UserControl
         InitializeComponent();
 
         vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
-        //vm.SearchPageAddToPlaylistDialogShow += this.OnAddToPlaylistDialogShowAsync;
         vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
+
+        this.DetachedFromVisualTree += (s, e) =>
+        {
+            vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
+            vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
+        };
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

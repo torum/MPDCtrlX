@@ -82,13 +82,21 @@ public partial class MainWindow : Window//AppWindow//
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
 
-
         vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
         vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
         vm.GoToSettingsPage +=  OnGoToSettingsPage;
 
-        //
+        this.DetachedFromVisualTree += (s, e) =>
+        {
+            this.Loaded -= vm.OnWindowLoaded;
+            this.Closing -= vm.OnWindowClosing;
+
+            vm.DebugWindowShowHide -= () => OnDebugWindowShowHide();
+            vm.DebugCommandOutput -= (sender, arg) => { this.OnDebugCommandOutput(arg); };
+            vm.DebugIdleOutput -= (sender, arg) => { this.OnDebugIdleOutput(arg); };
+            vm.GoToSettingsPage -= OnGoToSettingsPage;
+        };
 
         Bitmap bitmap = new Bitmap(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
         ImageAppIcon.Source = bitmap;
