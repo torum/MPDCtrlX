@@ -83,6 +83,8 @@ class Program
         {
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -99,6 +101,25 @@ class Program
             {
                 _mutex?.ReleaseMutex();
                 //_mutex.Dispose();
+            }
+        }
+    }
+
+    private static void OnProcessExit(object? sender, EventArgs e)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            if (File.Exists(GetPipePath()))
+            {
+                try
+                {
+                    File.Delete(GetPipePath());
+                }
+                catch (Exception ex)
+                {
+                    // Log the error.
+                    Debug.WriteLine($"Error deleting named pipe: {ex.Message}");
+                }
             }
         }
     }
