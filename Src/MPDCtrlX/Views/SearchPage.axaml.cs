@@ -403,4 +403,11 @@ public partial class SearchPage : UserControl
             this.SearchListViewHeaderScrollViewer.Offset = sv.Offset;
         }
     }
+
+    private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Debug.WriteLine("UserControl_Loaded");
+
+        this.SearchQueryInputTextBox.Focus();
+    }
 }

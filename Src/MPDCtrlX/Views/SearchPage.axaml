@@ -10,7 +10,8 @@
 			 x:DataType="vm:MainViewModel"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
-             x:CompileBindings="True">
+             x:CompileBindings="True"
+			 Loaded="UserControl_Loaded">
 	
 	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
@@ -156,7 +157,7 @@
 
 				<!--Search query input textbox -->
 				<StackPanel Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
-					<TextBox MinWidth="100" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="6,0,0,0" HorizontalAlignment="Stretch">
+					<TextBox x:Name="SearchQueryInputTextBox" MinWidth="100" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="6,0,0,0" HorizontalAlignment="Stretch">
 						<Interaction.Behaviors>
 							<EventTriggerBehavior EventName="Loaded">
 								<FocusControlAction />
