@@ -15,9 +15,14 @@ namespace MPDCtrlX.Desktop;
 class Program
 {
     private const string MutexName = "SingleInstanceMutexForMPDCtrlX";
-    private const string PipeName = "SingleInstancePipeForMPDCtrlX"; 
+    private const string PipeName = "MPDCtrlX.SingleInstance.Pipe";
     private static Mutex? _mutex;
-    private static CancellationTokenSource _pipeCancellationTokenSource = new();
+    //private static CancellationTokenSource _pipeCancellationTokenSource = new();
+    private static string GetPipePath()
+    {
+        var tempPath = Path.GetTempPath();
+        return Path.Combine(tempPath, PipeName);
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -32,40 +37,139 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        // First, use a mutex to ensure thread-safe access to the pipe logic.
         _mutex = new Mutex(true, MutexName, out bool isNewInstance);
-        if (isNewInstance)
-        {
-            // First instance: start the application and listen for pipe messages.
-            Task.Run(() => StartPipeServer(_pipeCancellationTokenSource.Token));
-
-            try
-            {
-                BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
-
-                TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            }
-            catch (Exception ex)
-            {
-                AppendErrorLog(ex.Message + System.IO.Path.DirectorySeparatorChar + ex.StackTrace, "Fatal exception in Main");
-            }
-            finally
-            {
-                SaveErrorLog();
-
-                _pipeCancellationTokenSource.Cancel();
-                _mutex.ReleaseMutex();
-                _mutex.Dispose();
-            }
-        }
-        else
+        if (!isNewInstance)
         {
             // Second instance: send a message to the first instance and exit.
-            SendFocusCommandToExistingInstance();
+            //SendFocusCommandToExistingInstance();
+
+            // The mutex is already owned, indicating another instance is running.
+            HandleExistingInstance(args);
+
+            return;
+        }
+
+        // First instance: start the application and listen for pipe messages.
+        //Task.Run(() => StartPipeServer(_pipeCancellationTokenSource.Token));
+
+        StartPipeServer(args);
+
+        try
+        {
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+        catch (Exception ex)
+        {
+            AppendErrorLog(ex.Message + System.IO.Path.DirectorySeparatorChar + ex.StackTrace, "Fatal exception in Main");
+        }
+        finally
+        {
+            SaveErrorLog();
+
+            //_pipeCancellationTokenSource.Cancel();
+            _mutex.ReleaseMutex();
+            //_mutex.Dispose();
         }
     }
 
+    private static void StartPipeServer(string[] args)
+    {
+        var pipePath = GetPipePath();
+
+        // Ensure the previous pipe is deleted in case of a crash.
+        if (File.Exists(pipePath))
+        {
+            File.Delete(pipePath);
+        }
+
+        Task.Run(() =>
+        {
+            // Create a named pipe for incoming connections.
+            var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
+
+            while (true)
+            {
+                server.WaitForConnection();
+
+                // Read messages from the new instance.
+                using (var reader = new StreamReader(server))
+                {
+                    string? line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        // Handle the message on the UI thread.
+                        if (line == "ShowMainWindow")
+                        {
+                            Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                // Your app logic to show/focus the window goes here.
+                                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                                {
+                                    var mainWnd = desktop.MainWindow;
+                                    if (mainWnd is not null)
+                                    {
+                                        if (mainWnd.WindowState == WindowState.Minimized)
+                                        {
+                                            mainWnd.WindowState = WindowState.Normal;
+                                        }
+                                        desktop.MainWindow?.Show();
+                                        desktop.MainWindow?.Activate();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+                server.Disconnect();
+            }
+        });
+    }
+
+    private static void HandleExistingInstance(string[] args)
+    {
+        var pipePath = GetPipePath();
+
+        // Attempt to connect to the named pipe.
+        using (var client = new NamedPipeClientStream(".", PipeName, PipeDirection.Out))
+        {
+            try
+            {
+                // Give it a brief timeout to find the server.
+                client.Connect(1000);
+                if (client.IsConnected)
+                {
+                    // Send a message to the first instance.
+                    using (var writer = new StreamWriter(client))
+                    {
+                        writer.WriteLine("ShowMainWindow");
+                        foreach (var arg in args)
+                        {
+                            writer.WriteLine(arg);
+                        }
+                        writer.Flush();
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                // First instance did not respond, it may have crashed.
+                // You can add logic here to clean up and start as the new instance.
+            }
+            catch (Exception ex)
+            {
+                // Handle other potential pipe communication errors.
+                Console.WriteLine($"Could not connect to existing instance: {ex.Message}");
+            }
+        }
+        // Exit the new process gracefully.
+        Environment.Exit(0);
+    }
+
+    /*
     private static async Task StartPipeServer(CancellationToken token)
     {
         try
@@ -124,6 +228,7 @@ class Program
             // The first instance may have crashed or closed, do nothing.
         }
     }
+    */
 
     private static void FocusExistingWindow(Window window)
     {
