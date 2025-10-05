@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,17 +39,39 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        // First, use a mutex to ensure thread-safe access to the pipe logic.
-        _mutex = new Mutex(true, MutexName, out bool isNewInstance);
-        if (!isNewInstance)
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Second instance: send a message to the first instance and exit.
-            //SendFocusCommandToExistingInstance();
+            // First, use a mutex to ensure thread-safe access to the pipe logic.
+            _mutex = new Mutex(true, MutexName, out bool isNewInstance);
+            if (!isNewInstance)
+            {
+                // Second instance: send a message to the first instance and exit.
+                //SendFocusCommandToExistingInstance();
 
-            // The mutex is already owned, indicating another instance is running.
-            HandleExistingInstance(args);
+                // The mutex is already owned, indicating another instance is running.
+                HandleExistingInstance(args);
 
-            return;
+                return;
+            }
+        }
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            var pipePath = GetPipePath();
+            if (File.Exists(pipePath))
+            {
+                // check actually alive by connecting it.
+                if (!HandleExistingInstance(args))
+                {
+                    if (File.Exists(pipePath))
+                    {
+                        File.Delete(pipePath);
+                    }
+                }
+
+                // Exit the new process gracefully.
+                Environment.Exit(0);
+            }
         }
 
         // First instance: start the application and listen for pipe messages.
@@ -72,8 +95,11 @@ class Program
             SaveErrorLog();
 
             //_pipeCancellationTokenSource.Cancel();
-            _mutex.ReleaseMutex();
-            //_mutex.Dispose();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                _mutex?.ReleaseMutex();
+                //_mutex.Dispose();
+            }
         }
     }
 
@@ -91,11 +117,10 @@ class Program
         {
             while (true)
             {
-                // Create a named pipe for incoming connections.
-                var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
                 try
                 {
-                    
+                    // Create a named pipe for incoming connections.
+                    var server = new NamedPipeServerStream(pipePath, PipeDirection.In);
                     server.WaitForConnection();
 
                     // Read messages from the new instance.
@@ -153,44 +178,45 @@ class Program
         });
     }
 
-    private static void HandleExistingInstance(string[] args)
+    private static bool HandleExistingInstance(string[] args)
     {
         var pipePath = GetPipePath();
 
         // Attempt to connect to the named pipe.
-        using (var client = new NamedPipeClientStream(".", PipeName, PipeDirection.Out))
+        using var client = new NamedPipeClientStream(".", pipePath, PipeDirection.Out);
+        try
         {
-            try
+            // Give it a brief timeout to find the server.
+            client.Connect(1000);
+            if (client.IsConnected)
             {
-                // Give it a brief timeout to find the server.
-                client.Connect(1000);
-                if (client.IsConnected)
+                // Send a message to the first instance.
+                using var writer = new StreamWriter(client);
+                writer.WriteLine("ShowMainWindow");
+                foreach (var arg in args)
                 {
-                    // Send a message to the first instance.
-                    using (var writer = new StreamWriter(client))
-                    {
-                        writer.WriteLine("ShowMainWindow");
-                        foreach (var arg in args)
-                        {
-                            writer.WriteLine(arg);
-                        }
-                        writer.Flush();
-                    }
+                    writer.WriteLine(arg);
                 }
+                writer.Flush();
+
+                return true;
             }
-            catch (TimeoutException)
+            else
             {
-                // First instance did not respond, it may have crashed.
-                // You can add logic here to clean up and start as the new instance.
-            }
-            catch (Exception ex)
-            {
-                // Handle other potential pipe communication errors.
-                Console.WriteLine($"Could not connect to existing instance: {ex.Message}");
+                return false;
             }
         }
-        // Exit the new process gracefully.
-        Environment.Exit(0);
+        catch (TimeoutException)
+        {
+            // First instance did not respond, it may have crashed.
+            return false;
+        }
+        catch (Exception ex)
+        {
+            // Handle other potential pipe communication errors.
+            Debug.WriteLine($"Could not connect to existing instance: {ex.Message}");
+            return false;
+        }
     }
 
     /*
