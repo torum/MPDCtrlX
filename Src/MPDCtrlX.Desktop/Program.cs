@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging;
 using Avalonia.Threading;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
@@ -88,43 +89,66 @@ class Program
 
         Task.Run(() =>
         {
-            // Create a named pipe for incoming connections.
-            var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
-
             while (true)
             {
-                server.WaitForConnection();
-
-                // Read messages from the new instance.
-                using (var reader = new StreamReader(server))
+                // Create a named pipe for incoming connections.
+                var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
+                try
                 {
-                    string? line;
-                    while ((line = reader.ReadLine()) != null)
+                    
+                    server.WaitForConnection();
+
+                    // Read messages from the new instance.
+                    using (var reader = new StreamReader(server))
                     {
-                        // Handle the message on the UI thread.
-                        if (line == "ShowMainWindow")
+                        string? line;
+                        while ((line = reader.ReadLine()) != null)
                         {
-                            Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                            // Handle the message on the UI thread.
+                            if (line == "ShowMainWindow")
                             {
-                                // Your app logic to show/focus the window goes here.
-                                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                                Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                                 {
-                                    var mainWnd = desktop.MainWindow;
-                                    if (mainWnd is not null)
+                                    // Your app logic to show/focus the window goes here.
+                                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                                     {
-                                        if (mainWnd.WindowState == WindowState.Minimized)
+                                        var mainWnd = desktop.MainWindow;
+                                        if (mainWnd is not null)
                                         {
-                                            mainWnd.WindowState = WindowState.Normal;
+                                            if (mainWnd.WindowState == WindowState.Minimized)
+                                            {
+                                                mainWnd.WindowState = WindowState.Normal;
+                                            }
+                                            desktop.MainWindow?.Show();
+                                            desktop.MainWindow?.Activate();
                                         }
-                                        desktop.MainWindow?.Show();
-                                        desktop.MainWindow?.Activate();
                                     }
-                                }
-                            });
+
+                                });
+                            }
                         }
                     }
+
+                    //server.Disconnect();
+                    if (server.IsConnected)
+                    {
+                        server.Disconnect();
+                        // test
+                        //break;
+                    }
+                } 
+                catch (Exception ex) 
+                {
+#if DEBUG
+                    AppendErrorLog(ex.Message + Environment.NewLine + ex.StackTrace, "Exception in StartPipeServer");
+                    SaveErrorLog();
+#else
+                    //
+#endif
+
+                    // Just break out the loop in case of exception.
+                    break;
                 }
-                server.Disconnect();
             }
         });
     }
