@@ -376,6 +376,8 @@ public partial class PlaylistItemPage : UserControl
             //
             this.HeaderGridSpacer.Width = 24;
         }
+
+        UpdateColumHeaders();
     }
 
     // This is a workaround to keep the header in sync with the ListBox scrolling.

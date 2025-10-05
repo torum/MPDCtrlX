@@ -65,6 +65,7 @@ public partial class QueuePage : UserControl
         //this.Column1X.Width = 80;//vm.QueueColumnHeaderPositionWidth
         this.Column1.Width = 80;
         this.DummyHeader.ColumnDefinitions[0].Width = GridLength.Auto;
+
         /*
         // Title
         this.DummyHeader.ColumnDefinitions[4].Width = new GridLength(vm.QueueColumnHeaderTitleWidth);
@@ -373,5 +374,7 @@ public partial class QueuePage : UserControl
             this.FindFilterButtonStackPanel.IsVisible = true;
             this.SortToggleSplitButton.IsVisible = true;
         }
+
+        UpdateColumHeaders();
     }
 }

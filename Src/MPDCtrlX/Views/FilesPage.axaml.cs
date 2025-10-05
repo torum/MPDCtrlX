@@ -145,5 +145,7 @@ public partial class FilesPage : UserControl
             //
             this.HeaderGridSpacer.Width = 24;
         }
+
+        UpdateColumHeaders();
     }
 }
