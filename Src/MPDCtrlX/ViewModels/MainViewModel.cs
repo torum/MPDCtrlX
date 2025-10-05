@@ -10404,7 +10404,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             string originalString = file.FilePath;
             string newString = originalString.Replace('/', System.IO.Path.DirectorySeparatorChar);
-
+            if (!newString.EndsWith(System.IO.Path.DirectorySeparatorChar))
+            {
+                newString += System.IO.Path.DirectorySeparatorChar;
+            }
+            newString += file.Name;
             await clipboard.SetTextAsync(newString);
         }
     }

@@ -1,37 +1,23 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging;
+using Avalonia.Threading;
 using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MPDCtrlX.Desktop;
 
 class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
-    [STAThread]
-    public static void Main(string[] args)
-    {
-        try
-        {
-            BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
-        }
-        catch (Exception ex)
-        {
-            AppendErrorLog(ex.Message + System.IO.Path.DirectorySeparatorChar + ex.StackTrace, "Fatal exception in Main");
-        }
-        finally
-        {
-            SaveErrorLog();
-        }
-
-        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-    }
+    private const string MutexName = "SingleInstanceMutexForMPDCtrlX";
+    private const string PipeName = "SingleInstancePipeForMPDCtrlX"; 
+    private static Mutex? _mutex;
+    private static CancellationTokenSource _pipeCancellationTokenSource = new();
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
@@ -40,6 +26,115 @@ class Program
             .WithInterFont()
             .LogToTrace(LogEventLevel.Warning);
 
+    // Initialization code. Don't use any Avalonia, third-party APIs or any
+    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
+    // yet and stuff might break.
+    [STAThread]
+    public static void Main(string[] args)
+    {
+        _mutex = new Mutex(true, MutexName, out bool isNewInstance);
+        if (isNewInstance)
+        {
+            // First instance: start the application and listen for pipe messages.
+            Task.Run(() => StartPipeServer(_pipeCancellationTokenSource.Token));
+
+            try
+            {
+                BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+
+                TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            }
+            catch (Exception ex)
+            {
+                AppendErrorLog(ex.Message + System.IO.Path.DirectorySeparatorChar + ex.StackTrace, "Fatal exception in Main");
+            }
+            finally
+            {
+                SaveErrorLog();
+
+                _pipeCancellationTokenSource.Cancel();
+                _mutex.ReleaseMutex();
+                _mutex.Dispose();
+            }
+        }
+        else
+        {
+            // Second instance: send a message to the first instance and exit.
+            SendFocusCommandToExistingInstance();
+        }
+    }
+
+    private static async Task StartPipeServer(CancellationToken token)
+    {
+        try
+        {
+            while (!token.IsCancellationRequested)
+            {
+                // The PipeName must be unique for your app
+                using var server = new NamedPipeServerStream(PipeName, PipeDirection.In);
+                await server.WaitForConnectionAsync(token);
+
+                using var reader = new StreamReader(server);
+                string? command = await reader.ReadLineAsync();
+
+                if (command == "FOCUS")
+                {
+                    // This is running in a background thread, so we need to
+                    // dispatch the window activation to the UI thread.
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    {
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            var window = desktop.MainWindow;
+                            if (window != null)
+                            {
+                                // Handle platform-specific focus logic
+                                FocusExistingWindow(window);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // The task was cancelled, so exit gracefully.
+        }
+        catch (Exception ex)
+        {
+            // Log the error
+            Console.WriteLine($"Pipe server error: {ex.Message}");
+        }
+    }
+
+    private static void SendFocusCommandToExistingInstance()
+    {
+        try
+        {
+            using var client = new NamedPipeClientStream(".", PipeName, PipeDirection.Out);
+            client.Connect(2000); // Timeout after 2 seconds
+            using var writer = new StreamWriter(client);
+            writer.WriteLine("FOCUS");
+            writer.Flush();
+        }
+        catch (Exception)
+        {
+            // The first instance may have crashed or closed, do nothing.
+        }
+    }
+
+    private static void FocusExistingWindow(Window window)
+    {
+        // This is a minimal cross-platform approach.
+        // For more robust behavior on Windows, you would use P/Invoke.
+        if (window.WindowState == WindowState.Minimized)
+        {
+            window.WindowState = WindowState.Normal;
+        }
+        window.Activate();
+    }
 
     private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
