@@ -21,6 +21,7 @@
 
 	</Window.Resources>
 	<Grid>
+		<!--
 		<ExperimentalAcrylicBorder IsHitTestVisible="False">
 			<ExperimentalAcrylicBorder.Material>
 				<ExperimentalAcrylicMaterial
@@ -30,7 +31,7 @@
                     MaterialOpacity="0.65" />
 			</ExperimentalAcrylicBorder.Material>
 		</ExperimentalAcrylicBorder>
-			
+		-->
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
