@@ -59,7 +59,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             
             var assembly = Assembly.GetExecutingAssembly().GetName();
             var version = assembly.Version;
-            _appVersion = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision} - RC8";
+            _appVersion = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision} - RC9";
 
             return _appVersion;
         }

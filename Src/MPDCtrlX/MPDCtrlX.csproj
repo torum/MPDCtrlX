@@ -11,7 +11,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 
 		<VersionPrefix>1.0.0.0</VersionPrefix>
-		<VersionSuffix>RC8</VersionSuffix>
+		<VersionSuffix>RC9</VersionSuffix>
 		<FileVersion>1.0.0.0</FileVersion>
 
 	</PropertyGroup>
