@@ -406,8 +406,6 @@ public partial class SearchPage : UserControl
 
     private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        Debug.WriteLine("UserControl_Loaded");
-
         this.SearchQueryInputTextBox.Focus();
     }
 }

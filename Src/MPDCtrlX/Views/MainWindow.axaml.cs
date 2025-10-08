@@ -55,19 +55,28 @@ public partial class MainWindow : Window//AppWindow//
         //var vm = App.GetService<MainViewModel>();
         this.DataContext = vm;
 
-        if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
+        if (vm.WindowState == WindowState.Maximized)
         {
-            this.Position = new PixelPoint(vm.WindowLeft, vm.WindowTop);
+            this.WindowState = WindowState.Maximized;
         }
-
-        if (vm.WindowHeight >= 120)
+        else
         {
-            this.Height = vm.WindowHeight;
-        }
+            this.WindowState = WindowState.Normal;
 
-        if (vm.WindowWidth >= 480)
-        {
-            this.Width = vm.WindowWidth;
+            if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
+            {
+                this.Position = new PixelPoint(vm.WindowLeft, vm.WindowTop);
+            }
+
+            if (vm.WindowHeight >= 120)
+            {
+                this.Height = vm.WindowHeight;
+            }
+
+            if (vm.WindowWidth >= 480)
+            {
+                this.Width = vm.WindowWidth;
+            }
         }
 
         InitializeComponent();
@@ -98,7 +107,7 @@ public partial class MainWindow : Window//AppWindow//
             vm.GoToSettingsPage -= OnGoToSettingsPage;
         };
 
-        Bitmap bitmap = new Bitmap(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
+        Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
         ImageAppIcon.Source = bitmap;
 
         /*
@@ -144,7 +153,6 @@ public partial class MainWindow : Window//AppWindow//
         }
 
     }
-
 
     private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {

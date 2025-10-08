@@ -48,7 +48,7 @@ using Path = System.IO.Path;
 
 namespace MPDCtrlX.ViewModels;
 
-public partial class MainViewModel : ViewModelBase //ObservableObject
+public partial class MainViewModel : ObservableObject
 {
     private string _appVersion = string.Empty;
     public string AppVersion
@@ -88,24 +88,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isFullyLoaded = value;
-            this.NotifyPropertyChanged(nameof(IsFullyLoaded));
-        }
-    }
-
-    private bool _isFullyRendered;
-    public bool IsFullyRendered
-    {
-        get
-        {
-            return _isFullyRendered;
-        }
-        set
-        {
-            if (_isFullyRendered == value)
-                return;
-
-            _isFullyRendered = value;
-            this.NotifyPropertyChanged(nameof(IsFullyRendered));
+            OnPropertyChanged(nameof(IsFullyLoaded));
         }
     }
 
@@ -123,7 +106,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _mainLeftPainActualWidth = value;
 
-            NotifyPropertyChanged(nameof(MainLeftPainActualWidth));
+            OnPropertyChanged(nameof(MainLeftPainActualWidth));
         }
     }
 
@@ -141,7 +124,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _mainLeftPainWidth = value;
 
-            NotifyPropertyChanged(nameof(MainLeftPainWidth));
+            OnPropertyChanged(nameof(MainLeftPainWidth));
         }
     }
 
@@ -155,7 +138,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isNavigationViewMenuOpen = value;
-            NotifyPropertyChanged(nameof(IsNavigationViewMenuOpen));
+            OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
 
             foreach (var hoge in MainMenuItems)
             {
@@ -192,7 +175,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderPositionVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderPositionVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderPositionVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -211,7 +194,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderPositionWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderPositionWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderPositionWidth));
         }
     }
 
@@ -230,7 +213,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderNowPlayingVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderNowPlayingVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderNowPlayingVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -249,7 +232,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderNowPlayingWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderNowPlayingWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderNowPlayingWidth));
         }
     }
 
@@ -268,7 +251,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTitleWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTitleWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderTitleWidth));
         }
     }
 
@@ -286,7 +269,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderTimeVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderTimeVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderTimeVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -305,7 +288,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTimeWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTimeWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderTimeWidth));
         }
     }
 
@@ -323,7 +306,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderArtistVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderArtistVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderArtistVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -342,7 +325,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderArtistWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderArtistWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderArtistWidth));
         }
     }
 
@@ -360,7 +343,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderAlbumVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderAlbumVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderAlbumVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -379,7 +362,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderAlbumWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderAlbumWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderAlbumWidth));
         }
     }
 
@@ -397,7 +380,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderDiscVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderDiscVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderDiscVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -416,7 +399,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderDiscWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderDiscWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderDiscWidth));
         }
     }
 
@@ -434,7 +417,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderTrackVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderTrackVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderTrackVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -453,7 +436,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderTrackWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderTrackWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderTrackWidth));
         }
     }
 
@@ -472,7 +455,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderGenreVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderGenreVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderGenreVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -491,7 +474,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderGenreWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderGenreWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderGenreWidth));
         }
     }
 
@@ -509,7 +492,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isQueueColumnHeaderLastModifiedVisible = value;
 
-            NotifyPropertyChanged(nameof(IsQueueColumnHeaderLastModifiedVisible));
+            OnPropertyChanged(nameof(IsQueueColumnHeaderLastModifiedVisible));
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -528,7 +511,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _queueColumnHeaderLastModifiedWidth = value;
 
-            NotifyPropertyChanged(nameof(QueueColumnHeaderLastModifiedWidth));
+            OnPropertyChanged(nameof(QueueColumnHeaderLastModifiedWidth));
         }
     }
 
@@ -552,7 +535,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (value > 12)
                 _filesColumnHeaderTitleWidth = value;
 
-            NotifyPropertyChanged(nameof(FilesColumnHeaderTitleWidth));
+            OnPropertyChanged(nameof(FilesColumnHeaderTitleWidth));
         }
     }
 
@@ -571,7 +554,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (value > 12)
                 _filesColumnHeaderFilePathWidth = value;
 
-            NotifyPropertyChanged(nameof(FilesColumnHeaderFilePathWidth));
+            OnPropertyChanged(nameof(FilesColumnHeaderFilePathWidth));
         }
     }
 
@@ -589,7 +572,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isFilesColumnHeaderFilePathVisible = value;
 
-            NotifyPropertyChanged(nameof(IsFilesColumnHeaderFilePathVisible));
+            OnPropertyChanged(nameof(IsFilesColumnHeaderFilePathVisible));
             // Notify code behind to do some work around ...
             FilesHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -613,7 +596,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderPositionVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderPositionVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderPositionVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -633,7 +616,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderPositionWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderPositionWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderPositionWidth));
         }
     }
 
@@ -651,7 +634,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderTitleWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderTitleWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderTitleWidth));
         }
     }
 
@@ -669,7 +652,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderTimeVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderTimeVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderTimeVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -689,7 +672,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderTimeWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderTimeWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderTimeWidth));
         }
     }
 
@@ -707,7 +690,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderArtistVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderArtistVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderArtistVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -727,7 +710,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderArtistWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderArtistWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderArtistWidth));
         }
     }
 
@@ -745,7 +728,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderAlbumVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderAlbumVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderAlbumVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -765,7 +748,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderAlbumWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderAlbumWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderAlbumWidth));
         }
     }
 
@@ -783,7 +766,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderDiscVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderDiscVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderDiscVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -803,7 +786,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderDiscWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderDiscWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderDiscWidth));
         }
     }
 
@@ -821,7 +804,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderTrackVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderTrackVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderTrackVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -841,7 +824,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderTrackWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderTrackWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderTrackWidth));
         }
     }
 
@@ -859,7 +842,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderGenreVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderGenreVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderGenreVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -879,7 +862,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderGenreWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderGenreWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderGenreWidth));
         }
     }
 
@@ -897,7 +880,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSearchColumnHeaderLastModifiedVisible = value;
 
-            NotifyPropertyChanged(nameof(IsSearchColumnHeaderLastModifiedVisible));
+            OnPropertyChanged(nameof(IsSearchColumnHeaderLastModifiedVisible));
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -917,7 +900,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _searchColumnHeaderLastModifiedWidth = value;
 
-            NotifyPropertyChanged(nameof(SearchColumnHeaderLastModifiedWidth));
+            OnPropertyChanged(nameof(SearchColumnHeaderLastModifiedWidth));
         }
     }
 
@@ -940,7 +923,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderPositionVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderPositionVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderPositionVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -960,7 +943,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderPositionWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderPositionWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderPositionWidth));
         }
     }
 
@@ -978,7 +961,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderTitleWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderTitleWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderTitleWidth));
         }
     }
 
@@ -996,7 +979,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderTimeVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTimeVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderTimeVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1016,7 +999,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderTimeWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderTimeWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderTimeWidth));
         }
     }
 
@@ -1034,7 +1017,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderArtistVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderArtistVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderArtistVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1054,7 +1037,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderArtistWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderArtistWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderArtistWidth));
         }
     }
 
@@ -1072,7 +1055,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderAlbumVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderAlbumVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderAlbumVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1092,7 +1075,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderAlbumWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderAlbumWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderAlbumWidth));
         }
     }
 
@@ -1110,7 +1093,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderDiscVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderDiscVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderDiscVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1130,7 +1113,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderDiscWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderDiscWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderDiscWidth));
         }
     }
 
@@ -1148,7 +1131,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderTrackVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderTrackVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderTrackVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1168,7 +1151,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderTrackWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderTrackWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderTrackWidth));
         }
     }
 
@@ -1186,7 +1169,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderGenreVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderGenreVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderGenreVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1206,7 +1189,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderGenreWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderGenreWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderGenreWidth));
         }
     }
 
@@ -1224,7 +1207,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isPlaylistColumnHeaderLastModifiedVisible = value;
 
-            NotifyPropertyChanged(nameof(IsPlaylistColumnHeaderLastModifiedVisible));
+            OnPropertyChanged(nameof(IsPlaylistColumnHeaderLastModifiedVisible));
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
@@ -1244,7 +1227,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _playlistColumnHeaderLastModifiedWidth = value;
 
-            NotifyPropertyChanged(nameof(PlaylistColumnHeaderLastModifiedWidth));
+            OnPropertyChanged(nameof(PlaylistColumnHeaderLastModifiedWidth));
         }
     }
 
@@ -1279,7 +1262,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (_currentTheme == value) return;
 
             _currentTheme = value;
-            NotifyPropertyChanged(nameof(CurrentTheme));
+            OnPropertyChanged(nameof(CurrentTheme));
 
             FluentAvaloniaTheme? faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
             if (_currentTheme.Id == 1)
@@ -1314,9 +1297,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConnected = value;
-            NotifyPropertyChanged(nameof(IsConnected));
-            NotifyPropertyChanged(nameof(ShortStatusWIthMpdVersion));
-            NotifyPropertyChanged(nameof(IsNotConnecting));
+            OnPropertyChanged(nameof(IsConnected));
+            OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
+            OnPropertyChanged(nameof(IsNotConnecting));
 
             IsConnecting = !_isConnected;
 
@@ -1344,11 +1327,11 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConnecting = value;
-            NotifyPropertyChanged(nameof(IsConnecting));
-            NotifyPropertyChanged(nameof(IsNotConnecting));
-            NotifyPropertyChanged(nameof(ShortStatusWIthMpdVersion));
+            OnPropertyChanged(nameof(IsConnecting));
+            OnPropertyChanged(nameof(IsNotConnecting));
+            OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
-            NotifyPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsProfileSwitchOK));
             if (_isConnecting)
             {
                 IsConnectButtonEnabled = false;
@@ -1369,8 +1352,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isNotConnectingNorConnected = value;
-            NotifyPropertyChanged(nameof(IsNotConnectingNorConnected));
-            NotifyPropertyChanged(nameof(ShortStatusWIthMpdVersion));
+            OnPropertyChanged(nameof(IsNotConnectingNorConnected));
+            OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
             if (_isNotConnectingNorConnected)
             {
@@ -1390,7 +1373,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isConnectButtonEnabled = value;
 
-            NotifyPropertyChanged(nameof(IsConnectButtonEnabled));
+            OnPropertyChanged(nameof(IsConnectButtonEnabled));
         }
     }
 
@@ -1439,7 +1422,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             }
 
-            NotifyPropertyChanged(nameof(IsSettingsShow));
+            OnPropertyChanged(nameof(IsSettingsShow));
 
         }
     }
@@ -1454,7 +1437,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConnectionSettingShow = value;
-            NotifyPropertyChanged(nameof(IsConnectionSettingShow));
+            OnPropertyChanged(nameof(IsConnectionSettingShow));
         }
     }
     /*
@@ -1471,7 +1454,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isChangePasswordDialogShow = value;
-            NotifyPropertyChanged(nameof(IsChangePasswordDialogShow));
+            OnPropertyChanged(nameof(IsChangePasswordDialogShow));
         }
     }
     */
@@ -1501,7 +1484,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isAlbumArtVisible = value;
-            NotifyPropertyChanged(nameof(IsAlbumArtVisible));
+            OnPropertyChanged(nameof(IsAlbumArtVisible));
         }
     }
 
@@ -1519,7 +1502,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isAlbumArtPanelIsOpen = value;
 
-            NotifyPropertyChanged(nameof(IsAlbumArtPanelIsOpen));
+            OnPropertyChanged(nameof(IsAlbumArtPanelIsOpen));
         }
     }
 
@@ -1536,7 +1519,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (_isAlbumArtsDownLoaded == value)
                 return;
             _isAlbumArtsDownLoaded = value;
-            NotifyPropertyChanged(nameof(IsAlbumArtsDownLoaded));
+            OnPropertyChanged(nameof(IsAlbumArtsDownLoaded));
         }
     }
     */
@@ -1554,8 +1537,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isBusy = value;
-            NotifyPropertyChanged(nameof(IsBusy));
-            NotifyPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsBusy));
+            OnPropertyChanged(nameof(IsProfileSwitchOK));
 
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
             //Dispatcher.UIThread.Post(async () => { CommandManager.InvalidateRequerySuggested()});
@@ -1575,8 +1558,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isWorking = value;
-            NotifyPropertyChanged(nameof(IsWorking));
-            NotifyPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsWorking));
+            OnPropertyChanged(nameof(IsProfileSwitchOK));
 
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
         }
@@ -1600,7 +1583,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 InfoBarInfoMessage = string.Empty;
             }
 
-            NotifyPropertyChanged(nameof(IsShowInfoWindow));
+            OnPropertyChanged(nameof(IsShowInfoWindow));
         }
     }
 
@@ -1622,7 +1605,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 InfoBarAckMessage = string.Empty;
             }
 
-            NotifyPropertyChanged(nameof(IsShowAckWindow));
+            OnPropertyChanged(nameof(IsShowAckWindow));
         }
     }
 
@@ -1644,7 +1627,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 InfoBarErrMessage = string.Empty;
             }
 
-            NotifyPropertyChanged(nameof(IsShowErrWindow));
+            OnPropertyChanged(nameof(IsShowErrWindow));
         }
     }
 
@@ -1660,7 +1643,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isShowDebugWindow = value;
 
-            NotifyPropertyChanged(nameof(IsShowDebugWindow));
+            OnPropertyChanged(nameof(IsShowDebugWindow));
 
             if (_isShowDebugWindow)
             {
@@ -1699,7 +1682,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isEnableDebugWindow = value;
 
-            NotifyPropertyChanged(nameof(IsEnableDebugWindow));
+            OnPropertyChanged(nameof(IsEnableDebugWindow));
         }
     }
 
@@ -1720,12 +1703,12 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _currentSong = value;
-            NotifyPropertyChanged(nameof(CurrentSong));
-            NotifyPropertyChanged(nameof(CurrentSongTitle));
-            NotifyPropertyChanged(nameof(CurrentSongArtist));
-            NotifyPropertyChanged(nameof(CurrentSongAlbum));
-            NotifyPropertyChanged(nameof(IsCurrentSongArtistNotNull));
-            NotifyPropertyChanged(nameof(IsCurrentSongAlbumNotNull));
+            OnPropertyChanged(nameof(CurrentSong));
+            OnPropertyChanged(nameof(CurrentSongTitle));
+            OnPropertyChanged(nameof(CurrentSongArtist));
+            OnPropertyChanged(nameof(CurrentSongAlbum));
+            OnPropertyChanged(nameof(IsCurrentSongArtistNotNull));
+            OnPropertyChanged(nameof(IsCurrentSongAlbumNotNull));
 
             CurrentSongChanged?.Invoke(this, CurrentSongStringForWindowTitle);
 
@@ -1841,7 +1824,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isCurrentSongNotNull = value;
-            NotifyPropertyChanged(nameof(IsCurrentSongNotNull));
+            OnPropertyChanged(nameof(IsCurrentSongNotNull));
         }
     }
 
@@ -1903,7 +1886,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _playButton = value;
-            NotifyPropertyChanged(nameof(PlayButton));
+            OnPropertyChanged(nameof(PlayButton));
         }
     }
 
@@ -1915,7 +1898,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             if (_volume == value) return;
             _volume = value;
-            NotifyPropertyChanged(nameof(Volume));
+            OnPropertyChanged(nameof(Volume));
 
             //if (Convert.ToDouble(_mpc.MpdStatus.MpdVolume) == _volume) return;
             
@@ -1956,7 +1939,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _repeat = value;
-            NotifyPropertyChanged(nameof(Repeat));
+            OnPropertyChanged(nameof(Repeat));
 
             if (_mpc is not null)
             {
@@ -1978,7 +1961,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _random = value;
-            NotifyPropertyChanged(nameof(Random));
+            OnPropertyChanged(nameof(Random));
 
             if (_mpc is not null)
             {
@@ -2000,7 +1983,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _consume = value;
-            NotifyPropertyChanged(nameof(Consume));
+            OnPropertyChanged(nameof(Consume));
 
             if (_mpc is not null)
             {
@@ -2022,7 +2005,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _single = value;
-            NotifyPropertyChanged(nameof(Single));
+            OnPropertyChanged(nameof(Single));
 
             if (_mpc is not null)
             {
@@ -2050,8 +2033,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _time = value;
-            NotifyPropertyChanged(nameof(Time));
-            NotifyPropertyChanged(nameof(TimeFormatted));
+            OnPropertyChanged(nameof(Time));
+            OnPropertyChanged(nameof(TimeFormatted));
         }
     }
 
@@ -2104,8 +2087,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 _elapsed = value;
                 Dispatcher.UIThread.Post(() =>
                 {
-                    NotifyPropertyChanged(nameof(Elapsed));
-                    NotifyPropertyChanged(nameof(ElapsedFormatted));
+                    OnPropertyChanged(nameof(Elapsed));
+                    OnPropertyChanged(nameof(ElapsedFormatted));
                 });
                 // If we have a timer and we are in this event handler, a user is still interact with the slider
                 // we stop the timer
@@ -2202,7 +2185,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             }
 
-            NotifyPropertyChanged(nameof(AlbumCover));
+            OnPropertyChanged(nameof(AlbumCover));
         }
     }
 
@@ -2220,7 +2203,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _albumArtBitmapSource = value;
-            NotifyPropertyChanged(nameof(AlbumArtBitmapSource));
+            OnPropertyChanged(nameof(AlbumArtBitmapSource));
         }
     }
 
@@ -2239,7 +2222,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _mainMenuItems.Children = value;
-            NotifyPropertyChanged(nameof(MainMenuItems));
+            OnPropertyChanged(nameof(MainMenuItems));
         }
     }
 
@@ -2358,7 +2341,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
 
             _selectedNodeMenu = value;
-            NotifyPropertyChanged(nameof(SelectedNodeMenu));
+            OnPropertyChanged(nameof(SelectedNodeMenu));
         }
     }
 
@@ -2379,7 +2362,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _currentpage = value;
-            this.NotifyPropertyChanged(nameof(CurrentPage));
+            this.OnPropertyChanged(nameof(CurrentPage));
         }
     }
 
@@ -2396,7 +2379,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedPlaylistName = value;
-            NotifyPropertyChanged(nameof(SelectedPlaylistName));
+            OnPropertyChanged(nameof(SelectedPlaylistName));
         }
     }
 
@@ -2413,7 +2396,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _renamedSelectPendingPlaylistName = value;
-            NotifyPropertyChanged(nameof(RenamedSelectPendingPlaylistName));
+            OnPropertyChanged(nameof(RenamedSelectPendingPlaylistName));
         }
     }
 
@@ -2442,8 +2425,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _queue = value;
-            NotifyPropertyChanged(nameof(Queue));
-            NotifyPropertyChanged(nameof(QueuePageSubTitleSongCount));
+            OnPropertyChanged(nameof(Queue));
+            OnPropertyChanged(nameof(QueuePageSubTitleSongCount));
         }
     }
 
@@ -2460,7 +2443,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedQueueSong = value;
-            NotifyPropertyChanged(nameof(SelectedQueueSong));
+            OnPropertyChanged(nameof(SelectedQueueSong));
         }
     }
 
@@ -2488,7 +2471,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             */
             FilterQueueQuery = "";
 
-            NotifyPropertyChanged(nameof(IsQueueFindVisible));
+            OnPropertyChanged(nameof(IsQueueFindVisible));
         }
     }
 
@@ -2510,7 +2493,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _queueForFilter = value;
-            NotifyPropertyChanged(nameof(QueueForFilter));
+            OnPropertyChanged(nameof(QueueForFilter));
         }
     }
 
@@ -2527,7 +2510,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedQueueFilterTags = value;
-            NotifyPropertyChanged(nameof(SelectedQueueFilterTags));
+            OnPropertyChanged(nameof(SelectedQueueFilterTags));
 
             if (_filterQueueQuery == "")
                 return;
@@ -2575,7 +2558,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _filterQueueQuery = value;
-            NotifyPropertyChanged(nameof(FilterQueueQuery));
+            OnPropertyChanged(nameof(FilterQueueQuery));
 
             if (_filterQueueQuery == "")
             {
@@ -2636,7 +2619,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedQueueFilterSong = value;
-            NotifyPropertyChanged(nameof(SelectedQueueFilterSong));
+            OnPropertyChanged(nameof(SelectedQueueFilterSong));
         }
     }
 
@@ -2661,7 +2644,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _musicDirectories.Children = value;
-            NotifyPropertyChanged(nameof(MusicDirectories));
+            OnPropertyChanged(nameof(MusicDirectories));
         }
     }
 
@@ -2675,7 +2658,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedNodeDirectory = value;
-            NotifyPropertyChanged(nameof(SelectedNodeDirectory));
+            OnPropertyChanged(nameof(SelectedNodeDirectory));
 
             if (_selectedNodeDirectory is null)
                 return;
@@ -2702,7 +2685,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 FilterFiles();
             }
 
-            NotifyPropertyChanged(nameof(MusicEntriesFiltered));
+            OnPropertyChanged(nameof(MusicEntriesFiltered));
             
             /*
             bool filteringMode = true;
@@ -2820,8 +2803,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _musicEntries = value;
-            NotifyPropertyChanged(nameof(MusicEntries));
-            NotifyPropertyChanged(nameof(FilesPageSubTitleFileCount));
+            OnPropertyChanged(nameof(MusicEntries));
+            OnPropertyChanged(nameof(FilesPageSubTitleFileCount));
         }
     }
 
@@ -2838,7 +2821,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _musicEntriesFiltered = value;
-            NotifyPropertyChanged(nameof(MusicEntriesFiltered));
+            OnPropertyChanged(nameof(MusicEntriesFiltered));
         }
     }
 
@@ -2887,7 +2870,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _filterMusicEntriesQuery = value;
-            NotifyPropertyChanged(nameof(FilterMusicEntriesQuery));
+            OnPropertyChanged(nameof(FilterMusicEntriesQuery));
 
             if (_selectedNodeDirectory is null)
                 return;
@@ -2907,7 +2890,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             else
             {
                 FilterFiles();
-                NotifyPropertyChanged(nameof(MusicEntriesFiltered));
+                OnPropertyChanged(nameof(MusicEntriesFiltered));
             }
         }
     }
@@ -2936,8 +2919,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _artists = value;
-            NotifyPropertyChanged(nameof(Artists));
-            NotifyPropertyChanged(nameof(ArtistPageSubTitleArtistCount));
+            OnPropertyChanged(nameof(Artists));
+            OnPropertyChanged(nameof(ArtistPageSubTitleArtistCount));
         }
     }
 
@@ -2961,7 +2944,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 _selectedAlbumArtist = value;
 
-                NotifyPropertyChanged(nameof(SelectedAlbumArtist));
+                OnPropertyChanged(nameof(SelectedAlbumArtist));
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
                
@@ -2993,7 +2976,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedArtistAlbums = value;
-            NotifyPropertyChanged(nameof(SelectedArtistAlbums));
+            OnPropertyChanged(nameof(SelectedArtistAlbums));
         }
     }
 
@@ -3011,8 +2994,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _albums = value;
-            NotifyPropertyChanged(nameof(Albums));
-            NotifyPropertyChanged(nameof(AlbumPageSubTitleAlbumCount));
+            OnPropertyChanged(nameof(Albums));
+            OnPropertyChanged(nameof(AlbumPageSubTitleAlbumCount));
         }
     }
 
@@ -3026,7 +3009,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isAlbumContentPanelVisible = value;
-            NotifyPropertyChanged(nameof(IsAlbumContentPanelVisible));
+            OnPropertyChanged(nameof(IsAlbumContentPanelVisible));
         }
     }
 
@@ -3040,8 +3023,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedAlbum = value;
-            NotifyPropertyChanged(nameof(SelectedAlbum));
-            NotifyPropertyChanged(nameof(SelectedAlbumSongs));
+            OnPropertyChanged(nameof(SelectedAlbum));
+            OnPropertyChanged(nameof(SelectedAlbumSongs));
         }
     }
 
@@ -3063,7 +3046,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedAlbumSongs = value;
-            NotifyPropertyChanged(nameof(SelectedAlbumSongs));
+            OnPropertyChanged(nameof(SelectedAlbumSongs));
         }
     }
 
@@ -3085,7 +3068,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             _visibleViewportItemsAlbumEx = value;
 
-            //NotifyPropertyChanged(nameof(VisibleViewportItemsAlbumEx));
+            //OnPropertyChanged(nameof(VisibleViewportItemsAlbumEx));
 
             if (VisibleViewportItemsAlbumEx is null)
             {
@@ -3114,8 +3097,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _searchResult = value;
-            NotifyPropertyChanged(nameof(SearchResult));
-            NotifyPropertyChanged(nameof(SearchPageSubTitleResultCount));
+            OnPropertyChanged(nameof(SearchResult));
+            OnPropertyChanged(nameof(SearchPageSubTitleResultCount));
         }
     }
 
@@ -3150,7 +3133,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedSearchTag = value;
-            NotifyPropertyChanged(nameof(SelectedSearchTag));
+            OnPropertyChanged(nameof(SelectedSearchTag));
         }
     }
 
@@ -3182,7 +3165,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _selectedSearchShiki = value;
-            NotifyPropertyChanged(nameof(SelectedSearchShiki));
+            OnPropertyChanged(nameof(SelectedSearchShiki));
         }
     }
 
@@ -3200,7 +3183,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _searchQuery = value;
-            NotifyPropertyChanged(nameof(SearchQuery));
+            OnPropertyChanged(nameof(SearchQuery));
             SearchExecCommand.NotifyCanExecuteChanged();
         }
     }
@@ -3232,7 +3215,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _playlists = value;
-            NotifyPropertyChanged(nameof(Playlists));
+            OnPropertyChanged(nameof(Playlists));
         }
     }
     /*
@@ -3248,7 +3231,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (_selectedPlaylist != value)
             {
                 _selectedPlaylist = value;
-                NotifyPropertyChanged(nameof(SelectedPlaylist));
+                OnPropertyChanged(nameof(SelectedPlaylist));
             }
         }
     }
@@ -3269,8 +3252,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (_playlistSongs != value)
             {
                 _playlistSongs = value;
-                NotifyPropertyChanged(nameof(PlaylistSongs));
-                NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
+                OnPropertyChanged(nameof(PlaylistSongs));
+                OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
             }
         }
     }
@@ -3287,7 +3270,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             if (_selectedPlaylistSong != value)
             {
                 _selectedPlaylistSong = value;
-                NotifyPropertyChanged(nameof(SelectedPlaylistSong));
+                OnPropertyChanged(nameof(SelectedPlaylistSong));
             }
         }
     }
@@ -3322,7 +3305,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _albumCacheFolderSizeFormatted = value;
-            NotifyPropertyChanged(nameof(AlbumCacheFolderSizeFormatted));
+            OnPropertyChanged(nameof(AlbumCacheFolderSizeFormatted));
         }
     }
 
@@ -3345,7 +3328,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _debugCommandText = value;
-            NotifyPropertyChanged(nameof(DebugCommandText));
+            OnPropertyChanged(nameof(DebugCommandText));
         }
     }
 
@@ -3363,7 +3346,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _debugIdleText = value;
-            NotifyPropertyChanged(nameof(DebugIdleText));
+            OnPropertyChanged(nameof(DebugIdleText));
         }
     }
 
@@ -3382,7 +3365,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isUpdateOnStartup = value;
 
-            NotifyPropertyChanged(nameof(IsUpdateOnStartup));
+            OnPropertyChanged(nameof(IsUpdateOnStartup));
         }
     }
 
@@ -3397,7 +3380,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isAutoScrollToNowPlaying = value;
 
-            NotifyPropertyChanged(nameof(IsAutoScrollToNowPlaying));
+            OnPropertyChanged(nameof(IsAutoScrollToNowPlaying));
         }
     }
 
@@ -3412,7 +3395,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isSaveLog = value;
 
-            NotifyPropertyChanged(nameof(IsSaveLog));
+            OnPropertyChanged(nameof(IsSaveLog));
         }
     }
 
@@ -3427,7 +3410,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isDownloadAlbumArt = value;
 
-            NotifyPropertyChanged(nameof(IsDownloadAlbumArt));
+            OnPropertyChanged(nameof(IsDownloadAlbumArt));
         }
     }
 
@@ -3442,7 +3425,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _isDownloadAlbumArtEmbeddedUsingReadPicture = value;
 
-            NotifyPropertyChanged(nameof(IsDownloadAlbumArtEmbeddedUsingReadPicture));
+            OnPropertyChanged(nameof(IsDownloadAlbumArtEmbeddedUsingReadPicture));
         }
     }
 
@@ -3466,19 +3449,19 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _currentProfile = value;
-            NotifyPropertyChanged(nameof(CurrentProfile));
+            OnPropertyChanged(nameof(CurrentProfile));
 
             SelectedProfile = _currentProfile;
 
             if (_currentProfile is not null)
             {
                 _volume = _currentProfile.Volume;
-                NotifyPropertyChanged(nameof(Volume));
+                OnPropertyChanged(nameof(Volume));
 
                 Host = _currentProfile.Host;
                 Port = _currentProfile.Port.ToString();
                 _password = _currentProfile.Password;
-                NotifyPropertyChanged(nameof(Password));
+                OnPropertyChanged(nameof(Password));
             }
         }
     }
@@ -3497,7 +3480,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _selectedProfile = value;
 
-            NotifyPropertyChanged(nameof(SelectedProfile));
+            OnPropertyChanged(nameof(SelectedProfile));
         }
     }
 
@@ -3512,7 +3495,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _setIsDefault = value;
 
-            NotifyPropertyChanged(nameof(SetIsDefault));
+            OnPropertyChanged(nameof(SetIsDefault));
         }
     }
     /*
@@ -3548,13 +3531,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 Password = "";
             }
 
-            NotifyPropertyChanged(nameof(SelectedProfile));
+            OnPropertyChanged(nameof(SelectedProfile));
 
             // "quietly"
             if (_selectedProfile is not null)
             {
                 _selectedQuickProfile = _selectedProfile;
-                NotifyPropertyChanged(nameof(SelectedQuickProfile));
+                OnPropertyChanged(nameof(SelectedQuickProfile));
             }
         }
     }
@@ -3598,7 +3581,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             }
 
-            NotifyPropertyChanged(nameof(SelectedQuickProfile));
+            OnPropertyChanged(nameof(SelectedQuickProfile));
         }
     }
     */
@@ -3641,7 +3624,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
             */
 
-            NotifyPropertyChanged(nameof(Host));
+            OnPropertyChanged(nameof(Host));
         }
     }
 
@@ -3656,7 +3639,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _hostIpAddress = value;
 
-            NotifyPropertyChanged(nameof(HostIpAddress));
+            OnPropertyChanged(nameof(HostIpAddress));
         }
     }
 
@@ -3690,7 +3673,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 }
             }
 
-            NotifyPropertyChanged(nameof(Port));
+            OnPropertyChanged(nameof(Port));
         }
     }
 
@@ -3704,9 +3687,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
             _password = value;
 
-            //NotifyPropertyChanged(nameof(IsNotPasswordSet));
-            //NotifyPropertyChanged(nameof(IsPasswordSet));
-            NotifyPropertyChanged(nameof(Password));
+            //OnPropertyChanged(nameof(IsNotPasswordSet));
+            //OnPropertyChanged(nameof(IsPasswordSet));
+            OnPropertyChanged(nameof(Password));
         }
     }
 
@@ -3821,7 +3804,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _settingProfileEditMessage = value;
-            NotifyPropertyChanged(nameof(SettingProfileEditMessage));
+            OnPropertyChanged(nameof(SettingProfileEditMessage));
         }
     }
 
@@ -3873,7 +3856,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSwitchingProfile = value;
-            NotifyPropertyChanged(nameof(IsSwitchingProfile));
+            OnPropertyChanged(nameof(IsSwitchingProfile));
         }
     }
 
@@ -3887,7 +3870,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _changePasswordDialogMessage = value;
-            NotifyPropertyChanged(nameof(ChangePasswordDialogMessage));
+            OnPropertyChanged(nameof(ChangePasswordDialogMessage));
         }
     }
     */
@@ -3905,7 +3888,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isRememberAsProfile = value;
-            NotifyPropertyChanged(nameof(IsRememberAsProfile));
+            OnPropertyChanged(nameof(IsRememberAsProfile));
         }
     }
 
@@ -3923,7 +3906,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _statusBarMessage = value;
-            NotifyPropertyChanged(nameof(StatusBarMessage));
+            OnPropertyChanged(nameof(StatusBarMessage));
         }
     }
 
@@ -3937,7 +3920,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _connectionStatusMessage = value;
-            NotifyPropertyChanged(nameof(ConnectionStatusMessage));
+            OnPropertyChanged(nameof(ConnectionStatusMessage));
         }
     }
 
@@ -3951,13 +3934,13 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _mpdStatusMessage = value;
-            NotifyPropertyChanged(nameof(MpdStatusMessage));
+            OnPropertyChanged(nameof(MpdStatusMessage));
 
             if (_mpdStatusMessage != "")
                 _isMpdStatusMessageContainsText = true;
             else
                 _isMpdStatusMessageContainsText = false;
-            NotifyPropertyChanged(nameof(IsMpdStatusMessageContainsText));
+            OnPropertyChanged(nameof(IsMpdStatusMessageContainsText));
         }
     }
 
@@ -3980,7 +3963,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarInfoTitle = value;
-            NotifyPropertyChanged(nameof(InfoBarInfoTitle));
+            OnPropertyChanged(nameof(InfoBarInfoTitle));
         }
     }
 
@@ -3994,7 +3977,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarInfoMessage = value;
-            NotifyPropertyChanged(nameof(InfoBarInfoMessage));
+            OnPropertyChanged(nameof(InfoBarInfoMessage));
         }
     }
 
@@ -4008,7 +3991,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarAckTitle = value;
-            NotifyPropertyChanged(nameof(InfoBarAckTitle));
+            OnPropertyChanged(nameof(InfoBarAckTitle));
         }
     }
 
@@ -4022,7 +4005,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarAckMessage = value;
-            NotifyPropertyChanged(nameof(InfoBarAckMessage));
+            OnPropertyChanged(nameof(InfoBarAckMessage));
         }
     }
 
@@ -4036,7 +4019,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarErrTitle = value;
-            NotifyPropertyChanged(nameof(InfoBarErrTitle));
+            OnPropertyChanged(nameof(InfoBarErrTitle));
         }
     }
 
@@ -4050,7 +4033,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _infoBarErrMessage = value;
-            NotifyPropertyChanged(nameof(InfoBarErrMessage));
+            OnPropertyChanged(nameof(InfoBarErrMessage));
         }
     }
 
@@ -4078,7 +4061,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _statusButton = value;
-            NotifyPropertyChanged(nameof(StatusButton));
+            OnPropertyChanged(nameof(StatusButton));
         }
     }
 
@@ -4099,7 +4082,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _mpdStatusButton = value;
-            NotifyPropertyChanged(nameof(MpdStatusButton));
+            OnPropertyChanged(nameof(MpdStatusButton));
         }
     }
 
@@ -4113,7 +4096,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         set
         {
             _isUpdatingMpdDb = value;
-            NotifyPropertyChanged(nameof(IsUpdatingMpdDb));
+            OnPropertyChanged(nameof(IsUpdatingMpdDb));
         }
     }
 
@@ -4134,7 +4117,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _mpdVersion = value;
-            NotifyPropertyChanged(nameof(MpdVersion));
+            OnPropertyChanged(nameof(MpdVersion));
         }
     }
 
@@ -4216,7 +4199,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmClearQueuePopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmClearQueuePopupVisible));
+            OnPropertyChanged(nameof(IsConfirmClearQueuePopupVisible));
         }
     }
 
@@ -4233,7 +4216,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSelectedSaveToPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSelectedSaveToPopupVisible));
+            OnPropertyChanged(nameof(IsSelectedSaveToPopupVisible));
         }
     }
 
@@ -4250,7 +4233,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSelectedSaveAsPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSelectedSaveAsPopupVisible));
+            OnPropertyChanged(nameof(IsSelectedSaveAsPopupVisible));
         }
     }
 
@@ -4267,7 +4250,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmDeleteQueuePopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmDeleteQueuePopupVisible));
+            OnPropertyChanged(nameof(IsConfirmDeleteQueuePopupVisible));
         }
     }
 
@@ -4284,7 +4267,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmUpdatePlaylistSongsPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmUpdatePlaylistSongsPopupVisible));
+            OnPropertyChanged(nameof(IsConfirmUpdatePlaylistSongsPopupVisible));
         }
     }
 
@@ -4301,7 +4284,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible));
+            OnPropertyChanged(nameof(IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible));
         }
     }
 
@@ -4318,7 +4301,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmDeletePlaylistSongPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmDeletePlaylistSongPopupVisible));
+            OnPropertyChanged(nameof(IsConfirmDeletePlaylistSongPopupVisible));
         }
     }
 
@@ -4335,7 +4318,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isConfirmPlaylistClearPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsConfirmPlaylistClearPopupVisible));
+            OnPropertyChanged(nameof(IsConfirmPlaylistClearPopupVisible));
         }
     }
 
@@ -4352,7 +4335,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSearchResultSelectedSaveAsPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSearchResultSelectedSaveAsPopupVisible));
+            OnPropertyChanged(nameof(IsSearchResultSelectedSaveAsPopupVisible));
         }
     }
 
@@ -4369,7 +4352,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSearchResultSelectedSaveToPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSearchResultSelectedSaveToPopupVisible));
+            OnPropertyChanged(nameof(IsSearchResultSelectedSaveToPopupVisible));
         }
     }
 
@@ -4386,7 +4369,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _sSongFilesSelectedSaveAsPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSongFilesSelectedSaveAsPopupVisible));
+            OnPropertyChanged(nameof(IsSongFilesSelectedSaveAsPopupVisible));
         }
     }
 
@@ -4403,7 +4386,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 return;
 
             _isSongFilesSelectedSaveToPopupVisible = value;
-            NotifyPropertyChanged(nameof(IsSongFilesSelectedSaveToPopupVisible));
+            OnPropertyChanged(nameof(IsSongFilesSelectedSaveToPopupVisible));
         }
     }
 
@@ -4811,8 +4794,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                             if (hoge.Value == "Maximized")
                             {
                                 //w.WindowState = WindowState.Maximized;
-                                // Since there is no restorebounds in AvaloniaUI.
-                                WindowState = WindowState.Normal;
+                                // Since there is no restorebounds in AvaloniaUI.....
+                                WindowState = WindowState.Maximized;
                             }
                             else if (hoge.Value == "Normal")
                             {
@@ -5017,7 +5000,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                                 {
                                     CurrentProfile = pro;
 
-                                    //NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                                    //OnPropertyChanged(nameof(IsCurrentProfileSet));
                                 }
 
                                 Profiles.Add(pro);
@@ -5058,7 +5041,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                             if (hoge is not null)
                             {
                                 // Call 
-                                // "NotifyPropertyChanged(nameof(IsNavigationViewMenuOpen));"
+                                // "OnPropertyChanged(nameof(IsNavigationViewMenuOpen));"
                                 // AFTER NavigationMenuItems is added.
                                 if (hoge.Value == "True")
                                 {
@@ -6064,9 +6047,6 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
 
             IsFullyLoaded = true;
-
-            // TODO: Since AvaloniaUI does not call OnContentRendered....
-            IsFullyRendered = true;
         }
         catch (System.IO.FileNotFoundException ex)
         {
@@ -6092,10 +6072,9 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (CurrentProfile is not null) return;
         var prof = Profiles.FirstOrDefault(x => x.IsDefault);
         CurrentProfile = prof ?? Profiles[0];
-        //NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+        //OnPropertyChanged(nameof(IsCurrentProfileSet));
     }
 
-    // Startup
     public async void OnWindowLoaded(object? sender, EventArgs e)
     {
         if (CurrentProfile is null)
@@ -6117,37 +6096,20 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
 
         // set this "quietly"
         _volume = CurrentProfile.Volume;
-        NotifyPropertyChanged(nameof(Volume));
+        OnPropertyChanged(nameof(Volume));
 
         // start the connection
         _ = Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port));
 
     }
 
-    // On window's content rendered <<< TODO: Not called in AvaloniaUI
-    public void OnContentRendered(object? sender, EventArgs e)
-    {
-        IsFullyRendered = true;
-    }
-
     private void SaveSettings(Window sender)
     {
         // Make sure Window and settings have been fully loaded and not overriding with empty data.
         if (!IsFullyLoaded)
+        {
             return;
-
-        // TODO: Since AvaloniaUI does not call OnContentRendered....
-        IsFullyRendered = true;
-
-        // This is a dirty work around for AvaloniaUI.
-        //QueuePage? qp = App.GetService<QueuePage>();
-        //qp?.SaveQueueHeaderWidth();
-        //FilesPage? fp = App.GetService<FilesPage>();
-        //fp?.SaveFilesHeaderWidth();
-        //PlaylistItemPage? pp = App.GetService<PlaylistItemPage>();
-        //pp?.SavePlaylistItemsHeaderWidth();
-        //SearchPage? sp = App.GetService<SearchPage>();
-        //sp?.SaveSearchHeaderWidth();
+        }
 
         double windowWidth = 780;
 
@@ -6252,7 +6214,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             // LeftPain
             leftpain = doc.CreateElement(string.Empty, "LeftPain", string.Empty);
             lAttrs = doc.CreateAttribute("Width");
-            if (IsFullyRendered) // << Not called in AvaloniaUI
+            if (IsFullyLoaded) // instead of IsFullyRendered
             {
                 if (windowWidth > (MainLeftPainActualWidth - 24))
                 {
@@ -7254,22 +7216,22 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     {
                         // "quietly" update.
                         _volume = tmpVol;
-                        NotifyPropertyChanged(nameof(Volume));
+                        OnPropertyChanged(nameof(Volume));
 
                     }
                 }
 
                 _random = _mpc.MpdStatus.MpdRandom;
-                NotifyPropertyChanged(nameof(Random));
+                OnPropertyChanged(nameof(Random));
 
                 _repeat = _mpc.MpdStatus.MpdRepeat;
-                NotifyPropertyChanged(nameof(Repeat));
+                OnPropertyChanged(nameof(Repeat));
 
                 _consume = _mpc.MpdStatus.MpdConsume;
-                NotifyPropertyChanged(nameof(Consume));
+                OnPropertyChanged(nameof(Consume));
 
                 _single = _mpc.MpdStatus.MpdSingle;
-                NotifyPropertyChanged(nameof(Single));
+                OnPropertyChanged(nameof(Single));
 
                 //start elapsed timer.
                 if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
@@ -7290,8 +7252,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     Time *= _elapsedTimeMultiplier;
                     _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed);
                     _elapsed *= _elapsedTimeMultiplier;
-                    NotifyPropertyChanged(nameof(Elapsed));
-                    NotifyPropertyChanged(nameof(ElapsedFormatted));
+                    OnPropertyChanged(nameof(Elapsed));
+                    OnPropertyChanged(nameof(ElapsedFormatted));
                 }
 
                 //
@@ -8027,7 +7989,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             IsWorking = false;
 
             // apply open/close after this menu is loaded.
-            NotifyPropertyChanged(nameof(IsNavigationViewMenuOpen));
+            OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
 
             if (!string.IsNullOrEmpty(RenamedSelectPendingPlaylistName))
             {
@@ -8116,7 +8078,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             MusicEntries = new ObservableCollection<NodeFile>(tmpMusicEntries);// COPY
 
             _musicEntriesFiltered = _musicEntriesFiltered = new ObservableCollection<NodeFile>(tmpMusicEntries);
-            NotifyPropertyChanged(nameof(MusicEntriesFiltered));
+            OnPropertyChanged(nameof(MusicEntriesFiltered));
 
             UpdateProgress?.Invoke(this, "");
             //IsBusy = false;
@@ -8156,7 +8118,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     if (MusicDirectories[0] is NodeDirectory nd)
                     {
                         _selectedNodeDirectory = nd;
-                        NotifyPropertyChanged(nameof(SelectedNodeDirectory));
+                        OnPropertyChanged(nameof(SelectedNodeDirectory));
                     }
                 }
 
@@ -9102,7 +9064,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                             CurrentProfile = prof;
                             Profiles.Add(prof);
 
-                            //NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                            //OnPropertyChanged(nameof(IsCurrentProfileSet));
                         }
                         else
                         {
@@ -9439,8 +9401,8 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             Dispatcher.UIThread.Post(() =>
             {
                 _elapsed += 1;
-                NotifyPropertyChanged(nameof(Elapsed));
-                NotifyPropertyChanged(nameof(ElapsedFormatted));
+                OnPropertyChanged(nameof(Elapsed));
+                OnPropertyChanged(nameof(ElapsedFormatted));
             });
             //Debug.WriteLine($"ElapsedTimer: {_elapsed}/{_time}");
         }
@@ -10384,7 +10346,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
     {
         return true;
     }
-    public async void FilesListviewCopySelectedFilePathCommand_Execute(object obj)
+    public static async void FilesListviewCopySelectedFilePathCommand_Execute(object obj)
     {
         if (obj is null) return;
 
@@ -10838,7 +10800,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             RenamedSelectPendingPlaylistName = string.Empty;
             _playlistPageSubTitleSongCount = ""; 
-            NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
+            OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
 
             /*
             foreach (var fuga in _mainMenuItems.PlaylistsDirectory.Children)
@@ -10938,7 +10900,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             //CurrentPage = App.GetService<QueuePage>();
 
             _playlistPageSubTitleSongCount = string.Empty;
-            NotifyPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
+            OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
         }
     }
 
@@ -11246,7 +11208,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         }
 
         Profiles.Add(pro);
-        NotifyPropertyChanged(nameof(Profiles));
+        OnPropertyChanged(nameof(Profiles));
         SelectedProfile = pro;
 
         if (Profiles.Count > 0)
@@ -11289,7 +11251,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             }
         }
 
-        NotifyPropertyChanged(nameof(Profiles));
+        OnPropertyChanged(nameof(Profiles));
 
         if (Profiles.Count == 0)
         {
@@ -11371,7 +11333,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         pro.Name = Host + ":" + _port.ToString();
 
         Profiles.Add(pro);
-        NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+        OnPropertyChanged(nameof(IsCurrentProfileSet));
 
         SelectedProfile = pro;
 
@@ -11589,7 +11551,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         if (Host == "")
         {
             //SetError(nameof(Host), "Error: Host must be specified."); //TODO: translate
-            NotifyPropertyChanged(nameof(Host));
+            OnPropertyChanged(nameof(Host));
             return;
         }
         else
@@ -11630,7 +11592,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
             {
                 //TODO: translate.
                 //SetError(nameof(Host), "Error: Could not retrive IP Address from the hostname.");
-                NotifyPropertyChanged(nameof(Host));
+                OnPropertyChanged(nameof(Host));
                 // TODO::
                 ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
                 StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
@@ -11641,7 +11603,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             //TODO: translate.
             //SetError(nameof(Host), "Error: Could not retrive IP Address from the hostname. (SocketException)");
-            NotifyPropertyChanged(nameof(Host));
+            OnPropertyChanged(nameof(Host));
             // TODO::
             ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
             StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
@@ -11652,7 +11614,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         {
             //TODO: translate.
             //SetError(nameof(Port), "Error: Port must be specified.");
-            NotifyPropertyChanged(nameof(Host));
+            OnPropertyChanged(nameof(Host));
             return;
         }
         /*
@@ -11753,7 +11715,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                 //SelectedProfile = prof;
 
                 Profiles.Add(prof);
-                //NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                //OnPropertyChanged(nameof(IsCurrentProfileSet));
             }
             else
             {
@@ -11772,7 +11734,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
                     CurrentProfile = prof;
                     Profiles.Add(prof);
 
-                    //NotifyPropertyChanged(nameof(IsCurrentProfileSet));
+                    //OnPropertyChanged(nameof(IsCurrentProfileSet));
                 }
                 else
                 {
@@ -11893,7 +11855,7 @@ public partial class MainViewModel : ViewModelBase //ObservableObject
         });
 
         _volume = prof.Volume;
-        NotifyPropertyChanged(nameof(Volume));
+        OnPropertyChanged(nameof(Volume));
 
 
         Host = prof.Host;
