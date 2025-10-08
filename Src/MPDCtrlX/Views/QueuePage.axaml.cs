@@ -218,10 +218,7 @@ public partial class QueuePage : UserControl
     {
         if (DataContext is MainViewModel vm)
         {
-            if (MainViewModel.QueueListviewEnterKeyCommand_CanExecute())
-            {
-                vm.QueueListviewEnterKeyCommand_ExecuteAsync();
-            }
+            _ = vm.QueueListviewEnterKey();
         }
     }
 

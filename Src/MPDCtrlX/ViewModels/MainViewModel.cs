@@ -1945,10 +1945,7 @@ public partial class MainViewModel : ObservableObject
             {
                 if (_mpc.MpdStatus.MpdRepeat != value)
                 {
-                    if (SetRpeatCommand.CanExecute(null))
-                    {
-                        SetRpeatCommand.Execute(null);
-                    }
+                    _ = SetRpeat();
                 }
             }
         }
@@ -1967,10 +1964,7 @@ public partial class MainViewModel : ObservableObject
             {
                 if (_mpc.MpdStatus.MpdRandom != value)
                 {
-                    if (SetRandomCommand.CanExecute(null))
-                    {
-                        SetRandomCommand.Execute(null);
-                    }
+                    _ = SetRandom();
                 }
             }
         }
@@ -1989,10 +1983,7 @@ public partial class MainViewModel : ObservableObject
             {
                 if (_mpc.MpdStatus.MpdConsume != value)
                 {
-                    if (SetConsumeCommand.CanExecute(null))
-                    {
-                        SetConsumeCommand.Execute(null);
-                    }
+                    _ = SetConsume();
                 }
             }
         }
@@ -2011,10 +2002,7 @@ public partial class MainViewModel : ObservableObject
             {
                 if (_mpc.MpdStatus.MpdSingle != value)
                 {
-                    if (SetSingleCommand.CanExecute(null))
-                    {
-                        SetSingleCommand.Execute(null);
-                    }
+                    _ = SetSingle();
                 }
             }
         }
@@ -2149,12 +2137,11 @@ public partial class MainViewModel : ObservableObject
     private System.Timers.Timer? _elapsedDelayTimer = null;
     private void DoChangeElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (_mpc is not null && (_elapsed < _time) && SetSeekCommand.CanExecute(null))
+        if (_mpc is not null && (_elapsed < _time))
         {
-            SetSeekCommand.Execute(null);
+            _ = SetSeek();
         }
     }
-
 
     #endregion
 
@@ -3184,7 +3171,7 @@ public partial class MainViewModel : ObservableObject
 
             _searchQuery = value;
             OnPropertyChanged(nameof(SearchQuery));
-            SearchExecCommand.NotifyCanExecuteChanged();
+            //SearchExecCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -4468,186 +4455,6 @@ public partial class MainViewModel : ObservableObject
         _mpc = mpcService;
         _initWin = initWin;
         _dialog = dialogService;
-
-        #region == Init commands ==
-
-        PlayCommand = new RelayCommand(PlayCommand_ExecuteAsync, PlayCommand_CanExecute);
-        PlayStopCommand = new RelayCommand(PlayStopCommand_Execute, PlayStopCommand_CanExecute);
-        PlayPauseCommand = new RelayCommand(PlayPauseCommand_Execute, PlayPauseCommand_CanExecute);
-        PlayNextCommand = new RelayCommand(PlayNextCommand_ExecuteAsync, PlayNextCommand_CanExecute);
-        PlayPrevCommand = new RelayCommand(PlayPrevCommand_ExecuteAsync, PlayPrevCommand_CanExecute);
-        ChangeSongCommand = new RelayCommand(ChangeSongCommand_ExecuteAsync, ChangeSongCommand_CanExecute);
-
-        SetRpeatCommand = new RelayCommand(SetRpeatCommand_ExecuteAsync, SetRpeatCommand_CanExecute);
-        SetRandomCommand = new RelayCommand(SetRandomCommand_ExecuteAsync, SetRandomCommand_CanExecute);
-        SetConsumeCommand = new RelayCommand(SetConsumeCommand_ExecuteAsync, SetConsumeCommand_CanExecute);
-        SetSingleCommand = new RelayCommand(SetSingleCommand_ExecuteAsync, SetSingleCommand_CanExecute);
-
-        SetVolumeCommand = new RelayCommand(SetVolumeCommand_ExecuteAsync, SetVolumeCommand_CanExecute);
-        VolumeMuteCommand = new RelayCommand(VolumeMuteCommand_Execute, VolumeMuteCommand_CanExecute);
-        VolumeUpCommand = new RelayCommand(VolumeUpCommand_Execute, VolumeUpCommand_CanExecute);
-        VolumeDownCommand = new RelayCommand(VolumeDownCommand_Execute, VolumeDownCommand_CanExecute);
-
-        SetSeekCommand = new RelayCommand(SetSeekCommand_ExecuteAsync, SetSeekCommand_CanExecute);
-        /*
-        PlaylistListviewEnterKeyCommand = new RelayCommand(PlaylistListviewEnterKeyCommand_ExecuteAsync, PlaylistListviewEnterKeyCommand_CanExecute);
-        PlaylistListviewLoadPlaylistCommand = new RelayCommand(PlaylistListviewLoadPlaylistCommand_ExecuteAsync, PlaylistListviewLoadPlaylistCommand_CanExecute);
-        PlaylistListviewClearLoadPlaylistCommand = new RelayCommand(PlaylistListviewClearLoadPlaylistCommand_ExecuteAsync, PlaylistListviewClearLoadPlaylistCommand_CanExecute);
-        PlaylistListviewLeftDoubleClickCommand = new GenericRelayCommand<Playlist>(param => PlaylistListviewLeftDoubleClickCommand_ExecuteAsync(param), param => PlaylistListviewLeftDoubleClickCommand_CanExecute());
-        ChangePlaylistCommand = new RelayCommand(ChangePlaylistCommand_ExecuteAsync, ChangePlaylistCommand_CanExecute);
-        */
-        PlaylistRenamePlaylistCommand = new GenericRelayCommand<string>(param => PlaylistRenamePlaylistCommand_Execute(param), param => PlaylistRenamePlaylistCommand_CanExecute());
-
-
-        PlaylistRemovePlaylistWithoutPromptCommand = new GenericRelayCommand<string>(param => PlaylistRemovePlaylistWithoutPromptCommand_Execute(param), param => PlaylistRemovePlaylistWithoutPromptCommand_CanExecute());
-        //PlaylistListviewRemovePlaylistCommand = new GenericRelayCommand<Playlist>(param => PlaylistListviewRemovePlaylistCommand_Execute(param), param => PlaylistListviewRemovePlaylistCommand_CanExecute());
-        //PlaylistListviewConfirmRemovePlaylistPopupCommand = new RelayCommand(PlaylistListviewConfirmRemovePlaylistPopupCommand_Execute, PlaylistListviewConfirmRemovePlaylistPopupCommand_CanExecute);
-        PlaylistClearPlaylistWithoutPromptCommand = new GenericRelayCommand<string>(param => PlaylistClearPlaylistWithoutPromptCommand_Execute(param), param => PlaylistClearPlaylistWithoutPromptCommand_CanExecute());
-        //PlaylistListviewClearCommand = new RelayCommand(PlaylistListviewClearCommand_Execute, PlaylistListviewClearCommand_CanExecute);
-        //PlaylistListviewClearPopupCommand = new RelayCommand(PlaylistListviewClearPopupCommand_Execute, PlaylistListviewClearPopupCommand_CanExecute);
-
-        //
-        PlaylistSongsListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfo>(param => PlaylistSongsListviewLeftDoubleClickCommand_ExecuteAsync(param), param => PlaylistSongsListviewLeftDoubleClickCommand_CanExecute());
-        //SongFilesListviewLeftDoubleClickCommand = new GenericRelayCommand<NodeFile>(param => SongFilesListviewLeftDoubleClickCommand_ExecuteAsync(param), param => SongFilesListviewLeftDoubleClickCommand_CanExecute());
-
-        QueueClearWithoutPromptCommand = new RelayCommand(QueueClearWithoutPromptCommand_ExecuteAsync, QueueClearWithoutPromptCommand_CanExecute);
-        //QueueSaveAsCommand = new RelayCommand(QueueSaveAsCommand_ExecuteAsync, QueueSaveAsCommand_CanExecute);
-        QueueSaveToCommand = new RelayCommand(QueueSaveToCommand_ExecuteAsync, QueueSaveToCommand_CanExecute);
-
-        QueueListviewMoveUpCommand = new GenericRelayCommand<object>(param => QueueListviewMoveUpCommand_Execute(param), param => QueueListviewMoveUpCommand_CanExecute());
-        QueueListviewMoveDownCommand = new GenericRelayCommand<object>(param => QueueListviewMoveDownCommand_Execute(param), param => QueueListviewMoveDownCommand_CanExecute());
-
-        QueueListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => QueueListviewSaveSelectedToCommand_Execute(param), param => QueueListviewSaveSelectedToCommand_CanExecute());
-
-        QueueListviewEnterKeyCommand = new RelayCommand(QueueListviewEnterKeyCommand_ExecuteAsync, QueueListviewEnterKeyCommand_CanExecute);
-        QueueListviewLeftDoubleClickCommand = new GenericRelayCommand<SongInfoEx>(param => QueueListviewLeftDoubleClickCommand_ExecuteAsync(param), param => QueueListviewLeftDoubleClickCommand_CanExecute());
-
-        QueueListviewDeleteSelectedWithoutPromptCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteSelectedWithoutPromptCommand_Execute(param), param => QueueListviewDeleteSelectedWithoutPromptCommand_CanExecute());
-        //QueueListviewDeleteCommand = new GenericRelayCommand<object>(param => QueueListviewDeleteCommand_Execute(param), param => QueueListviewDeleteCommand_CanExecute());
-        //QueueListviewConfirmDeletePopupCommand = new RelayCommand(QueueListviewConfirmDeletePopupCommand_Execute, QueueListviewConfirmDeletePopupCommand_CanExecute);
-
-        ShowProfileEditDialogCommand = new RelayCommand(ShowProfileEditDialogCommand_Execute, ShowProfileEditDialogCommand_CanExecute);
-        ShowProfileAddDialogCommand = new RelayCommand(ShowProfileAddDialogCommand_Execute, ShowProfileAddDialogCommand_CanExecute);
-        ShowProfileRemoveNoneDialogCommand = new RelayCommand(ShowProfileRemoveNoneDialogCommand_Execute, ShowProfileRemoveNoneDialogCommand_CanExecute);
-        GoToSettingsCommand = new RelayCommand(GoToSettingsCommand_Execute, GoToSettingsCommand_CanExecute);
-        ClearAlbumCacheFolderCommand = new RelayCommand(ClearAlbumCacheFolderCommand_Execute, ClearAlbumCacheFolderCommand_CanExecute);
-
-        SaveProfileCommand = new GenericRelayCommand<object>(param => SaveProfileCommand_Execute(param), param => SaveProfileCommand_CanExecute());
-        UpdateProfileCommand = new GenericRelayCommand<object>(param => UpdateProfileCommand_Execute(param), param => UpdateProfileCommand_CanExecute());
-        ChangeConnectionProfileCommand = new GenericRelayCommand<object>(param => ChangeConnectionProfileCommand_Execute(param), param => ChangeConnectionProfileCommand_CanExecute());
-        ReConnectWithSelectedProfileCommand = new RelayCommand(ReConnectWithSelectedProfileCommand_Execute, ReConnectWithSelectedProfileCommand_CanExecute);
-
-        EscapeCommand = new RelayCommand(EscapeCommand_ExecuteAsync, EscapeCommand_CanExecute);
-
-        QueueColumnHeaderPositionShowHideCommand = new RelayCommand(QueueColumnHeaderPositionShowHideCommand_Execute, QueueColumnHeaderPositionShowHideCommand_CanExecute);
-        QueueColumnHeaderNowPlayingShowHideCommand = new RelayCommand(QueueColumnHeaderNowPlayingShowHideCommand_Execute, QueueColumnHeaderNowPlayingShowHideCommand_CanExecute);
-        QueueColumnHeaderTimeShowHideCommand = new RelayCommand(QueueColumnHeaderTimeShowHideCommand_Execute, QueueColumnHeaderTimeShowHideCommand_CanExecute);
-        QueueColumnHeaderArtistShowHideCommand = new RelayCommand(QueueColumnHeaderArtistShowHideCommand_Execute, QueueColumnHeaderArtistShowHideCommand_CanExecute);
-        QueueColumnHeaderAlbumShowHideCommand = new RelayCommand(QueueColumnHeaderAlbumShowHideCommand_Execute, QueueColumnHeaderAlbumShowHideCommand_CanExecute);
-        QueueColumnHeaderDiscShowHideCommand = new RelayCommand(QueueColumnHeaderDiscShowHideCommand_Execute, QueueColumnHeaderDiscShowHideCommand_CanExecute);
-        QueueColumnHeaderTrackShowHideCommand = new RelayCommand(QueueColumnHeaderTrackShowHideCommand_Execute, QueueColumnHeaderTrackShowHideCommand_CanExecute);
-        QueueColumnHeaderGenreShowHideCommand = new RelayCommand(QueueColumnHeaderGenreShowHideCommand_Execute, QueueColumnHeaderGenreShowHideCommand_CanExecute);
-        QueueColumnHeaderLastModifiedShowHideCommand = new RelayCommand(QueueColumnHeaderLastModifiedShowHideCommand_Execute, QueueColumnHeaderLastModifiedShowHideCommand_CanExecute);
-
-        PlaylistColumnHeaderPositionShowHideCommand = new RelayCommand(PlaylistColumnHeaderPositionShowHideCommand_Execute, PlaylistColumnHeaderPositionShowHideCommand_CanExecute);
-        PlaylistColumnHeaderTimeShowHideCommand = new RelayCommand(PlaylistColumnHeaderTimeShowHideCommand_Execute, PlaylistColumnHeaderTimeShowHideCommand_CanExecute);
-        PlaylistColumnHeaderArtistShowHideCommand = new RelayCommand(PlaylistColumnHeaderArtistShowHideCommand_Execute, PlaylistColumnHeaderArtistShowHideCommand_CanExecute);
-        PlaylistColumnHeaderAlbumShowHideCommand = new RelayCommand(PlaylistColumnHeaderAlbumShowHideCommand_Execute, PlaylistColumnHeaderAlbumShowHideCommand_CanExecute);
-        PlaylistColumnHeaderDiscShowHideCommand = new RelayCommand(PlaylistColumnHeaderDiscShowHideCommand_Execute, PlaylistColumnHeaderDiscShowHideCommand_CanExecute);
-        PlaylistColumnHeaderTrackShowHideCommand = new RelayCommand(PlaylistColumnHeaderTrackShowHideCommand_Execute, PlaylistColumnHeaderTrackShowHideCommand_CanExecute);
-        PlaylistColumnHeaderGenreShowHideCommand = new RelayCommand(PlaylistColumnHeaderGenreShowHideCommand_Execute, PlaylistColumnHeaderGenreShowHideCommand_CanExecute);
-        PlaylistColumnHeaderLastModifiedShowHideCommand = new RelayCommand(PlaylistColumnHeaderLastModifiedShowHideCommand_Execute, PlaylistColumnHeaderLastModifiedShowHideCommand_CanExecute);
-
-        SearchColumnHeaderPositionShowHideCommand = new RelayCommand(SearchColumnHeaderPositionShowHideCommand_Execute, SearchColumnHeaderPositionShowHideCommand_CanExecute);
-        SearchColumnHeaderTimeShowHideCommand = new RelayCommand(SearchColumnHeaderTimeShowHideCommand_Execute, SearchColumnHeaderTimeShowHideCommand_CanExecute);
-        SearchColumnHeaderArtistShowHideCommand = new RelayCommand(SearchColumnHeaderArtistShowHideCommand_Execute, SearchColumnHeaderArtistShowHideCommand_CanExecute);
-        SearchColumnHeaderAlbumShowHideCommand = new RelayCommand(SearchColumnHeaderAlbumShowHideCommand_Execute, SearchColumnHeaderAlbumShowHideCommand_CanExecute);
-        SearchColumnHeaderDiscShowHideCommand = new RelayCommand(SearchColumnHeaderDiscShowHideCommand_Execute, SearchColumnHeaderDiscShowHideCommand_CanExecute);
-        SearchColumnHeaderTrackShowHideCommand = new RelayCommand(SearchColumnHeaderTrackShowHideCommand_Execute, SearchColumnHeaderTrackShowHideCommand_CanExecute);
-        SearchColumnHeaderGenreShowHideCommand = new RelayCommand(SearchColumnHeaderGenreShowHideCommand_Execute, SearchColumnHeaderGenreShowHideCommand_CanExecute);
-        SearchColumnHeaderLastModifiedShowHideCommand = new RelayCommand(SearchColumnHeaderLastModifiedShowHideCommand_Execute, SearchColumnHeaderLastModifiedShowHideCommand_CanExecute);
-
-        ShowFindCommand = new RelayCommand(ShowFindCommand_Execute, ShowFindCommand_CanExecute);
-
-        QueueFindShowHideCommand = new RelayCommand(QueueFindShowHideCommand_Execute, QueueFindShowHideCommand_CanExecute);
-
-        SearchExecCommand = new RelayCommand(SearchExecCommand_Execute, SearchExecCommand_CanExecute);
-        //FilterMusicEntriesClearCommand = new RelayCommand(FilterMusicEntriesClearCommand_Execute, FilterMusicEntriesClearCommand_CanExecute);
-
-        FilterQueueClearCommand = new RelayCommand(FilterQueueClearCommand_Execute, FilterQueueClearCommand_CanExecute);
-
-        //SearchListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => SearchListviewSaveSelectedAsCommand_Execute(param), param => SearchListviewSaveSelectedAsCommand_CanExecute());
-        //SearchResultListviewSaveSelectedAsPopupCommand = new GenericRelayCommand<string>(param => SearchResultListviewSaveSelectedAsPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedAsPopupCommand_CanExecute());
-        SearchListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => SearchListviewSaveSelectedToCommand_Execute(param), param => SearchListviewSaveSelectedToCommand_CanExecute());
-        //SearchResultListviewSaveSelectedToPopupCommand = new GenericRelayCommand<Playlist>(param => SearchResultListviewSaveSelectedToPopupCommand_Execute(param), param => SearchResultListviewSaveSelectedToPopupCommand_CanExecute());
-
-
-        SongsListviewAddSelectedToQueueCommand = new GenericRelayCommand<object>(param => SongsListviewAddSelectedToQueueCommand_Execute(param), param => SongsListviewAddSelectedToQueueCommand_CanExecute());
-        FilesListviewAddSelectedToQueueCommand = new GenericRelayCommand<object>(param => FilesListviewAddSelectedToQueueCommand_Execute(param), param => FilesListviewAddSelectedToQueueCommand_CanExecute());
-
-        //SongFilesListviewSaveSelectedAsCommand = new GenericRelayCommand<object>(param => SongFilesListviewSaveSelectedAsCommand_Execute(param), param => SongFilesListviewSaveSelectedAsCommand_CanExecute());
-        //SongFilesListviewSaveSelectedAsPopupCommand = new GenericRelayCommand<string>(param => SongFilesListviewSaveSelectedAsPopupCommand_Execute(param), param => SongFilesListviewSaveSelectedAsPopupCommand_CanExecute());
-        //SongFilesListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => SongFilesListviewSaveSelectedToCommand_Execute(param), param => SongFilesListviewSaveSelectedToCommand_CanExecute());
-        //SongFilesListviewSaveSelectedToPopupCommand = new GenericRelayCommand<Playlist>(param => SongFilesListviewSaveSelectedToPopupCommand_Execute(param), param => SongFilesListviewSaveSelectedToPopupCommand_CanExecute());
-
-
-        ScrollIntoNowPlayingCommand = new RelayCommand(ScrollIntoNowPlayingCommand_Execute, ScrollIntoNowPlayingCommand_CanExecute);
-
-        ClearDebugCommandTextCommand = new RelayCommand(ClearDebugCommandTextCommand_Execute, ClearDebugCommandTextCommand_CanExecute);
-        ClearDebugIdleTextCommand = new RelayCommand(ClearDebugIdleTextCommand_Execute, ClearDebugIdleTextCommand_CanExecute);
-        ShowDebugWindowCommand = new RelayCommand(ShowDebugWindowCommand_Execute, ShowDebugWindowCommand_CanExecute);
-
-        ClearAckTextCommand = new RelayCommand(ClearAckTextCommand_Execute, ClearAckTextCommand_CanExecute);
-        ShowAckWindowCommand = new RelayCommand(ShowAckWindowCommand_Execute, ShowAckWindowCommand_CanExecute);
-
-        PlaylistListviewDeleteSelectedWithoutPromptCommand = new GenericRelayCommand<object>(param => PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute(param), param => PlaylistListviewDeleteSelectedWithoutPromptCommand_CanExecute());
-        //PlaylistListviewDeletePosCommand = new GenericRelayCommand<object>(param => PlaylistListviewDeletePosCommand_Execute(param), param => PlaylistListviewDeletePosCommand_CanExecute());
-        //PlaylistListviewDeletePosPopupCommand = new RelayCommand(PlaylistListviewDeletePosPopupCommand_Execute, PlaylistListviewDeletePosPopupCommand_CanExecute);
-        //PlaylistListviewConfirmDeletePosNotSupportedPopupCommand = new RelayCommand(PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_Execute, PlaylistListviewConfirmDeletePosNotSupportedPopupCommand_CanExecute);
-
-        //QueueFilterSelectCommand = new GenericRelayCommand<object>(param => QueueFilterSelectCommand_Execute(param), param => QueueFilterSelectCommand_CanExecute());
-        QueueFilterSelectCommand = new RelayCommand(QueueFilterSelectCommand_Execute, QueueFilterSelectCommand_CanExecute);
-
-        PlaylistLoadPlaylistCommand = new RelayCommand(PlaylistLoadPlaylistCommand_Execute, PlaylistLoadPlaylistCommand_CanExecute);
-        PlaylistClearLoadPlaylistCommand = new RelayCommand(PlaylistClearLoadPlaylistCommand_Execute, PlaylistClearLoadPlaylistCommand_CanExecute);
-
-        //GetArtistsCommand = new RelayCommand(GetArtistsCommand_ExecuteAsync, GetArtistsCommand_CanExecute);
-        
-        AlbumsItemInvokedCommand = new GenericRelayCommand<object>(param => AlbumsItemInvokedCommand_Execute(param), param => AlbumsItemInvokedCommand_CanExecute());
-        AlbumsCloseAlbumContentPanelCommand = new RelayCommand(AlbumsCloseAlbumContentPanelCommand_Execute, AlbumsCloseAlbumContentPanelCommand_CanExecute);
-
-        AlbumsCoverOverlayPanelCloseCommand = new RelayCommand(AlbumsCoverOverlayPanelCloseCommand_Execute, AlbumsCoverOverlayPanelCloseCommand_CanExecute);
-
-        JumpToAlbumPageCommand = new RelayCommand(JumpToAlbumPageCommand_Execute, JumpToAlbumPageCommand_CanExecute);
-        JumpToArtistPageCommand = new RelayCommand(JumpToArtistPageCommand_Execute, JumpToArtistPageCommand_CanExecute);
-
-        QueueListviewSortReverseCommand = new RelayCommand(QueueListviewSortReverseCommand_Execute, QueueListviewSortReverseCommand_CanExecute);
-
-        QueueListviewSortByCommand = new GenericRelayCommand<string>(param => QueueListviewSortByCommand_Execute(param), param => QueueListviewSortByCommand_CanExecute());
-
-        SongsPlayCommand = new GenericRelayCommand<object>(param => SongsPlayCommand_Execute(param), param => SongsPlayCommand_CanExecute());
-        SongsAddToQueueCommand = new GenericRelayCommand<object>(param => SongsAddToQueueCommand_Execute(param), param => SongsAddToQueueCommand_CanExecute());
-
-        SongsListviewPlayThisCommand = new GenericRelayCommand<object>(param => SongsListviewPlayThisCommand_Execute(param), param => SongsListviewPlayThisCommand_CanExecute());
-        SongsListviewAddThisCommand = new GenericRelayCommand<object>(param => SongsListviewAddThisCommand_Execute(param), param => SongsListviewAddThisCommand_CanExecute());
-
-        SearchPageSongsAddToPlaylistCommand = new GenericRelayCommand<object>(param => SearchPageSongsAddToPlaylistCommand_Execute(param), param => SearchPageSongsAddToPlaylistCommand_CanExecute());
-
-        FilesPlayCommand = new GenericRelayCommand<object>(param => FilesPlayCommand_Execute(param), param => FilesPlayCommand_CanExecute());
-        FilesAddToQueueCommand = new GenericRelayCommand<object>(param => FilesAddToQueueCommand_Execute(param), param => FilesAddToQueueCommand_CanExecute());
-        FilesPageFilesAddToPlaylistCommand = new GenericRelayCommand<object>(param => FilesPageFilesAddToPlaylistCommand_Execute(param), param => FilesPageFilesAddToPlaylistCommand_CanExecute());
-        FilesListviewSaveSelectedToCommand = new GenericRelayCommand<object>(param => FilesListviewSaveSelectedToCommand_Execute(param), param => FilesListviewSaveSelectedToCommand_CanExecute());
-        FilesListviewCopySelectedFilePathCommand = new GenericRelayCommand<object>(param => FilesListviewCopySelectedFilePathCommand_Execute(param), param => FilesListviewCopySelectedFilePathCommand_CanExecute());
-
-        FilesListviewPlayThisCommand = new GenericRelayCommand<object>(param => FilesListviewPlayThisCommand_Execute(param), param => FilesListviewPlayThisCommand_CanExecute());
-        FilesListviewAddThisCommand = new GenericRelayCommand<object>(param => FilesListviewAddThisCommand_Execute(param), param => FilesListviewAddThisCommand_CanExecute());
-
-        TryConnectCommand = new RelayCommand(TryConnectCommand_Execute, TryConnectCommand_CanExecute);
-
-        ListviewGoToAlbumPageCommand = new GenericRelayCommand<SongInfo>(param => ListviewGoToAlbumPageCommand_Execute(param), param => ListviewGoToAlbumPageCommand_CanExecute());
-        ListviewGoToArtistPageCommand = new GenericRelayCommand<SongInfo>(param => ListviewGoToArtistPageCommand_Execute(param), param => ListviewGoToArtistPageCommand_CanExecute());
-
-        #endregion
 
         #region == Subscribe to events ==
 
@@ -9418,14 +9225,11 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playback play ==
 
-    public IRelayCommand PlayCommand { get; }
-    public bool PlayCommand_CanExecute()
+    [RelayCommand]
+    public async Task Play()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void PlayCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
+
         if (Queue.Count < 1) { return; }
 
         switch (_mpc.MpdStatus.MpdState)
@@ -9453,67 +9257,45 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlayNextCommand { get; }
-    public bool PlayNextCommand_CanExecute()
+    [RelayCommand]
+    public async Task PlayNext()
     {
-        if (IsBusy) return false;
-        //if (Queue.Count < 1) { return false; }
-        return true;
-    }
-    public async void PlayNextCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         if (Queue.Count < 1) { return; }
 
         await _mpc.MpdPlaybackNext(Convert.ToInt32(_volume));
     }
 
-    public IRelayCommand PlayPrevCommand { get; }
-    public bool PlayPrevCommand_CanExecute()
+    [RelayCommand]
+    public async Task PlayPrev()
     {
-        if (IsBusy) return false;
-        //if (Queue.Count < 1) { return false; }
-        return true;
-    }
-    public async void PlayPrevCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         if (Queue.Count < 1) { return; }
 
         await _mpc.MpdPlaybackPrev(Convert.ToInt32(_volume));
     }
 
-    public IRelayCommand ChangeSongCommand { get; set; }
-    public bool ChangeSongCommand_CanExecute()
+    [RelayCommand]
+    public async Task ChangeSong()
     {
-        if (IsBusy) return false;
-        if (Queue.Count < 1) { return false; }
-        if (_selectedQueueSong is null) { return false; }
-        return true;
-    }
-    public async void ChangeSongCommand_ExecuteAsync()
-    {
-        if (_selectedQueueSong is not null)
-            await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), _selectedQueueSong.Id);
+        if (IsBusy) return;
+        if (Queue.Count < 1) return;
+        if (_selectedQueueSong is null) return;
+
+        await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), _selectedQueueSong.Id);
     }
 
-    public IRelayCommand PlayPauseCommand { get; }
-    public bool PlayPauseCommand_CanExecute()
+    [RelayCommand]
+    public async Task PlayPause()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void PlayPauseCommand_Execute()
-    {
+        if (IsBusy) return;
         await _mpc.MpdPlaybackPause();
     }
 
-    public IRelayCommand PlayStopCommand { get; }
-    public bool PlayStopCommand_CanExecute()
+    [RelayCommand]
+    public async Task PlayStop()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void PlayStopCommand_Execute()
-    {
+        if (IsBusy) return;
         await _mpc.MpdPlaybackStop();
     }
 
@@ -9521,47 +9303,31 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playback opts ==
 
-    public IRelayCommand SetRandomCommand { get; }
-    public bool SetRandomCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetRandom()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetRandomCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetRandom(_random);
     }
 
-    public IRelayCommand SetRpeatCommand { get; }
-    public bool SetRpeatCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetRpeat()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetRpeatCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetRepeat(_repeat);
     }
 
-    public IRelayCommand SetConsumeCommand { get; }
-    public bool SetConsumeCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetConsume()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetConsumeCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetConsume(_consume);
     }
 
-    public IRelayCommand SetSingleCommand { get; }
-    public bool SetSingleCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetSingle()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetSingleCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetSingle(_single);
     }
 
@@ -9569,48 +9335,32 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playback seek and volume ==
 
-    public IRelayCommand SetVolumeCommand { get; }
-    public bool SetVolumeCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetVolume()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetVolumeCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
     }
 
-    public IRelayCommand SetSeekCommand { get; }
-    public bool SetSeekCommand_CanExecute()
+    [RelayCommand]
+    public async Task SetSeek()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void SetSeekCommand_ExecuteAsync()
-    {
+        if (IsBusy) return;
         double elapsed = _elapsed / _elapsedTimeMultiplier;
         await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, elapsed);
     }
 
-    public IRelayCommand VolumeMuteCommand { get; }
-    public bool VolumeMuteCommand_CanExecute()
+    [RelayCommand]
+    public async Task VolumeMute()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void VolumeMuteCommand_Execute()
-    {
+        if (IsBusy) return;
         await _mpc.MpdSetVolume(0);
     }
 
-    public IRelayCommand VolumeDownCommand { get; }
-    public bool VolumeDownCommand_CanExecute()
+    [RelayCommand]
+    public void VolumeDown()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public void VolumeDownCommand_Execute()
-    {
+        if (IsBusy) return;
         if (_volume >= 10)
         {
             Volume -= 10;
@@ -9622,14 +9372,10 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand VolumeUpCommand { get; }
-    public bool VolumeUpCommand_CanExecute()
+    [RelayCommand]
+    public void VolumeUp()
     {
-        if (IsBusy) return false;
-        return true;
-    }
-    public void VolumeUpCommand_Execute()
-    {
+        if (IsBusy) return;
         if (_volume <= 90)
         {
             Volume += 10;
@@ -9657,17 +9403,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    public IRelayCommand QueueSaveToCommand { get; }
-    public static bool QueueSaveToCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        */
-        return true;
-    }
-    public async void QueueSaveToCommand_ExecuteAsync()
+    [RelayCommand]
+    public async Task QueueSaveTo()
     {
         if (Queue.Count == 0)
             return;
@@ -9726,18 +9463,8 @@ public partial class MainViewModel : ObservableObject
 
 
     // Add selected to playlist
-    public IRelayCommand QueueListviewSaveSelectedToCommand { get; }
-    public static bool QueueListviewSaveSelectedToCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        if (SelectedQueueSong is null) return false;
-        */
-        return true;
-    }
-    public async void QueueListviewSaveSelectedToCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task QueueListviewSaveSelectedTo(object obj)
     {
         if (obj is null)
         {
@@ -9773,14 +9500,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // TODO:  Enter or double click from code behind.
-    public IRelayCommand QueueListviewEnterKeyCommand { get; set; }
-    public static bool QueueListviewEnterKeyCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (IsWorking) return false;
-        return true;
-    }
-    public async void QueueListviewEnterKeyCommand_ExecuteAsync()
+    [RelayCommand]
+    public async Task QueueListviewEnterKey()
     {
         if (Queue.Count < 1)
         {
@@ -9795,16 +9516,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // TODO: Actually used as ContextMenu Play.
-    public IRelayCommand QueueListviewLeftDoubleClickCommand { get; set; }
-    public static bool QueueListviewLeftDoubleClickCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (IsWorking) return false;
-        //if (Queue.Count < 1) { return false; }
-        //if (_selectedQueueSong is null) { return false; }
-        return true;
-    }
-    public async void QueueListviewLeftDoubleClickCommand_ExecuteAsync(SongInfoEx song)
+    [RelayCommand]
+    public async Task QueueListviewLeftDoubleClick(SongInfoEx song)
     {
         if (Queue.Count < 1)
         {
@@ -9818,15 +9531,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Command to clear the queue listview.
-    public IRelayCommand QueueClearWithoutPromptCommand { get; }
-    public static bool QueueClearWithoutPromptCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (IsWorking) return false;
-        //if (Queue.Count == 0) { return false; }
-        return true;
-    }
-    public async void QueueClearWithoutPromptCommand_ExecuteAsync()
+    [RelayCommand]
+    public async Task QueueClearWithoutPrompt()
     {
         if (Queue.Count == 0) { return; }
 
@@ -9835,16 +9541,12 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Command to delete selected songs from the queue listview.
-    public ICommand QueueListviewDeleteSelectedWithoutPromptCommand { get; }
-    public bool QueueListviewDeleteSelectedWithoutPromptCommand_CanExecute()
+    [RelayCommand]
+    public async Task QueueListviewDeleteSelectedWithoutPrompt(object obj)
     {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        //if (SelectedQueueSong is null) return false;
-        return true;
-    }
-    public async void QueueListviewDeleteSelectedWithoutPromptCommand_Execute(object obj)
-    {
+        if (IsBusy) return;
+        if (IsWorking) return;
+
         if (obj is null) return;
         System.Collections.IList items = (System.Collections.IList)obj;
 
@@ -9870,17 +9572,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Move selected songs up in the queue listview.
-    public IRelayCommand QueueListviewMoveUpCommand { get; }
-    public static bool QueueListviewMoveUpCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        */
-        return true;
-    }
-    public async void QueueListviewMoveUpCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task QueueListviewMoveUp(object obj)
     {
         if (obj is null) return;
 
@@ -9909,17 +9602,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Move down
-    public IRelayCommand QueueListviewMoveDownCommand { get; }
-    public static bool QueueListviewMoveDownCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        */
-        return true;
-    }
-    public async void QueueListviewMoveDownCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task QueueListviewMoveDown(object obj)
     {
         if (obj is null) return;
 
@@ -9949,17 +9633,11 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Sort reverse
-    public IRelayCommand QueueListviewSortReverseCommand { get; }
-    public bool QueueListviewSortReverseCommand_CanExecute()
+    [RelayCommand]
+    public async Task QueueListviewSortReverse()
     {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) { return false; }
-        //if (CurrentSong is null) { return false; }
-        return true;
-    }
-    public async void QueueListviewSortReverseCommand_Execute()
-    {
+        if (IsBusy) return;
+        if (IsWorking) return;
         if (Queue.Count <= 1) return;
 
         var sorted = new ObservableCollection<SongInfoEx>(Queue.OrderByDescending(x => x.Index));
@@ -9976,16 +9654,13 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Sort
-    public IRelayCommand QueueListviewSortByCommand { get; }
-    public bool QueueListviewSortByCommand_CanExecute()
+    [RelayCommand]
+    public async Task QueueListviewSortBy(string key)
     {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        if (Queue.Count == 0) return false;
-        return true;
-    }
-    public async void QueueListviewSortByCommand_Execute(string key)
-    {
+        if (IsBusy) return;
+        if (IsWorking) return;
+        if (Queue.Count == 0) return;
+
         if (string.IsNullOrEmpty(key))
             return;
 
@@ -10037,17 +9712,11 @@ public partial class MainViewModel : ObservableObject
     }
 
     // ScrollIntoNowPlaying
-    public IRelayCommand ScrollIntoNowPlayingCommand { get; }
-    public bool ScrollIntoNowPlayingCommand_CanExecute()
+    [RelayCommand]
+    public void ScrollIntoNowPlaying()
     {
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        //if (Queue.Count == 0) { return false; }
-        //if (CurrentSong is null) { return false; }
-        return true;
-    }
-    public void ScrollIntoNowPlayingCommand_Execute()
-    {
+        if (IsBusy) return;
+        if (IsWorking) return;
         if (Queue.Count == 0) return;
         if (CurrentSong is null) return;
         if (Queue.Count < CurrentSong.Index + 1) return;
@@ -10056,24 +9725,21 @@ public partial class MainViewModel : ObservableObject
         ScrollIntoView?.Invoke(this, CurrentSong.Index);
     }
 
-    public IRelayCommand FilterQueueClearCommand { get; }
-    public bool FilterQueueClearCommand_CanExecute()
+    public bool FilterQueueClearCanExecute()
     {
         if (string.IsNullOrEmpty(FilterQueueQuery))
             return false;
         return true;
     }
-    public void FilterQueueClearCommand_Execute()
+
+    [RelayCommand(CanExecute = nameof(FilterQueueClearCanExecute))]
+    public void FilterQueueClear()
     {
         FilterQueueQuery = "";
     }
 
-    public IRelayCommand QueueFindShowHideCommand { get; }
-    public static bool QueueFindShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueFindShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueFindShowHide()
     {
         if (IsQueueFindVisible)
         {
@@ -10106,12 +9772,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     //
-    public IRelayCommand QueueFilterSelectCommand { get; set; }
-    public static bool QueueFilterSelectCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueFilterSelectCommand_Execute()//object obj
+    [RelayCommand]
+    public void QueueFilterSelect()//object obj
     {
         if (Queue.Count <= 1)
             return;
@@ -10147,17 +9809,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == Search ==
 
-    public IRelayCommand SearchExecCommand { get; }
-    public static bool SearchExecCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (string.IsNullOrEmpty(SearchQuery))
-            return false;
-        */
-        return true;
-    }
-    public async void SearchExecCommand_Execute()
+    [RelayCommand]
+    public async Task SearchExec()
     {
         // Allow empty string.
         //if (string.IsNullOrEmpty(SearchQuery)) return; 
@@ -10193,15 +9846,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    public IRelayCommand SearchListviewSaveSelectedToCommand { get; }
-    public static bool SearchListviewSaveSelectedToCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (SearchResult is null) return false;
-        //if (SearchResult.Count == 0) return false;
-        return true;
-    }
-    public async void SearchListviewSaveSelectedToCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SearchListviewSaveSelectedTo(object obj)
     {
         if (obj is null) return;
 
@@ -10232,12 +9878,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Add to playlist
-    public IRelayCommand SearchPageSongsAddToPlaylistCommand { get; set; }
-    public static bool SearchPageSongsAddToPlaylistCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void SearchPageSongsAddToPlaylistCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SearchPageSongsAddToPlaylist(object obj)
     {
         if (obj is null) return;
 
@@ -10269,15 +9911,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == Files ==
 
-    public IRelayCommand FilesListviewAddSelectedToQueueCommand { get; }
-    public static bool FilesListviewAddSelectedToQueueCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (IsWorking) return false;
-        //if (MusicEntries.Count == 0) return false;
-        return true;
-    }
-    public async void FilesListviewAddSelectedToQueueCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesListviewAddSelectedToQueue(object obj)
     {
         if (obj is null) return;
 
@@ -10304,12 +9939,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    public IRelayCommand FilesListviewSaveSelectedToCommand { get; }
-    public static bool FilesListviewSaveSelectedToCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesListviewSaveSelectedToCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesListviewSaveSelectedTo(object obj)
     {
         if (obj is null) return;
 
@@ -10341,12 +9972,8 @@ public partial class MainViewModel : ObservableObject
         _ = AddTo(result.PlaylistName, uriList);
     }
 
-    public IRelayCommand FilesListviewCopySelectedFilePathCommand { get; }
-    public static bool FilesListviewCopySelectedFilePathCommand_CanExecute()
-    {
-        return true;
-    }
-    public static async void FilesListviewCopySelectedFilePathCommand_Execute(object obj)
+    [RelayCommand]
+    public static async Task FilesListviewCopySelectedFilePath(object obj)
     {
         if (obj is null) return;
 
@@ -10376,12 +10003,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Play all
-    public IRelayCommand FilesPlayCommand { get; set; }
-    public static bool FilesPlayCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesPlayCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesPlay(object obj)
     {
         if (obj is null) return;
 
@@ -10412,12 +10035,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Queue all
-    public IRelayCommand FilesAddToQueueCommand { get; set; }
-    public static bool FilesAddToQueueCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesAddToQueueCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesAddToQueue(object obj)
     {
         if (obj is null) return;
 
@@ -10445,12 +10064,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Add to playlist
-    public IRelayCommand FilesPageFilesAddToPlaylistCommand { get; set; }
-    public static bool FilesPageFilesAddToPlaylistCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesPageFilesAddToPlaylistCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesPageFilesAddToPlaylist(object obj)
     {
         if (obj is null) return;
 
@@ -10479,12 +10094,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand FilesListviewPlayThisCommand { get; set; }
-    public static bool FilesListviewPlayThisCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesListviewPlayThisCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesListviewPlayThis(object obj)
     {
         if (obj is null) return;
 
@@ -10504,12 +10115,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand FilesListviewAddThisCommand { get; set; }
-    public static bool FilesListviewAddThisCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void FilesListviewAddThisCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task FilesListviewAddThis(object obj)
     {
         if (obj is null) return;
 
@@ -10523,12 +10130,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == Albums ==
 
-    public IRelayCommand AlbumsItemInvokedCommand { get; set; }
-    public static bool AlbumsItemInvokedCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void AlbumsItemInvokedCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task AlbumsItemInvoked(object obj)
     {
         if (obj is null)
         {
@@ -10675,12 +10278,8 @@ public partial class MainViewModel : ObservableObject
         UpdateProgress?.Invoke(this, "");
     }
 
-    public IRelayCommand AlbumsCloseAlbumContentPanelCommand { get; set; }
-    public static bool AlbumsCloseAlbumContentPanelCommand_CanExecute()
-    {
-        return true;
-    }
-    public void AlbumsCloseAlbumContentPanelCommand_Execute()
+    [RelayCommand]
+    public void AlbumsCloseAlbumContentPanel()
     {
         IsAlbumContentPanelVisible = false;
     }
@@ -10689,20 +10288,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playlist ==
 
-    public IRelayCommand PlaylistLoadPlaylistCommand { get; }
-    public static bool PlaylistLoadPlaylistCommand_CanExecute()
-    {
-        /*
-        if (SelectedNodeMenu is null)
-            return false;
-        if (SelectedNodeMenu is not NodeMenuPlaylistItem)
-            return false;
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        */
-        return true;
-    }
-    public async void PlaylistLoadPlaylistCommand_Execute()
+    [RelayCommand]
+    public async Task PlaylistLoadPlaylist()
     {
         if (IsBusy) return;
         if (IsWorking) return;
@@ -10714,22 +10301,8 @@ public partial class MainViewModel : ObservableObject
         await _mpc.MpdLoadPlaylist(SelectedNodeMenu.Name);
     }
 
-    public IRelayCommand PlaylistClearLoadPlaylistCommand { get; }
-    public static bool PlaylistClearLoadPlaylistCommand_CanExecute()
-    {
-        /*
-        if (SelectedNodeMenu is null)
-            return false;
-        if (SelectedNodeMenu is not NodeMenuPlaylistItem)
-            return false;
-        */
-        /*
-        if (IsBusy) return false;
-        if (IsWorking) return false;
-        */
-        return true;
-    }
-    public async void PlaylistClearLoadPlaylistCommand_Execute()
+    [RelayCommand]
+    public async Task PlaylistClearLoadPlaylist()
     {
         /*
         if (IsBusy)
@@ -10759,12 +10332,8 @@ public partial class MainViewModel : ObservableObject
         UpdateCurrentSong();
     }
 
-    public IRelayCommand PlaylistRenamePlaylistCommand { get; set; }
-    public static bool PlaylistRenamePlaylistCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistRenamePlaylistCommand_Execute(string playlist)
+    [RelayCommand]
+    public void PlaylistRenamePlaylist(string playlist)
     {
         if (string.IsNullOrEmpty(_selectedPlaylistName))
         {
@@ -10865,19 +10434,8 @@ public partial class MainViewModel : ObservableObject
         return match;
     }
 
-    public IRelayCommand PlaylistRemovePlaylistWithoutPromptCommand { get; set; }
-    public static bool PlaylistRemovePlaylistWithoutPromptCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        */
-        return true;
-    }
-    public async void PlaylistRemovePlaylistWithoutPromptCommand_Execute(string playlist)
+    [RelayCommand]
+    public async Task PlaylistRemovePlaylistWithoutPrompt(string playlist)
     {
         if (string.IsNullOrEmpty(_selectedPlaylistName))
         {
@@ -10905,14 +10463,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Deletes song in a playlist.
-    public IRelayCommand PlaylistListviewDeleteSelectedWithoutPromptCommand { get; set; }
-    public static bool PlaylistListviewDeleteSelectedWithoutPromptCommand_CanExecute()
-    {
-        //if (SelectedPlaylistSong is null) return false;
-        //if (IsBusy) return false;
-        return true;
-    }
-    public async void PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task PlaylistListviewDeleteSelectedWithoutPrompt(object obj)
     {
         /*
         // This caused problem
@@ -10946,19 +10498,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Playlist Clear
-    public IRelayCommand PlaylistClearPlaylistWithoutPromptCommand { get; set; }
-    public static bool PlaylistClearPlaylistWithoutPromptCommand_CanExecute()
-    {
-        /*
-        if (IsBusy) return false;
-        if (_selectedPlaylist is null)
-            return false;
-        if (string.IsNullOrEmpty(_selectedPlaylist.Name))
-            return false;
-        */
-        return true;
-    }
-    public async void PlaylistClearPlaylistWithoutPromptCommand_Execute(string playlist)
+    [RelayCommand]
+    public async Task PlaylistClearPlaylistWithoutPrompt(string playlist)
     {
         if (string.IsNullOrEmpty(_selectedPlaylistName))
         {
@@ -10979,16 +10520,12 @@ public partial class MainViewModel : ObservableObject
     }
 
     // double clicked in a playlist listview (currently NOT USED)
-    public IRelayCommand PlaylistSongsListviewLeftDoubleClickCommand { get; set; }
-    public bool PlaylistSongsListviewLeftDoubleClickCommand_CanExecute()
+    [RelayCommand]
+    public async Task PlaylistSongsListviewLeftDoubleClick(SongInfo song)
     {
-        //if (IsWorking) return false;
-        if (SelectedPlaylistSong is null) return false;
-        if (IsBusy) return false;
-        return true;
-    }
-    public async void PlaylistSongsListviewLeftDoubleClickCommand_ExecuteAsync(SongInfo song)
-    {
+        if (SelectedPlaylistSong is null) return;
+        if (IsBusy) return;
+
         await _mpc.MpdAdd(song.File);
     }
 
@@ -10997,14 +10534,8 @@ public partial class MainViewModel : ObservableObject
     #region == Common Listview selected/collection songs command ==
 
     // used in context menu of Search result, Playlist etc.
-    public IRelayCommand SongsListviewAddSelectedToQueueCommand { get; }
-    public static bool SongsListviewAddSelectedToQueueCommand_CanExecute()
-    {
-        //if (IsBusy) return false;
-        //if (IsWorking) return false;
-        return true;
-    }
-    public async void SongsListviewAddSelectedToQueueCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SongsListviewAddSelectedToQueue(object obj)
     {
         if (obj is null) return;
 
@@ -11032,14 +10563,9 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-
     // Play (Used in Albums, Artists, Search pages etc.)
-    public IRelayCommand SongsPlayCommand { get; set; }
-    public static bool SongsPlayCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void SongsPlayCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SongsPlay(object obj)
     {
         if (obj is null) return;
 
@@ -11066,12 +10592,8 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Add to queue (Used in Albums, Artists, Search pages etc.)
-    public IRelayCommand SongsAddToQueueCommand { get; set; }
-    public static bool SongsAddToQueueCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void SongsAddToQueueCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SongsAddToQueue(object obj)
     {
         if (obj is null) return;
 
@@ -11097,12 +10619,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SongsListviewPlayThisCommand { get; set; }
-    public static bool SongsListviewPlayThisCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void SongsListviewPlayThisCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SongsListviewPlayThis(object obj)
     {
         if (obj is null) return;
 
@@ -11115,12 +10633,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SongsListviewAddThisCommand { get; set; }
-    public static bool SongsListviewAddThisCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void SongsListviewAddThisCommand_Execute(object obj)
+    [RelayCommand]
+    public async Task SongsListviewAddThis(object obj)
     {
         if (obj is null) return;
 
@@ -11134,12 +10648,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == Settings ==
 
-    public IRelayCommand ShowProfileEditDialogCommand { get; }
-    public static bool ShowProfileEditDialogCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void ShowProfileEditDialogCommand_Execute()
+    [RelayCommand]
+    public async Task ShowProfileEditDialog()
     {
         if (SelectedProfile is null)
         {
@@ -11177,12 +10687,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand ShowProfileAddDialogCommand { get; }
-    public static bool ShowProfileAddDialogCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void ShowProfileAddDialogCommand_Execute()
+    [RelayCommand]
+    public async Task ShowProfileAddDialog()
     {
         var pro = await _dialog.ShowProfileAddDialog();
 
@@ -11217,12 +10723,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand ShowProfileRemoveNoneDialogCommand { get; }
-    public static bool ShowProfileRemoveNoneDialogCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ShowProfileRemoveNoneDialogCommand_Execute()
+    [RelayCommand]
+    public void ShowProfileRemoveNoneDialog()
     {
         if (Profiles.Count <= 0)
         {
@@ -11259,23 +10761,15 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand GoToSettingsCommand { get; }
-    public static bool GoToSettingsCommand_CanExecute()
-    {
-        return true;
-    }
-    public void GoToSettingsCommand_Execute()
+    [RelayCommand]
+    public void GoToSettings()
     {
         //IsSettingsShow = false;
         GoToSettingsPage?.Invoke(this, EventArgs.Empty);
     }
 
-    public IRelayCommand ClearAlbumCacheFolderCommand { get; }
-    public static bool ClearAlbumCacheFolderCommand_CanExecute()
-    {
-        return true;
-    }
-    public async void ClearAlbumCacheFolderCommand_Execute()
+    [RelayCommand]
+    public async Task ClearAlbumCacheFolder()
     {
         DeleteAllContents(App.AppDataCacheFolder);
 
@@ -11283,15 +10777,16 @@ public partial class MainViewModel : ObservableObject
         await GetCacheFolderSize();
     }
 
-    public IRelayCommand SaveProfileCommand { get; }
-    public bool SaveProfileCommand_CanExecute()
+    public bool SaveProfileCanExecute()
     {
         //if (SelectedProfile is not null) return false;
         if (string.IsNullOrEmpty(Host)) return false;
         if (_port == 0) return false;
         return true;
     }
-    public void SaveProfileCommand_Execute(object obj)
+
+    [RelayCommand(CanExecute = nameof(SaveProfileCanExecute))]
+    public void SaveProfile(object obj)
     {
         if (obj is null) return;
         //if (SelectedProfile is not null) return;
@@ -11348,13 +10843,8 @@ public partial class MainViewModel : ObservableObject
         */
     }
 
-    public IRelayCommand UpdateProfileCommand { get; }
-    public static bool UpdateProfileCommand_CanExecute()
-    {
-        //if (SelectedProfile is null) return false;
-        return true;
-    }
-    public void UpdateProfileCommand_Execute(object obj)
+    [RelayCommand]
+    public void UpdateProfile(object obj)
     {
         if (obj is null) return;
         //if (SelectedProfile is null) return;
@@ -11414,8 +10904,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Connection ==
 
-    public IRelayCommand ReConnectWithSelectedProfileCommand { get; }
-    public bool ReConnectWithSelectedProfileCommand_CanExecute()
+    public bool ReConnectWithSelectedProfileCanExecute()
     {
         if (IsBusy) return false;
         if (IsConnecting) return false;
@@ -11423,7 +10912,8 @@ public partial class MainViewModel : ObservableObject
         return true;
     }
 
-    public void ReConnectWithSelectedProfileCommand_Execute()
+    [RelayCommand(CanExecute = nameof(ReConnectWithSelectedProfileCanExecute))]
+    public void ReConnectWithSelectedProfile()
     {
         if (IsBusy) return;
         if (IsConnecting) return;
@@ -11513,8 +11003,8 @@ public partial class MainViewModel : ObservableObject
         IsWorking = false;
     }
 
-    public IRelayCommand ChangeConnectionProfileCommand { get; }
-    public bool ChangeConnectionProfileCommand_CanExecute()
+
+    public bool ChangeConnectionProfileCanExecute()
     {
         if (IsBusy) return false;
         if (string.IsNullOrWhiteSpace(Host)) return false;
@@ -11523,7 +11013,8 @@ public partial class MainViewModel : ObservableObject
         //if ((SelectedProfile is not null) && CurrentProfile is null) return false;
         return true;
     }
-    public async void ChangeConnectionProfileCommand_Execute(object obj)
+    [RelayCommand(CanExecute = nameof(ChangeConnectionProfileCanExecute))]
+    public async Task ChangeConnectionProfile(object obj)
     {
         if (obj is null) return;
         if (string.IsNullOrEmpty(Host)) return;
@@ -11910,12 +11401,8 @@ public partial class MainViewModel : ObservableObject
         IsBusy = false;
     }
 
-    public IRelayCommand TryConnectCommand { get; }
-    public static bool TryConnectCommand_CanExecute()
-    {
-        return true;
-    }
-    public void TryConnectCommand_Execute()
+    [RelayCommand]
+    public void TryConnect()
     {
         Debug.WriteLine("_host: "+ _host);
         _ = Task.Run(() => Start(_host, _port));
@@ -11925,12 +11412,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == QueueListview header colums Show/Hide ==
 
-    public IRelayCommand QueueColumnHeaderPositionShowHideCommand { get; }
-    public static bool QueueColumnHeaderPositionShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderPositionShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderPositionShowHide()
     {
         if (IsQueueColumnHeaderPositionVisible)
         {
@@ -11944,12 +11427,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderNowPlayingShowHideCommand { get; }
-    public static bool QueueColumnHeaderNowPlayingShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderNowPlayingShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderNowPlayingShowHide()
     {
         if (IsQueueColumnHeaderNowPlayingVisible)
         {
@@ -11962,12 +11441,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderTimeShowHideCommand { get; }
-    public static bool QueueColumnHeaderTimeShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderTimeShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderTimeShowHide()
     {
         if (IsQueueColumnHeaderTimeVisible)
         {
@@ -11981,12 +11456,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderArtistShowHideCommand { get; }
-    public static bool QueueColumnHeaderArtistShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderArtistShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderArtistShowHide()
     {
         if (IsQueueColumnHeaderArtistVisible)
         {
@@ -11999,12 +11470,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderAlbumShowHideCommand { get; }
-    public static bool QueueColumnHeaderAlbumShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderAlbumShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderAlbumShowHide()
     {
         if (IsQueueColumnHeaderAlbumVisible)
         {
@@ -12017,12 +11484,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderDiscShowHideCommand { get; }
-    public static bool QueueColumnHeaderDiscShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderDiscShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderDiscShowHide()
     {
         if (IsQueueColumnHeaderDiscVisible)
         {
@@ -12035,12 +11498,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderTrackShowHideCommand { get; }
-    public static bool QueueColumnHeaderTrackShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderTrackShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderTrackShowHide()
     {
         if (IsQueueColumnHeaderTrackVisible)
         {
@@ -12053,12 +11512,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderGenreShowHideCommand { get; }
-    public static bool QueueColumnHeaderGenreShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderGenreShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderGenreShowHide()
     {
         if (IsQueueColumnHeaderGenreVisible)
         {
@@ -12071,12 +11526,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand QueueColumnHeaderLastModifiedShowHideCommand { get; }
-    public static bool QueueColumnHeaderLastModifiedShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void QueueColumnHeaderLastModifiedShowHideCommand_Execute()
+    [RelayCommand]
+    public void QueueColumnHeaderLastModifiedShowHide()
     {
         if (IsQueueColumnHeaderLastModifiedVisible)
         {
@@ -12093,12 +11544,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == PlaylistListview header colums Show/Hide ==
 
-    public IRelayCommand PlaylistColumnHeaderPositionShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderPositionShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderPositionShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderPositionShowHide()
     {
         if (IsPlaylistColumnHeaderPositionVisible)
         {
@@ -12135,12 +11582,8 @@ public partial class MainViewModel : ObservableObject
     }
     */
 
-    public IRelayCommand PlaylistColumnHeaderTimeShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderTimeShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderTimeShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderTimeShowHide()
     {
         if (IsPlaylistColumnHeaderTimeVisible)
         {
@@ -12154,12 +11597,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderArtistShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderArtistShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderArtistShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderArtistShowHide()
     {
         if (IsPlaylistColumnHeaderArtistVisible)
         {
@@ -12172,12 +11611,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderAlbumShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderAlbumShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderAlbumShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderAlbumShowHide()
     {
         if (IsPlaylistColumnHeaderAlbumVisible)
         {
@@ -12190,12 +11625,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderDiscShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderDiscShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderDiscShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderDiscShowHide()
     {
         if (IsPlaylistColumnHeaderDiscVisible)
         {
@@ -12208,12 +11639,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderTrackShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderTrackShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderTrackShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderTrackShowHide()
     {
         if (IsPlaylistColumnHeaderTrackVisible)
         {
@@ -12226,12 +11653,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderGenreShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderGenreShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderGenreShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderGenreShowHide()
     {
         if (IsPlaylistColumnHeaderGenreVisible)
         {
@@ -12244,12 +11667,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand PlaylistColumnHeaderLastModifiedShowHideCommand { get; }
-    public static bool PlaylistColumnHeaderLastModifiedShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void PlaylistColumnHeaderLastModifiedShowHideCommand_Execute()
+    [RelayCommand]
+    public void PlaylistColumnHeaderLastModifiedShowHide()
     {
         if (IsPlaylistColumnHeaderLastModifiedVisible)
         {
@@ -12266,12 +11685,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == SearchListview header colums Show/Hide ==
 
-    public IRelayCommand SearchColumnHeaderPositionShowHideCommand { get; }
-    public static bool SearchColumnHeaderPositionShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderPositionShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderPositionShowHide()
     {
         if (IsSearchColumnHeaderPositionVisible)
         {
@@ -12308,12 +11723,8 @@ public partial class MainViewModel : ObservableObject
     }
     */
 
-    public IRelayCommand SearchColumnHeaderTimeShowHideCommand { get; }
-    public static bool SearchColumnHeaderTimeShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderTimeShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderTimeShowHide()
     {
         if (IsSearchColumnHeaderTimeVisible)
         {
@@ -12327,12 +11738,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderArtistShowHideCommand { get; }
-    public static bool SearchColumnHeaderArtistShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderArtistShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderArtistShowHide()
     {
         if (IsSearchColumnHeaderArtistVisible)
         {
@@ -12345,12 +11752,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderAlbumShowHideCommand { get; }
-    public static bool SearchColumnHeaderAlbumShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderAlbumShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderAlbumShowHide()
     {
         if (IsSearchColumnHeaderAlbumVisible)
         {
@@ -12363,12 +11766,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderDiscShowHideCommand { get; }
-    public static bool SearchColumnHeaderDiscShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderDiscShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderDiscShowHide()
     {
         if (IsSearchColumnHeaderDiscVisible)
         {
@@ -12381,12 +11780,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderTrackShowHideCommand { get; }
-    public static bool SearchColumnHeaderTrackShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderTrackShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderTrackShowHide()
     {
         if (IsSearchColumnHeaderTrackVisible)
         {
@@ -12399,12 +11794,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderGenreShowHideCommand { get; }
-    public static bool SearchColumnHeaderGenreShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderGenreShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderGenreShowHide()
     {
         if (IsSearchColumnHeaderGenreVisible)
         {
@@ -12417,12 +11808,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand SearchColumnHeaderLastModifiedShowHideCommand { get; }
-    public static bool SearchColumnHeaderLastModifiedShowHideCommand_CanExecute()
-    {
-        return true;
-    }
-    public void SearchColumnHeaderLastModifiedShowHideCommand_Execute()
+    [RelayCommand]
+    public void SearchColumnHeaderLastModifiedShowHide()
     {
         if (IsSearchColumnHeaderLastModifiedVisible)
         {
@@ -12440,12 +11827,8 @@ public partial class MainViewModel : ObservableObject
 
     #region == DebugWindow and AckWindow ==
 
-    public IRelayCommand ClearDebugCommandTextCommand { get; }
-    public static bool ClearDebugCommandTextCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ClearDebugCommandTextCommand_Execute()
+    [RelayCommand]
+    public void ClearDebugCommandText()
     {
         
         Dispatcher.UIThread.Post(() => {
@@ -12453,12 +11836,8 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    public IRelayCommand ClearDebugIdleTextCommand { get; }
-    public static bool ClearDebugIdleTextCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ClearDebugIdleTextCommand_Execute()
+    [RelayCommand]
+    public void ClearDebugIdleText()
     {
         
         Dispatcher.UIThread.Post(() => {
@@ -12466,12 +11845,8 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    public IRelayCommand ShowDebugWindowCommand { get; }
-    public static bool ShowDebugWindowCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ShowDebugWindowCommand_Execute()
+    [RelayCommand]
+    public void ShowDebugWindow()
     {
         
         Dispatcher.UIThread.Post(() => {
@@ -12479,12 +11854,8 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    public IRelayCommand ClearAckTextCommand { get; }
-    public static bool ClearAckTextCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ClearAckTextCommand_Execute()
+    [RelayCommand]
+    public void ClearAckText()
     {
         
         Dispatcher.UIThread.Post(() => {
@@ -12492,12 +11863,8 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    public IRelayCommand ShowAckWindowCommand { get; }
-    public static bool ShowAckWindowCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ShowAckWindowCommand_Execute()
+    [RelayCommand]
+    public void ShowAckWindow()
     {
         if (IsShowAckWindow)
             IsShowAckWindow = false;
@@ -12509,16 +11876,12 @@ public partial class MainViewModel : ObservableObject
 
     #region == Find ==
 
-    public IRelayCommand ShowFindCommand { get; }
-    public static bool ShowFindCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ShowFindCommand_Execute()
+    [RelayCommand]
+    public void ShowFind()
     {
         if (SelectedNodeMenu is NodeMenuQueue)
         {
-            QueueFindShowHideCommand_Execute();
+            QueueFindShowHide();
         }
         else if (SelectedNodeMenu is NodeMenuSearch)
         {
@@ -12537,12 +11900,9 @@ public partial class MainViewModel : ObservableObject
 
     #region == Other commands == 
 
-    public IRelayCommand EscapeCommand { get; }
-    public static bool EscapeCommand_CanExecute()
-    {
-        return true;
-    }
-    public void EscapeCommand_ExecuteAsync()
+    [RelayCommand]
+
+    public void Escape()
     {
         //IsChangePasswordDialogShow = false;
 
@@ -12568,23 +11928,15 @@ public partial class MainViewModel : ObservableObject
         IsAlbumContentPanelVisible = false;
     }
 
-    public IRelayCommand AlbumsCoverOverlayPanelCloseCommand { get; set; }
-    public static bool AlbumsCoverOverlayPanelCloseCommand_CanExecute()
-    {
-        return true;
-    }
-    public void AlbumsCoverOverlayPanelCloseCommand_Execute()
+    [RelayCommand]
+    public void AlbumsCoverOverlayPanelClose()
     {
         IsAlbumArtPanelIsOpen = false;
     }
 
     // Jump menu from CurrentSong
-    public IRelayCommand JumpToAlbumPageCommand { get; set; }
-    public static bool JumpToAlbumPageCommand_CanExecute()
-    {
-        return true;
-    }
-    public void JumpToAlbumPageCommand_Execute()
+    [RelayCommand]
+    public void JumpToAlbumPage()
     {
         if (CurrentSong is null)
         {
@@ -12652,12 +12004,8 @@ public partial class MainViewModel : ObservableObject
         */
     }
 
-    public IRelayCommand JumpToArtistPageCommand { get; set; }
-    public static bool JumpToArtistPageCommand_CanExecute()
-    {
-        return true;
-    }
-    public void JumpToArtistPageCommand_Execute()
+    [RelayCommand]
+    public void JumpToArtistPage()
     {
         if (CurrentSong is null)
         {
@@ -12701,12 +12049,8 @@ public partial class MainViewModel : ObservableObject
         */
     }
 
-    public IRelayCommand ListviewGoToAlbumPageCommand { get; }
-    public static bool ListviewGoToAlbumPageCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ListviewGoToAlbumPageCommand_Execute(SongInfo song)
+    [RelayCommand]
+    public void ListviewGoToAlbumPage(SongInfo song)
     {
         if (song is null)
         {
@@ -12753,12 +12097,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IRelayCommand ListviewGoToArtistPageCommand { get; }
-    public static bool ListviewGoToArtistPageCommand_CanExecute()
-    {
-        return true;
-    }
-    public void ListviewGoToArtistPageCommand_Execute(SongInfo song)
+    [RelayCommand]
+    public void ListviewGoToArtistPage(SongInfo song)
     {
         if (song is null)
         {
