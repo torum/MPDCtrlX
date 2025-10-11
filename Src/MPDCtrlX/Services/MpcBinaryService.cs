@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using static MPDCtrlX.Services.MpcService;
@@ -23,6 +24,8 @@ namespace MPDCtrlX.Services;
 
 public class MpcBinaryService : IMpcBinaryService
 {
+    private CancellationTokenSource? _cts;
+
     private static TcpClient _binaryConnection = new();
     private StreamReader? _binaryReader;
     private StreamWriter? _binaryWriter;
@@ -42,6 +45,9 @@ public class MpcBinaryService : IMpcBinaryService
 
     public async Task<bool> MpdBinaryConnectionStart(string host, int port, string password)
     {
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+
         ConnectionResult r = await MpdBinaryConnect(host, port);
 
         if (r.IsSuccess)
@@ -153,6 +159,17 @@ public class MpcBinaryService : IMpcBinaryService
     {
         CommandResult ret = new();
 
+        if (_cts is null)
+        {
+            return ret;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested returning @MpdBinarySendCommand");
+            return ret;
+        }
+
         if (_binaryConnection.Client is null)
         {
             return ret;
@@ -218,7 +235,7 @@ public class MpcBinaryService : IMpcBinaryService
 
             while (true)
             {
-                string? line = await _binaryReader.ReadLineAsync();
+                string? line = await _binaryReader.ReadLineAsync(_cts.Token);
 
                 if (line is not null)
                 {
@@ -333,6 +350,17 @@ public class MpcBinaryService : IMpcBinaryService
     {
         CommandBinaryResult ret = new();
 
+        if (_cts is null)
+        {
+            return ret;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested returning @MpdBinarySendBinaryCommand");
+            return ret;
+        }
+
         if (_binaryConnection.Client is null)
         {
             Debug.WriteLine("@MpdBinarySendBinaryCommand: " + "TcpClient.Client is null");
@@ -423,7 +451,7 @@ public class MpcBinaryService : IMpcBinaryService
 
                 using (MemoryStream ms = new())
                 {
-                    while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer)) > 0)
+                    while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer, _cts.Token)) > 0)
                     {
                         ms.Write(buffer, 0, readSize);
 
@@ -977,7 +1005,7 @@ public class MpcBinaryService : IMpcBinaryService
                         }
                         else
                         {
-                            Debug.WriteLine("not IsSuccess @MpdQueryAlbumArt");
+                            Debug.WriteLine("Not IsSuccess MpdReQueryAlbumArt @MpdQueryAlbumArt: " + result.ErrorMessage);
                             /*
                             Dispatcher.UIThread.Post(() =>
                             {

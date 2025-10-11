@@ -276,7 +276,7 @@
 							</PathIcon>
 						</Viewbox>
 					</Button>
-					<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" HotKey="Ctrl+Space" AutomationProperties.AccessKey="P" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" Command="{Binding PlayCommand}" Focusable="False" Width="54" Height="54" CornerRadius="27" Background="Transparent" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0">
+					<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" HotKey="Ctrl+Space" AutomationProperties.AccessKey="P" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" Command="{Binding PlayCommand}" Focusable="False" Width="54" Height="54" CornerRadius="27" Background="Transparent" BorderThickness="0" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0">
 						<Viewbox Width="46" Height="46">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 								Data="{Binding PlayButton, Mode=OneWay}">

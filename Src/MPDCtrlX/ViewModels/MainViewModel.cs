@@ -2935,7 +2935,8 @@ public partial class MainViewModel : ObservableObject
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
                
-                Task.Run(async () =>
+                // TODO:
+                _ = Task.Run(async () =>
                 {
                     IsWorking = true;
                     await Task.Yield();
@@ -3062,6 +3063,7 @@ public partial class MainViewModel : ObservableObject
                 return;
             }
 
+            // TODO:
             _ = Task.Run(() => GetAlbumPictures(VisibleViewportItemsAlbumEx));
             //GetAlbumPictures(VisibleViewportItemsAlbumEx);
         }
@@ -5906,8 +5908,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(Volume));
 
         // start the connection
-        _ = Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port));
-
+        await Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port));
     }
 
     private void SaveSettings(Window sender)
@@ -6778,7 +6779,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         // Start MPD connection.
-        _ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
+        await Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
     }
 
     private async Task LoadInitialData()
@@ -8049,7 +8050,8 @@ public partial class MainViewModel : ObservableObject
 
         filestNode.IsAcquired = true;
 
-        Task.Run(async () =>
+        // TODO:
+        _ = Task.Run(async () =>
         {
             await Task.Delay(10);
             //await Task.Yield();
@@ -8831,7 +8833,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == MPD event callback == 
 
-    private void OnMpdIdleConnected(MpcService sender)
+    private async void OnMpdIdleConnected(MpcService sender)
     {
         Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
 
@@ -8884,7 +8886,7 @@ public partial class MainViewModel : ObservableObject
         });
 
         // 
-        _ = Task.Run(LoadInitialData);
+        await Task.Run(LoadInitialData);
     }
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
@@ -10913,7 +10915,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(ReConnectWithSelectedProfileCanExecute))]
-    public void ReConnectWithSelectedProfile()
+    public async Task ReConnectWithSelectedProfile()
     {
         if (IsBusy) return;
         if (IsConnecting) return;
@@ -10982,7 +10984,7 @@ public partial class MainViewModel : ObservableObject
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        _ = Task.Run(() => Start(_host, _port));
+        await Task.Run(() => Start(_host, _port));
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -11402,10 +11404,10 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void TryConnect()
+    public async Task TryConnect()
     {
         Debug.WriteLine("_host: "+ _host);
-        _ = Task.Run(() => Start(_host, _port));
+        await Task.Run(() => Start(_host, _port));
     }
 
     #endregion
