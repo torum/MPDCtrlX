@@ -1306,6 +1306,18 @@ public partial class MpcService : IMpcService
 
         CommandResult ret = new();
 
+        if (_cts is null)
+        {
+            ret.IsSuccess = false;
+            return ret;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested @MpdCommandSendCommandProtected");
+            return ret;
+        }
+
         if (_commandConnection.Client is null)
         {
             Debug.WriteLine("@MpdSendCommand: " + "TcpClient.Client is null");
@@ -1558,7 +1570,13 @@ public partial class MpcService : IMpcService
 
             while (true)
             {
-                string? line = await _commandReader.ReadLineAsync();
+                string? line = await _commandReader.ReadLineAsync(_cts.Token);
+                
+                if (_cts.Token.IsCancellationRequested)
+                {
+                    Debug.WriteLine("IsCancellationRequested in while loop @MpdCommandSendCommandProtected");
+                    return ret;
+                }
 
                 if (line is not null)
                 {
@@ -4317,6 +4335,11 @@ public partial class MpcService : IMpcService
 
     public void MpdDisconnect(bool isReconnect)
     {
+        // This needs to be first.
+        ConnectionState = ConnectionStatus.Disconnecting;
+
+        _cts?.Cancel();
+
         try
         {
             IsBusy?.Invoke(this, true);
@@ -4326,7 +4349,10 @@ public partial class MpcService : IMpcService
             _commandConnection.Client?.Shutdown(SocketShutdown.Both);
             _commandConnection.Close();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception _commandConnection @MpdDisconnect() {ex}");
+        }
         finally
         {
             IsBusy?.Invoke(this, false);
@@ -4339,19 +4365,13 @@ public partial class MpcService : IMpcService
 
             ConnectionState = ConnectionStatus.Disconnecting;
 
-            _cts?.Cancel();
-
             _idleConnection.Client?.Shutdown(SocketShutdown.Both);
             _idleConnection.Close();
-
-            //_cts?.Dispose();
-
-            if (isReconnect)
-            {
-                //_cts = new CancellationTokenSource();
-            }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception _idleConnection @MpdDisconnect() {ex}");
+        }
         finally
         {
             IsBusy?.Invoke(this, false);
@@ -4362,6 +4382,14 @@ public partial class MpcService : IMpcService
 
         ConnectionState = ConnectionStatus.DisconnectedByUser;
         IsBusy?.Invoke(this, false);
+
+        // not here.
+        //_cts?.Dispose();
+
+        if (isReconnect)
+        {
+            //_cts = new CancellationTokenSource();
+        }
     }
 }
 

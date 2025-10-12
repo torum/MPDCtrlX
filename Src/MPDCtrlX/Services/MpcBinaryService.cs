@@ -453,6 +453,12 @@ public class MpcBinaryService : IMpcBinaryService
                 {
                     while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer, _cts.Token)) > 0)
                     {
+                        if (_cts.Token.IsCancellationRequested)
+                        {
+                            Debug.WriteLine("IsCancellationRequested in while loop @MpdBinarySendBinaryCommand");
+                            return ret;
+                        }
+
                         ms.Write(buffer, 0, readSize);
 
                         if (readSize < bufferSize)
@@ -1168,6 +1174,8 @@ public class MpcBinaryService : IMpcBinaryService
 
     public void MpdBinaryConnectionDisconnect()
     {
+        _cts?.Cancel();
+
         try
         {
             _binaryConnection.Client?.Shutdown(SocketShutdown.Both);

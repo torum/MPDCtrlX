@@ -297,7 +297,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 				<!-- Album view ListBox -->
 				<Grid Name="AlbumsListBoxGrid">
 
-					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="6,3,6,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
+					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="6,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
 							

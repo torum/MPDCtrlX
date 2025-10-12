@@ -6698,18 +6698,6 @@ public partial class MainViewModel : ObservableObject
             }
         }
 
-        try
-        {
-            if (IsConnected)
-            {
-                _mpc.MpdStop = true;
-
-                // TODO: Although it's a good thing to close...this causes anoying exception in the debug output. 
-                _mpc.MpdDisconnect(false);
-            }
-        }
-        catch { }
-
         if (IsSaveLog)
         {
             // Save error logs.
@@ -6725,6 +6713,20 @@ public partial class MainViewModel : ObservableObject
     // Closing
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
+        try
+        {
+            if (IsConnected)
+            {
+                _mpc.MpdStop = true;
+
+                _mpc.MpdDisconnect(false);
+            }
+        }
+        catch (Exception ex)
+        { 
+           Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+        }
+
         if (sender is Window w)
         {
             SaveSettings(w);
@@ -8224,6 +8226,12 @@ public partial class MainViewModel : ObservableObject
     
     private void GetAlbumPictures(IEnumerable<object>? albumExItems)
     {
+        if (_mpc.MpdStop)
+        {
+            Debug.WriteLine("GetAlbumPictures: MpdStop");
+            return;
+        }
+
         Dispatcher.UIThread.Post(async () =>
         {
             if (albumExItems is null)
@@ -8322,6 +8330,12 @@ public partial class MainViewModel : ObservableObject
                 }
                 else
                 {
+                    if (_mpc.MpdStop)
+                    {
+                        Debug.WriteLine("GetAlbumPictures: MpdStop in foreach1 loop");
+                        break;
+                    }
+
                     album.IsImageLoading = true;
 
                     string fileTempPath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
@@ -8364,6 +8378,12 @@ public partial class MainViewModel : ObservableObject
                     foreach (var albumsong in sresult)
                     {
                         await Task.Yield();
+                        
+                        if (_mpc.MpdStop)
+                        {
+                            Debug.WriteLine("GetAlbumPictures: MpdStop in foreach2 loop");
+                            break;
+                        }
 
                         if (albumsong is null)
                         {
