@@ -90,11 +90,13 @@ public partial class MainWindow : Window//AppWindow//
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
+        this.Closed += vm.OnWindowClosed;
+        this.SizeChanged += this.Window_SizeChanged;
 
         vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
         vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
-        vm.GoToSettingsPage +=  OnGoToSettingsPage;
+        vm.GoToSettingsPage += OnGoToSettingsPage;
 
         this.DetachedFromVisualTree += (s, e) =>
         {
@@ -126,7 +128,7 @@ public partial class MainWindow : Window//AppWindow//
         {
             //TitleBar.ExtendsContentIntoTitleBar = true;
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
-            
+
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
             //TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
             //Background = Brushes.Transparent;
@@ -152,16 +154,6 @@ public partial class MainWindow : Window//AppWindow//
             //
         }
 
-    }
-
-    private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        //
-    }
-
-    private void Window_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
-    {
-        //
     }
 
     private void NavigationView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -500,23 +492,13 @@ public partial class MainWindow : Window//AppWindow//
         {
             return;
         }
-        
+
         await vm.GetCacheFolderSize();
 
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;
         this.NavigateViewControl.Content = App.GetService<SettingsPage>();
         return;
-    }
-
-    private void Window_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
-    {
-        //
-    }
-
-    private void Window_KeyUp_1(object? sender, Avalonia.Input.KeyEventArgs e)
-    {
-        //
     }
 
     private void VolumeSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)

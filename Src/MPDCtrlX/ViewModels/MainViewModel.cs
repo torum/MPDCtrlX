@@ -39,6 +39,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Xml;
@@ -2946,7 +2947,7 @@ public partial class MainViewModel : ObservableObject
 
                     IsWorking = false;
                     await Task.Yield();
-                });
+                }, _cts.Token);
             }
         }
     }
@@ -3064,7 +3065,7 @@ public partial class MainViewModel : ObservableObject
             }
 
             // TODO:
-            _ = Task.Run(() => GetAlbumPictures(VisibleViewportItemsAlbumEx));
+            _ = Task.Run(() => GetAlbumPictures(VisibleViewportItemsAlbumEx), _cts.Token);
             //GetAlbumPictures(VisibleViewportItemsAlbumEx);
         }
     }
@@ -4450,6 +4451,8 @@ public partial class MainViewModel : ObservableObject
 
     private readonly InitWindow _initWin;
     private readonly IDialogService _dialog;
+
+    private readonly CancellationTokenSource _cts = new();
 
     public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService)
     {
@@ -5908,7 +5911,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(Volume));
 
         // start the connection
-        await Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port));
+        await Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
     }
 
     private void SaveSettings(Window sender)
@@ -6715,6 +6718,8 @@ public partial class MainViewModel : ObservableObject
     {
         try
         {
+            _cts.Cancel();
+
             if (IsConnected)
             {
                 _mpc.MpdStop = true;
@@ -6731,6 +6736,11 @@ public partial class MainViewModel : ObservableObject
         {
             SaveSettings(w);
         }
+    }
+
+    public void OnWindowClosed(object? sender, EventArgs e)
+    {
+        _cts?.Dispose();
     }
 
     #endregion
@@ -6781,7 +6791,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         // Start MPD connection.
-        await Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port));
+        await Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
     }
 
     private async Task LoadInitialData()
@@ -8091,7 +8101,7 @@ public partial class MainViewModel : ObservableObject
             {
                 IsWorking = false;
             });
-        });
+        }, _cts.Token);
     }
 
     private void GetArtistSongs(AlbumArtist? artist)
@@ -8232,6 +8242,12 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested @GetAlbumPictures");
+            return;
+        }
+
         Dispatcher.UIThread.Post(async () =>
         {
             if (albumExItems is null)
@@ -8252,6 +8268,12 @@ public partial class MainViewModel : ObservableObject
             foreach (var item in albumExItems)
             {
                 await Task.Yield();
+
+                if (_cts.Token.IsCancellationRequested)
+                {
+                    Debug.WriteLine("IsCancellationRequested in foreach @GetAlbumPictures");
+                    return;
+                }
 
                 if (item is not AlbumEx album)
                 {
@@ -8378,11 +8400,17 @@ public partial class MainViewModel : ObservableObject
                     foreach (var albumsong in sresult)
                     {
                         await Task.Yield();
-                        
+
                         if (_mpc.MpdStop)
                         {
                             Debug.WriteLine("GetAlbumPictures: MpdStop in foreach2 loop");
                             break;
+                        }
+
+                        if (_cts.Token.IsCancellationRequested)
+                        {
+                            Debug.WriteLine("IsCancellationRequested in forearch2 @GetAlbumPictures");
+                            return;
                         }
 
                         if (albumsong is null)
@@ -8906,7 +8934,7 @@ public partial class MainViewModel : ObservableObject
         });
 
         // 
-        await Task.Run(LoadInitialData);
+        await Task.Run(LoadInitialData, _cts.Token);
     }
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
@@ -11004,7 +11032,7 @@ public partial class MainViewModel : ObservableObject
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        await Task.Run(() => Start(_host, _port));
+        await Task.Run(() => Start(_host, _port), _cts.Token);
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -11427,7 +11455,7 @@ public partial class MainViewModel : ObservableObject
     public async Task TryConnect()
     {
         Debug.WriteLine("_host: "+ _host);
-        await Task.Run(() => Start(_host, _port));
+        await Task.Run(() => Start(_host, _port), _cts.Token);
     }
 
     #endregion

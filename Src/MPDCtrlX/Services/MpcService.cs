@@ -4337,6 +4337,8 @@ public partial class MpcService : IMpcService
     {
         // This needs to be first.
         ConnectionState = ConnectionStatus.Disconnecting;
+        
+        MpdStop = true;
 
         _cts?.Cancel();
 

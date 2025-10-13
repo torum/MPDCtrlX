@@ -15,11 +15,7 @@
         Title=""
 		 Icon="/Assets/Untitled.ico"
 		MinWidth="320" 
-		MinHeight="460" 
-		SizeChanged="Window_SizeChanged" 
-		Loaded="Window_Loaded" 
-		Closing="Window_Closing"
-		KeyDown="Window_KeyDown" KeyUp="Window_KeyUp_1">
+		MinHeight="460">
 	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
