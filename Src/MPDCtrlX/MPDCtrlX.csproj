@@ -7,11 +7,11 @@
 		<ApplicationIcon>Assets\MPDCtrlX.ico</ApplicationIcon>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<ErrorReport>none</ErrorReport>
+		<IncludeSymbols>True</IncludeSymbols>
 
 		<PlatformTarget>AnyCPU</PlatformTarget>
 
 		<VersionPrefix>1.0.0.0</VersionPrefix>
-		<VersionSuffix>RC9</VersionSuffix>
 		<FileVersion>1.0.0.0</FileVersion>
 
 	</PropertyGroup>
@@ -33,7 +33,6 @@
 		<AvaloniaXamlIlDebuggerLaunch>False</AvaloniaXamlIlDebuggerLaunch>
 		<AvaloniaXamlVerboseExceptions>False</AvaloniaXamlVerboseExceptions>
 		<AvaloniaXamlReportImportance>Normal</AvaloniaXamlReportImportance>
-		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<AvaloniaNameGeneratorAttachDevTools>False</AvaloniaNameGeneratorAttachDevTools>
 	</PropertyGroup>
@@ -59,9 +58,9 @@
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
 		<PackageReference Include="FluentAvaloniaUI" Version="2.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.10" />
 		<PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.6.5" />
 	</ItemGroup>
 
