@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=MPDCtrlX
 Comment=
-Icon=MPDCtrlX.Desktop
+Icon=MPDCtrlX.Desktop.png
 Exec=MPDCtrlX.Desktop
 StartupWMClass=MPDCtrlX.Desktop
 Terminal=false
