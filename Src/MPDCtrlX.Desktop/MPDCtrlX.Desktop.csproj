@@ -40,6 +40,11 @@
 		<Version></Version>
 	</PropertyGroup>
 
+
+	<ItemGroup>
+	  <None Remove="MPDCtrlX.Desktop.parcel" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Content Include="MPDCtrlX.ico" />
 	</ItemGroup>

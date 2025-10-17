@@ -1,6 +1,6 @@
 # Build and publish
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net9.0
+MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net9.0 -p:PublishAot=true
 
 # Grab published binaries
 
