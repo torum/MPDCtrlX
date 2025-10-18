@@ -11,9 +11,9 @@
         x:Class="MPDCtrlX.Core.Views.MainWindow"
 		x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
-		x:Name="ThisMainWindow"
-        Title=""
-		 Icon="/Assets/Untitled.ico"
+		Title="MPDCtrlX"
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="PreferSystemChrome"
 		MinWidth="320" 
 		MinHeight="460">
 	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
@@ -72,7 +72,8 @@
 		-->
 	</Window.KeyBindings>
 
-	<Grid>
+	<Grid Margin="{OnPlatform Default='0', Windows='0,32,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
+		<!--
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
@@ -81,7 +82,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-
+		-->
 		<!-- NavigationView -->
 		<ui:NavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 			<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->

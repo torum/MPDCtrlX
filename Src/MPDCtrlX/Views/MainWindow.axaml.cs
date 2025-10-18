@@ -126,6 +126,8 @@ public partial class MainWindow : Window//AppWindow//
         //if (os.Platform.ToString().StartsWith("Win"))
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
+            //this.ExtendClientAreaToDecorationsHint = true;
+            
             //TitleBar.ExtendsContentIntoTitleBar = true;
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
 

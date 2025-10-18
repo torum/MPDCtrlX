@@ -12,7 +12,7 @@
 		-->
 		<!--
 		-->
-		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="False"/>
+		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="False" />
 		
 		<StyleInclude Source="avares://MPDCtrlX.Core/Styles/Styles.axaml" />
 	</Application.Styles>
