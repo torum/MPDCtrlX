@@ -12,6 +12,8 @@ MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX
 
 MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
+(Make sure "MPDCtrlX/Src/deb-staging/usr/bin/MPDCtrlX" shell script has "Executable as Program" permission)
+
 # Create a deb package
 
 MPDCtrlX/Src/MPDCtrlX.Desktop$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.0_amd64.deb

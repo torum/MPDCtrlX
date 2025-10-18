@@ -72,7 +72,7 @@
 		-->
 	</Window.KeyBindings>
 
-	<Grid Margin="{OnPlatform Default='0', Windows='0,32,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
+	<Grid Margin="{OnPlatform Default='0', Windows='0,30,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
 		<!--
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
