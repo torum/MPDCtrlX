@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 
-namespace MPDCtrlX.Common
+namespace MPDCtrlX.Core.Common
 {
     /*
     public static class TreeViewItemExtensions

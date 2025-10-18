@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
              d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
-             x:Class="MPDCtrlX.Views.QueuePage"
+             xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
+             x:Class="MPDCtrlX.Core.Views.QueuePage"
              x:DataType="vm:MainViewModel"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:CompileBindings="True">
 
@@ -167,7 +167,7 @@
 					</Grid.ColumnDefinitions>
 
 					<Border Grid.Column="0" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="0" Name="Column1" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
+					<Grid Grid.Column="0" x:Name="Column1" IsVisible="{Binding IsChecked, ElementName=SortToggleSplitButton}">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0">
 							<PathIcon Opacity="0.7" Background="Transparent" Width="NaN" Height="NaN"
 								Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
@@ -176,7 +176,7 @@
 					</Grid>
 
 					<Border Grid.Column="1" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="1" Name="Column2">
+					<Grid Grid.Column="1" x:Name="Column2">
 						<Viewbox Width="14" Height="14" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
 							<PathIcon Opacity="0.7" Data="M296.494737,3608.57322 L292.500752,3606.14219 C291.83208,3605.73542 291,3606.25002 291,3607.06891 L291,3611.93095 C291,3612.7509 291.83208,3613.26444 292.500752,3612.85767 L296.494737,3610.42771 C297.168421,3610.01774 297.168421,3608.98319 296.494737,3608.57322" Width="NaN" Height="NaN" Margin="0" Padding="0">
 							</PathIcon>
@@ -184,47 +184,47 @@
 					</Grid>
 
 					<Border Grid.Column="2" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="2" Name="Column3">
+					<Grid Grid.Column="2" x:Name="Column3">
 						<TextBlock Name="Column3X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="3" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="3" Name="Column4" IsVisible="{Binding IsQueueColumnHeaderTimeVisible}">
+					<Grid Grid.Column="3" x:Name="Column4" IsVisible="{Binding IsQueueColumnHeaderTimeVisible}">
 						<TextBlock Name="Column4X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Time}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="4" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="4" Name="Column5" IsVisible="{Binding IsQueueColumnHeaderArtistVisible}">
+					<Grid Grid.Column="4" x:Name="Column5" IsVisible="{Binding IsQueueColumnHeaderArtistVisible}">
 						<TextBlock Name="Column5X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Artist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="5" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="5" Name="Column6" IsVisible="{Binding IsQueueColumnHeaderAlbumVisible}">
+					<Grid Grid.Column="5" x:Name="Column6" IsVisible="{Binding IsQueueColumnHeaderAlbumVisible}">
 						<TextBlock Name="Column6X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Album}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="6" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="6" Name="Column7" IsVisible="{Binding IsQueueColumnHeaderDiscVisible}">
+					<Grid Grid.Column="6" x:Name="Column7" IsVisible="{Binding IsQueueColumnHeaderDiscVisible}">
 						<TextBlock Name="Column7X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Disc}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="7" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="7" Name="Column8" IsVisible="{Binding IsQueueColumnHeaderTrackVisible}">
+					<Grid Grid.Column="7" x:Name="Column8" IsVisible="{Binding IsQueueColumnHeaderTrackVisible}">
 						<TextBlock Name="Column8X" Opacity="0.7" HorizontalAlignment="Left" Padding="12,0,0,0" VerticalAlignment="Center" Text="{x:Static prop:Resources.ListviewColumnHeader_Track}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="8" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="8" Name="Column9" IsVisible="{Binding IsQueueColumnHeaderGenreVisible}">
+					<Grid Grid.Column="8" x:Name="Column9" IsVisible="{Binding IsQueueColumnHeaderGenreVisible}">
 						<TextBlock Name="Column9X" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Text="{x:Static prop:Resources.ListviewColumnHeader_Genre}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="9" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="9" Name="Column10" IsVisible="{Binding IsQueueColumnHeaderLastModifiedVisible}">
+					<Grid Grid.Column="9" x:Name="Column10" IsVisible="{Binding IsQueueColumnHeaderLastModifiedVisible}">
 						<TextBlock Name="Column10X" Opacity="0.7" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="12,0,0,0" Text="{x:Static prop:Resources.ListviewColumnHeader_LastModified}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 					</Grid>
 
 					<Border Grid.Column="10" Background="Transparent" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0,0,1,0" Opacity="0.5"/>
-					<Grid Grid.Column="10" Name="Column11" MinWidth="24">
+					<Grid Grid.Column="10" x:Name="Column11" MinWidth="24">
 
 					</Grid>
 

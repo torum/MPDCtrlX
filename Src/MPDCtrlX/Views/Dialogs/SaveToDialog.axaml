@@ -3,10 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-             x:Class="MPDCtrlX.Views.Dialogs.SaveToDialog">
+			 xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
+             x:Class="MPDCtrlX.Core.Views.Dialogs.SaveToDialog">
 	<Grid>
 		<StackPanel Margin="10" Width="250">
 			

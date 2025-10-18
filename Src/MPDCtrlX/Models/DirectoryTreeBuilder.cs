@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class NodeDirectory : NodeTree
 {

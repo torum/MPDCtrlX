@@ -1,14 +1,14 @@
-﻿using MPDCtrlX.Models;
-using MPDCtrlX.Services;
-using MPDCtrlX.ViewModels;
+﻿using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.Services;
+using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static MPDCtrlX.Services.DialogService;
+using static MPDCtrlX.Core.Services.DialogService;
 
-namespace MPDCtrlX.Services.Contracts;
+namespace MPDCtrlX.Core.Services.Contracts;
 
 public interface IDialogService
 {

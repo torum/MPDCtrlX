@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
 			 d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
-             x:Class="MPDCtrlX.Views.FilesPage"
+             x:Class="MPDCtrlX.Core.Views.FilesPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 

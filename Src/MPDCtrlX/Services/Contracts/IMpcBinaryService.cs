@@ -1,7 +1,7 @@
-using MPDCtrlX.Models;
+using MPDCtrlX.Core.Models;
 using System.Threading.Tasks;
 
-namespace MPDCtrlX.Services.Contracts;
+namespace MPDCtrlX.Core.Services.Contracts;
 
 public interface IMpcBinaryService
 {

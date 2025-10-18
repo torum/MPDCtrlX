@@ -1,14 +1,14 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:MPDCtrlX.ViewModels"
+        xmlns:vm="using:MPDCtrlX.Core.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:ui="using:FluentAvalonia.UI.Controls"
-		xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-        xmlns:views="clr-namespace:MPDCtrlX.Views"
-		xmlns:mod="clr-namespace:MPDCtrlX.Models"
+		xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
+        xmlns:views="clr-namespace:MPDCtrlX.Core.Views"
+		xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="MPDCtrlX.Views.MainWindow"
+        x:Class="MPDCtrlX.Core.Views.MainWindow"
 		x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
 		x:Name="ThisMainWindow"
@@ -144,10 +144,6 @@
 					
 				</Grid>
 			</ui:NavigationView.PaneHeader>
-			<ui:NavigationView.PaneCustomContent>
-			</ui:NavigationView.PaneCustomContent>
-			<ui:NavigationView.PaneFooter>
-			</ui:NavigationView.PaneFooter>
 			<ui:NavigationView.Resources>
 				<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
 					<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">

@@ -1,7 +1,7 @@
 using Avalonia.Media.Imaging;
 using System.Collections.ObjectModel;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class Result
 {

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
-using MPDCtrlX.Models;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.ViewModels;
+using MPDCtrlX.Core.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class QueuePage : UserControl
 {

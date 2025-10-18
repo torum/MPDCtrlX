@@ -1,7 +1,7 @@
 ﻿using Avalonia.Threading;
 using System.ComponentModel;
 
-namespace MPDCtrlX.ViewModels;
+namespace MPDCtrlX.Core.ViewModels;
 
 public class ViewModelBase : INotifyPropertyChanged
 {

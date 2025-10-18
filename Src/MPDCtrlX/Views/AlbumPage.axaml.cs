@@ -3,13 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 using FluentAvalonia.Core;
-using MPDCtrlX.Models;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class AlbumPage : UserControl
 {

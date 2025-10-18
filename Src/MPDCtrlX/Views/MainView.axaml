@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+             xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
 			 xmlns:ui="using:FluentAvalonia.UI.Controls"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="MPDCtrlX.Views.MainView"
+             x:Class="MPDCtrlX.Core.Views.MainView"
              x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 	<Grid>

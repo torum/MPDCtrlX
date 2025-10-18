@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System;
 using FluentAvalonia.UI.Windowing;
 
-namespace MPDCtrlX.Views.Dialogs;
+namespace MPDCtrlX.Core.Views.Dialogs;
 
 public partial class InitWindow : AppWindow
 {

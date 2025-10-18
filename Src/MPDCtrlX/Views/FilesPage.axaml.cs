@@ -6,16 +6,16 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.ViewModels;
+using MPDCtrlX.Core.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class FilesPage : UserControl
 {

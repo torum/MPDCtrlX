@@ -4,10 +4,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		xmlns:ui="using:FluentAvalonia.UI.Controls"
-		xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-		xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
+		xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
+		xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
 		x:DataType="vm:MainViewModel"
-        x:Class="MPDCtrlX.Views.Dialogs.InitWindow"
+        x:Class="MPDCtrlX.Core.Views.Dialogs.InitWindow"
         
         TransparencyLevelHint="AcrylicBlur"
         ExtendClientAreaToDecorationsHint="True"

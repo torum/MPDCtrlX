@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.Shapes;
 using Avalonia.Threading;
-using MPDCtrlX.Models;
-using MPDCtrlX.Services.Contracts;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.Services.Contracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,10 +17,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using static MPDCtrlX.Services.MpcService;
+using static MPDCtrlX.Core.Services.MpcService;
 using Path = System.IO.Path;
 
-namespace MPDCtrlX.Services;
+namespace MPDCtrlX.Core.Services;
 
 #pragma warning disable IDE0079 //
 #pragma warning disable CA1854

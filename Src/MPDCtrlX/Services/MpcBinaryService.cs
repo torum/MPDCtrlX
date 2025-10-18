@@ -1,8 +1,8 @@
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using MPDCtrlX.Models;
-using MPDCtrlX.Services.Contracts;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.Services.Contracts;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -17,10 +17,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using static MPDCtrlX.Services.MpcService;
+using static MPDCtrlX.Core.Services.MpcService;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace MPDCtrlX.Services;
+namespace MPDCtrlX.Core.Services;
 
 public class MpcBinaryService : IMpcBinaryService
 {

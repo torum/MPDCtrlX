@@ -1,10 +1,10 @@
 using Avalonia.Threading;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 /// <summary>
 /// Profile class for connection setting.

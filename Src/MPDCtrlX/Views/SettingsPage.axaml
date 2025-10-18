@@ -3,13 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
 			 x:DataType="vm:MainViewModel"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
 			 xmlns:ui="using:FluentAvalonia.UI.Controls"
              x:CompileBindings="True"
-             x:Class="MPDCtrlX.Views.SettingsPage">
+             x:Class="MPDCtrlX.Core.Views.SettingsPage">
 
 	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>

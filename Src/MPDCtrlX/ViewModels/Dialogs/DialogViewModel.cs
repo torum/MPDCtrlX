@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPDCtrlX.ViewModels.Dialogs
+namespace MPDCtrlX.Core.ViewModels.Dialogs
 {
     public class DialogViewModel : ViewModelBase
     {

@@ -3,11 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.ViewModels;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class PlaylistItemPage : UserControl
 {
@@ -398,12 +398,12 @@ public partial class PlaylistItemPage : UserControl
 
         var dialog = new ContentDialog
         {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_NewPlaylistName,
+            Title = MPDCtrlX.Core.Properties.Resources.Dialog_Title_NewPlaylistName,
             IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.RenameNewPlaylistDialog()
             {
                 //DataContext = new DialogViewModel()
@@ -425,7 +425,7 @@ public partial class PlaylistItemPage : UserControl
             {
                 var resultHint = new ContentDialog()
                 {
-                    Content = MPDCtrlX.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
+                    Content = MPDCtrlX.Core.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
                     Title = plname,
                     PrimaryButtonText = "OK"
                 };

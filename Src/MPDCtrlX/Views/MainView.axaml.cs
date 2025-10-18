@@ -1,13 +1,13 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Text;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class MainView : UserControl
 {

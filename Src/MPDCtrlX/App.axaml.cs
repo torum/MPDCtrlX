@@ -6,19 +6,19 @@ using Avalonia.Threading;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MPDCtrlX.Models;
-using MPDCtrlX.Services;
-using MPDCtrlX.Services.Contracts;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views;
-using MPDCtrlX.Views.Dialogs;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.Services;
+using MPDCtrlX.Core.Services.Contracts;
+using MPDCtrlX.Core.ViewModels;
+using MPDCtrlX.Core.Views;
+using MPDCtrlX.Core.Views.Dialogs;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace MPDCtrlX;
+namespace MPDCtrlX.Core;
 
 public partial class App : Application
 {

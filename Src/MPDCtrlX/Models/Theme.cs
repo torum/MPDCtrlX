@@ -1,4 +1,4 @@
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class Theme
 {

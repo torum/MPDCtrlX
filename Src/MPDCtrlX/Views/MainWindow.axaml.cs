@@ -10,9 +10,9 @@ using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.ViewModels;
+using MPDCtrlX.Core.Views;
 using SkiaSharp;
 using System;
 using System.Diagnostics;
@@ -23,7 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
@@ -109,7 +109,7 @@ public partial class MainWindow : Window//AppWindow//
             vm.GoToSettingsPage -= OnGoToSettingsPage;
         };
 
-        Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
+        Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX.Core/Assets/MPDCtrlX-24.png")));
         ImageAppIcon.Source = bitmap;
 
         /*

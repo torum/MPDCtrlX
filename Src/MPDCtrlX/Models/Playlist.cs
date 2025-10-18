@@ -1,6 +1,6 @@
 using System;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class Playlist
 {

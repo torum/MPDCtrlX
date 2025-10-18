@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class NodeMenu : NodeTree
 {
@@ -160,7 +160,7 @@ public class MenuTreeBuilder : NodeTree
 
     public MenuTreeBuilder(string name) : base(name)
     {
-        NodeMenuQueue queue = new(Properties.Resources.MenuTreeItem_Queue)
+        NodeMenuQueue queue = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Queue)
         {
             //Selected = true,
             Selected = false,
@@ -171,7 +171,7 @@ public class MenuTreeBuilder : NodeTree
         Children.Add(queue);
         _queueDirectory = queue;
 
-        NodeMenuSearch search = new(Properties.Resources.MenuTreeItem_Search)
+        NodeMenuSearch search = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Search)
         {
             Selected = false,
             Expanded = false,
@@ -181,7 +181,7 @@ public class MenuTreeBuilder : NodeTree
         Children.Add(search);
         _searchDirectory = search;
 
-        NodeMenuLibrary library = new(Properties.Resources.MenuTreeItem_Library)
+        NodeMenuLibrary library = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Library)
         {
             Selected = false,
             Expanded = false,
@@ -191,7 +191,7 @@ public class MenuTreeBuilder : NodeTree
         Children.Add(library);
         _libraryDirectory = library;
 
-        NodeMenuAlbum albums = new(Properties.Resources.MenuTreeItem_Albums)
+        NodeMenuAlbum albums = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Albums)
         {
             Selected = false,
             Expanded = false,
@@ -202,7 +202,7 @@ public class MenuTreeBuilder : NodeTree
         _albumsDirectory = albums;
         
 
-        NodeMenuArtist artists = new(Properties.Resources.MenuTreeItem_Artists)
+        NodeMenuArtist artists = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Artists)
         {
             Selected = false,
             Expanded = false,
@@ -213,7 +213,7 @@ public class MenuTreeBuilder : NodeTree
         _artistsDirectory = artists;
 
 
-        NodeMenuFiles files = new(Properties.Resources.MenuTreeItem_Files)
+        NodeMenuFiles files = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Files)
         {
             Selected = false,
             Expanded = false,
@@ -224,7 +224,7 @@ public class MenuTreeBuilder : NodeTree
         _filesDirectory = files;
 
 
-        NodeMenuPlaylists playlists = new(Properties.Resources.MenuTreeItem_Playlists)
+        NodeMenuPlaylists playlists = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Playlists)
         {
             Selected = false,
             Expanded = false,

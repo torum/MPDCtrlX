@@ -1,6 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="MPDCtrlX.App"
+             x:Class="MPDCtrlX.Core.App"
 			 RequestedThemeVariant="Dark"
 			 xmlns:sty="using:FluentAvalonia.Styling">
              <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -14,6 +14,6 @@
 		-->
 		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="False"/>
 		
-		<StyleInclude Source="avares://MPDCtrlX/Styles/Styles.axaml" />
+		<StyleInclude Source="avares://MPDCtrlX.Core/Styles/Styles.axaml" />
 	</Application.Styles>
 </Application>

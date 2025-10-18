@@ -2,9 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.ViewModels;
 
-namespace MPDCtrlX.Views;
+namespace MPDCtrlX.Core.Views;
 
 public partial class ArtistPage : UserControl
 {

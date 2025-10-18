@@ -27,9 +27,9 @@
 			
 			<ResourceDictionary.MergedDictionaries>
 				<!-- <ResourceInclude Source="avares://MPDCtrlX/Styles/AppWindowStyles.axaml" /> -->
-				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewStyles.axaml" />
-				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemStyles.axaml" />
-				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemPresenterStyles.axaml" />
+				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewStyles.axaml" />
+				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemStyles.axaml" />
+				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemPresenterStyles.axaml" />
 
 			</ResourceDictionary.MergedDictionaries>
 

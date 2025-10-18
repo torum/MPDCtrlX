@@ -4,12 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" 
 			 d:DesignWidth="800" d:DesignHeight="450"
-			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
-			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
-			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
-			 xmlns:common="clr-namespace:MPDCtrlX.Common"
+			 xmlns:vm="clr-namespace:MPDCtrlX.Core.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
+			 xmlns:common="clr-namespace:MPDCtrlX.Core.Common"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
-             x:Class="MPDCtrlX.Views.ArtistPage"
+             x:Class="MPDCtrlX.Core.Views.ArtistPage"
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True">
 

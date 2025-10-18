@@ -1,8 +1,8 @@
 ﻿using FluentAvalonia.UI.Controls;
-using MPDCtrlX.Models;
-using MPDCtrlX.Services.Contracts;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
+using MPDCtrlX.Core.Models;
+using MPDCtrlX.Core.Services.Contracts;
+using MPDCtrlX.Core.ViewModels;
+using MPDCtrlX.Core.Views.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MPDCtrlX.Services;
+namespace MPDCtrlX.Core.Services;
 
 public class DialogService : IDialogService
 {
@@ -32,12 +32,12 @@ public class DialogService : IDialogService
 
         var dialog = new ContentDialog
         {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_SelectPlaylist,
+            Title = MPDCtrlX.Core.Properties.Resources.Dialog_Title_SelectPlaylist,
             IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.SaveToDialog()
             {
                 //DataContext = new DialogViewModel()
@@ -102,10 +102,10 @@ public class DialogService : IDialogService
         {
             Title = "EDIT",
             IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.ProfileDialog()
             {
                 //DataContext = new DialogViewModel()
@@ -141,10 +141,10 @@ public class DialogService : IDialogService
         {
             Title = "ADD",
             IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = Properties.Resources.Dialog_Ok,
+            PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
             DefaultButton = ContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
-            CloseButtonText = Properties.Resources.Dialog_CancelClose,
+            CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.ProfileDialog()
             {
                 //DataContext = new DialogViewModel()

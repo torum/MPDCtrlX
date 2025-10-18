@@ -4,7 +4,7 @@ using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 
-namespace MPDCtrlX.Views.Dialogs;
+namespace MPDCtrlX.Core.Views.Dialogs;
 
 public partial class SaveAsDialog : UserControl
 {

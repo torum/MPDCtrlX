@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Xml.Linq;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 /// <summary>
 /// Generic song file class. (for listall)

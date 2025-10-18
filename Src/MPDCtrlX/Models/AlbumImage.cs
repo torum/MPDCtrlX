@@ -1,7 +1,7 @@
 using Avalonia.Media.Imaging;
 using System;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 public class AlbumImage
 {

@@ -1,11 +1,11 @@
 using Avalonia.Controls.Chrome;
 using Avalonia.Media.Imaging;
-using MPDCtrlX.ViewModels;
+using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MPDCtrlX.Models;
+namespace MPDCtrlX.Core.Models;
 
 
 public class Album : ViewModelBase

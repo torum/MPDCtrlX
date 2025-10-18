@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using MPDCtrlX.Models;
+using MPDCtrlX.Core.Models;
 
-namespace MPDCtrlX.Services.Contracts;
+namespace MPDCtrlX.Core.Services.Contracts;
 
 public interface IMpcService
 {

@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using MPDCtrlX.Models;
+using MPDCtrlX.Core.Models;
 using System.Diagnostics;
 
-namespace MPDCtrlX.Views.Dialogs;
+namespace MPDCtrlX.Core.Views.Dialogs;
 
 public partial class ProfileDialog : UserControl
 {

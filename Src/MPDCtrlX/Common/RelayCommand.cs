@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace MPDCtrlX.Common
+namespace MPDCtrlX.Core.Common
 {
     /// <summary>
     /// GenericRelayCommand
