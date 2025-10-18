@@ -6,11 +6,11 @@ MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release
 
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libHarfBuzzSharp.so
 MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libSkiaSharp.so
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX.Desktop
+MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX
 
 # Put them in ...
 
-MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX.Desktop/
+MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
 # Create a deb package
 

@@ -1,11 +1,11 @@
 [Desktop Entry]
 Name=MPDCtrlX
 Comment=
-Icon=MPDCtrlX.Desktop.png
-Exec=MPDCtrlX.Desktop
-StartupWMClass=MPDCtrlX.Desktop
+Icon=MPDCtrlX.png
+Exec=MPDCtrlX
+StartupWMClass=MPDCtrlX
 Terminal=false
 Type=Application
 Categories=Music
-GenericName=MPDCtrlX.Desktop
+GenericName=MPDCtrlX
 Keywords=MPD
