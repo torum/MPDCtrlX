@@ -1,6 +1,6 @@
-Package: MPDCtrlX.Desktop
+Package: MPDCtrlX
 Version: 1.0.0
-Section: misc
+Section: music
 Priority: optional
 Architecture: amd64
 Installed-Size: 33596,520
