@@ -152,13 +152,10 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
 						</ui:SettingsExpanderItem>
 
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
-
 					</ui:SettingsExpander>
 
 					<!-- Local storage -->
-					<ui:SettingsExpander Header="Local storage usage" Description="Cache folder/directory for album cover/art images">
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_LocalStrage}" Description="{x:Static prop:Resources.Settings_LocalStrage_Description}">
 
 						<ui:SettingsExpanderItem>
 							<Grid ColumnDefinitions="*,Auto">
@@ -173,9 +170,6 @@
 
 						</ui:SettingsExpanderItem>
 
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
-
 					</ui:SettingsExpander>
 
 					<!-- Project info -->
@@ -189,9 +183,6 @@
 							<HyperlinkButton NavigateUri="https://github.com/torum/MPDCtrlX">https://github.com/torum/MPDCtrlX</HyperlinkButton>
 						</ui:SettingsExpanderItem>
 
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
-
 					</ui:SettingsExpander>
 
 					<!-- License -->
@@ -200,9 +191,6 @@
 						<ui:SettingsExpanderItem>
 							<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
 						</ui:SettingsExpanderItem>
-
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
 
 					</ui:SettingsExpander>
 					
@@ -213,45 +201,63 @@
 							<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
 						</ui:SettingsExpanderItem>
 
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
-
 					</ui:SettingsExpander>
 
 					<!-- Third party -->
-					<ui:SettingsExpander Header="Third-party libraries" Description="Built with C#/.NET">
+					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Third_party_Libraries}" Description="{x:Static prop:Resources.Settings_Third_party_Libraries_Description}">
 
 						<ui:SettingsExpanderItem>
 							<StackPanel>
-								<TextBlock>
-									<Bold>Avalonia</Bold> by <Italic>Avalonia Team</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>CommunityToolkit.Mvvm</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>Egolds.Xaml.Behaviors.Interactions.Animated</Bold> by <Italic>Egolds</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>FluentAvaloniaUI</Bold> by <Italic>amwx</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>System.Security.Cryptography.ProtectedData</Bold> by <Italic>Microsoft</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
-								<TextBlock>
-									<Bold>Xaml.Behaviors.Avalonia</Bold> by <Italic>Wiesław Šoltés</Italic> <Run>(MIT)</Run>.
-								</TextBlock>
+								<StackPanel Orientation="Horizontal">
+									<HyperlinkButton NavigateUri="https://github.com/avaloniaui/avalonia">
+										<TextBlock>
+											<Bold>Avalonia</Bold> by <Italic>Avalonia Team</Italic> <Run>(MIT license)</Run>
+										</TextBlock>
+									</HyperlinkButton>
+									<!--
+									<HyperlinkButton NavigateUri="https://avaloniaui.net">
+										<TextBlock>
+											Corporate site
+										</TextBlock>
+									</HyperlinkButton> -->
+								</StackPanel>
+								<HyperlinkButton NavigateUri="https://github.com/CommunityToolkit/Windows">
+									<TextBlock>
+										<Bold>CommunityToolkit.Mvvm</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://github.com/Egolds/Xaml.Behaviors.Interactions.Animated">
+									<TextBlock>
+										<Bold>Egolds.Xaml.Behaviors.Interactions.Animated</Bold> by <Italic>Egolds</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://github.com/amwx/FluentAvalonia">
+									<TextBlock>
+									<Bold>FluentAvalonia</Bold> by <Italic>amwx</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/microsoft.extensions.hosting/">
+									<TextBlock>
+									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/microsoft.extensions.dependencyinjection">
+									<TextBlock>
+									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/system.security.cryptography.protecteddata/">
+									<TextBlock>
+									<Bold>System.Security.Cryptography.ProtectedData</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://github.com/wieslawsoltes/Xaml.Behaviors">
+									<TextBlock>
+									<Bold>Xaml.Behaviors.Avalonia</Bold> by <Italic>Wiesław Šoltés</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
 							</StackPanel>
 						</ui:SettingsExpanderItem>
-
-						<ui:SettingsExpander.Footer>
-						</ui:SettingsExpander.Footer>
 
 					</ui:SettingsExpander>
 					

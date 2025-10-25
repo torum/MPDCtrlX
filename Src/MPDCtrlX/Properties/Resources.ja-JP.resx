@@ -235,7 +235,7 @@
     <value>ライセンス</value>
   </data>
   <data name="LicenseText" xml:space="preserve">
-    <value>Copyright (c) 2018~ torum
+    <value>Copyright (c) 2018- torum
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -684,5 +684,17 @@ SOFTWARE.</value>
   </data>
   <data name="ListviewItemContextMenu_CopyFilePath" xml:space="preserve">
     <value>ファイルのパスをコピー</value>
+  </data>
+  <data name="Settings_Third_party_Libraries" xml:space="preserve">
+    <value>サードパーティー製のライブラリ</value>
+  </data>
+  <data name="Settings_Third_party_Libraries_Description" xml:space="preserve">
+    <value>C#/.NET</value>
+  </data>
+  <data name="Settings_LocalStrage" xml:space="preserve">
+    <value>ローカルストレージ使用状況</value>
+  </data>
+  <data name="Settings_LocalStrage_Description" xml:space="preserve">
+    <value>アルバムカバー画像の一時保存フォルダ</value>
   </data>
 </root>

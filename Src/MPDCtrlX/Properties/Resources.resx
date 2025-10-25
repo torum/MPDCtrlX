@@ -238,7 +238,7 @@
     <value>License</value>
   </data>
   <data name="LicenseText" xml:space="preserve">
-    <value>Copyright (c) 2018~ torum
+    <value>Copyright (c) 2018- torum
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -691,5 +691,17 @@ SOFTWARE.</value>
   </data>
   <data name="ListviewItemContextMenu_CopyFilePath" xml:space="preserve">
     <value>Copy File Path</value>
+  </data>
+  <data name="Settings_Third_party_Libraries" xml:space="preserve">
+    <value>Third-party Libraries</value>
+  </data>
+  <data name="Settings_Third_party_Libraries_Description" xml:space="preserve">
+    <value>Built with C#/.NET</value>
+  </data>
+  <data name="Settings_LocalStrage" xml:space="preserve">
+    <value>Local storage usage</value>
+  </data>
+  <data name="Settings_LocalStrage_Description" xml:space="preserve">
+    <value>Cache folder/directory for album cover/art images</value>
   </data>
 </root>
