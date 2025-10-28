@@ -8068,7 +8068,7 @@ public partial class MainViewModel : ObservableObject
             await Task.Delay(10);
             //await Task.Yield();
 
-            Dispatcher.UIThread.Post(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 IsWorking = true;
             });
@@ -8077,7 +8077,7 @@ public partial class MainViewModel : ObservableObject
             CommandResult result = await _mpc.MpdQueryListAll().ConfigureAwait(false);
             if (result.IsSuccess)
             {
-                Dispatcher.UIThread.Post(() =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     filestNode.IsAcquired = true;
                 });
@@ -8090,14 +8090,14 @@ public partial class MainViewModel : ObservableObject
             }
             else
             {
-                Dispatcher.UIThread.Post(() =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     filestNode.IsAcquired = false;
                 });
                 Debug.WriteLine("fail to get MpdQueryListAll: " + result.ErrorMessage);
             }
 
-            Dispatcher.UIThread.Post(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 IsWorking = false;
             });
@@ -8905,6 +8905,12 @@ public partial class MainViewModel : ObservableObject
                 {
                     if (IsRememberAsProfile)
                     {
+                        // TODO:
+                        if (string.IsNullOrEmpty(_host))
+                        {
+                            _host = "localhost";
+                        }
+
                         var prof = new Profile
                         {
                             Name = _host,
@@ -11279,7 +11285,7 @@ public partial class MainViewModel : ObservableObject
                 }
                 else
                 {
-                    Debug.WriteLine("Host info is empty. @OnMpdIdleConnected");
+                    Debug.WriteLine("Host info is empty. @ChangeConnectionProfile");
                 }
                 /*
                 //SelectedProfile = new Profile();
