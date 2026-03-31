@@ -3711,27 +3711,35 @@ public partial class MainViewModel : ObservableObject
         //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         else
         {
-            string encryptionKey = "withas";
-            byte[] sBytes = Encoding.Unicode.GetBytes(s);
-            using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
+            try
             {
-                // Obsolete and deprecated in .NET 10.
-                //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                //encryptor.Key = pdb.GetBytes(32);
-                //encryptor.IV = pdb.GetBytes(16);
-                // New since .NET 10.
-                encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
-                encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
-
-                using MemoryStream ms = new();
-                using (CryptoStream cs = new(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                string encryptionKey = "withas";
+                byte[] sBytes = Encoding.Unicode.GetBytes(s);
+                using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
                 {
-                    cs.Write(sBytes, 0, sBytes.Length);
-                    cs.Close();
+                    // Obsolete and deprecated in .NET 10.
+                    //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                    //encryptor.Key = pdb.GetBytes(32);
+                    //encryptor.IV = pdb.GetBytes(16);
+                    // New since .NET 10.
+                    encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
+                    encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
+
+                    using MemoryStream ms = new();
+                    using (CryptoStream cs = new(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(sBytes, 0, sBytes.Length);
+                        cs.Close();
+                    }
+                    s = Convert.ToBase64String(ms.ToArray());
                 }
-                s = Convert.ToBase64String(ms.ToArray());
+                return s;
             }
-            return s;
+            catch
+            {
+                Debug.WriteLine($"Encrypt fail.");
+                return s;
+            }
         }
     }
 
@@ -3760,29 +3768,37 @@ public partial class MainViewModel : ObservableObject
         //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         else
         {
-            string encryptionKey = "withas";
-            s = s.Replace(" ", "+");
-            byte[] sBytes = Convert.FromBase64String(s);
-            using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
+            try
             {
-                // Obsolete and deprecated in .NET 10.
-                //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                //encryptor.Key = pdb.GetBytes(32);
-                //encryptor.IV = pdb.GetBytes(16);
-                // New since .NET 10.
-                encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
-                encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
-
-                using MemoryStream ms = new();
-                using (CryptoStream cs = new(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                string encryptionKey = "withas";
+                s = s.Replace(" ", "+");
+                byte[] sBytes = Convert.FromBase64String(s);
+                using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
                 {
-                    cs.Write(sBytes, 0, sBytes.Length);
-                    cs.Close();
+                    // Obsolete and deprecated in .NET 10.
+                    //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                    //encryptor.Key = pdb.GetBytes(32);
+                    //encryptor.IV = pdb.GetBytes(16);
+                    // New since .NET 10.
+                    encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
+                    encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
+
+                    using MemoryStream ms = new();
+                    using (CryptoStream cs = new(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(sBytes, 0, sBytes.Length);
+                        cs.Close();
+                    }
+                    s = Encoding.Unicode.GetString(ms.ToArray());
                 }
-                s = Encoding.Unicode.GetString(ms.ToArray());
+
+                return s;
             }
-            
-            return s;
+            catch
+            {
+                Debug.WriteLine($"Decrypt fail.");
+                return "";
+            }
         }
     }
 
