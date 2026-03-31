@@ -9,7 +9,7 @@ namespace MPDCtrlX.Core.Models;
 /// <summary>
 /// Generic song file class. (for listall)
 /// </summary>
-public partial class SongFile : ViewModelBase
+public partial class SongFile : ObservableObject
 {
     public string File { get; set; } = "";
 }
@@ -146,8 +146,8 @@ public partial class SongInfo : SongFile
 
             _lastModified = value;
 
-            NotifyPropertyChanged(nameof(LastModified));
-            NotifyPropertyChanged(nameof(LastModifiedFormated));
+            OnPropertyChanged(nameof(LastModified));
+            OnPropertyChanged(nameof(LastModifiedFormated));
         }
     }
 
@@ -193,11 +193,12 @@ public partial class SongInfo : SongFile
 
             _index = value;
 
-            NotifyPropertyChanged(nameof(Index));
-            NotifyPropertyChanged(nameof(IndexPlusOne));
+            OnPropertyChanged(nameof(Index));
+            OnPropertyChanged(nameof(IndexPlusOne));
         }
     }
 
+    /*
     private bool _isSelected;
     public bool IsSelected
     {
@@ -212,9 +213,10 @@ public partial class SongInfo : SongFile
 
             _isSelected = value;
 
-            NotifyPropertyChanged(nameof(IsSelected));
+            OnPropertyChanged(nameof(IsSelected));
         }
     }
+    */
 
     public int IndexPlusOne
     {
@@ -248,7 +250,7 @@ public partial class SongInfoEx : SongInfo
 
             _pos = value;
 
-            NotifyPropertyChanged(nameof(Pos));
+            OnPropertyChanged(nameof(Pos));
         }
     }
 
@@ -266,7 +268,7 @@ public partial class SongInfoEx : SongInfo
 
             _isPlaying = value;
 
-            NotifyPropertyChanged(nameof(IsPlaying));
+            OnPropertyChanged(nameof(IsPlaying));
         }
     }
 
@@ -284,7 +286,7 @@ public partial class SongInfoEx : SongInfo
 
             _isAlbumCoverNeedsUpdate = value;
 
-            NotifyPropertyChanged(nameof(IsAlbumCoverNeedsUpdate));
+            OnPropertyChanged(nameof(IsAlbumCoverNeedsUpdate));
         }
     }
 }

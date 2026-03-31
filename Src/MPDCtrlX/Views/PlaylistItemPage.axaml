@@ -332,7 +332,9 @@
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
+						<!--
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+						-->
 						<Setter Property="ContextFlyout">
 							<Setter.Value>
 								<MenuFlyout>

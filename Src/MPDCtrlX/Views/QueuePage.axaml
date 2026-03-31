@@ -233,8 +233,8 @@
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
 			<ListBox Grid.Row="3" x:Name="QueueListBox" ItemsSource="{Binding Queue}" SelectedItem="{Binding SelectedQueueSong}" SelectionMode="Multiple" AutoScrollToSelectedItem="False" DoubleTapped="QueueListBox_DoubleTapped" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
 				<ListBox.Resources>
-					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
-					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
+					<!-- Edit: Added VerticalScrollViewerAnimatedBehavior. -->
+					<!-- (No longer used) Added ScrollChanged="ScrollViewer_ScrollChanged" inside scrollviewer. This is a workaround to keep the header in sync with the ListBox scrolling. -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
 						<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 						<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
@@ -253,7 +253,7 @@
 										BorderThickness="{TemplateBinding BorderThickness}"
 										CornerRadius="{TemplateBinding CornerRadius}">
 									<ScrollViewer Name="PART_ScrollViewer"
-												  ScrollChanged="ScrollViewer_ScrollChanged"
+												  
 												  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
 												  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
 												  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
@@ -444,7 +444,10 @@
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
+						<!--
+						Not working because Avalonia's ListBox doesn't clear selection outside of viewort.
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+						-->
 						<Setter Property="ContextFlyout">
 							<Setter.Value>
 								<MenuFlyout>

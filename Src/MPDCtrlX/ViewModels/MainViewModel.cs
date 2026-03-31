@@ -45,7 +45,8 @@ using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
 using Path = System.IO.Path;
-//using CommunityToolkit.WinUI.Converters; // this is bad one.
+
+#pragma warning disable IDE0028
 
 namespace MPDCtrlX.Core.ViewModels;
 
@@ -2554,7 +2555,9 @@ public partial class MainViewModel : ObservableObject
             }
 
             var filtered = Queue.Where(song => FilterSongInfoEx(song));
+
             QueueForFilter = new ObservableCollection<SongInfoEx>(filtered);
+
             /*
             var collectionView = CollectionViewSource.GetDefaultView(_queueForFilter);
             collectionView.Filter = x =>
@@ -3712,9 +3715,14 @@ public partial class MainViewModel : ObservableObject
             byte[] sBytes = Encoding.Unicode.GetBytes(s);
             using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
             {
-                Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
+                // Obsolete and deprecated in .NET 10.
+                //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                //encryptor.Key = pdb.GetBytes(32);
+                //encryptor.IV = pdb.GetBytes(16);
+                // New since .NET 10.
+                encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
+                encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
+
                 using MemoryStream ms = new();
                 using (CryptoStream cs = new(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
                 {
@@ -3757,9 +3765,14 @@ public partial class MainViewModel : ObservableObject
             byte[] sBytes = Convert.FromBase64String(s);
             using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
             {
-                Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
+                // Obsolete and deprecated in .NET 10.
+                //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
+                //encryptor.Key = pdb.GetBytes(32);
+                //encryptor.IV = pdb.GetBytes(16);
+                // New since .NET 10.
+                encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
+                encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
+
                 using MemoryStream ms = new();
                 using (CryptoStream cs = new(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
                 {
@@ -6901,10 +6914,7 @@ public partial class MainViewModel : ObservableObject
                     CurrentSong.IsPlaying = false;
 
                     //
-                    if (_mpc.MpdCurrentSong is not null)
-                    {
-                        _mpc.MpdCurrentSong.IsPlaying = false;
-                    }
+                    _mpc.MpdCurrentSong?.IsPlaying = false;
                     AlbumCover = null;
                     //IsAlbumArtVisible = false;
                     AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
@@ -6913,10 +6923,7 @@ public partial class MainViewModel : ObservableObject
             else
             {
                 // just in case
-                if (_mpc.MpdCurrentSong is not null)
-                {
-                    _mpc.MpdCurrentSong.IsPlaying = false;
-                }
+                _mpc.MpdCurrentSong?.IsPlaying = false;
 
                 isCurrentSongWasNull = true;
             }
@@ -7103,10 +7110,7 @@ public partial class MainViewModel : ObservableObject
                     CurrentSong.IsPlaying = false;
 
                     //
-                    if (_mpc.MpdCurrentSong is not null)
-                    {
-                        _mpc.MpdCurrentSong.IsPlaying = false;
-                    }
+                    _mpc.MpdCurrentSong?.IsPlaying = false;
 
                     //IsAlbumArtVisible = false;
                     //AlbumArt = _albumArtDefault;
@@ -7328,7 +7332,7 @@ public partial class MainViewModel : ObservableObject
                         {
                             // this cuase strange selection problem.
                             //sng.IsSelected = fuga.IsSelected;
-                            fuga.IsSelected = false; // so clear it for now.
+                            //fuga.IsSelected = false; // so clear it for now.
                             fuga.IsPlaying = false;
 
                             // Just update.
@@ -11010,8 +11014,7 @@ public partial class MainViewModel : ObservableObject
 
         SelectedPlaylistSong = null;
 
-        if (_mainMenuItems.FilesDirectory is not null)
-            _mainMenuItems.FilesDirectory.IsAcquired = false;
+        _mainMenuItems.FilesDirectory?.IsAcquired = false;
 
         MusicEntries.Clear();
 
@@ -11090,8 +11093,7 @@ public partial class MainViewModel : ObservableObject
         }
 
         // Save volume.
-        if (CurrentProfile is not null)
-            CurrentProfile.Volume = Convert.ToInt32(Volume);
+        CurrentProfile?.Volume = Convert.ToInt32(Volume);
 
         /*
         // Validate Host input.
@@ -11176,11 +11178,8 @@ public partial class MainViewModel : ObservableObject
         }
         */
         // Clear current...
-        if (CurrentSong is not null)
-        {
-            CurrentSong.IsPlaying = false;
-            CurrentSong = null;
-        }
+        CurrentSong?.IsPlaying = false;
+        CurrentSong = null;
         if (CurrentSong is not null)
         {
             SelectedQueueSong = null;
@@ -11204,8 +11203,7 @@ public partial class MainViewModel : ObservableObject
 
             SelectedPlaylistSong = null;
 
-            if (_mainMenuItems.FilesDirectory is not null)
-                _mainMenuItems.FilesDirectory.IsAcquired = false;
+            _mainMenuItems.FilesDirectory?.IsAcquired = false;
 
             MusicEntries.Clear();
 
@@ -11338,15 +11336,11 @@ public partial class MainViewModel : ObservableObject
         }
 
         // Save volume.
-        if (CurrentProfile is not null)
-            CurrentProfile.Volume = Volume;
+        CurrentProfile?.Volume = Volume;
 
         // Clear current...
-        if (CurrentSong is not null)
-        {
-            CurrentSong.IsPlaying = false;
-            CurrentSong = null;
-        }
+        CurrentSong?.IsPlaying = false;
+        CurrentSong = null;
         if (CurrentSong is not null)
         {
             SelectedQueueSong = null;
@@ -11373,8 +11367,7 @@ public partial class MainViewModel : ObservableObject
 
             SelectedPlaylistSong = null;
 
-            if (_mainMenuItems.FilesDirectory is not null)
-                _mainMenuItems.FilesDirectory.IsAcquired = false;
+            _mainMenuItems.FilesDirectory?.IsAcquired = false;
 
             MusicEntries.Clear();
 

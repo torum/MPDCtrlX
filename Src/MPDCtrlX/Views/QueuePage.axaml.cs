@@ -188,25 +188,18 @@ public partial class QueuePage : UserControl
             {
                 lb.ScrollIntoView(ind);
 
+                lb.SelectedIndex = ind;
+
+                // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
+                /*
                 if (DataContext is not MainViewModel vm)
                 {
                     return;
                 }
 
-                /* 
-                var test = vm?.Queue.FirstOrDefault(x => x.IsPlaying == true);
-                if (test != null)
-                {
-                    //lb.ScrollIntoView(test.Index);
-                    test.IsSelected = true;
-                }
-                */
-
                 var test = vm?.Queue.FirstOrDefault(x => x.Index == ind);
-                if (test != null)
-                {
-                    test.IsSelected = true;
-                }
+                test?.IsSelected = true;
+                */
 
                 //lb.AutoScrollToSelectedItem = true;
             }
@@ -231,7 +224,8 @@ public partial class QueuePage : UserControl
             {
                 lb.ScrollIntoView(song.Index);
 
-                song.IsSelected = true;
+                lb.SelectedIndex = song.Index;
+                //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
             }
         }
     }

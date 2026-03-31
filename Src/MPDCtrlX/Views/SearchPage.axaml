@@ -256,7 +256,7 @@
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
-					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. Added ScrollChanged="ScrollViewer_ScrollChanged" -->
+					<!-- (No longer used) Added ScrollChanged="ScrollViewer_ScrollChanged" inside scrollviewer. This is a workaround to keep the header in sync with the ListBox scrolling. -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
 						<Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
 						<Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
@@ -275,7 +275,7 @@
 										BorderThickness="{TemplateBinding BorderThickness}"
 										CornerRadius="{TemplateBinding CornerRadius}">
 									<ScrollViewer Name="PART_ScrollViewer"
-												  ScrollChanged="ScrollViewer_ScrollChanged"
+												  
 												  VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
 												  HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
 												  HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
@@ -368,7 +368,10 @@
 						<Setter Property="MinHeight" Value="32"/>
 						<Setter Property="Padding" Value="0,0,0,0"/>
 						<Setter Property="VerticalAlignment" Value="Center"/>
+						<!--
+						Not working because Avalonia's ListBox doesn't clear selection outside of viewort.
 						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+						-->
 						<Setter Property="ContextFlyout">
 							<Setter.Value>
 								<MenuFlyout>
