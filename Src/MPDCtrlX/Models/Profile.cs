@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MPDCtrlX.Core.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,9 +10,9 @@ namespace MPDCtrlX.Core.Models;
 /// <summary>
 /// Profile class for connection setting.
 /// </summary>
-public class Profile : ViewModelBase
+public class Profile : ObservableObject
 {
-    private string _host = "";
+    private string _host = string.Empty;
     public string Host
     {
         get { return _host; }
@@ -21,7 +22,7 @@ public class Profile : ViewModelBase
                 return;
 
             _host = value;
-            NotifyPropertyChanged(nameof(Host));
+            OnPropertyChanged(nameof(Host));
         }
     }
 
@@ -51,11 +52,11 @@ public class Profile : ViewModelBase
                 return;
 
             _port = value;
-            NotifyPropertyChanged(nameof(Port));
+            OnPropertyChanged(nameof(Port));
         }
     }
 
-    private string _password = "";
+    private string _password = string.Empty;
     public string Password
     {
         get { return _password; }
@@ -65,11 +66,11 @@ public class Profile : ViewModelBase
                 return;
 
             _password = value;
-            NotifyPropertyChanged(nameof(Password));
+            OnPropertyChanged(nameof(Password));
         }
     }
 
-    private string _name = "";
+    private string _name = string.Empty;
     public string Name
     {
         get { return _name; }
@@ -79,7 +80,7 @@ public class Profile : ViewModelBase
                 return;
 
             _name = value;
-            NotifyPropertyChanged(nameof(Name));
+            OnPropertyChanged(nameof(Name));
         }
     }
 
@@ -94,7 +95,7 @@ public class Profile : ViewModelBase
 
             _isDefault = value;
 
-            NotifyPropertyChanged(nameof(IsDefault));
+            OnPropertyChanged(nameof(IsDefault));
         }
     }
 
@@ -109,7 +110,7 @@ public class Profile : ViewModelBase
 
             _volume = value;
 
-            NotifyPropertyChanged(nameof(Volume));
+            OnPropertyChanged(nameof(Volume));
         }
     }
 }

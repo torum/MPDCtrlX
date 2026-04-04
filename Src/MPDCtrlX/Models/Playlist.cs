@@ -1,12 +1,13 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 
 namespace MPDCtrlX.Core.Models;
 
-public class Playlist
+public class Playlist : ObservableObject
 {
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
 
-    private string _lastModified = "";
+    private string _lastModified = string.Empty;
     public string LastModified
     {
         get
@@ -19,6 +20,9 @@ public class Playlist
                 return;
 
             _lastModified = value;
+
+            OnPropertyChanged(nameof(LastModified));
+            OnPropertyChanged(nameof(LastModifiedFormated));
         }
     }
 

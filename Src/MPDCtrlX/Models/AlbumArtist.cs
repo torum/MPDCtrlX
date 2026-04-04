@@ -1,5 +1,6 @@
 using Avalonia.Controls.Chrome;
 using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MPDCtrlX.Core.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -8,26 +9,31 @@ using System.ComponentModel;
 namespace MPDCtrlX.Core.Models;
 
 
-public class Album : ViewModelBase
+public class Album : ObservableObject
 {
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = string.Empty;
 
     public bool IsSongsAcquired { get; set; } = false;
 
-    public ObservableCollection<SongInfo> Songs { get; set; } = [];
+    public ObservableCollection<SongInfo> _songs = [];
+    public ObservableCollection<SongInfo> Songs
+    {
+        get => _songs;
+        set
+        {
+            if (_songs == value)
+            {
+                return;
+            }
+            _songs = value;
+            OnPropertyChanged(nameof(Songs));
+        }
+    }
 }
-
-public class AlbumArtist
-{
-    public string Name { get; set; } = "";
-
-    public ObservableCollection<Album> Albums { get; private set; } = [];
-}
-
 
 public class AlbumEx :Album
 {
-    public string AlbumArtist { get; set; } = "";
+    public string AlbumArtist { get; set; } = string.Empty;
 
     public string? AlbumImagePath { get; set; } = null;
 
@@ -36,14 +42,22 @@ public class AlbumEx :Album
         get => _albumImage; 
         set
         {
-            if (_albumImage != value)
+            if (_albumImage == value)
             {
-                _albumImage = value;
-                NotifyPropertyChanged(nameof(AlbumImage));
+                return;
             }
+            _albumImage = value;
+            OnPropertyChanged(nameof(AlbumImage));
         }
     }
 
     public bool IsImageAcquired { get; set; } = false;
     public bool IsImageLoading { get; set; } = false;
+}
+
+public class AlbumArtist
+{
+    public string Name { get; set; } = string.Empty;
+
+    public ObservableCollection<Album> Albums { get; private set; } = [];
 }

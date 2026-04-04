@@ -140,21 +140,25 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             _isNavigationViewMenuOpen = value;
+
             OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
 
-            foreach (var hoge in MainMenuItems)
+            // Needed this. Otherwise, there will be some weird visual bugs when expanding/collapsing the menu via hamburger menu button.
+            Dispatcher.UIThread.Post(() =>
             {
-                switch (hoge)
+                foreach (var hoge in MainMenuItems)
                 {
-                    case NodeMenuLibrary lib:
-                        lib.Expanded = _isNavigationViewMenuOpen;
-                        break;
-                    case NodeMenuPlaylists plt:
-                        plt.Expanded = _isNavigationViewMenuOpen;
-                        break;
+                    switch (hoge)
+                    {
+                        case NodeMenuLibrary lib:
+                            lib.Expanded = _isNavigationViewMenuOpen;
+                            break;
+                        case NodeMenuPlaylists plt:
+                            plt.Expanded = _isNavigationViewMenuOpen;
+                            break;
+                    }
                 }
-            }
-
+            });
         }
     }
 
@@ -10371,8 +10375,13 @@ public partial class MainViewModel : ObservableObject
         if (IsWorking) return;
         if (SelectedNodeMenu is null)
             return;
-        if (SelectedNodeMenu is not NodeMenuPlaylistItem)
+        if (SelectedNodeMenu is not NodeMenuPlaylistItem list)
             return;
+
+        if (list.PlaylistSongs.Count == 0)
+        {
+            return;
+        }
 
         await _mpc.MpdLoadPlaylist(SelectedNodeMenu.Name);
     }
@@ -10387,8 +10396,13 @@ public partial class MainViewModel : ObservableObject
         */
         if (SelectedNodeMenu is null)
             return;
-        if (SelectedNodeMenu is not NodeMenuPlaylistItem)
+        if (SelectedNodeMenu is not NodeMenuPlaylistItem list)
             return;
+
+        if (list.PlaylistSongs.Count == 0)
+        {
+            return;
+        }
 
         Dispatcher.UIThread.Post(() => {
             Queue.Clear();
@@ -10447,24 +10461,6 @@ public partial class MainViewModel : ObservableObject
             _playlistPageSubTitleSongCount = ""; 
             OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
 
-            /*
-            foreach (var fuga in _mainMenuItems.PlaylistsDirectory.Children)
-            {
-                if (fuga is NodeMenuPlaylistItem)
-                {
-                    if (string.Equals(playlist, fuga.Name))
-                    {
-                        Debug.WriteLine($"{playlist} is now selected....");
-                        IsNavigationViewMenuOpen = true;
-                        fuga.Selected = true;
-                        SelectedNodeMenu = fuga;
-                        SelectedPlaylistName = fuga.Name;
-                        break;
-                    }
-                }
-            }
-            */
-
             foreach (var hoge in MainMenuItems)
             {
                 if (hoge is NodeMenuPlaylists)
@@ -10475,11 +10471,16 @@ public partial class MainViewModel : ObservableObject
                         {
                             if (string.Equals(playlist, fuga.Name))
                             {
-                                Debug.WriteLine($"{playlist} is now selected....");
-                                IsNavigationViewMenuOpen = true;
-                                fuga.Selected = true;
-                                SelectedNodeMenu = fuga;
-                                SelectedPlaylistName = fuga.Name;
+                                //Debug.WriteLine($"{playlist} is now selected....");
+                                
+                                // Needed this. Otherwise, Playlist name wouldn't update. 
+                                Dispatcher.UIThread.Post(() =>
+                                {
+                                    IsNavigationViewMenuOpen = true;
+                                    fuga.Selected = true;
+                                    SelectedNodeMenu = fuga;
+                                    SelectedPlaylistName = fuga.Name;
+                                });
                                 break;
                             }
                         }
@@ -10647,6 +10648,7 @@ public partial class MainViewModel : ObservableObject
 
         if (obj is not ObservableCollection<SongInfo> list) return;
         if (list.Count <= 0) return;
+
         Dispatcher.UIThread.Post(() => {
             Queue.Clear();
             CurrentSong = null;        

@@ -11,7 +11,7 @@ namespace MPDCtrlX.Core.Models;
 /// </summary>
 public partial class SongFile : ObservableObject
 {
-    public string File { get; set; } = "";
+    public string File { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -20,8 +20,8 @@ public partial class SongFile : ObservableObject
 
 public partial class SongInfo : SongFile
 {
-    public string Title { get; set; } = "";
-    public string Track { get; set; } = "";
+    public string Title { get; set; } = string.Empty;
+    public string Track { get; set; } = string.Empty;
     public int TrackSort
     {
         get
@@ -39,7 +39,7 @@ public partial class SongInfo : SongFile
             return iTrack;
         }
     }
-    public string Disc { get; set; } = "";
+    public string Disc { get; set; } = string.Empty;
     public int DiscSort
     {
         get
@@ -57,12 +57,12 @@ public partial class SongInfo : SongFile
             return iDisc;
         }
     }
-    public string Time { get; set; } = "";
+    public string Time { get; set; } = string.Empty;
     public string TimeFormated
     {
         get
         {
-            string _timeFormatted = "";
+            string _timeFormatted = string.Empty;
             try
             {
                 if (!string.IsNullOrEmpty(Time))
@@ -124,15 +124,15 @@ public partial class SongInfo : SongFile
             return dtime;
         }
     }
-    public string Duration { get; set; } = "";
-    public string Artist { get; set; } = "";
-    public string Album { get; set; } = "";
-    public string AlbumArtist { get; set; } = "";
-    public string Composer { get; set; } = "";
-    public string Date { get; set; } = "";
-    public string Genre { get; set; } = "";
+    public string Duration { get; set; } = string.Empty;
+    public string Artist { get; set; } = string.Empty;
+    public string Album { get; set; } = string.Empty;
+    public string AlbumArtist { get; set; } = string.Empty;
+    public string Composer { get; set; } = string.Empty;
+    public string Date { get; set; } = string.Empty;
+    public string Genre { get; set; } = string.Empty;
     
-    private string _lastModified = "";
+    private string _lastModified = string.Empty;
     public string LastModified
     {
         get
@@ -234,9 +234,9 @@ public partial class SongInfoEx : SongInfo
 {
     // Queue specific
 
-    public string Id { get; set; } = "";
+    public string Id { get; set; } = string.Empty;
 
-    private string _pos = "";
+    private string _pos = string.Empty;
     public string Pos
     {
         get

@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using MPDCtrlX.Core.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,7 +10,7 @@ namespace MPDCtrlX.Core.Models;
 /// <summary>
 /// Base class for Treeview Node and Listview Item.
 /// </summary>
-abstract public class Node : ViewModelBase
+abstract public class Node : ObservableObject
 {
     private string _name;
     public string Name
@@ -25,7 +26,7 @@ abstract public class Node : ViewModelBase
 
             _name = value;
 
-            NotifyPropertyChanged(nameof(Name));
+            OnPropertyChanged(nameof(Name));
         }
     }
 
@@ -40,9 +41,10 @@ abstract public class Node : ViewModelBase
         {
             if (_pathData == value)
                 return;
+
             _pathData = value;
 
-            NotifyPropertyChanged(nameof(PathIcon));
+            OnPropertyChanged(nameof(PathIcon));
         }
     }
 
@@ -71,7 +73,7 @@ public class NodeTree : Node
 
             _selected = value;
 
-            NotifyPropertyChanged(nameof(Selected));
+            OnPropertyChanged(nameof(Selected));
         }
     }
 
@@ -89,7 +91,7 @@ public class NodeTree : Node
 
             _expanded = value;
 
-            NotifyPropertyChanged(nameof(Expanded));
+            OnPropertyChanged(nameof(Expanded));
         }
     }
 
@@ -106,10 +108,9 @@ public class NodeTree : Node
             if (_parent == value)
                 return;
 
-
             _parent = value;
 
-            NotifyPropertyChanged(nameof(Parent));
+            OnPropertyChanged(nameof(Parent));
         }
     }
 
@@ -122,15 +123,16 @@ public class NodeTree : Node
         }
         set
         {
+            if (_children == value)
+                return;
+
             _children = value;
 
-            NotifyPropertyChanged(nameof(Children));
+            OnPropertyChanged(nameof(Children));
         }
     }
 
     protected NodeTree(string name) : base(name)
     {
-        //BindingOperations.EnableCollectionSynchronization(_children, new object());
     }
-
 }
