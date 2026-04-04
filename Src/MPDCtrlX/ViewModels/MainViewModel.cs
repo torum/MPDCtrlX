@@ -7699,14 +7699,16 @@ public partial class MainViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             // Sort
-            //CultureInfo ci = CultureInfo.CurrentCulture;
-            //StringComparer comp = StringComparer.Create(ci, true);
+            var ci = CultureInfo.CurrentCulture;
+            var comp = StringComparer.Create(ci, true);
 
             UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
-            Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. //.OrderBy(x => x.Name, comp)
+            //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. 
+            Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
 
             UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
-            Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY. // Sort .OrderBy(x => x.Name, comp)
+            //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
+            Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
 
             UpdateProgress?.Invoke(this, "");
             /* 
