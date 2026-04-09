@@ -35,6 +35,8 @@ public class AlbumEx :Album
 {
     public string AlbumArtist { get; set; } = string.Empty;
 
+    public string AlbumArtistSort { get; set; } = string.Empty;
+
     public string? AlbumImagePath { get; set; } = null;
 
     private Bitmap? _albumImage = null;

@@ -3857,6 +3857,25 @@ public partial class MpcService : IMpcService
         return Task.FromResult(true);
     }
 
+    private static string RemoveThePrefix(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        string prefix = "The ";
+
+        if (value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return value[prefix.Length..];
+        }
+        else
+        {
+            return value;
+        }
+    }
+
     private Task<bool> ParseListAlbumGroupAlbumArtist(string result, bool sort)
     {
         if (MpdStop) return Task.FromResult(false);
@@ -3896,15 +3915,7 @@ public partial class MpcService : IMpcService
                     {
                         if (!string.IsNullOrEmpty(arts.Name))
                         {
-                            if (arts.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase))
-                            {
-                                arts.NameSort = arts.Name.Replace("The ", "");
-                            }
-                            else
-                            {
-                                arts.NameSort = arts.Name;
-                            }
-                            //Debug.WriteLine(arts.NameSort);
+                            arts.NameSort = RemoveThePrefix(arts.Name);
 
                             AlbumArtists.Add(arts);
                         }
@@ -3922,7 +3933,8 @@ public partial class MpcService : IMpcService
                     var albx = new AlbumEx
                     {
                         Name = value.Replace("Album: ", ""),
-                        AlbumArtist = arts?.Name ?? ""
+                        AlbumArtist = arts?.Name ?? "",
+                        AlbumArtistSort = RemoveThePrefix(arts?.Name)
                     };
 
                     arts?.Albums.Add(albx);
@@ -3944,15 +3956,7 @@ public partial class MpcService : IMpcService
                     {
                         if (!string.IsNullOrEmpty(arts.Name))
                         {
-                            if (arts.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase))
-                            {
-                                arts.NameSort = arts.Name.Replace("The ", "");
-                            }
-                            else
-                            {
-                                arts.NameSort = arts.Name;
-                            }
-                            //Debug.WriteLine(arts.NameSort);
+                            arts.NameSort = RemoveThePrefix(arts.Name);
 
                             AlbumArtists.Add(arts);
                         }

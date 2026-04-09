@@ -7709,7 +7709,8 @@ public partial class MainViewModel : ObservableObject
 
             UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
             //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
-            Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
+            //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
+            Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort 
 
             UpdateProgress?.Invoke(this, "");
             /* 
