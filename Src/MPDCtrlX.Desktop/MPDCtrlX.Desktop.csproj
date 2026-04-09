@@ -12,8 +12,8 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<IncludeSymbols>True</IncludeSymbols>
 
-		<VersionPrefix>1.0.0.0</VersionPrefix>
-		<FileVersion>1.0.0.0</FileVersion>
+		<VersionPrefix>1.0.1.0</VersionPrefix>
+		<FileVersion>1.0.1.0</FileVersion>
 
 		<AssemblyName>MPDCtrlX</AssemblyName>
 		

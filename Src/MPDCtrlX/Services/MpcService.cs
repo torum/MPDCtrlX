@@ -1964,10 +1964,12 @@ public partial class MpcService : IMpcService
         MpcProgress?.Invoke(this, "[Background] Querying artists...");
 
         CommandResult result = await MpdCommandSendCommand("list album group albumartist");
+        // Test
+        //CommandResult result = await MpdCommandSendCommand("list album group albumartistsort");
         if (result.IsSuccess)
         {
             MpcProgress?.Invoke(this, "[Background] Parsing artists...");
-            result.IsSuccess = await ParseListAlbumGroupAlbumArtist(result.ResultText);
+            result.IsSuccess = await ParseListAlbumGroupAlbumArtist(result.ResultText, false);
             MpcProgress?.Invoke(this, "[Background] Artists updated.");
         }
         MpcProgress?.Invoke(this, "");
@@ -3855,7 +3857,7 @@ public partial class MpcService : IMpcService
         return Task.FromResult(true);
     }
 
-    private Task<bool> ParseListAlbumGroupAlbumArtist(string result)
+    private Task<bool> ParseListAlbumGroupAlbumArtist(string result, bool sort)
     {
         if (MpdStop) return Task.FromResult(false);
 
@@ -3875,23 +3877,43 @@ public partial class MpcService : IMpcService
             int i = 0;
 
             AlbumArtist? arts = null;
+
+            var albumArtistType = string.Empty;
+            if (sort)
+            {
+                albumArtistType = "AlbumArtistSort:";
+            }
+            else
+            {
+                albumArtistType = "AlbumArtist:";
+            }
+
             foreach (string value in resultLines)
             {
-                if (value.StartsWith("AlbumArtist:"))
+                if (value.StartsWith(albumArtistType))
                 {
                     if (arts is not null)
                     {
                         if (!string.IsNullOrEmpty(arts.Name))
                         {
+                            if (arts.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                arts.NameSort = arts.Name.Replace("The ", "");
+                            }
+                            else
+                            {
+                                arts.NameSort = arts.Name;
+                            }
+                            //Debug.WriteLine(arts.NameSort);
+
                             AlbumArtists.Add(arts);
                         }
                     }
 
                     arts = new AlbumArtist
                     {
-                        Name = value.Replace("AlbumArtist: ", "")
+                        Name = value.Replace(albumArtistType + " ", "")
                     };
-                    //AlbumArtists.Add(arts);
 
                     MpcProgress?.Invoke(this, string.Format("[Background] Parsing AlbumArtists ({0})...", i));
                 }
@@ -3922,6 +3944,16 @@ public partial class MpcService : IMpcService
                     {
                         if (!string.IsNullOrEmpty(arts.Name))
                         {
+                            if (arts.Name.StartsWith("The ", StringComparison.OrdinalIgnoreCase))
+                            {
+                                arts.NameSort = arts.Name.Replace("The ", "");
+                            }
+                            else
+                            {
+                                arts.NameSort = arts.Name;
+                            }
+                            //Debug.WriteLine(arts.NameSort);
+
                             AlbumArtists.Add(arts);
                         }
                     }
@@ -4248,20 +4280,11 @@ public partial class MpcService : IMpcService
             {
                 sng.Artist = SongValues["Artist"];
             }
-            /*
-            else
+
+            if (SongValues.ContainsKey("ArtistSort"))
             {
-                if (SongValues.ContainsKey("AlbumArtist"))
-                {
-                    // TODO: Should I?
-                    //sng.Artist = SongValues["AlbumArtist"];
-                }
-                else
-                {
-                    sng.Artist = "";
-                }
+                sng.ArtistSort = SongValues["ArtistSort"];
             }
-            */
 
             if (SongValues.ContainsKey("Last-Modified"))
             {

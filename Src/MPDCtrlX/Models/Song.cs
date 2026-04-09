@@ -126,6 +126,7 @@ public partial class SongInfo : SongFile
     }
     public string Duration { get; set; } = string.Empty;
     public string Artist { get; set; } = string.Empty;
+    public string ArtistSort { get; set; } = string.Empty;
     public string Album { get; set; } = string.Empty;
     public string AlbumArtist { get; set; } = string.Empty;
     public string Composer { get; set; } = string.Empty;

@@ -55,9 +55,10 @@ public class AlbumEx :Album
     public bool IsImageLoading { get; set; } = false;
 }
 
-public class AlbumArtist
+public class AlbumArtist : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
+    public string NameSort { get; set; } = string.Empty;
 
     public ObservableCollection<Album> Albums { get; private set; } = [];
 }

@@ -2942,7 +2942,7 @@ public partial class MainViewModel : ObservableObject
                 OnPropertyChanged(nameof(SelectedAlbumArtist));
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
-               
+
                 // TODO:
                 _ = Task.Run(async () =>
                 {
@@ -7704,7 +7704,8 @@ public partial class MainViewModel : ObservableObject
 
             UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
             //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. 
-            Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
+            //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
+            Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.NameSort, comp));// COPY. // Sort 
 
             UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
             //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
@@ -12094,14 +12095,19 @@ public partial class MainViewModel : ObservableObject
 
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
-        SelectedAlbumArtist = item;
+
         GoToArtistPage();
+        SelectedAlbumArtist = item;
     }
 
     private void GoToArtistPage()
     {
-        IsNavigationViewMenuOpen = true;
-        _mainMenuItems.ArtistsDirectory.Selected = true;
+        Dispatcher.UIThread.Post(() =>  // Test
+        {
+            IsNavigationViewMenuOpen = true;
+            _mainMenuItems.ArtistsDirectory.Selected = true;
+        });
+
         //GoToSelectedPage?.Invoke(this, _mainMenuItems.ArtistsDirectory);
         /*
         foreach (var hoge in MainMenuItems)
@@ -12187,8 +12193,9 @@ public partial class MainViewModel : ObservableObject
 
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
-        SelectedAlbumArtist = item;
+
         GoToArtistPage();
+        SelectedAlbumArtist = item;
     }
 
     #endregion
