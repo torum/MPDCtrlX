@@ -171,15 +171,6 @@ public class MenuTreeBuilder : NodeTree
         Children.Add(queue);
         _queueDirectory = queue;
 
-        NodeMenuSearch search = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Search)
-        {
-            Selected = false,
-            Expanded = false,
-
-            Parent = this
-        };
-        Children.Add(search);
-        _searchDirectory = search;
 
         NodeMenuLibrary library = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Library)
         {
@@ -190,6 +181,7 @@ public class MenuTreeBuilder : NodeTree
         };
         Children.Add(library);
         _libraryDirectory = library;
+
 
         NodeMenuAlbum albums = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Albums)
         {
@@ -222,6 +214,17 @@ public class MenuTreeBuilder : NodeTree
         };
         library.Children.Add(files);
         _filesDirectory = files;
+
+
+        NodeMenuSearch search = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Search)
+        {
+            Selected = false,
+            Expanded = false,
+
+            Parent = this
+        };
+        library.Children.Add(search);
+        _searchDirectory = search;
 
 
         NodeMenuPlaylists playlists = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Playlists)
