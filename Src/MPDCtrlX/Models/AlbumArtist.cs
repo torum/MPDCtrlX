@@ -12,7 +12,7 @@ namespace MPDCtrlX.Core.Models;
 public class Album : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
-
+    public string NameSort { get; set; } = string.Empty;
     public bool IsSongsAcquired { get; set; } = false;
 
     public ObservableCollection<SongInfo> _songs = [];

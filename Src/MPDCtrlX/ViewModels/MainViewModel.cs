@@ -2943,6 +2943,23 @@ public partial class MainViewModel : ObservableObject
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
 
+                if (SelectedArtistAlbums is null)
+                {
+                    return;
+                }
+
+                if (IsAlbumSortWithoutThePrefix)
+                {
+                    // Sort
+                    var ci = CultureInfo.CurrentCulture;
+                    var comp = StringComparer.Create(ci, true);
+                    SelectedArtistAlbums = new ObservableCollection<Album>(SelectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                }
+                else
+                {
+                    Debug.WriteLine("SelectedArtistAlbums is not sorted because IsAlbumSortWithoutThePrefix is false.");
+                }
+
                 // TODO:
                 _ = Task.Run(async () =>
                 {
@@ -3378,6 +3395,36 @@ public partial class MainViewModel : ObservableObject
             _isAutoScrollToNowPlaying = value;
 
             OnPropertyChanged(nameof(IsAutoScrollToNowPlaying));
+        }
+    }
+
+    private bool _isArtistSortWithoutThePrefix = false;
+    public bool IsArtistSortWithoutThePrefix
+    {
+        get { return _isArtistSortWithoutThePrefix; }
+        set
+        {
+            if (_isArtistSortWithoutThePrefix == value)
+                return;
+
+            _isArtistSortWithoutThePrefix = value;
+
+            OnPropertyChanged(nameof(IsArtistSortWithoutThePrefix));
+        }
+    }
+
+    private bool _isAlbumSortWithoutThePrefix = false;
+    public bool IsAlbumSortWithoutThePrefix
+    {
+        get { return _isAlbumSortWithoutThePrefix; }
+        set
+        {
+            if (_isAlbumSortWithoutThePrefix == value)
+                return;
+
+            _isAlbumSortWithoutThePrefix = value;
+
+            OnPropertyChanged(nameof(IsAlbumSortWithoutThePrefix));
         }
     }
 
@@ -4693,6 +4740,32 @@ public partial class MainViewModel : ObservableObject
                             else
                             {
                                 IsAutoScrollToNowPlaying = false;
+                            }
+                        }
+
+                        hoge = opts.Attribute("ArtistSortWithoutThePrefix");
+                        if (hoge is not null)
+                        {
+                            if (hoge.Value == "True")
+                            {
+                                IsArtistSortWithoutThePrefix = true;
+                            }
+                            else
+                            {
+                                IsArtistSortWithoutThePrefix = false;
+                            }
+                        }
+
+                        hoge = opts.Attribute("AlbumSortWithoutThePrefix");
+                        if (hoge is not null)
+                        {
+                            if (hoge.Value == "True")
+                            {
+                                IsAlbumSortWithoutThePrefix = true;
+                            }
+                            else
+                            {
+                                IsAlbumSortWithoutThePrefix = false;
                             }
                         }
 
@@ -6574,6 +6647,30 @@ public partial class MainViewModel : ObservableObject
         }
         opts.SetAttributeNode(attrs);
 
+        //
+        attrs = doc.CreateAttribute("ArtistSortWithoutThePrefix");
+        if (IsArtistSortWithoutThePrefix)
+        {
+            attrs.Value = "True";
+        }
+        else
+        {
+            attrs.Value = "False";
+        }
+        opts.SetAttributeNode(attrs);
+
+        //
+        attrs = doc.CreateAttribute("AlbumSortWithoutThePrefix");
+        if (IsAlbumSortWithoutThePrefix)
+        {
+            attrs.Value = "True";
+        }
+        else
+        {
+            attrs.Value = "False";
+        }
+        opts.SetAttributeNode(attrs);
+
         // 
         attrs = doc.CreateAttribute("UpdateOnStartup");
         if (IsUpdateOnStartup)
@@ -7704,13 +7801,29 @@ public partial class MainViewModel : ObservableObject
 
             UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
             //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. 
-            //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
-            Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.NameSort, comp));// COPY. // Sort 
+
+            // Sort with AlbumArtist for Artist view.
+            if (IsArtistSortWithoutThePrefix)
+            {
+                Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.NameSort, comp));// COPY. // Sort without prefix like "The".
+            }
+            else
+            {
+                Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
+            }
 
             UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
             //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
-            //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
-            Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort 
+
+            // Sort with AlbumArtist for Album view.(TODO: Save preference. AlbumArtist/Album name)
+            if (IsArtistSortWithoutThePrefix)
+            {
+                Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+            }
+            else
+            {
+                Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
+            }
 
             UpdateProgress?.Invoke(this, "");
             /* 

@@ -19,7 +19,7 @@ namespace MPDCtrlX.Core.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -1416,6 +1416,24 @@ namespace MPDCtrlX.Core.Properties {
         public static string Settings_LocalStrage_Description {
             get {
                 return ResourceManager.GetString("Settings_LocalStrage_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sort album without &quot;The&quot; and &quot;A&quot; prefix. (Require relaunch to take effect) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_AlbumSortWithoutTheAndAPrefix {
+            get {
+                return ResourceManager.GetString("Settings_Opts_AlbumSortWithoutTheAndAPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sort artists without &quot;The&quot; prefix. (Require relaunch to take effect) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_ArtistSortWithoutThePrefix {
+            get {
+                return ResourceManager.GetString("Settings_Opts_ArtistSortWithoutThePrefix", resourceCulture);
             }
         }
         

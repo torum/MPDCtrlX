@@ -152,6 +152,15 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
 						</ui:SettingsExpanderItem>
 
+						<ui:SettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_ArtistSortWithoutThePrefix}" IsChecked="{Binding IsArtistSortWithoutThePrefix}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+
+						<ui:SettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AlbumSortWithoutTheAndAPrefix}" IsChecked="{Binding IsAlbumSortWithoutThePrefix}" Margin="0"></CheckBox>
+						</ui:SettingsExpanderItem>
+						
+
 					</ui:SettingsExpander>
 
 					<!-- Local storage -->
