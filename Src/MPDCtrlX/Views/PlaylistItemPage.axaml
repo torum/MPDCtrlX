@@ -129,6 +129,9 @@
 							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Clear}" Command="{Binding PlaylistClearPlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
 							<Separator/>
 							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Remove}" Command="{Binding PlaylistRemovePlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+							<Separator/>
+							<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_RemoveDuplicates}" Command="{Binding PlaylistRemoveDuplicatesCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
+						
 						</MenuFlyout>
 					</Button.Flyout>
 				</Button>

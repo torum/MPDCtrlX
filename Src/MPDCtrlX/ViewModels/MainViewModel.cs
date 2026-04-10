@@ -2948,18 +2948,6 @@ public partial class MainViewModel : ObservableObject
                     return;
                 }
 
-                if (IsAlbumSortWithoutThePrefix)
-                {
-                    // Sort
-                    var ci = CultureInfo.CurrentCulture;
-                    var comp = StringComparer.Create(ci, true);
-                    SelectedArtistAlbums = new ObservableCollection<Album>(SelectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
-                }
-                else
-                {
-                    Debug.WriteLine("SelectedArtistAlbums is not sorted because IsAlbumSortWithoutThePrefix is false.");
-                }
-
                 // TODO:
                 _ = Task.Run(async () =>
                 {
@@ -2989,6 +2977,18 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             _selectedArtistAlbums = value;
+
+            if (_selectedArtistAlbums is not null)
+            {
+                if (IsAlbumSortWithoutThePrefix)
+                {
+                    // Sort
+                    var ci = CultureInfo.CurrentCulture;
+                    var comp = StringComparer.Create(ci, true);
+                    _selectedArtistAlbums = new ObservableCollection<Album>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                }
+            }
+
             OnPropertyChanged(nameof(SelectedArtistAlbums));
         }
     }
@@ -8258,7 +8258,7 @@ public partial class MainViewModel : ObservableObject
             IsWorking = true;
             await Task.Yield();
 
-            var r = await SearchArtistSongs(artist.Name).ConfigureAwait(ConfigureAwaitOptions.None);
+            var r = await SearchArtistSongs(artist.Name);//.ConfigureAwait(ConfigureAwaitOptions.None);
 
             UpdateProgress?.Invoke(this, "");
 
@@ -8440,7 +8440,7 @@ public partial class MainViewModel : ObservableObject
 
                 if (string.IsNullOrEmpty(album.Name.Trim()))
                 {
-                    Debug.WriteLine($"GetAlbumPictures: album.Name is null or empty, skipping. {album.AlbumArtist}");
+                    //Debug.WriteLine($"GetAlbumPictures: album.Name is null or empty, skipping. {album.AlbumArtist}");
                     continue;
                 }
 
@@ -10605,7 +10605,6 @@ public partial class MainViewModel : ObservableObject
                 }
             }
         });
-
     }
 
     // CheckPlaylistNameExists when Rename playlists.
@@ -10721,6 +10720,44 @@ public partial class MainViewModel : ObservableObject
         if (IsBusy) return;
 
         await _mpc.MpdAdd(song.File);
+    }
+
+    // Remove duplicated songs in a playlist. 
+    [RelayCommand]
+    public void PlaylistRemoveDuplicates(string playlist)
+    {
+        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        {
+            return;
+        }
+
+        if (_selectedPlaylistName != playlist)
+        {
+            return;
+        }
+
+        if (PlaylistSongs.Count <= 1)
+        {
+            return;
+        }
+
+        //var duplicates = PlaylistSongs.GroupBy(x => x.File).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+        var uniqueSongs = PlaylistSongs.GroupBy(s => s.File).Select(g => g.First()).ToList();
+
+        if (PlaylistSongs.Count == uniqueSongs.Count)
+        {
+            return;
+        }
+
+        List<string> uris = [];
+        foreach (var song in uniqueSongs)
+        {
+            //Debug.WriteLine($"Unique song: {song.Title} - {song.File}");
+            uris.Add(song.File);
+        }
+
+        _mpc.MpdPlaylistClear(_selectedPlaylistName);
+        _mpc.MpdPlaylistAdd(_selectedPlaylistName, uris);
     }
 
     #endregion

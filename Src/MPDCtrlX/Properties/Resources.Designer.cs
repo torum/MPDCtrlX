@@ -1168,6 +1168,15 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
+        ///   Remove duplicate songs に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PlaylistItemMenu_RemoveDuplicates {
+            get {
+                return ResourceManager.GetString("PlaylistItemMenu_RemoveDuplicates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Rename に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PlaylistItemMenu_Rename {
