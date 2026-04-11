@@ -2256,22 +2256,15 @@ public partial class MainViewModel : ObservableObject
             */
             else if (value is NodeMenuArtist)
             {
-                CurrentPage = App.GetService<ArtistPage>();
-
-                if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
+                Dispatcher.UIThread.Post(() =>
                 {
-                    Dispatcher.UIThread.Post(() =>
+                    CurrentPage = App.GetService<ArtistPage>();
+
+                    if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
                     {
                         SelectedAlbumArtist = Artists[0];
-                    });
-                }
-                // Get album pictures.
-                /*
-                if (!IsAlbumArtsDownLoaded)
-                {
-                    GetAlbumPictures(_albums);
-                }
-                */
+                    }
+                });
             }
             else if (value is NodeMenuAlbum nmb)
             {
@@ -12247,8 +12240,11 @@ public partial class MainViewModel : ObservableObject
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        GoToArtistPage();
-        SelectedAlbumArtist = item;
+        Dispatcher.UIThread.Post(() =>  // Test
+        {
+            SelectedAlbumArtist = item;
+        });
+        GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
     }
 
     private void GoToArtistPage()
@@ -12258,6 +12254,7 @@ public partial class MainViewModel : ObservableObject
             IsNavigationViewMenuOpen = true;
             _mainMenuItems.ArtistsDirectory.Selected = true;
         });
+
 
         //GoToSelectedPage?.Invoke(this, _mainMenuItems.ArtistsDirectory);
         /*
@@ -12345,8 +12342,11 @@ public partial class MainViewModel : ObservableObject
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        GoToArtistPage();
-        SelectedAlbumArtist = item;
+        Dispatcher.UIThread.Post(() =>  // Test
+        {
+            SelectedAlbumArtist = item;
+        });
+        GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
     }
 
     #endregion
