@@ -2258,13 +2258,13 @@ public partial class MainViewModel : ObservableObject
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-                    CurrentPage = App.GetService<ArtistPage>();
-
                     if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
                     {
                         SelectedAlbumArtist = Artists[0];
                     }
+                    CurrentPage = App.GetService<ArtistPage>();
                 });
+
             }
             else if (value is NodeMenuAlbum nmb)
             {
@@ -12243,8 +12243,8 @@ public partial class MainViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>  // Test
         {
             SelectedAlbumArtist = item;
+            GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
         });
-        GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
     }
 
     private void GoToArtistPage()
@@ -12345,8 +12345,8 @@ public partial class MainViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>  // Test
         {
             SelectedAlbumArtist = item;
+            GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
         });
-        GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
     }
 
     #endregion

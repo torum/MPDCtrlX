@@ -12,8 +12,8 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<IncludeSymbols>True</IncludeSymbols>
 
-		<VersionPrefix>1.0.1.0</VersionPrefix>
-		<FileVersion>1.0.1.0</FileVersion>
+		<VersionPrefix>1.0.1.1</VersionPrefix>
+		<FileVersion>1.0.1.1</FileVersion>
 
 		<AssemblyName>MPDCtrlX</AssemblyName>
 		
@@ -25,7 +25,8 @@
 		<PublishAot>True</PublishAot>
 		<!-- Recommended Avalonia trimming settings for Native AOT -->
 		<BuiltInComInteropSupport>False</BuiltInComInteropSupport>
-		<TrimMode>link</TrimMode>
+		<!-- <TrimMode>link</TrimMode> -->
+		<TrimMode>partial</TrimMode>
 		<PublishTrimmed>True</PublishTrimmed>
 		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>true</SelfContained>
