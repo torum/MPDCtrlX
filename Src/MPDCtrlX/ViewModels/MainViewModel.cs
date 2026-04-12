@@ -2256,15 +2256,21 @@ public partial class MainViewModel : ObservableObject
             */
             else if (value is NodeMenuArtist)
             {
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
+                    IsWorking = true;
+                    //await Task.Yield();
+                    await Task.Delay(10);
+
                     if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
                     {
                         SelectedAlbumArtist = Artists[0];
                     }
                     CurrentPage = App.GetService<ArtistPage>();
-                });
 
+                    await Task.Delay(20);
+                    IsWorking = false;
+                });
             }
             else if (value is NodeMenuAlbum nmb)
             {
@@ -2935,7 +2941,6 @@ public partial class MainViewModel : ObservableObject
                 OnPropertyChanged(nameof(SelectedAlbumArtist));
 
                 SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
-
                 if (SelectedArtistAlbums is null)
                 {
                     return;
@@ -2946,7 +2951,7 @@ public partial class MainViewModel : ObservableObject
                 {
                     IsWorking = true;
                     await Task.Yield();
-
+                    await Task.Delay(20);
                     GetArtistSongs(_selectedAlbumArtist);
                     GetAlbumPictures(SelectedArtistAlbums);
 
@@ -12240,36 +12245,20 @@ public partial class MainViewModel : ObservableObject
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        Dispatcher.UIThread.Post(() =>  // Test
-        {
-            SelectedAlbumArtist = item;
-            GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
-        });
+        GoToArtistPage(item);
     }
 
-    private void GoToArtistPage()
+    private void GoToArtistPage(AlbumArtist artist)
     {
-        Dispatcher.UIThread.Post(() =>  // Test
-        {
-            IsNavigationViewMenuOpen = true;
-            _mainMenuItems.ArtistsDirectory.Selected = true;
-        });
-
-
-        //GoToSelectedPage?.Invoke(this, _mainMenuItems.ArtistsDirectory);
         /*
-        foreach (var hoge in MainMenuItems)
+        Dispatcher.UIThread.Post(async () =>  // Test
         {
-            if (hoge is not NodeMenuLibrary) continue;
-            foreach (var fuga in hoge.Children)
-            {
-                if (fuga is not NodeMenuArtist) continue;
-                IsNavigationViewMenuOpen = true;
-                fuga.Selected = true;
-                break;
-            }
-        }
+
+        });
         */
+        IsNavigationViewMenuOpen = true;
+        SelectedAlbumArtist = artist;
+        _mainMenuItems.ArtistsDirectory.Selected = true;
     }
 
     [RelayCommand]
@@ -12342,11 +12331,7 @@ public partial class MainViewModel : ObservableObject
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        Dispatcher.UIThread.Post(() =>  // Test
-        {
-            SelectedAlbumArtist = item;
-            GoToArtistPage(); // needs to be after setting SelectedAlbumArtist.
-        });
+        GoToArtistPage(item);
     }
 
     #endregion
