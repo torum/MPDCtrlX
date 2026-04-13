@@ -1519,7 +1519,7 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
-        ///   A few preferences に類似しているローカライズされた文字列を検索します。
+        ///   Other preferences に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_Opts_Options_Description {
             get {

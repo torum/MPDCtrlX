@@ -3396,7 +3396,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isArtistSortWithoutThePrefix = false;
+    private bool _isArtistSortWithoutThePrefix = true;
     public bool IsArtistSortWithoutThePrefix
     {
         get { return _isArtistSortWithoutThePrefix; }
@@ -3411,7 +3411,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isAlbumSortWithoutThePrefix = false;
+    private bool _isAlbumSortWithoutThePrefix = true;
     public bool IsAlbumSortWithoutThePrefix
     {
         get { return _isAlbumSortWithoutThePrefix; }

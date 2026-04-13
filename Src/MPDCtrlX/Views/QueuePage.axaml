@@ -467,6 +467,7 @@
 											</PathIcon>
 										</MenuItem.Icon>
 									</MenuItem>
+									<Separator/>
 									<MenuItem Header="{x:Static prop:Resources.ListviewItemContextMenu_GoToAlbumPage}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).ListviewGoToAlbumPageCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}">
 										<MenuItem.Icon>
 											<PathIcon Background="Transparent" Width="NaN" Height="NaN"

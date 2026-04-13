@@ -223,7 +223,7 @@
     <value>絞り込み</value>
   </data>
   <data name="FilterClear" xml:space="preserve">
-    <value>絞り込みをクリアする</value>
+    <value>絞り込みをクリア</value>
   </data>
   <data name="Host" xml:space="preserve">
     <value>ホスト</value>
@@ -325,16 +325,16 @@ SOFTWARE.</value>
     <value>ボリューム</value>
   </data>
   <data name="PlaylistItemContextMenu_ClearAndLoad" xml:space="preserve">
-    <value>キューをクリアして追加する</value>
+    <value>キューをクリアして追加</value>
   </data>
   <data name="PlaylistItemContextMenu_Load" xml:space="preserve">
-    <value>キューに追加する (Enter)</value>
+    <value>キューに追加 (Enter)</value>
   </data>
   <data name="PlaylistItemMenu_Remove" xml:space="preserve">
-    <value>プレイリストを削除する</value>
+    <value>プレイリストを削除</value>
   </data>
   <data name="PlaylistItemContextMenu_Rename" xml:space="preserve">
-    <value>プレイリストの名前を変更する</value>
+    <value>プレイリストの名前を変更</value>
   </data>
   <data name="PlaylistListviewTabitemHeader_Playlists" xml:space="preserve">
     <value>プレイリスト (_P)</value>
@@ -349,7 +349,7 @@ SOFTWARE.</value>
     <value>プレイリスト</value>
   </data>
   <data name="PlaylistSongsContextMenu_Remove" xml:space="preserve">
-    <value>プレイリストから削除する</value>
+    <value>プレイリストから削除</value>
   </data>
   <data name="Dialog_Title_NewPlaylistName" xml:space="preserve">
     <value>新規プレイリスト名の入力</value>
@@ -380,13 +380,13 @@ SOFTWARE.</value>
     <value>上へ 移動</value>
   </data>
   <data name="FlyoutMenu_Clear" xml:space="preserve">
-    <value>クリアする</value>
+    <value>クリア</value>
   </data>
   <data name="ListviewItemContextMenu_Remove" xml:space="preserve">
     <value>削除</value>
   </data>
   <data name="FlyoutMenu_AddToPlaylist" xml:space="preserve">
-    <value>プレイリストに保存する</value>
+    <value>プレイリストに保存</value>
   </data>
   <data name="FlyoutMenu_ScrollIntoNowPlaying" xml:space="preserve">
     <value>現在の曲へスクロール</value>
@@ -533,13 +533,13 @@ SOFTWARE.</value>
     <value>プレイリストを選択</value>
   </data>
   <data name="PlaylistItemMenu_Clear" xml:space="preserve">
-    <value>プレイリストをクリアする</value>
+    <value>プレイリストをクリア</value>
   </data>
   <data name="PlaylistItemContextMenu_Remove" xml:space="preserve">
-    <value>プレイリストから削除する</value>
+    <value>プレイリストから削除</value>
   </data>
   <data name="PlaylistItemMenu_Rename" xml:space="preserve">
-    <value>プレイリストの名前を変更する</value>
+    <value>プレイリストの名前を変更</value>
   </data>
   <data name="Settings_Opts_Themes_System" xml:space="preserve">
     <value>システム</value>
@@ -704,6 +704,6 @@ SOFTWARE.</value>
     <value>アルバム名をソートするとき先頭の「The」と「A」を無視する。（再起動で反映）</value>
   </data>
   <data name="PlaylistItemMenu_RemoveDuplicates" xml:space="preserve">
-    <value>重複した曲を削除する</value>
+    <value>重複した曲を削除</value>
   </data>
 </root>

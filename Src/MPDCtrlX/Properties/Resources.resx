@@ -619,7 +619,7 @@ SOFTWARE.</value>
     <value>Reconnect</value>
   </data>
   <data name="Settings_Opts_Options_Description" xml:space="preserve">
-    <value>A few preferences</value>
+    <value>Other preferences</value>
   </data>
   <data name="Settings_ProjectPage" xml:space="preserve">
     <value>Project info</value>
