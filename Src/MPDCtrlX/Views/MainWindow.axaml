@@ -73,12 +73,15 @@
 		</KeyBinding>
 		-->
 	</Window.KeyBindings>
-	<Grid Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
+	<Grid Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='1,*,Auto,1,128,Auto,Auto', Windows='1,*,Auto,1,128,Auto,Auto'}">
 		<!-- v12
 		 Margin="{OnPlatform Default='0', Windows='0,30,0,0'}"
 		-->
+		
+		<Border Grid.Row="0" BorderThickness="{OnPlatform Default='0', Windows='0,1,0,0'}" Opacity="1"></Border>
+
 		<!-- NavigationView -->
-		<ui:FANavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+		<ui:FANavigationView Grid.Row="1" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 			<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
 			<ui:FANavigationView.PaneHeader>
 				<Grid ColumnDefinitions="*,Auto">
@@ -168,7 +171,7 @@
 			
 		</ui:FANavigationView>
 
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="2">
 			<!-- InfoBar -->
 			<ui:FAInfoBar Title="{Binding InfoBarInfoTitle}" IsOpen="{Binding IsShowInfoWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Informational" Message="{Binding InfoBarInfoMessage}" />
 			<ui:FAInfoBar Title="{Binding InfoBarAckTitle}" IsOpen="{Binding IsShowAckWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Warning" Message="{Binding InfoBarAckMessage}" />
@@ -176,10 +179,10 @@
 		</Grid>
 
 		<!-- Border -->
-		<Border Grid.Row="2" Opacity="0.1" BorderThickness="0,1,0,0"></Border>
+		<Border Grid.Row="3" Opacity="0.1" BorderThickness="0,1,0,0"></Border>
 		
 		<!-- Playback control area -->
-		<Grid Grid.Row="3">
+		<Grid Grid.Row="4">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
@@ -326,7 +329,7 @@
 		</Grid>
 
 		<!-- Debug Windows -->
-		<Grid x:Name="DebugWindow" Grid.Row="4" RowDefinitions="8,*" ColumnDefinitions="1*,8,1*" Height="200" IsVisible="{Binding IsShowDebugWindow, Mode=TwoWay}">
+		<Grid x:Name="DebugWindow" Grid.Row="5" RowDefinitions="8,*" ColumnDefinitions="1*,8,1*" Height="200" IsVisible="{Binding IsShowDebugWindow, Mode=TwoWay}">
 
 			<TextBox x:Name="DebugCommandTextBox" Grid.Row="1" Grid.Column="0" Text="{Binding DebugCommandText, Mode=OneWay}" Background="{DynamicResource LayerFillColorDefaultBrush}" BorderThickness="0" AcceptsReturn="True" Padding="6 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextWrapping="NoWrap" IsReadOnly="False" IsTabStop="False" Margin="4,0,0,4" MinHeight="24">
 			</TextBox>
@@ -337,7 +340,7 @@
 		</Grid>
 		
 		<!-- StatusBar -->
-		<Border Grid.Row="5" Height="32" Margin="0 0 0 0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6" IsVisible="False">
+		<Border Grid.Row="6" Height="32" Margin="0 0 0 0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6" IsVisible="False">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />

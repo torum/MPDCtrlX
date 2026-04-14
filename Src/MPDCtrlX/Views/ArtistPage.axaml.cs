@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Core.ViewModels;
+using System.Threading.Tasks;
 
 namespace MPDCtrlX.Core.Views;
 
@@ -17,15 +19,22 @@ public partial class ArtistPage : UserControl
         InitializeComponent();
     }
 
-    private void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    private async void ListBox_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
     {
         if (SelectedArtistAlbumsScrollViewer is null)
         {
             return;
         }
 
-        this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
-        //DetailsPaneScrollViewer.ChangeView(0,0,1);
+        //this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
+        ////DetailsPaneScrollViewer.ChangeView(0,0,1);
+
+        await Task.Yield();
+        await Task.Delay(100); // Wait for UI to update
+        Dispatcher.UIThread.Post(() =>
+        {
+            this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
+        });
     }
 
     private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)

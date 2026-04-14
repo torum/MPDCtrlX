@@ -167,7 +167,7 @@ public partial class QueuePage : UserControl
     private async void OnScrollIntoView(int ind)
     {
         await Task.Yield();
-        //await Task.Delay(100); // Wait for UI to update
+        await Task.Delay(100); // Wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
             if (this.QueueListBox is ListBox lb)
@@ -181,7 +181,7 @@ public partial class QueuePage : UserControl
     private async void OnScrollIntoViewAndSelect(int ind)
     {
         await Task.Yield();
-        //await Task.Delay(800); // Need to wait for UI to update
+        await Task.Delay(100); // Need to wait for UI to update
         Dispatcher.UIThread.Post(() =>
         {
             if (this.QueueListBox is ListBox lb)

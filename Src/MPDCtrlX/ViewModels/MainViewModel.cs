@@ -2243,11 +2243,17 @@ public partial class MainViewModel : ObservableObject
 
             if (value is NodeMenuQueue)
             {
-                CurrentPage = App.GetService<QueuePage>();
+                Dispatcher.UIThread.Post(() =>
+                {
+                    CurrentPage = App.GetService<QueuePage>();
+                });
             }
             else if (value is NodeMenuSearch)
             {
-                CurrentPage = App.GetService<SearchPage>();
+                Dispatcher.UIThread.Post(() =>
+                {
+                    CurrentPage = App.GetService<SearchPage>();
+                });
             }
             /*
             else if (value is NodeMenuLibrary)
@@ -2259,18 +2265,15 @@ public partial class MainViewModel : ObservableObject
             {
                 Dispatcher.UIThread.Post(async () =>
                 {
-                    IsWorking = true;
+                    //IsWorking = true;
                     //await Task.Yield();
-                    await Task.Delay(10);
-
                     if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
                     {
                         SelectedAlbumArtist = Artists[0];
                     }
                     CurrentPage = App.GetService<ArtistPage>();
 
-                    await Task.Delay(20);
-                    IsWorking = false;
+                    //IsWorking = false;
                 });
             }
             else if (value is NodeMenuAlbum nmb)
@@ -2312,16 +2315,19 @@ public partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
-                CurrentPage = App.GetService<PlaylistItemPage>();
-
-                SelectedPlaylistSong = null;
-                PlaylistSongs = nmpli.PlaylistSongs;
-                SelectedPlaylistName = nmpli.Name;
-
-                if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                Dispatcher.UIThread.Post(() =>
                 {
-                    GetPlaylistSongs(nmpli);
-                }
+                    CurrentPage = App.GetService<PlaylistItemPage>();
+
+                    SelectedPlaylistSong = null;
+                    PlaylistSongs = nmpli.PlaylistSongs;
+                    SelectedPlaylistName = nmpli.Name;
+
+                    if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                    {
+                        GetPlaylistSongs(nmpli);
+                    }
+                });
             }
             else if (value is NodeMenu)
             {
@@ -2935,31 +2941,49 @@ public partial class MainViewModel : ObservableObject
         get { return _selectedAlbumArtist; }
         set
         {
-            if (_selectedAlbumArtist != value)
+            if (_selectedAlbumArtist == value)
             {
-                _selectedAlbumArtist = value;
-
-                OnPropertyChanged(nameof(SelectedAlbumArtist));
-
-                SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
-                if (SelectedArtistAlbums is null)
-                {
-                    return;
-                }
-
-                // TODO:
-                _ = Task.Run(async () =>
-                {
-                    IsWorking = true;
-                    await Task.Yield();
-                    await Task.Delay(20);
-                    GetArtistSongs(_selectedAlbumArtist);
-                    GetAlbumPictures(SelectedArtistAlbums);
-
-                    IsWorking = false;
-                    await Task.Yield();
-                }, _cts.Token);
+                return;
             }
+
+            _selectedAlbumArtist = value;
+            OnPropertyChanged(nameof(SelectedAlbumArtist));
+
+            if (_selectedAlbumArtist is null)
+            {
+                SelectedArtistAlbums = null;
+                return;
+            }
+
+            SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
+            //OnPropertyChanged(nameof(ArtistPageSubTitleArtistAlbumCount));
+            if (SelectedArtistAlbums is null)
+            {
+                return;
+            }
+            /*
+            // Test
+            Task.Run(async () =>
+            {
+                IsWorking = true;
+                await Task.Yield();
+                await Task.Delay(20);
+                GetArtistSongs(SelectedArtistAlbums);
+                GetAlbumPictures(SelectedArtistAlbums);
+
+                IsWorking = false;
+                await Task.Yield();
+            }, _cts.Token);
+            */
+            Dispatcher.UIThread.Post(async () =>  // Test
+            {
+                IsWorking = true;
+                await Task.Yield();
+                await Task.Delay(20);
+                GetArtistSongs(SelectedAlbumArtist);
+                GetAlbumPictures(SelectedArtistAlbums);
+                IsWorking = false;
+            }, DispatcherPriority.Default);
         }
     }
 
@@ -11205,7 +11229,6 @@ public partial class MainViewModel : ObservableObject
         SelectedAlbumArtist = null;
         SelectedAlbumSongs = [];
         SelectedArtistAlbums = null;
-        SelectedAlbumArtist = null;
 
         // TODO: more?
 
@@ -12257,9 +12280,25 @@ public partial class MainViewModel : ObservableObject
 
         });
         */
+
         IsNavigationViewMenuOpen = true;
         SelectedAlbumArtist = artist;
         _mainMenuItems.ArtistsDirectory.Selected = true;
+
+        /*
+        SelectedAlbumArtist = artist;
+        foreach (var hoge in MainMenuItems)
+        {
+            if (hoge is not NodeMenuLibrary) continue;
+            foreach (var fuga in hoge.Children)
+            {
+                if (fuga is not NodeMenuArtist) continue;
+                IsNavigationViewMenuOpen = true;
+                fuga.Selected = true;
+                break;
+            }
+        }
+        */
     }
 
     [RelayCommand]
