@@ -10,7 +10,7 @@
 		<ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<IncludeSymbols>True</IncludeSymbols>
+		<IncludeSymbols>False</IncludeSymbols>
 
 		<VersionPrefix>1.0.1.2</VersionPrefix>
 		<FileVersion>1.0.1.2</FileVersion>
@@ -20,13 +20,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<IncludeSymbols>True</IncludeSymbols>
+		<IncludeSymbols>False</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PublishAot>True</PublishAot>
 		<!-- Recommended Avalonia trimming settings for Native AOT -->
 		<BuiltInComInteropSupport>False</BuiltInComInteropSupport>
-		<!-- <TrimMode>link</TrimMode> -->
-		<TrimMode>partial</TrimMode>
+		<TrimMode>link</TrimMode>
+		<!-- <TrimMode>partial</TrimMode> -->
 		<PublishTrimmed>True</PublishTrimmed>
 		<PublishSingleFile>true</PublishSingleFile>
 		<SelfContained>true</SelfContained>

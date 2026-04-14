@@ -2923,6 +2923,7 @@ public partial class MainViewModel : ObservableObject
             _artists = value;
 
             SelectedAlbumArtist = null;
+            SelectedArtistAlbums = null;
 
             OnPropertyChanged(nameof(Artists));
             OnPropertyChanged(nameof(ArtistPageSubTitleArtistCount));
@@ -3034,6 +3035,9 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             _albums = value;
+
+            SelectedAlbum = null;
+
             OnPropertyChanged(nameof(Albums));
             OnPropertyChanged(nameof(AlbumPageSubTitleAlbumCount));
         }
@@ -12237,6 +12241,8 @@ public partial class MainViewModel : ObservableObject
         {
             SelectedAlbum = album;
             IsNavigationViewMenuOpen = true;
+            await Task.Yield(); // Wait for UI to update.
+            await Task.Delay(100); // Wait for SelectedAlbumArtist to be set and UI to update.
             _mainMenuItems.AlbumsDirectory.Selected = true;
         });
 
@@ -12285,12 +12291,21 @@ public partial class MainViewModel : ObservableObject
     private void GoToArtistPage(AlbumArtist artist)
     {
         if (artist is null) return;
-        Dispatcher.UIThread.Post(async () => 
+        Dispatcher.UIThread.Post(async () =>
         {
+            SelectedAlbumArtist = null; //Test.
+            CurrentPage = App.GetService<ArtistPage>(); //Test. Needed this...for the strange selection issue.
+            await Task.Yield(); 
+            await Task.Delay(100);
             SelectedAlbumArtist = artist;
+            await Task.Yield(); 
+            await Task.Delay(100); 
             IsNavigationViewMenuOpen = true; // Need this somehow.
+            await Task.Yield(); 
+            await Task.Delay(100);
             _mainMenuItems.ArtistsDirectory.Selected = true;
         });
+
         /*
         SelectedAlbumArtist = artist;
         foreach (var hoge in MainMenuItems)
