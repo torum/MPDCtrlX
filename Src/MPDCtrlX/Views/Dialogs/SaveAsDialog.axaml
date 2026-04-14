@@ -15,7 +15,7 @@
 			 Margin="10"
 			 HorizontalAlignment="Stretch"
 			 VerticalAlignment="Top"
-			 Watermark="Enter playlist name" AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+			 PlaceholderText="Enter playlist name" AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
 		</StackPanel>
 
 	</Grid>

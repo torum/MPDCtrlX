@@ -1145,7 +1145,8 @@ public class MpcBinaryService : IMpcBinaryService
             // resize
             var realScale = skbit.Height < skbit.Width ? (double)skbit.Height / skbit.Width : (double)skbit.Width / skbit.Height;
 
-            using var resized = skbit.Resize(new SKSizeI(400, (int)(realScale * 400)), SKFilterQuality.High);
+            //using var resized = skbit.Resize(new SKSizeI(400, (int)(realScale * 400)), SKFilterQuality.High);
+            using var resized = skbit.Resize(new SKSizeI(400, (int)(realScale * 400)), SKSamplingOptions.Default);
             using var enc = resized?.Encode(SKEncodedImageFormat.Png, 100);
             using var stm = enc?.AsStream();
             if (stm != null)

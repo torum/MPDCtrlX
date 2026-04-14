@@ -8,7 +8,7 @@
              x:Class="MPDCtrlX.Core.Views.Dialogs.RenameNewPlaylistDialog">
 	<Grid>
 		<StackPanel Margin="10" Width="250">
-			<TextBox Name="TextBoxPlaylistName" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Top" Watermark="{x:Static prop:Resources.Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName}" AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+			<TextBox Name="TextBoxPlaylistName" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Top" PlaceholderText="{x:Static prop:Resources.Dialog_TextBox_Watermark_EnterNewRenamedPlaylistName}" AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
 		</StackPanel>
 	</Grid>
 </UserControl>

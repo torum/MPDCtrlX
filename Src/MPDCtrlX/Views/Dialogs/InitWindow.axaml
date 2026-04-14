@@ -55,17 +55,17 @@
 
 				<StackPanel Spacing="3" HorizontalAlignment="Left">
 					<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
-					<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="{x:Static prop:Resources.InitialSetupWindow_Watermark_IPAddressOrServerName}" Width="250"></TextBox>
+					<TextBox Text="{Binding Host, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{x:Static prop:Resources.InitialSetupWindow_Watermark_IPAddressOrServerName}" Width="250"></TextBox>
 					<!--  (127.0.0.1 or localhost for Local PC) -->
 				</StackPanel>
 				<StackPanel Spacing="3" HorizontalAlignment="Left">
 					<TextBlock Text="{x:Static prop:Resources.Port}"></TextBlock>
-					<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Watermark="InitialSetupWindow_Watermark_DefaultIs6600" Width="250"></TextBox>
+					<TextBox Text="{Binding Port, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" PlaceholderText="InitialSetupWindow_Watermark_DefaultIs6600" Width="250"></TextBox>
 				</StackPanel>
 				<StackPanel Spacing="3" HorizontalAlignment="Left">
 					<TextBlock Text="{x:Static prop:Resources.Password}"></TextBlock>
 					<StackPanel Spacing="24" Orientation="Horizontal">
-						<TextBox Name="PasswordBox" Watermark="{x:Static prop:Resources.InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise}" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
+						<TextBox Name="PasswordBox" PlaceholderText="{x:Static prop:Resources.InitialSetupWindow_Watermark_OptionalUnlessConfiguredOtherwise}" PasswordChar="*" Text="{Binding Password, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="250"></TextBox>
 						<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
 					</StackPanel>
 				</StackPanel>
