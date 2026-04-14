@@ -160,7 +160,7 @@ public partial class MainWindow : Window//AppWindow//
 
     private void NavigationView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is not NavigationView)
+        if (sender is not FANavigationView)
         {
             return;
         }
@@ -182,10 +182,7 @@ public partial class MainWindow : Window//AppWindow//
         }
 
         vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
-        if (vm.SelectedNodeMenu != null)
-        {
-            vm.SelectedNodeMenu.Selected = true;
-        }
+        vm.SelectedNodeMenu?.Selected = true;
 
         /*
          * Debug.WriteLine(this.navigateView.MenuItems.Count.ToString());
@@ -222,9 +219,9 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    private void NavigationView_SelectionChanged(object? sender, FluentAvalonia.UI.Controls.NavigationViewSelectionChangedEventArgs e)
+    private void NavigationView_SelectionChanged(object? sender, FluentAvalonia.UI.Controls.FANavigationViewSelectionChangedEventArgs e)
     {
-        if (sender is not NavigationView)
+        if (sender is not FluentAvalonia.UI.Controls.FANavigationView)
         {
             return;
         }
@@ -269,9 +266,9 @@ public partial class MainWindow : Window//AppWindow//
         }
     }
 
-    private async void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.NavigationViewItemInvokedEventArgs e)
+    private async void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.FANavigationViewItemInvokedEventArgs e)
     {
-        if (sender is not NavigationView nv)
+        if (sender is not FluentAvalonia.UI.Controls.FANavigationView nv)
         {
             return;
         }

@@ -42,7 +42,7 @@ public partial class AlbumPage : UserControl
             return;
         }
 
-        if (AlbumSongsListBox.ItemsSource.Count() > 0)
+        if (AlbumSongsListBox.ItemCount > 0)
         {
             AlbumSongsListBox.ScrollIntoView(0);
         }

@@ -5,9 +5,10 @@
 
         <ResourceDictionary>
 
-			<!-- Temp workaround for https://github.com/AvaloniaUI/Avalonia/issues/19592  -->
+			<!-- v12 no need for v12? 
+			Temp workaround for https://github.com/AvaloniaUI/Avalonia/issues/19592 
 			<FontFamily x:Key="ContentControlThemeFontFamily">Inter</FontFamily>
-
+			 -->
 			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">0,0,0,0</CornerRadius>
 			<Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
 			<Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
@@ -26,7 +27,7 @@
 			<StaticResource x:Key="CardStrokeBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
 			
 			<ResourceDictionary.MergedDictionaries>
-				<!-- <ResourceInclude Source="avares://MPDCtrlX.Core/Styles/AppWindowStyles.axaml" /> -->
+				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/AppWindowStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemPresenterStyles.axaml" />

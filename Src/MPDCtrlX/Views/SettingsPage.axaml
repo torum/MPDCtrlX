@@ -54,9 +54,9 @@
 					</StackPanel>
 
 					<!-- Themes -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Themes}" IconSource="DarkTheme" Description="{x:Static prop:Resources.Settings_Opts_Themes_Description}">
 
-						<ui:SettingsExpander.Footer>
+						<ui:FASettingsExpander.Footer>
 							<ComboBox MinWidth="150" ItemsSource="{Binding Themes}" SelectedItem="{Binding CurrentTheme, Mode=TwoWay}" Height="42">
 								<ComboBox.ItemTemplate>
 									<DataTemplate x:DataType="mod:Theme">
@@ -71,14 +71,14 @@
 									</DataTemplate>
 								</ComboBox.ItemTemplate>
 							</ComboBox>
-						</ui:SettingsExpander.Footer>
+						</ui:FASettingsExpander.Footer>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- MPD connection and opts -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" IsExpanded="False" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_Opts_MPD}" IsExpanded="False" Description="{x:Static prop:Resources.Settings_Opts_MPD_Description}">
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 
 							<Grid ColumnDefinitions="Auto,*">
 
@@ -125,48 +125,48 @@
 								
 							</Grid>
 
-						</ui:SettingsExpanderItem>
-						<ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UpdateDatabaseOnStartup}" IsChecked="{Binding IsUpdateOnStartup}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
-						<ui:SettingsExpanderItem IsVisible="False">
+						</ui:FASettingsExpanderItem>
+						<ui:FASettingsExpanderItem IsVisible="False">
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_EnableAlbumArt}" IsChecked="{Binding IsDownloadAlbumArt}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
-						<ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
 
-						<ui:SettingsExpander.Footer>
+						<ui:FASettingsExpander.Footer>
 							<!-- Footer connection status with MPD protocol version -->
 							<TextBlock Text="{Binding ShortStatusWIthMpdVersion, Mode=OneWay}"></TextBlock>
-						</ui:SettingsExpander.Footer>
+						</ui:FASettingsExpander.Footer>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- Option -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
 
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_ArtistSortWithoutThePrefix}" IsChecked="{Binding IsArtistSortWithoutThePrefix}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AlbumSortWithoutTheAndAPrefix}" IsChecked="{Binding IsAlbumSortWithoutThePrefix}" Margin="0"></CheckBox>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 						
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- Local storage -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_LocalStrage}" Description="{x:Static prop:Resources.Settings_LocalStrage_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_LocalStrage}" Description="{x:Static prop:Resources.Settings_LocalStrage_Description}">
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<Grid ColumnDefinitions="*,Auto">
 								<StackPanel Orientation="Horizontal" Grid.Column="0">
 									<HyperlinkButton NavigateUri="{Binding AlbumCacheFolderPath, Mode=OneTime}" Content="{Binding AlbumCacheFolderPath, Mode=OneTime}" Click="HyperlinkButton_AlbumCacheFolderPath_Click" Margin="0,0,24,0"></HyperlinkButton>
@@ -177,45 +177,45 @@
 								</StackPanel>
 							</Grid>
 
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- Project info -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 						<!--
-				<ui:SettingsExpanderItem>
+				<ui:FASettingsExpanderItem>
 					<HyperlinkButton NavigateUri="https://torum.github.io/MPDCtrlX">https://torum.github.io/MPDCtrlX</HyperlinkButton>
-				</ui:SettingsExpanderItem>
+				</ui:FASettingsExpanderItem>
 				-->
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<HyperlinkButton NavigateUri="https://github.com/torum/MPDCtrlX">https://github.com/torum/MPDCtrlX</HyperlinkButton>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- License -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.License}" Description="{x:Static prop:Resources.LicenseTitle}">
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<TextBlock Text="{x:Static prop:Resources.LicenseText}" TextWrapping="Wrap"></TextBlock>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 					
 					<!-- PrivacyPolicy -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.PrivacyPolicy}" Description="Nothing is collected">
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<TextBlock Text="{x:Static prop:Resources.PrivacyPolicyText}" TextWrapping="Wrap"></TextBlock>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 
 					<!-- Third party -->
-					<ui:SettingsExpander Header="{x:Static prop:Resources.Settings_Third_party_Libraries}" Description="{x:Static prop:Resources.Settings_Third_party_Libraries_Description}">
+					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_Third_party_Libraries}" Description="{x:Static prop:Resources.Settings_Third_party_Libraries_Description}">
 
-						<ui:SettingsExpanderItem>
+						<ui:FASettingsExpanderItem>
 							<StackPanel>
 								<StackPanel Orientation="Horizontal">
 									<HyperlinkButton NavigateUri="https://github.com/avaloniaui/avalonia">
@@ -266,9 +266,9 @@
 									</TextBlock>
 								</HyperlinkButton>
 							</StackPanel>
-						</ui:SettingsExpanderItem>
+						</ui:FASettingsExpanderItem>
 
-					</ui:SettingsExpander>
+					</ui:FASettingsExpander>
 					
 					
 				</StackPanel>

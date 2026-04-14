@@ -12,8 +12,8 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<IncludeSymbols>True</IncludeSymbols>
 
-		<VersionPrefix>1.0.1.1</VersionPrefix>
-		<FileVersion>1.0.1.1</FileVersion>
+		<VersionPrefix>1.0.1.2</VersionPrefix>
+		<FileVersion>1.0.1.2</FileVersion>
 
 		<AssemblyName>MPDCtrlX</AssemblyName>
 		
@@ -58,8 +58,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia.Desktop" Version="11.3.13" />
-		<PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

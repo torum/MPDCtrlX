@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:ui="using:FluentAvalonia.UI.Controls"
+		xmlns:wnd="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
 		xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
         xmlns:views="clr-namespace:MPDCtrlX.Core.Views"
 		xmlns:mod="clr-namespace:MPDCtrlX.Core.Models"
@@ -12,10 +13,11 @@
 		x:DataType="vm:MainViewModel"
         x:CompileBindings="True"
 		Title="MPDCtrlX"
-		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="PreferSystemChrome"
+		WindowDecorations="Full"
+		ExtendClientAreaToDecorationsHint="False"
 		MinWidth="320" 
 		MinHeight="460">
+
 	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
@@ -71,25 +73,17 @@
 		</KeyBinding>
 		-->
 	</Window.KeyBindings>
-
-	<Grid Margin="{OnPlatform Default='0', Windows='0,30,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
-		<!--
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="1"/>
-			<RowDefinition Height="128"/>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+	<Grid Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='*,Auto,1,128,Auto,Auto', Windows='*,Auto,1,128,Auto,Auto'}">
+		<!-- v12
+		 Margin="{OnPlatform Default='0', Windows='0,30,0,0'}"
 		-->
 		<!-- NavigationView -->
-		<ui:NavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
+		<ui:FANavigationView Grid.Row="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" Margin="0" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 			<!--  NOT GOOD > SelectedItem="{Binding SelectedNodeMenu, Mode=TwoWay}"  SelectedItem="{Binding SelectedNodeMenu, Mode=OneWayToSource}" -->
-			<ui:NavigationView.PaneHeader>
+			<ui:FANavigationView.PaneHeader>
 				<Grid ColumnDefinitions="*,Auto">
 
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="False">
 						<Image x:Name="ImageAppIcon" Width="16" Height="16" Margin="0,0,6,0" Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 						<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 					</StackPanel>
@@ -144,14 +138,16 @@
 					</StackPanel>
 					
 				</Grid>
-			</ui:NavigationView.PaneHeader>
-			<ui:NavigationView.Resources>
+			</ui:FANavigationView.PaneHeader>
+			<ui:FANavigationView.Resources>
 				<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
-					<ui:NavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
-						<ui:NavigationViewItem.IconSource>
-							<ui:PathIconSource Data="{Binding PathIcon}"/>
-						</ui:NavigationViewItem.IconSource>
-						<ui:NavigationViewItem.Content>
+					<ui:FANavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
+						<ui:FANavigationViewItem.IconSource>
+							<ui:FAPathIconSource Data="{Binding PathIcon}"/>
+						</ui:FANavigationViewItem.IconSource>
+						<ui:FANavigationViewItem.Content>
+							<TextBlock Text="{Binding Name}" Margin="0,0,0,0"></TextBlock>
+							<!--
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,0">
 								<Viewbox Width="15" Height="15" Opacity="1" HorizontalAlignment="Left" Margin="0,0,0,0" IsVisible="False">
 									<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Padding="0"
@@ -160,22 +156,23 @@
 								</Viewbox>
 								<TextBlock Text="{Binding Name}" Margin="0,0,0,0"></TextBlock>
 							</StackPanel>
-						</ui:NavigationViewItem.Content>
-					</ui:NavigationViewItem>
+							-->
+						</ui:FANavigationViewItem.Content>
+					</ui:FANavigationViewItem>
 				</DataTemplate>
-			</ui:NavigationView.Resources>
+			</ui:FANavigationView.Resources>
 
 			<!-- We don't use Navigation frame and Navigate method in Avalonia UI because Avalonia UI does not have a cache mechanism in page navigation... resulting in multiple creation of page instance. -->
 			<!-- Use ContentControl in MainView instead.  -->
-			<ui:Frame/>
+			<ui:FAFrame/>
 			
-		</ui:NavigationView>
+		</ui:FANavigationView>
 
 		<Grid Grid.Row="1">
 			<!-- InfoBar -->
-			<ui:InfoBar Title="{Binding InfoBarInfoTitle}" IsOpen="{Binding IsShowInfoWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Informational" Message="{Binding InfoBarInfoMessage}" />
-			<ui:InfoBar Title="{Binding InfoBarAckTitle}" IsOpen="{Binding IsShowAckWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Warning" Message="{Binding InfoBarAckMessage}" />
-			<ui:InfoBar Title="{Binding InfoBarErrTitle}" IsOpen="{Binding IsShowErrWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Error" Message="{Binding InfoBarErrMessage}" />
+			<ui:FAInfoBar Title="{Binding InfoBarInfoTitle}" IsOpen="{Binding IsShowInfoWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Informational" Message="{Binding InfoBarInfoMessage}" />
+			<ui:FAInfoBar Title="{Binding InfoBarAckTitle}" IsOpen="{Binding IsShowAckWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Warning" Message="{Binding InfoBarAckMessage}" />
+			<ui:FAInfoBar Title="{Binding InfoBarErrTitle}" IsOpen="{Binding IsShowErrWindow, Mode=TwoWay}" IsIconVisible="True" IsClosable="True" Severity="Error" Message="{Binding InfoBarErrMessage}" />
 		</Grid>
 
 		<!-- Border -->

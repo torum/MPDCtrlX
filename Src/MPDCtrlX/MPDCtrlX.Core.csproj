@@ -11,8 +11,8 @@
 
 		<PlatformTarget>AnyCPU</PlatformTarget>
 
-		<VersionPrefix>1.0.1.1</VersionPrefix>
-		<FileVersion>1.0.1.1</FileVersion>
+		<VersionPrefix>1.0.1.2</VersionPrefix>
+		<FileVersion>1.0.1.2</FileVersion>
 
 	</PropertyGroup>
 
@@ -53,31 +53,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="11.3.13" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.13" />
+		<PackageReference Include="Avalonia" Version="12.0.1" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-
-		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.13" />
-		
 		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
-		<PackageReference Include="FluentAvaloniaUI" Version="2.5.1" />
+		<PackageReference Include="FluentAvaloniaUI" Version="3.0.0-preview1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
 		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.5" />
-		<PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.9.5" />
+		<PackageReference Include="Xaml.Behaviors.Avalonia" Version="12.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <AvaloniaResource Update="Assets\MPDCtrlX-24.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </AvaloniaResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<AvaloniaXaml Update="Styles\AppWindowStyles.axaml">
-			<CopyToOutputDirectory></CopyToOutputDirectory>
-		</AvaloniaXaml>
 	</ItemGroup>
 
 	<ItemGroup>

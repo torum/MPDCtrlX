@@ -4,13 +4,6 @@
                     xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
                     x:CompileBindings="True">
 
-    <Design.PreviewWith>
-        <Border Padding="50">
-            <StackPanel Spacing="4">
-                <uip:NavigationViewItemPresenter Content="Hello" IconSource="Save" />
-            </StackPanel>
-        </Border>
-    </Design.PreviewWith>
 
 	<!-- Added
 		IconColumn	 Width="{DynamicResource NavigationViewItemOnLeftIconBoxHeight}"
@@ -19,8 +12,8 @@
 	<!-- Added 
 	    SelectionIndicator  BorderThickness="1" BorderBrush="Transparent" -->
 	
-    <ControlTheme x:Key="{x:Type uip:NavigationViewItemPresenter}"
-                  TargetType="uip:NavigationViewItemPresenter">
+    <ControlTheme x:Key="{x:Type uip:FANavigationViewItemPresenter}"
+                  TargetType="uip:FANavigationViewItemPresenter">
         <!--<Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />-->
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -230,8 +223,8 @@
     </ControlTheme>
 
     <ControlTheme x:Key="NavigationViewItemPresenterWhenOnTopPane"
-                  TargetType="uip:NavigationViewItemPresenter"
-                  BasedOn="{StaticResource {x:Type uip:NavigationViewItemPresenter}}">
+                  TargetType="uip:FANavigationViewItemPresenter"
+                  BasedOn="{StaticResource {x:Type uip:FANavigationViewItemPresenter}}">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -440,8 +433,8 @@
     </ControlTheme>
 
     <ControlTheme x:Key="NavigationViewItemPresenterWhenOnTopPaneOverflow"
-                  TargetType="uip:NavigationViewItemPresenter"
-                  BasedOn="{StaticResource {x:Type uip:NavigationViewItemPresenter}}">
+                  TargetType="uip:FANavigationViewItemPresenter"
+                  BasedOn="{StaticResource {x:Type uip:FANavigationViewItemPresenter}}">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="Template">
             <ControlTemplate>

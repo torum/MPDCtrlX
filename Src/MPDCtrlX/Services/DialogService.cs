@@ -30,12 +30,12 @@ public class DialogService : IDialogService
             return null;
         }
 
-        var dialog = new ContentDialog
+        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
             Title = MPDCtrlX.Core.Properties.Resources.Dialog_Title_SelectPlaylist,
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.SaveToDialog()
@@ -59,7 +59,7 @@ public class DialogService : IDialogService
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
+        if (result == FluentAvalonia.UI.Controls.FAContentDialogResult.Primary && dialog.Content is Views.Dialogs.SaveToDialog dlg)
         {
 
             if (dlg.CreateNewCheckBox.IsChecked is true)
@@ -98,12 +98,12 @@ public class DialogService : IDialogService
             return null;
         }
 
-        var dialog = new ContentDialog
+        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
             Title = "EDIT",
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.ProfileDialog()
@@ -121,7 +121,7 @@ public class DialogService : IDialogService
 
         var result = await dialog.ShowAsync();
 
-        if (result != ContentDialogResult.Primary)
+        if (result != FluentAvalonia.UI.Controls.FAContentDialogResult.Primary)
         {
             return null;
         }
@@ -137,12 +137,12 @@ public class DialogService : IDialogService
 
     public async Task<Profile?> ShowProfileAddDialog()
     {
-        var dialog = new ContentDialog
+        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
             Title = "ADD",
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.ProfileDialog()
@@ -158,7 +158,7 @@ public class DialogService : IDialogService
 
         var result = await dialog.ShowAsync();
 
-        if (result != ContentDialogResult.Primary)
+        if (result != FluentAvalonia.UI.Controls.FAContentDialogResult.Primary)
         {
             return null;
         }

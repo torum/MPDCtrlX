@@ -396,12 +396,12 @@ public partial class PlaylistItemPage : UserControl
             return;
         }
 
-        var dialog = new ContentDialog
+        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
             Title = MPDCtrlX.Core.Properties.Resources.Dialog_Title_NewPlaylistName,
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_Ok,
-            DefaultButton = ContentDialogButton.Primary,
+            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
             IsSecondaryButtonEnabled = false,
             CloseButtonText = MPDCtrlX.Core.Properties.Resources.Dialog_CancelClose,
             Content = new Views.Dialogs.RenameNewPlaylistDialog()
@@ -412,7 +412,7 @@ public partial class PlaylistItemPage : UserControl
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary && dialog.Content is Views.Dialogs.RenameNewPlaylistDialog dlg)
+        if (result == FluentAvalonia.UI.Controls.FAContentDialogResult.Primary && dialog.Content is Views.Dialogs.RenameNewPlaylistDialog dlg)
         {
             var plname = dlg.TextBoxPlaylistName.Text;
 
@@ -423,7 +423,7 @@ public partial class PlaylistItemPage : UserControl
 
             if (vm.CheckIfPlaylistExists(plname.Trim()))
             {
-                var resultHint = new ContentDialog()
+                var resultHint = new FluentAvalonia.UI.Controls.FAContentDialog()
                 {
                     Content = MPDCtrlX.Core.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
                     Title = plname,
