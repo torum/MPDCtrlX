@@ -62,5 +62,18 @@ public class AlbumArtist : ObservableObject
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
 
-    public ObservableCollection<Album> Albums { get; private set; } = [];
+    public ObservableCollection<Album> _albums = [];
+    public ObservableCollection<Album> Albums
+    {
+        get => _albums;
+        private set
+        {
+            if (_albums == value)
+            {
+                return;
+            }
+            _albums = value;
+            OnPropertyChanged(nameof(Albums));
+        }
+    }
 }
