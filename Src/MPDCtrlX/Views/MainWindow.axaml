@@ -246,7 +246,7 @@
 							</MenuFlyout>
 						</Button.Flyout>
 						<StackPanel Margin="80,0,0,0" VerticalAlignment="Top">
-							<TextBlock x:Name="CurrentSongTitle" Text="{Binding CurrentSongTitle, Mode=OneWay}" FontSize="20" FontWeight="Bold" Opacity="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
+							<TextBlock x:Name="CurrentSongTitle" Text="{Binding CurrentSongTitle, Mode=OneWay}" FontSize="20" FontWeight="SemiBold" Opacity="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"></TextBlock>
 							<TextBlock Opacity="0.8" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongArtist" Text="{Binding CurrentSongArtist, Mode=OneWay}" IsVisible="{Binding IsCurrentSongArtistNotNull, Mode=OneWay}"></TextBlock>
 							<TextBlock Opacity="0.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" x:Name="CurrentSongAlbum" Text="{Binding CurrentSongAlbum, Mode=OneWay}" IsVisible="{Binding IsCurrentSongAlbumNotNull, Mode=OneWay}"></TextBlock>
 						</StackPanel>

@@ -274,7 +274,7 @@ SOFTWARE.</value>
     <value>プレイリスト</value>
   </data>
   <data name="MenuTreeItem_Queue" xml:space="preserve">
-    <value>キュー</value>
+    <value>再生キュー</value>
   </data>
   <data name="MenuTreeItem_Search" xml:space="preserve">
     <value>検索</value>

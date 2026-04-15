@@ -77,8 +77,8 @@ public class AlbumArtist : ObservableObject
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
 
-    public ObservableCollection<AlbumEx> _albums = [];
-    public ObservableCollection<AlbumEx> Albums
+    public ObservableCollection<Album> _albums = [];
+    public ObservableCollection<Album> Albums
     {
         get => _albums;
         private set

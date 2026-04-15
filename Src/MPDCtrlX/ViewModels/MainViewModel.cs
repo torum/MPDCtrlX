@@ -3010,8 +3010,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private ObservableCollection<AlbumEx>? _selectedArtistAlbums = [];
-    public ObservableCollection<AlbumEx>? SelectedArtistAlbums
+    private ObservableCollection<Album>? _selectedArtistAlbums = [];
+    public ObservableCollection<Album>? SelectedArtistAlbums
     {
         get 
         {
@@ -3031,7 +3031,7 @@ public partial class MainViewModel : ObservableObject
                     // Sort
                     var ci = CultureInfo.CurrentCulture;
                     var comp = StringComparer.Create(ci, true);
-                    _selectedArtistAlbums = new ObservableCollection<AlbumEx>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                    _selectedArtistAlbums = new ObservableCollection<Album>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
                 }
             }
 
@@ -8357,7 +8357,6 @@ public partial class MainViewModel : ObservableObject
                         {
                             slbm.ReleaseYear = song.Date;
                         }
-                        Debug.WriteLine($"GetArtistSongs: Added song {song.Title} to album {slbm.Name} ({slbm.ReleaseYear}) of artist {artist.Name}.");
                     }
                 }
 
