@@ -200,6 +200,7 @@
 										</Grid.RowDefinitions>
 
 										<StackPanel Margin="16,16,16,16">
+											<!--
 											<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
 												<Interaction.Behaviors>
 													<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
@@ -207,6 +208,10 @@
 													</DataTriggerBehavior>
 												</Interaction.Behaviors>
 											</TextBlock>
+											-->
+											<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+											<TextBlock Grid.Row="0" Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+
 										</StackPanel>
 
 										<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="24" Margin="16,0,16,16" HorizontalAlignment="Left">

@@ -1,9 +1,11 @@
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
+using Avalonia.Media;
 using System;
 using System.Globalization;
 using System.Windows;
 
-namespace MPDCtrlX.Core.Common
+namespace MPDCtrlX.Core.Converters
 {
     /*
     public static class TreeViewItemExtensions
@@ -29,4 +31,23 @@ namespace MPDCtrlX.Core.Common
         }
     }
     */
+
+    public class BoolToFontWeightConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            // If the bool is true, return Bold, otherwise Normal
+            if (value is bool isBold && isBold)
+            {
+                return FontWeight.SemiBold;
+            }
+            return FontWeight.Normal;
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
+

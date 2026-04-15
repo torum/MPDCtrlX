@@ -716,4 +716,7 @@ SOFTWARE.</value>
   <data name="Text_UnknownArtist" xml:space="preserve">
     <value>Unknown Artist</value>
   </data>
+  <data name="Text_UnknownAlbum" xml:space="preserve">
+    <value>Unknown Album</value>
+  </data>
 </root>
