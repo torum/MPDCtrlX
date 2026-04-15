@@ -8,6 +8,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
+using FluentAvalonia.UI.Navigation;
 using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Core.Models;
@@ -82,6 +83,7 @@ public partial class MainWindow : Window//AppWindow//
         InitializeComponent();
 
         this.NavigateViewControl.Content = App.GetService<MainView>();
+        //this.ContentFrame.Navigate(typeof(MainView));
 
         // Temp
         //GoToSettingsPage(null,EventArgs.Empty);
@@ -237,32 +239,14 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        if (e.SelectedItem is NodeMenuPlaylists)
+        if (e.SelectedItem is NodeTree)
         {
-            // don't change page here.
-            if (vm.SelectedNodeMenu != null)
-            {
-                //vm.SelectedNodeMenu.Selected = true;
-            }
-        }
-        else if (e.SelectedItem is NodeMenuLibrary)
-        {
-            // don't change page here.
-            if (vm.SelectedNodeMenu != null)
-            {
-                //vm.SelectedNodeMenu.Selected = true;
-            }
+            vm.SelectedNodeMenu = e.SelectedItem as NodeTree;
         }
         else
         {
-            if (e.SelectedItem is not null)
-            {
-                vm.SelectedNodeMenu = e.SelectedItem as NodeTree;
-            }
-            else
-            {
-                vm.SelectedNodeMenu = null;
-            }
+            Debug.WriteLine("e.SelectedItem is not NodeTree. @NavigationView_SelectionChanged");
+            vm.SelectedNodeMenu = null;
         }
     }
 
@@ -273,125 +257,26 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        if (e.IsSettingsInvoked == true)
-        {
-            if (this.DataContext is MainViewModel vm)
-            {
-                await vm.GetCacheFolderSize();
-            }
-
-            nv.Content = App.GetService<SettingsPage>();
-
-            return;
-        }
-
-        var mainView = App.GetService<MainView>();
-        if (nv.Content != mainView)
-        {
-            nv.Content = mainView;
-        }
-
-        //
-        /*
-        if (sender is not NavigationView)
-        {
-            return;
-        }
-
         if (this.DataContext is not MainViewModel vm)
         {
             return;
         }
 
-        if (e.InvokedItemContainer is NavigationViewItem item)
+        // Not really "invoked" now that we use clicking on the settings icon....
+        if (e.IsSettingsInvoked == true)
         {
-            if (item.DataContext is NodeMenuQueue nt)
-            {
-                if (this.NavigationFrame.Navigate(typeof(QueuePage), null, e.RecommendedNavigationTransitionInfo))//, args.RecommendedNavigationTransitionInfo //new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft }
-                {
-                    //_currentPage = typeof(QueuePage);
-                    vm.SelectedNodeMenu = nt;
-                }
-            }
-            else if (item.DataContext is NodeMenuLibrary)
-            {
-                // Do nothing.
-            }
-            else if (item.DataContext is NodeMenuAlbum)
-            {
-                if (this.NavigationFrame.Navigate(typeof(AlbumPage), null, e.RecommendedNavigationTransitionInfo))
-                {
-                    //_currentPage = typeof(AlbumPage);
-                }
-            }
-            else if (item.DataContext is NodeMenuArtist)
-            {
-                if (this.NavigationFrame.Navigate(typeof(ArtistPage), null, e.RecommendedNavigationTransitionInfo))
-                {
-                    //_currentPage = typeof(ArtistPage);
-                }
-            }
-            else if (item.DataContext is NodeMenuFiles)
-            {
-                if (this.NavigationFrame.Navigate(typeof(FilesPage), null, e.RecommendedNavigationTransitionInfo))
-                {
-                    //_currentPage = typeof(FilesPage);
-                }
-            }
-            else if (item.DataContext is NodeMenuSearch)
-            {
-                if (this.NavigationFrame.Navigate(typeof(SearchPage), null, e.RecommendedNavigationTransitionInfo))
-                {
-                    //_currentPage = typeof(SearchPage);
-                }
-            }
-            else if (item.DataContext is NodeMenuPlaylists)
-            {
-                // Do nothing.
-            }
-            else if (item.DataContext is NodeMenuPlaylistItem)
-            {
-                if (this.NavigationFrame.Navigate(typeof(PlaylistItemPage), null, e.RecommendedNavigationTransitionInfo))
-                {
-                    //_currentPage = typeof(PlaylistItemPage);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("Not NodeMenu");
-            }
-        }
-        else
-        {
-            Debug.WriteLine("Not NavigationViewItem @NavigationView_ItemInvoked:" + e.InvokedItem.ToString());
-        }
-        */
-        //
+            await vm.GetCacheFolderSize();
 
+            nv.Content = App.GetService<SettingsPage>();
 
-        /*
-        if (nv.Content != _shellPage)
-        {
-            nv.Content = _shellPage;
-        }
-        */
-
-        /*
-        if (nv.SelectedItem is NodeMenuPlaylists)
-        {
-            // don't change page here.
-            //nv.SelectedItem = _navigationViewSelectedItem;
             return;
         }
-        else if (nv.SelectedItem is NodeMenuLibrary)
+        
+        var mainView = App.GetService<MainView>();
+        if (nv.Content is not MainView)
         {
-            // don't change page here.
-            //nv.SelectedItem = _navigationViewSelectedItem;
-            return;
+            nv.Content = mainView;
         }
-
-        _navigationViewSelectedItem = nv.SelectedItem as NavigationViewItem;
-        */
     }
 
     private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
@@ -497,7 +382,7 @@ public partial class MainWindow : Window//AppWindow//
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;
         this.NavigateViewControl.Content = App.GetService<SettingsPage>();
-        return;
+        //this.ContentFrame.Navigate(typeof(SettingsPage));
     }
 
     private void VolumeSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)

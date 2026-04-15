@@ -2233,34 +2233,45 @@ public partial class MainViewModel : ObservableObject
             {
                 Dispatcher.UIThread.Post(() =>
                 {
+                    CurrentPage = null; // needed this.
+
                     SelectedPlaylistName = string.Empty;
                     RenamedSelectPendingPlaylistName = string.Empty;
                     PlaylistSongs.Clear();
                 });
 
+                _selectedNodeMenu = value;
+                OnPropertyChanged(nameof(SelectedNodeMenu));
                 return;
             }
 
             if (value is NodeMenuQueue)
             {
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
+                    IsWorking = true;
+                    await Task.Yield();
+                    await Task.Delay(10);
                     CurrentPage = App.GetService<QueuePage>();
+                    IsWorking = false;
                 });
             }
             else if (value is NodeMenuSearch)
             {
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
+                    IsWorking = true;
+                    await Task.Yield();
+                    await Task.Delay(10);
                     CurrentPage = App.GetService<SearchPage>();
+                    IsWorking = false;
                 });
             }
-            /*
             else if (value is NodeMenuLibrary)
             {
                 // Do nothing.
+                // Do not remove.
             }
-            */
             else if (value is NodeMenuArtist)
             {
                 Dispatcher.UIThread.Post(async () =>
@@ -2312,7 +2323,7 @@ public partial class MainViewModel : ObservableObject
             else if (value is NodeMenuPlaylists)
             {
                 // Do nothing
-                //CurrentPage = App.GetService<PlaylistsPage>();
+                // Do not remove.
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
@@ -2337,6 +2348,7 @@ public partial class MainViewModel : ObservableObject
             }
             else
             {
+                Debug.WriteLine($"SelectedNodeMenu is of type {value.GetType().Name}, which is not handled.");
                 throw new NotImplementedException();
             }
 
@@ -7900,17 +7912,6 @@ public partial class MainViewModel : ObservableObject
 
             if (playlistDir is not null)
             {
-                /*
-                // Sort playlists.
-                List<string> slTmp = [];
-
-                foreach (var v in _mpc.Playlists)
-                {
-                    slTmp.Add(v.Name);
-                }
-                slTmp.Sort();
-                */
-
                 foreach (var hoge in Playlists)
                 {
                     var fuga = playlistDir.Children.FirstOrDefault(i => i.Name == hoge.Name);
@@ -10727,6 +10728,12 @@ public partial class MainViewModel : ObservableObject
         {
             return;
         }
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            // Move selection before deleting
+            _mainMenuItems.PlaylistsDirectory.Selected = true;
+        });
 
         var ret = await _mpc.MpdRemovePlaylist(_selectedPlaylistName);
 

@@ -13,7 +13,7 @@
 	<Grid x:Name="PageGrid">
 		<!-- Pages -->
 		<!-- Use ContentControl because Avalonia UI does not have a cache mechanism in page navigation... resulting in multiple creation of page instance. -->
-		<TransitioningContentControl x:Name="ContentFrame" Content="{Binding CurrentPage}" Margin="0">
+		<TransitioningContentControl x:Name="ContentFrame" Content="{Binding CurrentPage, Mode=TwoWay}" Margin="0">
 			<TransitioningContentControl.PageTransition>
 				<CompositePageTransition>
 					<CrossFade Duration="0:00:00.120" />
