@@ -4552,6 +4552,8 @@ public partial class MainViewModel : ObservableObject
     //public event EventHandler? NavigationViewMenuItemsLoaded;
     public event EventHandler? GoToSettingsPage;
 
+    public event EventHandler? AlbumsCollectionHasBeenReset;
+
     #endregion
 
     #region == Services == 
@@ -10512,6 +10514,61 @@ public partial class MainViewModel : ObservableObject
         IsAlbumContentPanelVisible = false;
     }
 
+    [RelayCommand]
+    public void AlbumsSortBy(object obj)
+    {
+        if (obj is null)
+        {
+            return;
+        }
+        if (obj is not string key)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        var ci = CultureInfo.CurrentCulture;
+        var comp = StringComparer.Create(ci, true);
+
+        switch (key)
+        {
+            case "artist":
+                if (IsArtistSortWithoutThePrefix)
+                {
+                    Albums = new ObservableCollection<AlbumEx>(Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort without prefix like "The".
+                }
+                else
+                {
+                    Albums = new ObservableCollection<AlbumEx>(Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort
+                }
+                break;
+            case "album":
+                if (IsAlbumSortWithoutThePrefix)
+                {
+                    Albums = new ObservableCollection<AlbumEx>(Albums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                }
+                else
+                {
+                    Albums = new ObservableCollection<AlbumEx>(Albums.OrderBy(x => x.Name, comp)); // COPY. // Sort
+                }
+                break;
+            case "reverse":
+                Albums = new ObservableCollection<AlbumEx>(Albums.Reverse<AlbumEx>());
+                break;
+        }
+
+        SelectedAlbum = null;
+
+        // Need this to load image.
+        // Albums sort resets ObservableCollection which is not recognized by ListViewBehavior and does not UpdateVisibleItems,
+        // so forcibly fire scroll event in AlbumsPage's code behind.
+        AlbumsCollectionHasBeenReset?.Invoke(this, EventArgs.Empty);
+    }
+
     #endregion
 
     #region == Playlist ==
@@ -12242,14 +12299,15 @@ public partial class MainViewModel : ObservableObject
             IsWorking = true;
             await Task.Yield();
             await Task.Delay(100);
+            // Not good
             //SelectedAlbum = null;
-            CurrentPage = App.GetService<AlbumPage>();
-            await Task.Yield();
-            await Task.Delay(100);
+            //CurrentPage = App.GetService<AlbumPage>(); // not good
+            //await Task.Yield();
+            //await Task.Delay(100);
             SelectedAlbum = album;
             await Task.Yield();
             await Task.Delay(100);
-            IsNavigationViewMenuOpen = true;
+            IsNavigationViewMenuOpen = true; // Need this somehow.
             await Task.Yield();
             await Task.Delay(100);
             _mainMenuItems.AlbumsDirectory.Selected = true;
@@ -12307,7 +12365,7 @@ public partial class MainViewModel : ObservableObject
             await Task.Yield();
             await Task.Delay(100);
             SelectedAlbumArtist = null; //Test.
-            CurrentPage = App.GetService<ArtistPage>(); //Test. Needed this...for the strange selection issue.
+            CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
             await Task.Yield(); 
             await Task.Delay(100);
             SelectedAlbumArtist = artist;

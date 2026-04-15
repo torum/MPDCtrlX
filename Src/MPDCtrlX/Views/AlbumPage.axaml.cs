@@ -1,13 +1,18 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.LogicalTree;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using FluentAvalonia.Core;
 using MPDCtrlX.Core.Models;
 using MPDCtrlX.Core.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MPDCtrlX.Core.Views;
 
@@ -22,6 +27,8 @@ public partial class AlbumPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+
+        vm.AlbumsCollectionHasBeenReset += this.OnAlbumsCollectionHasBeenReset;
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -47,6 +54,64 @@ public partial class AlbumPage : UserControl
             AlbumSongsListBox.ScrollIntoView(0);
         }
     }
+
+    public void OnAlbumsCollectionHasBeenReset(object? sender, System.EventArgs e)
+    {
+        if (AlbumsListBox is null)
+        {
+            return;
+        }
+
+        if (AlbumsListBox.ItemsSource is null)
+        {
+            return;
+        }
+
+        if (AlbumsListBox.ItemCount > 0)
+        {
+            AlbumsListBox.ScrollIntoView(0);
+        }
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            var scrollViewer = AlbumsListBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+
+            var wrapPanel = AlbumsListBox.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.UniformGrid>().FirstOrDefault();
+
+            if ((scrollViewer != null) && (wrapPanel != null))
+            {
+                UpdateVisibleItems(AlbumsListBox, scrollViewer, wrapPanel);
+            }
+        }, DispatcherPriority.Render);
+    }
+
+    private static void UpdateVisibleItems(ListBox listBox, ScrollViewer scrollViewer, Avalonia.Controls.Primitives.UniformGrid uniformGridPanel)
+    {
+        //var _scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+        if (scrollViewer == null) return;
+
+        //var _wrapPanel = listBox.GetVisualDescendants().OfType<WrapPanel>().FirstOrDefault();
+        if (uniformGridPanel == null) return;
+
+        var viewportRect = new Rect(new Point(scrollViewer.Offset.X, scrollViewer.Offset.Y), scrollViewer.Viewport);
+
+        var visibleObjects = uniformGridPanel.Children.Where(child => child.Bounds.Intersects(viewportRect)).ToList();
+
+        var visibleItems = new List<object>();
+
+        foreach (var itemContainer in visibleObjects)
+        {
+            var dataItem = itemContainer.DataContext;
+            if (dataItem != null)
+            {
+                visibleItems.Add(dataItem);
+            }
+        }
+
+        var vm = App.GetService<MainViewModel>();
+        vm.VisibleViewportItemsAlbumEx = visibleItems;
+    }
+
 
     private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {

@@ -34,7 +34,21 @@
 				<TextBlock Theme="{DynamicResource CaptionTextBlockStyle}" Text="{Binding AlbumPageSubTitleAlbumCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
 			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
-
+			<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+			<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+				<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+					Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
+				</PathIcon>
+			</Viewbox>
+			<Button.Flyout>
+			<MenuFlyout Placement="Bottom">
+				<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Album}" Command="{Binding AlbumsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="album" />
+				<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Artist}" Command="{Binding AlbumsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="artist" />
+				<Separator/>
+				<MenuItem Header="{x:Static prop:Resources.PageMenu_ReverseSort}" Command="{Binding AlbumsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="reverse" />
+			</MenuFlyout>
+			</Button.Flyout>
+			</Button>
 			</StackPanel>
 		</Grid>
 
@@ -65,6 +79,9 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
 										</DataTemplate>
 									</TransitioningContentControl.ContentTemplate>
+									<TransitioningContentControl.PageTransition>
+										<CrossFade Duration="0:00:00.400" />
+									</TransitioningContentControl.PageTransition>
 								</TransitioningContentControl>
 
 							</Grid>
@@ -124,25 +141,6 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											</MenuFlyout>
 										</SplitButton.Flyout>
 									</SplitButton>
-									<!-- More options button -->
-									<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom" IsVisible="False">
-										<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-											<PathIcon Background="Transparent" Width="NaN" Height="NaN"
-												Data="M10 6C9.30964 6 8.75 5.44036 8.75 4.75C8.75 4.05964 9.30964 3.5 10 3.5C10.6904 3.5 11.25 4.05964 11.25 4.75C11.25 5.44036 10.6904 6 10 6ZM10 11.25C9.30964 11.25 8.75 10.6904 8.75 10C8.75 9.30964 9.30964 8.75 10 8.75C10.6904 8.75 11.25 9.30964 11.25 10C11.25 10.6904 10.6904 11.25 10 11.25ZM8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14C9.30964 14 8.75 14.5596 8.75 15.25Z">
-											</PathIcon>
-										</Viewbox>
-										<!--
-										<Button.Flyout>
-											<MenuFlyout>
-												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Rename}" Command="{Binding PlaylistRenamePlaylistCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
-												<Separator/>
-												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Clear}" Command="{Binding PlaylistClearPlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
-												<Separator/>
-												<MenuItem Header="{x:Static prop:Resources.PlaylistItemMenu_Remove}" Command="{Binding PlaylistRemovePlaylistWithoutPromptCommand}" CommandParameter="{Binding SelectedPlaylistName}"/>
-											</MenuFlyout>
-										</Button.Flyout>
-										-->
-									</Button>
 								</StackPanel>
 
 							</Grid>
@@ -503,6 +501,9 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 														<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
 													</DataTemplate>
 												</TransitioningContentControl.ContentTemplate>
+												<TransitioningContentControl.PageTransition>
+													<CrossFade Duration="0:00:00.400" />
+												</TransitioningContentControl.PageTransition>
 											</TransitioningContentControl>
 
 											<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

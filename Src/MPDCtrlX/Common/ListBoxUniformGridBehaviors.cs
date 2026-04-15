@@ -46,14 +46,14 @@ public class ListBoxUniformGridBehaviors
                 return;
             }
 
-            listBox.Tag = "LoadedEvent_ListBoxUniformGridBehaviors";
-
             var scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
 
             var wrapPanel = listBox.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.UniformGrid>().FirstOrDefault();
 
             if ((scrollViewer != null) && (wrapPanel != null))
             {
+                listBox.Tag = "LoadedEvent_ListBoxUniformGridBehaviors";
+
                 //Debug.WriteLine("Subscribed @ListBoxUniformGridBehaviors");
 
                 // Subscribe to the scroll event to update the visible items.
@@ -63,6 +63,10 @@ public class ListBoxUniformGridBehaviors
 
                 // Call it once initially to set the property.
                 UpdateVisibleItems(listBox, scrollViewer, wrapPanel);
+            }
+            else
+            {
+                //Debug.WriteLine("Not Subscribed - (scrollViewer != null) && (wrapPanel != null) @ListBoxUniformGridBehaviors");
             }
         });
     }

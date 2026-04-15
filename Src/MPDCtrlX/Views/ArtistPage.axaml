@@ -184,6 +184,9 @@
 														<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
 													</DataTemplate>
 												</TransitioningContentControl.ContentTemplate>
+												<TransitioningContentControl.PageTransition>
+													<CrossFade Duration="0:00:00.400" />
+												</TransitioningContentControl.PageTransition>
 											</TransitioningContentControl>
 
 										</Grid>
