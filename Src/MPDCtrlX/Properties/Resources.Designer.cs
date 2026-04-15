@@ -1753,6 +1753,15 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
+        ///   Unknown Artist に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Text_UnknownArtist {
+            get {
+                return ResourceManager.GetString("Text_UnknownArtist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Update に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Update {

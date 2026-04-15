@@ -113,6 +113,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											</DataTriggerBehavior>
 										</Interaction.Behaviors>
 									</TextBlock>
+									<!--
 									<TextBlock Text="{Binding SelectedAlbum.AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7">
 										<Interaction.Behaviors>
 											<DataTriggerBehavior Binding="{Binding SelectedAlbum.AlbumArtist}" ComparisonCondition="Equal" Value="">
@@ -120,6 +121,13 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											</DataTriggerBehavior>
 										</Interaction.Behaviors>
 									</TextBlock>
+									-->
+									<!--
+									<TextBlock Text="{Binding SelectedAlbum.AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7" IsVisible="{Binding SelectedAlbum.AlbumArtist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+									-->
+									<HyperlinkButton Content="{Binding SelectedAlbum.AlbumArtist}" Command="{Binding SelectedAlbumGoToArtistPageCommand}" CommandParameter="{Binding SelectedAlbum, Mode=OneWay}" Margin="0,0,24,0"></HyperlinkButton>
+									<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7" IsVisible="{Binding SelectedAlbum.AlbumArtist, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+
 								</StackPanel>
 
 								<StackPanel Orientation="Horizontal" Spacing="24" Grid.Row="1" Margin="16,16,16,16" HorizontalAlignment="Left">
@@ -525,13 +533,8 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 													</DataTriggerBehavior>
 												</Interaction.Behaviors>
 											</TextBlock>
-											<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7">
-												<Interaction.Behaviors>
-													<DataTriggerBehavior Binding="{Binding AlbumArtist}" ComparisonCondition="Equal" Value="">
-														<ChangePropertyAction PropertyName="Text" Value="Unknown Artist" />
-													</DataTriggerBehavior>
-												</Interaction.Behaviors>
-											</TextBlock>
+											<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
 										</StackPanel>
 
 										<!--

@@ -10570,6 +10570,29 @@ public partial class MainViewModel : ObservableObject
         AlbumsCollectionHasBeenReset?.Invoke(this, EventArgs.Empty);
     }
 
+    [RelayCommand]
+    public void SelectedAlbumGoToArtistPage(AlbumEx album)
+    {
+        if (album is null)
+        {
+            return;
+        }
+
+        var asdf = album.AlbumArtist;
+        if (string.IsNullOrEmpty(asdf.Trim()))
+        {
+            return;
+        }
+
+        var item = Artists.FirstOrDefault(i => i.Name == asdf);
+        if (item is null) return;
+
+        // Close pane.
+        IsAlbumContentPanelVisible = false;
+
+        GoToArtistPage(item);
+    }
+
     #endregion
 
     #region == Playlist ==

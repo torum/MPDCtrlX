@@ -713,4 +713,7 @@ SOFTWARE.</value>
   <data name="PlaylistItemMenu_RemoveDuplicates" xml:space="preserve">
     <value>Remove duplicate songs</value>
   </data>
+  <data name="Text_UnknownArtist" xml:space="preserve">
+    <value>Unknown Artist</value>
+  </data>
 </root>

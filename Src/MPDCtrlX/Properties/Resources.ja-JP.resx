@@ -706,4 +706,7 @@ SOFTWARE.</value>
   <data name="PlaylistItemMenu_RemoveDuplicates" xml:space="preserve">
     <value>重複した曲を削除</value>
   </data>
+  <data name="Text_UnknownArtist" xml:space="preserve">
+    <value>不明なアーティスト</value>
+  </data>
 </root>
