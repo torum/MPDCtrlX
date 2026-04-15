@@ -12236,14 +12236,24 @@ public partial class MainViewModel : ObservableObject
 
     private void GoToAlbumPage(AlbumEx album)
     {
-        if (album is null) return;  
-        Dispatcher.UIThread.Post(async () => 
+        if (album is null) return;
+        Dispatcher.UIThread.Post(async () =>
         {
+            IsWorking = true;
+            await Task.Yield();
+            await Task.Delay(100);
+            //SelectedAlbum = null;
+            CurrentPage = App.GetService<AlbumPage>();
+            await Task.Yield();
+            await Task.Delay(100);
             SelectedAlbum = album;
+            await Task.Yield();
+            await Task.Delay(100);
             IsNavigationViewMenuOpen = true;
-            await Task.Yield(); // Wait for UI to update.
-            await Task.Delay(100); // Wait for SelectedAlbumArtist to be set and UI to update.
+            await Task.Yield();
+            await Task.Delay(100);
             _mainMenuItems.AlbumsDirectory.Selected = true;
+            IsWorking = false;
         });
 
         //GoToSelectedPage?.Invoke(this, _mainMenuItems.AlbumsDirectory);
@@ -12293,6 +12303,9 @@ public partial class MainViewModel : ObservableObject
         if (artist is null) return;
         Dispatcher.UIThread.Post(async () =>
         {
+            IsWorking = true;
+            await Task.Yield();
+            await Task.Delay(100);
             SelectedAlbumArtist = null; //Test.
             CurrentPage = App.GetService<ArtistPage>(); //Test. Needed this...for the strange selection issue.
             await Task.Yield(); 
@@ -12304,6 +12317,7 @@ public partial class MainViewModel : ObservableObject
             await Task.Yield(); 
             await Task.Delay(100);
             _mainMenuItems.ArtistsDirectory.Selected = true;
+            IsWorking = false;
         });
 
         /*

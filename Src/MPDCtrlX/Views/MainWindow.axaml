@@ -73,7 +73,7 @@
 		</KeyBinding>
 		-->
 	</Window.KeyBindings>
-	<Grid Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='1,*,Auto,1,128,Auto,Auto', Windows='1,*,Auto,1,128,Auto,Auto'}">
+	<Grid Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='0,*,Auto,1,128,Auto,Auto', Windows='1,*,Auto,1,128,Auto,Auto'}">
 		<!-- v12
 		 Margin="{OnPlatform Default='0', Windows='0,30,0,0'}"
 		-->
