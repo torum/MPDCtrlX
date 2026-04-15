@@ -2247,6 +2247,7 @@ public partial class MainViewModel : ObservableObject
 
             if (value is NodeMenuQueue)
             {
+                /*
                 Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
@@ -2255,9 +2256,12 @@ public partial class MainViewModel : ObservableObject
                     CurrentPage = App.GetService<QueuePage>();
                     IsWorking = false;
                 });
+                */
+                CurrentPage = App.GetService<QueuePage>();
             }
             else if (value is NodeMenuSearch)
             {
+                /*
                 Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
@@ -2266,6 +2270,8 @@ public partial class MainViewModel : ObservableObject
                     CurrentPage = App.GetService<SearchPage>();
                     IsWorking = false;
                 });
+                */
+                CurrentPage = App.GetService<SearchPage>();
             }
             else if (value is NodeMenuLibrary)
             {
@@ -3004,8 +3010,8 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private ObservableCollection<Album>? _selectedArtistAlbums = [];
-    public ObservableCollection<Album>? SelectedArtistAlbums
+    private ObservableCollection<AlbumEx>? _selectedArtistAlbums = [];
+    public ObservableCollection<AlbumEx>? SelectedArtistAlbums
     {
         get 
         {
@@ -3025,7 +3031,7 @@ public partial class MainViewModel : ObservableObject
                     // Sort
                     var ci = CultureInfo.CurrentCulture;
                     var comp = StringComparer.Create(ci, true);
-                    _selectedArtistAlbums = new ObservableCollection<Album>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                    _selectedArtistAlbums = new ObservableCollection<AlbumEx>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
                 }
             }
 
@@ -8347,6 +8353,11 @@ public partial class MainViewModel : ObservableObject
                     if (song.Album.Equals(slbm.Name, StringComparison.CurrentCulture))
                     {
                         slbm.Songs.Add(song);
+                        if (!string.IsNullOrEmpty(song.Date))
+                        {
+                            slbm.ReleaseYear = song.Date;
+                        }
+                        Debug.WriteLine($"GetArtistSongs: Added song {song.Title} to album {slbm.Name} ({slbm.ReleaseYear}) of artist {artist.Name}.");
                     }
                 }
 

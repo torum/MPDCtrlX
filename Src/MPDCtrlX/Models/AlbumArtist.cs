@@ -13,6 +13,21 @@ public class Album : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
+
+    private string _releaseYear = string.Empty;
+    public string ReleaseYear
+    {
+        get => _releaseYear;
+        set
+        {
+            if (_releaseYear == value)
+            {
+                return;
+            }
+            _releaseYear = value;
+            OnPropertyChanged(nameof(ReleaseYear));
+        }
+    }
     public bool IsSongsAcquired { get; set; } = false;
 
     public ObservableCollection<SongInfo> _songs = [];
@@ -62,8 +77,8 @@ public class AlbumArtist : ObservableObject
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
 
-    public ObservableCollection<Album> _albums = [];
-    public ObservableCollection<Album> Albums
+    public ObservableCollection<AlbumEx> _albums = [];
+    public ObservableCollection<AlbumEx> Albums
     {
         get => _albums;
         private set

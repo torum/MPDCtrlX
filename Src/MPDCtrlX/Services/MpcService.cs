@@ -1970,7 +1970,7 @@ public partial class MpcService : IMpcService
         if (result.IsSuccess)
         {
             MpcProgress?.Invoke(this, "[Background] Parsing artists...");
-            result.IsSuccess = await ParseListAlbumGroupAlbumArtist(result.ResultText, false);
+            result.IsSuccess = await ParseListAlbumGroupAlbumArtist(result.ResultText);
             MpcProgress?.Invoke(this, "[Background] Artists updated.");
         }
         MpcProgress?.Invoke(this, "");
@@ -3878,7 +3878,7 @@ public partial class MpcService : IMpcService
         }
     }
 
-    private Task<bool> ParseListAlbumGroupAlbumArtist(string result, bool sort)
+    private Task<bool> ParseListAlbumGroupAlbumArtist(string result)
     {
         if (MpdStop) return Task.FromResult(false);
 
@@ -3899,19 +3899,9 @@ public partial class MpcService : IMpcService
 
             AlbumArtist? arts = null;
 
-            var albumArtistType = string.Empty;
-            if (sort)
-            {
-                albumArtistType = "AlbumArtistSort:";
-            }
-            else
-            {
-                albumArtistType = "AlbumArtist:";
-            }
-
             foreach (string value in resultLines)
             {
-                if (value.StartsWith(albumArtistType))
+                if (value.StartsWith("AlbumArtist:"))
                 {
                     if (arts is not null)
                     {
@@ -3925,7 +3915,7 @@ public partial class MpcService : IMpcService
 
                     arts = new AlbumArtist
                     {
-                        Name = value.Replace(albumArtistType + " ", "")
+                        Name = value.Replace("AlbumArtist: ", "")
                     };
 
                     MpcProgress?.Invoke(this, string.Format("[Background] Parsing AlbumArtists ({0})...", i));
@@ -3947,6 +3937,10 @@ public partial class MpcService : IMpcService
                     else if (albx.Name.StartsWith("A ", StringComparison.OrdinalIgnoreCase))
                     {
                         albx.NameSort = RemoveThePrefix(albx.Name, "A");
+                    }
+                    else if (albx.Name.StartsWith("An ", StringComparison.OrdinalIgnoreCase))
+                    {
+                        albx.NameSort = RemoveThePrefix(albx.Name, "An");
                     }
                     else
                     {

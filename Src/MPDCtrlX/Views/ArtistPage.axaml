@@ -199,7 +199,7 @@
 											<RowDefinition Height="*"></RowDefinition>
 										</Grid.RowDefinitions>
 
-										<StackPanel Margin="16,16,16,16">
+										<StackPanel Grid.Row="0" Margin="16,16,16,16">
 											<!--
 											<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
 												<Interaction.Behaviors>
@@ -209,8 +209,10 @@
 												</Interaction.Behaviors>
 											</TextBlock>
 											-->
-											<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
-											<TextBlock Grid.Row="0" Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+
+											<TextBlock Text="{Binding ReleaseYear}" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding ReleaseYear, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
 
 										</StackPanel>
 
