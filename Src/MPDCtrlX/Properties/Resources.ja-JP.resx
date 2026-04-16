@@ -416,7 +416,7 @@ SOFTWARE.</value>
     <value>保存</value>
   </data>
   <data name="PageMenu_Find" xml:space="preserve">
-    <value>検索</value>
+    <value>検索 (Ctrl+F)</value>
   </data>
   <data name="Search_ToolTip" xml:space="preserve">
     <value>検索 (Ctrl+F)</value>
@@ -581,13 +581,13 @@ SOFTWARE.</value>
     <value>すべてキューへ登録</value>
   </data>
   <data name="PageMenu_Filter" xml:space="preserve">
-    <value>絞り込み</value>
+    <value>絞り込み (Ctrl+F)</value>
   </data>
   <data name="FilesListviewColumnHeader_FilePath" xml:space="preserve">
     <value>パス</value>
   </data>
   <data name="PageMenu_Search" xml:space="preserve">
-    <value>検索</value>
+    <value>検索 (Enter)</value>
   </data>
   <data name="Search_Shiki_Contains" xml:space="preserve">
     <value>含む</value>

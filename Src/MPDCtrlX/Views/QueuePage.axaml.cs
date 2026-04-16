@@ -31,14 +31,12 @@ public partial class QueuePage : UserControl
         vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
         vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
-        vm.QueueFindTextBoxSetFocus += this.OnQueueFindTextBoxSetFocus;
 
         this.DetachedFromVisualTree += (s, e) =>
         {
             vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
             vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
             vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
-            vm.QueueFindTextBoxSetFocus -= this.OnQueueFindTextBoxSetFocus;
         };
     }
 

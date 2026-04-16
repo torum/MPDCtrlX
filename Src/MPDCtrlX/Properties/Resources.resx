@@ -419,7 +419,7 @@ SOFTWARE.</value>
     <value>Save</value>
   </data>
   <data name="PageMenu_Find" xml:space="preserve">
-    <value>Find</value>
+    <value>Find (Ctrl+F)</value>
   </data>
   <data name="Search_ToolTip" xml:space="preserve">
     <value>Search (Ctrl+F)</value>
@@ -586,13 +586,13 @@ SOFTWARE.</value>
     <value>Queue all</value>
   </data>
   <data name="PageMenu_Filter" xml:space="preserve">
-    <value>Filter</value>
+    <value>Filter (Ctrl+F)</value>
   </data>
   <data name="FilesListviewColumnHeader_FilePath" xml:space="preserve">
     <value>File path</value>
   </data>
   <data name="PageMenu_Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Search (Enter)</value>
   </data>
   <data name="Search_Shiki_Contains" xml:space="preserve">
     <value>Contains</value>

@@ -42,10 +42,15 @@
 				<StackPanel Orientation="Horizontal" x:Name="FindFilterButtonStackPanel">
 
 					<Popup x:Name="FilterQueuePopup" Opened="FilterQueuePopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="False" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
+
 						<Border Grid.Row="3" Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 							<StackPanel>
 
-								<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0"></TextBox>
+								<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+									<TextBox.KeyBindings>
+										<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
+									</TextBox.KeyBindings>
+								</TextBox>
 
 								<ListBox Name="FilterQueueListBox" ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" SelectionMode="AlwaysSelected,Single" DoubleTapped="FilterQueueListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
 									<ListBox.KeyBindings>

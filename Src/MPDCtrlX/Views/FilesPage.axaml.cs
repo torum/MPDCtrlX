@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MPDCtrlX.Core.Views;
 
@@ -86,14 +88,24 @@ public partial class FilesPage : UserControl
 
     private void ButtonFilesItemsFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        //FilesFilterQueryTextBox.Text = string.Empty;
+    }
+
+    private void TglButtonFilesItemsFilter_IsCheckedChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
         FilesFilterQueryTextBox.Text = string.Empty;
 
-        if (FilesFilterQueryTextBox.IsVisible)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
+        if (e is Avalonia.Interactivity.RoutedEventArgs args && args.Source is ToggleButton toggleButton && toggleButton.IsChecked == true)
+        { 
+            Dispatcher.UIThread.Post(async () =>
             {
-                FilesFilterQueryTextBox.Focus(NavigationMethod.Unspecified, KeyModifiers.None);
-            });
+                await Task.Yield(); // Ensure the UI has processed the opened event
+
+                if (FilesFilterQueryTextBox.Focusable)
+                {
+                    this.FilesFilterQueryTextBox.Focus();
+                }
+            }, DispatcherPriority.Render);
         }
     }
 
@@ -148,4 +160,5 @@ public partial class FilesPage : UserControl
 
         UpdateColumHeaders();
     }
+
 }

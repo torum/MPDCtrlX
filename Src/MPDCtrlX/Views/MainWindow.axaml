@@ -64,10 +64,10 @@
 		<KeyBinding Command="{Binding EscapeCommand}" Gesture="Escape" />
 		-->
 		<!-- Localized search eg. find song in QueuePage or artist in ArtistPage -->
-		<KeyBinding Command="{Binding ShowSearchCommand}" Gesture="Ctrl+S"/>
+		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
 		
 		<!-- Library search -->
-		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
+		<KeyBinding Command="{Binding ShowSearchCommand}" Gesture="Ctrl+S"/>
 		<!--
 		<KeyBinding Gesture="Alt+D" Command="{Binding DevCenterViewActivation}">
 			<KeyBinding.CommandParameter>

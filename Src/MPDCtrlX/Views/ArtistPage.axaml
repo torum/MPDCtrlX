@@ -54,7 +54,11 @@
 					<Border Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 						
 						<StackPanel>
-							<TextBox x:Name="FilterArtistQueryTextBox" Text="{Binding FilterArtistQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonArtistFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"></TextBox>
+							<TextBox x:Name="FilterArtistQueryTextBox" Text="{Binding FilterArtistQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonArtistFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+								<TextBox.KeyBindings>
+									<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
+								</TextBox.KeyBindings>
+							</TextBox>
 
 							<ListBox Name="FilterArtistListBox" ItemsSource="{Binding ArtistsForFilter}" SelectedItem="{Binding SelectedFilterAlbumArtist}" AutoScrollToSelectedItem="True" SelectionMode="Single" DoubleTapped="FilterArtistListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
 								<ListBox.KeyBindings>

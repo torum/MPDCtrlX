@@ -2923,6 +2923,24 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private bool _isFilesFindVisible;
+    public bool IsFilesFindVisible
+    {
+        get
+        {
+            return _isFilesFindVisible;
+        }
+        set
+        {
+            if (_isFilesFindVisible == value)
+                return;
+
+            _isFilesFindVisible = value;
+
+            OnPropertyChanged(nameof(IsFilesFindVisible));
+        }
+    }
+
     #endregion
 
     #region == Artists ==
@@ -4658,29 +4676,14 @@ public partial class MainViewModel : ObservableObject
 
     public event EventHandler<string>? CurrentSongChanged;
 
-    //public event EventHandler? QueueSaveAsDialogShow;
-    //public event EventHandler? QueueSaveToDialogShow;
-    //public event EventHandler<List<string>>? QueueListviewSaveToDialogShow;
-    
     public event EventHandler? QueueHeaderVisibilityChanged;
-    public event EventHandler? QueueFindTextBoxSetFocus;
 
     public event EventHandler? SearchHeaderVisibilityChanged;
     public event EventHandler? PlaylistHeaderVisibilityChanged;
     public event EventHandler? FilesHeaderVisibilityChanged;
 
-    //public event EventHandler<List<string>>? SearchPageAddToPlaylistDialogShow;
-    //public event EventHandler<List<string>>? FilesPageAddToPlaylistDialogShow;
-
     public event EventHandler<string>? PlaylistRenameToDialogShow;
 
-
-    //public event EventHandler<NodeTree>? GoToSelectedPage;
-    //public delegate void NavigationViewMenuItemsLoadedEventHandler();
-    //public event NavigationViewMenuItemsLoadedEventHandler? NavigationViewMenuItemsLoaded;
-    //
-
-    //public event EventHandler? NavigationViewMenuItemsLoaded;
     public event EventHandler? GoToSettingsPage;
 
     public event EventHandler? AlbumsCollectionHasBeenReset;
@@ -10249,7 +10252,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        if (Queue is null)
+        if (Queue.Count <= 0)
         {
             return;
         }
@@ -10262,12 +10265,8 @@ public partial class MainViewModel : ObservableObject
         FilterQueueQuery = "";
 
         IsQueueFindVisible = true;
-
-        // Set focus textbox in code behind.
-        QueueFindTextBoxSetFocus?.Invoke(this, EventArgs.Empty);
     }
 
-    //
     [RelayCommand]
     public void QueueFilterSelect()//object obj
     {
@@ -10622,6 +10621,24 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    public void FilesFindShowHide()
+    {
+        if (IsFilesFindVisible)
+        {
+            IsFilesFindVisible = false;
+            return;
+        }
+
+        if (MusicDirectories.Count <= 0) 
+        {
+            return;
+        }
+
+        IsFilesFindVisible = true;
+
+    }
+
     #endregion
 
     #region == Albums ==
@@ -10765,7 +10782,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        if (Artists is null)
+        if (Artists.Count <= 0)
         {
             return;
         }
@@ -12408,6 +12425,31 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void ShowFind()
     {
+        if (SelectedNodeMenu is NodeMenuQueue)
+        {
+            QueueFindShowHide();
+        }
+        else if (SelectedNodeMenu is NodeMenuArtist)
+        {
+            ArtistFindShowHide();
+        }
+        else if (SelectedNodeMenu is NodeMenuSearch)
+        {
+
+        }
+        else if (SelectedNodeMenu is NodeMenuFiles)
+        {
+            FilesFindShowHide();
+        }
+        else
+        {
+
+        }
+    }
+
+    [RelayCommand]
+    public void ShowSearch()
+    {
         Dispatcher.UIThread.Post(async () =>
         {
             IsWorking = true;
@@ -12422,27 +12464,6 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    [RelayCommand]
-    public void ShowSearch()
-    {
-        if (SelectedNodeMenu is NodeMenuQueue)
-        {
-            QueueFindShowHide();
-        }
-        else if (SelectedNodeMenu is NodeMenuArtist)
-        {
-            ArtistFindShowHide();
-        }
-        else if (SelectedNodeMenu is NodeMenuSearch)
-        {
-
-        }
-        else
-        {
-
-        }
-    }
-
     #endregion
 
     #region == Other commands == 
@@ -12455,8 +12476,9 @@ public partial class MainViewModel : ObservableObject
 
         //IsSettingsShow = false; //Don't.
 
-        IsQueueFindVisible = false; // not working?
+        IsQueueFindVisible = false;
         IsArtistFindVisible = false;
+        IsFilesFindVisible = false;
 
         // Popups
         if (IsConfirmClearQueuePopupVisible) { IsConfirmClearQueuePopupVisible = false; }

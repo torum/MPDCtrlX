@@ -943,7 +943,7 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
-        ///   Filter に類似しているローカライズされた文字列を検索します。
+        ///   Filter (Ctrl+F) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMenu_Filter {
             get {
@@ -952,7 +952,7 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
-        ///   Find に類似しているローカライズされた文字列を検索します。
+        ///   Find (Ctrl+F) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMenu_Find {
             get {
@@ -1006,7 +1006,7 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
-        ///   Search に類似しているローカライズされた文字列を検索します。
+        ///   Search (Enter) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMenu_Search {
             get {
