@@ -3085,8 +3085,30 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             _selectedAlbum = value;
+
             OnPropertyChanged(nameof(SelectedAlbum));
             OnPropertyChanged(nameof(SelectedAlbumSongs));
+
+            //OpenAlbumPane?.Invoke(this, EventArgs.Empty);
+
+            /*
+            if (_selectedAlbum is not null)
+            {
+                Dispatcher.UIThread.Post(async () =>  // Test
+                {
+                    IsWorking = true;
+                    //await Task.Yield();
+                    //await Task.Delay(20);
+                    await AlbumsItemInvoked(_selectedAlbum);
+                    IsWorking = false;
+
+                    await Task.Yield();
+                    await Task.Delay(20);
+                    IsAlbumContentPanelVisible = true;
+
+                }, DispatcherPriority.Default);
+            }
+            */
         }
     }
 
@@ -3137,7 +3159,6 @@ public partial class MainViewModel : ObservableObject
                 return;
             }
 
-            // TODO:
             _ = Task.Run(() => GetAlbumPictures(VisibleViewportItemsAlbumEx), _cts.Token);
             //GetAlbumPictures(VisibleViewportItemsAlbumEx);
         }
@@ -10425,7 +10446,6 @@ public partial class MainViewModel : ObservableObject
                     }
                     album.IsSongsAcquired = true;
 
-                    //InvokedAlbum = album;
                     SelectedAlbum = album;
                     await Task.Yield();
                     IsAlbumContentPanelVisible = true;

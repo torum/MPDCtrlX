@@ -67,13 +67,13 @@
 						<!-- Album Image -->
 						<Border Grid.Row="0" Grid.Column="0" Margin="24" Width="240" Height="240" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
 							<Grid>
-								<Viewbox Margin="0" Width="240" Height="240" HorizontalAlignment="Center" VerticalAlignment="Center">
+								<Viewbox Margin="0" Width="240" Height="240" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{Binding SelectedAlbum.AlbumImage, Converter={x:Static ObjectConverters.IsNull}}">
 									<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
 Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 9.515T8.5 12t1.015 2.486T12 15.5m0-2.5q-.425 0-.712-.288T11 12t.288-.712T12 11t.713.288T13 12t-.288.713T12 13m.003 8q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8">
 									</PathIcon>
 								</Viewbox>
 
-								<TransitioningContentControl Content="{Binding SelectedAlbum.AlbumImage, Mode=OneWay}" >
+								<TransitioningContentControl Content="{Binding SelectedAlbum.AlbumImage, Mode=OneWay}" IsVisible="{Binding SelectedAlbum.AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}">
 									<TransitioningContentControl.ContentTemplate>
 										<DataTemplate DataType="Bitmap">
 											<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
@@ -490,83 +490,94 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 						</ListBox.ItemsPanel>
 						<ListBox.ItemTemplate>
 							<DataTemplate x:DataType="mod:AlbumEx">
-								<Grid Width="190" Margin="6,12,6,12">
-									<Grid.RowDefinitions>
-										<RowDefinition Height="184"/>
-										<RowDefinition Height="42"/>
-									</Grid.RowDefinitions>
-
-									<Border Grid.Row="0" Grid.Column="0" Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True" CornerRadius="6">
-
-										<Grid>
-											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center">
-												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
+								<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+									<Button.Styles>
+										<Style Selector="Border#ClipBorder:pointerover">
+											<Setter Property="RenderTransform" Value="Scale(1.1, 1.1)" />
+										</Style>
+										<Style Selector="Viewbox#AlbumIcon:pointerover">
+											<Setter Property="RenderTransform" Value="Scale(1.1, 1.1)" />
+										</Style>
+									</Button.Styles>
+									<Grid Width="190" Margin="6,12,6,12">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="184"/>
+											<RowDefinition Height="52"/>
+										</Grid.RowDefinitions>
+										<Grid Grid.Row="0" Grid.Column="0">
+											<Viewbox x:Name="AlbumIcon" Margin="0" Width="120" Height="120" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsVisible="{Binding AlbumImage, Converter={x:Static ObjectConverters.IsNull}}">
+												<Viewbox.Transitions>
+													<Transitions>
+														<TransformOperationsTransition Property="RenderTransform" Duration="0:00:00.200" />
+													</Transitions>
+												</Viewbox.Transitions>
+												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="0" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
 													Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 9.515T8.5 12t1.015 2.486T12 15.5m0-2.5q-.425 0-.712-.288T11 12t.288-.712T12 11t.713.288T13 12t-.288.713T12 13m.003 8q-1.867 0-3.51-.708q-1.643-.709-2.859-1.924t-1.925-2.856T3 12.003t.709-3.51Q4.417 6.85 5.63 5.634t2.857-1.925T11.997 3t3.51.709q1.643.708 2.859 1.922t1.925 2.857t.709 3.509t-.708 3.51t-1.924 2.859t-2.856 1.925t-3.509.709M12 20q3.35 0 5.675-2.325T20 12t-2.325-5.675T12 4T6.325 6.325T4 12t2.325 5.675T12 20m0-8">
 												</PathIcon>
 											</Viewbox>
+											<Border x:Name="ClipBorder" Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True" CornerRadius="6">
+												<Border.Transitions>
+													<Transitions>
+														<TransformOperationsTransition Property="RenderTransform" Duration="0:00:00.200" />
+													</Transitions>
+												</Border.Transitions>
+												<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}" IsVisible="{Binding AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}">
+													<TransitioningContentControl.ContentTemplate>
+														<DataTemplate DataType="Bitmap">
+															<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center">
+																<!--
+																<Image.Transitions>
+																	<Transitions>
+																		<TransformOperationsTransition Property="RenderTransform" Duration="0:00:00.600" />
+																	</Transitions>
+																</Image.Transitions>
+																<Image.RenderTransform>
+																	<ScaleTransform ScaleX="1" ScaleY="1" />
+																</Image.RenderTransform>
+																<Image.Styles>
+																	<Style Selector="Image:pointerover">
+																		<Setter Property="RenderTransform" Value="Scale(1.1, 1.1)" />
+																	</Style>
+																</Image.Styles>
+																-->
+															</Image>
+														</DataTemplate>
+													</TransitioningContentControl.ContentTemplate>
+													<TransitioningContentControl.PageTransition>
+														<CrossFade Duration="0:00:00.400" />
+													</TransitioningContentControl.PageTransition>
+												</TransitioningContentControl>
+											</Border>	
+										</Grid>
 
-											<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}" >
-												<TransitioningContentControl.ContentTemplate>
-													<DataTemplate DataType="Bitmap">
-														<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
-													</DataTemplate>
-												</TransitioningContentControl.ContentTemplate>
-												<TransitioningContentControl.PageTransition>
-													<CrossFade Duration="0:00:00.400" />
-												</TransitioningContentControl.PageTransition>
-											</TransitioningContentControl>
-
-											<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+										<Grid Grid.Row="1">
+											<StackPanel Margin="4,5,4,3">
 												<!--
-												<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center"></Viewbox>
+												<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
+													<Interaction.Behaviors>
+														<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
+															<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
+														</DataTriggerBehavior>
+													</Interaction.Behaviors>
+												</TextBlock>
 												-->
-											</Button>
+												<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,4,0,0" Padding="0" Opacity="1" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+												<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,4,0,0" Padding="0" Opacity="1" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+
+												<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+												<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+											</StackPanel>
 
 										</Grid>
-									</Border>
 
-									<Grid Grid.Row="1">
-
-										<StackPanel Margin="4">
-											<!--
-											<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1">
-												<Interaction.Behaviors>
-													<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
-														<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
-													</DataTriggerBehavior>
-												</Interaction.Behaviors>
-											</TextBlock>
-											-->
-											<TextBlock Text="{Binding Name}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
-											<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="1" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
-
-											<TextBlock Text="{Binding AlbumArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
-											<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="2" Opacity="0.7" IsVisible="{Binding AlbumArtist, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
-										</StackPanel>
-
-										<!--
-										<ListBox ItemsSource="{Binding Songs}" SelectionMode="Single" BorderThickness="0" Margin="0,3,0,0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-											<ListBox.ItemsPanel>
-												<ItemsPanelTemplate>
-													<VirtualizingStackPanel />
-												</ItemsPanelTemplate>
-											</ListBox.ItemsPanel>
-											<ListBox.ItemTemplate>
-												<DataTemplate x:DataType="mod:SongInfo">
-													<TextBlock Text="{Binding Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0,0,0,0" Opacity="0.9"></TextBlock>
-												</DataTemplate>
-											</ListBox.ItemTemplate>
-										</ListBox>
--->
 									</Grid>
-
-								</Grid>
+								</Button>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 						<ListBox.Styles>
 							<Style Selector="ListBoxItem" x:DataType="mod:AlbumEx">
 								<Setter Property="Width" Value="226"/>
-								<Setter Property="Height" Value="270"/>
+								<Setter Property="Height" Value="260"/>
 								<Setter Property="Padding" Value="0"/>
 							</Style>
 						</ListBox.Styles>

@@ -53,6 +53,28 @@ public partial class AlbumPage : UserControl
         {
             AlbumSongsListBox.ScrollIntoView(0);
         }
+        /*
+        var vm = App.GetService<MainViewModel>();
+        if (AlbumsListBox.SelectedItem is AlbumEx alb)
+        {
+            Dispatcher.UIThread.Post(async () =>
+            {
+                await vm.AlbumsItemInvoked(alb);
+            }, DispatcherPriority.Normal);
+        }
+        */
+        /*
+        if (AlbumsListBox.SelectedItem is not null)
+        {
+            var vm = App.GetService<MainViewModel>();
+            _ = Task.Run(async () =>
+            {
+                await vm.AlbumsItemInvoked(AlbumsListBox.SelectedItem);
+
+                vm.IsAlbumContentPanelVisible = true;
+            });
+        }
+        */
     }
 
     public void OnAlbumsCollectionHasBeenReset(object? sender, System.EventArgs e)
