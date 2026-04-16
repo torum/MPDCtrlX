@@ -130,6 +130,8 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 									<HyperlinkButton Content="{Binding SelectedAlbum.AlbumArtist}" Command="{Binding SelectedAlbumGoToArtistPageCommand}" CommandParameter="{Binding SelectedAlbum, Mode=OneWay}" Margin="0,0,24,0" IsVisible="{Binding SelectedAlbum.AlbumArtist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></HyperlinkButton>
 									<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Theme="{DynamicResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="0" Opacity="0.7" IsVisible="{Binding SelectedAlbum.AlbumArtist, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
 
+									<TextBlock Text="{Binding SelectedAlbum.ReleaseYear, Mode=OneWay}" Margin="12,0,0,0" FontSize="{StaticResource FontSizePageSubTitle}" FontWeight="Normal" Opacity="0.9" IsVisible="{Binding SelectedAlbum.ReleaseYear, Mode=OneWay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
 								</StackPanel>
 
 								<StackPanel Orientation="Horizontal" Spacing="24" Grid.Row="1" Margin="16,16,16,16" HorizontalAlignment="Left">
@@ -493,7 +495,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 									<Button.Styles>
 										<Style Selector="Border#ClipBorder:pointerover">
-											<Setter Property="RenderTransform" Value="Scale(1.1, 1.1)" />
+											<Setter Property="RenderTransform" Value="Scale(1.05, 1.05)" />
 										</Style>
 										<Style Selector="Viewbox#AlbumIcon:pointerover">
 											<Setter Property="RenderTransform" Value="Scale(1.1, 1.1)" />

@@ -10442,6 +10442,11 @@ public partial class MainViewModel : ObservableObject
                             {
                                 //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
                                 album.Songs.Add(song);
+
+                                if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                {
+                                    album.ReleaseYear = song.Date;
+                                }
                             }
                         }
                     }
@@ -10502,6 +10507,11 @@ public partial class MainViewModel : ObservableObject
                         foreach (var song in r.SearchResult)
                         {
                             album.Songs.Add(song);
+
+                            if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                            {
+                                album.ReleaseYear = song.Date;
+                            }
                         }
                         album.IsSongsAcquired = true;
 
