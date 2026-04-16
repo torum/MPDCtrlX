@@ -50,7 +50,7 @@
 
 				<!-- Filter box -->
 				<StackPanel Orientation="Horizontal">
-					<TextBox Name="FilesFilterQueryTextBox" MinWidth="120" Width="150" Text="{Binding FilterMusicEntriesQuery, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsVisible="{Binding IsChecked, ElementName=TglButtonFilesItemsFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
+					<TextBox Name="FilesFilterQueryTextBox" MinWidth="280" Width="280" Text="{Binding FilterMusicEntriesQuery, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsVisible="{Binding IsChecked, ElementName=TglButtonFilesItemsFilter}" VerticalAlignment="Bottom" Margin="0,0,6,0"></TextBox>
 					<ToggleButton Name="TglButtonFilesItemsFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Filter}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" Click="ButtonFilesItemsFilter_Click">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"

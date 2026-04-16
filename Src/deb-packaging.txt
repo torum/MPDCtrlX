@@ -1,6 +1,6 @@
 # Build and publish
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true
+MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true --self-contained true
 
 # Grab published binaries
 
@@ -16,10 +16,16 @@ MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
 # Create a deb package
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.1.1_amd64.deb
+MPDCtrlX/Src/MPDCtrlX.Desktop$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.2.0_amd64.deb
 
 # Test it
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ sudo apt install ./MPDCtrlX_1.0.1.1_amd64.deb
+MPDCtrlX/Src/MPDCtrlX.Desktop$ sudo apt install ./MPDCtrlX_1.0.2.0_amd64.deb
+
+
+=======================
+For Windows:
+
+MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r win-x64 -f net10.0 -p:PublishAot=true --self-contained true
 
 

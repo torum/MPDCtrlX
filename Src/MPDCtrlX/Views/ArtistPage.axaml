@@ -11,10 +11,11 @@
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Core.Views.ArtistPage"
 			 x:DataType="vm:MainViewModel"
-             x:CompileBindings="True">
+             x:CompileBindings="True"
+			 KeyDown="Page_KeyDown">
 
 	<!-- Artists -->
-	<Grid SizeChanged="PageGrid_SizeChanged">
+	<Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="1"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -30,7 +31,7 @@
 		
 		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
 		<!-- Artists page title and menus -->
-		<Grid Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
+		<Grid x:Name="ArtistPageTitleGrid" Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -47,16 +48,61 @@
 				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" Text="{Binding ArtistPageSubTitleArtistCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
 
-			<StackPanel Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+			<StackPanel x:Name="FindFilterButtonStackPanel" Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+				<!-- Find/Filter -->
+				<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="False" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
+					<Border Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
+						
+						<StackPanel>
+							<TextBox x:Name="FilterArtistQueryTextBox" Text="{Binding FilterArtistQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonArtistFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch"></TextBox>
 
+							<ListBox Name="FilterArtistListBox" ItemsSource="{Binding ArtistsForFilter}" SelectedItem="{Binding SelectedFilterAlbumArtist}" AutoScrollToSelectedItem="True" SelectionMode="Single" DoubleTapped="FilterArtistListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
+								<ListBox.KeyBindings>
+									<!--  Enter -->
+									<KeyBinding Command="{Binding ArtistFilterSelectCommand}" CommandParameter="{Binding #FilterArtistListBox.SelectedItem}" Gesture="Enter" />
+								</ListBox.KeyBindings>
+								<ListBox.ItemContainerTheme>
+
+								</ListBox.ItemContainerTheme>
+								<ListBox.ItemsPanel>
+									<ItemsPanelTemplate>
+										<VirtualizingStackPanel />
+									</ItemsPanelTemplate>
+								</ListBox.ItemsPanel>
+								<ListBox.ItemTemplate>
+									<DataTemplate x:DataType="mod:AlbumArtist">
+											<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Name, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+								<ListBox.Styles>
+									<Style Selector="ListBoxItem" x:DataType="mod:AlbumArtist">
+										<Setter Property="Height" Value="36"/>
+										<Setter Property="MinHeight" Value="32"/>
+										<Setter Property="Padding" Value="0,0,0,0"/>
+										<Setter Property="VerticalAlignment" Value="Center"/>
+									</Style>
+								</ListBox.Styles>
+							</ListBox>
+						</StackPanel>
+
+					</Border>
+				</Popup>
+				<ToggleButton x:Name="TglButtonArtistFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Find}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsArtistFindVisible, Mode=TwoWay}" Click="TglButtonArtistFilter_Click">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							Data="M10.0195 10.7266C9.06578 11.5217 7.83875 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5C12 7.83875 11.5217 9.06578 10.7266 10.0195L13.8535 13.1464C14.0488 13.3417 14.0488 13.6583 13.8535 13.8536C13.6583 14.0488 13.3417 14.0488 13.1464 13.8536L10.0195 10.7266ZM11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11C8.98528 11 11 8.98528 11 6.5Z">
+						</PathIcon>
+					</Viewbox>
+				</ToggleButton>
 			</StackPanel>
+
 		</Grid>
 
         <Grid Grid.Row="2" Grid.Column="0">
 			<!-- 
 			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border> -->
 			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.6"></Border>
-			<ListBox Margin="3,0,3,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
+			<ListBox x:Name="ArtistListBox" Margin="3,0,3,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
@@ -134,8 +180,8 @@
         </Grid>
 
 		<Border Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-		<!-- Song list of selected artists -->
-		<Grid Grid.Row="2" Grid.Column="2" Margin="8,0,0,0">
+		<!-- Song list of selected artist -->
+		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="8,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>

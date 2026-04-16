@@ -2261,7 +2261,6 @@ public partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuSearch)
             {
-                /*
                 Dispatcher.UIThread.Post(async () =>
                 {
                     IsWorking = true;
@@ -2270,8 +2269,7 @@ public partial class MainViewModel : ObservableObject
                     CurrentPage = App.GetService<SearchPage>();
                     IsWorking = false;
                 });
-                */
-                CurrentPage = App.GetService<SearchPage>();
+                //CurrentPage = App.GetService<SearchPage>();
             }
             else if (value is NodeMenuLibrary)
             {
@@ -3036,6 +3034,100 @@ public partial class MainViewModel : ObservableObject
             }
 
             OnPropertyChanged(nameof(SelectedArtistAlbums));
+        }
+    }
+
+    private ObservableCollection<AlbumArtist> _artistsForFilter = [];
+    public ObservableCollection<AlbumArtist> ArtistsForFilter
+    {
+        get
+        {
+            return _artistsForFilter;
+        }
+        set
+        {
+            if (_artistsForFilter == value)
+                return;
+
+            _artistsForFilter = value;
+            OnPropertyChanged(nameof(ArtistsForFilter));
+        }
+    }
+
+    private string _filterArtistQuery = "";
+    public string FilterArtistQuery
+    {
+        get
+        {
+            return _filterArtistQuery;
+        }
+        set
+        {
+            if (_filterArtistQuery == value)
+                return;
+
+            _filterArtistQuery = value;
+            OnPropertyChanged(nameof(FilterArtistQuery));
+
+            if (_filterArtistQuery == "")
+            {
+                return;
+            }
+
+            var filtered = Artists.Where(artist => FilterArtists(artist));
+
+            ArtistsForFilter = new ObservableCollection<AlbumArtist>(filtered);
+
+        }
+    }
+
+    private bool FilterArtists(AlbumArtist artist)
+    {
+        return artist.Name.Contains(FilterArtistQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
+    }
+
+    private bool _isArtistFindVisible;
+    public bool IsArtistFindVisible
+    {
+        get
+        {
+            return _isArtistFindVisible;
+        }
+        set
+        {
+            if (_isArtistFindVisible == value)
+                return;
+
+            _isArtistFindVisible = value;
+
+            ArtistsForFilter.Clear();
+            /*
+            var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
+            collectionView.Filter = x =>
+            {
+                return false;
+            };
+            */
+            FilterArtistQuery = "";
+
+            OnPropertyChanged(nameof(IsArtistFindVisible));
+        }
+    }
+
+    private AlbumArtist? _selectedFilterAlbumArtist;
+    public AlbumArtist? SelectedFilterAlbumArtist
+    {
+        get
+        {
+            return _selectedFilterAlbumArtist;
+        }
+        set
+        {
+            if (_selectedFilterAlbumArtist == value)
+                return;
+
+            _selectedFilterAlbumArtist = value;
+            OnPropertyChanged(nameof(SelectedFilterAlbumArtist));
         }
     }
 
@@ -4571,7 +4663,7 @@ public partial class MainViewModel : ObservableObject
     //public event EventHandler<List<string>>? QueueListviewSaveToDialogShow;
     
     public event EventHandler? QueueHeaderVisibilityChanged;
-    public event EventHandler? QueueFindWindowVisibilityChangedSetFocus;
+    public event EventHandler? QueueFindTextBoxSetFocus;
 
     public event EventHandler? SearchHeaderVisibilityChanged;
     public event EventHandler? PlaylistHeaderVisibilityChanged;
@@ -8306,6 +8398,153 @@ public partial class MainViewModel : ObservableObject
         }, _cts.Token);
     }
 
+    private void GetAlbumSongs(AlbumEx album)
+    {
+        if (album is null)
+        {
+            Debug.WriteLine("GetAlbumSongs: obj is null, returning.");
+            return;
+        }
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            //Debug.WriteLine("GetAlbumSongs: Invoked with Album name: " + album.Name);
+
+            if (!album.IsSongsAcquired)
+            {
+                //album.IsSongsAcquired = true;
+
+                if (!string.IsNullOrEmpty(album.AlbumArtist.Trim()))
+                {
+                    //Debug.WriteLine($"GetAlbumSongs: Album artist is not empty, searching by album artist. ({album.AlbumArtist})");
+                    var r = await SearchArtistSongs(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
+
+                    if (r.IsSuccess)
+                    {
+                        if (r.SearchResult is null)
+                        {
+                            Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
+                            return;
+                        }
+
+                        foreach (var song in r.SearchResult)
+                        {
+                            if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)))
+                            {
+                                //if (song.Album.Trim() == album.Name.Trim())
+                                if (song.Album.Equals(album.Name))
+                                {
+                                    //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
+                                    album.Songs.Add(song);
+
+                                    if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                    {
+                                        album.ReleaseYear = song.Date;
+                                    }
+                                }
+                            }
+                        }
+                        album.IsSongsAcquired = true;
+
+                        SelectedAlbum = album;
+                        await Task.Yield();
+                        IsAlbumContentPanelVisible = true;
+
+                        /*
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            if (r.SearchResult is null)
+                            {
+                                Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
+                                return;
+                            }
+
+                            foreach (var song in r.SearchResult)
+                            {
+                                if ((song.AlbumArtist == album.AlbumArtist) || (song.Artist == album.AlbumArtist))
+                                {
+                                    if (song.Album.Trim() == album.Name.Trim())
+                                    {
+                                        album.Songs.Add(song);
+                                    }
+                                }
+                            }
+                            album.IsSongsAcquired = true;
+
+                            //InvokedAlbum = album;
+                            SelectedAlbum = album;
+                            IsAlbumContentPanelVisible = true;
+                        });
+                        */
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetAlbumSongs: SearchArtistSongs returned false, returning.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"GetAlbumSongs: No album artist, trying to search by album name. ({album.Name})");
+
+                    if (!string.IsNullOrEmpty(album.Name.Trim()))
+                    {
+                        var r = await SearchAlbumSongs(album.Name); // no trim() here.
+                        if (r.IsSuccess)
+                        {
+                            if (r.SearchResult is null)
+                            {
+                                Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
+                                return;
+                            }
+
+                            foreach (var song in r.SearchResult)
+                            {
+                                album.Songs.Add(song);
+
+                                if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                {
+                                    album.ReleaseYear = song.Date;
+                                }
+                            }
+                            album.IsSongsAcquired = true;
+
+                            //InvokedAlbum = album;
+                            SelectedAlbum = album;
+                            await Task.Yield();
+                            IsAlbumContentPanelVisible = true;
+                            /*
+                            Dispatcher.UIThread.Post(() =>
+                            {
+
+                            });
+                            */
+                        }
+                        else
+                        {
+                            Debug.WriteLine("GetAlbumSongs: SearchArtistSongs returned false, returning.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("GetAlbumSongs: No album name, no artist name.");
+                        // This should not happen.
+                    }
+                }
+            }
+            else
+            {
+                //InvokedAlbum = album;
+                SelectedAlbum = album;
+                await Task.Delay(50);
+                IsAlbumContentPanelVisible = true;
+            }
+
+            UpdateProgress?.Invoke(this, "");
+        });
+    }
+
     private void GetArtistSongs(AlbumArtist? artist)
     {
         Dispatcher.UIThread.Post(async () =>
@@ -10019,19 +10258,13 @@ public partial class MainViewModel : ObservableObject
         QueueForFilter.Clear();
 
         QueueForFilter = new ObservableCollection<SongInfoEx>(Queue);
-        /*
-        var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
-        collectionView.Filter = x =>
-        {
-            return false;
-        };
-        */
+
         FilterQueueQuery = "";
 
         IsQueueFindVisible = true;
 
         // Set focus textbox in code behind.
-        QueueFindWindowVisibilityChangedSetFocus?.Invoke(this, EventArgs.Empty);
+        QueueFindTextBoxSetFocus?.Invoke(this, EventArgs.Empty);
     }
 
     //
@@ -10394,7 +10627,7 @@ public partial class MainViewModel : ObservableObject
     #region == Albums ==
 
     [RelayCommand]
-    public async Task AlbumsItemInvoked(object obj)
+    public void AlbumsItemInvoked(object obj)
     {
         if (obj is null)
         {
@@ -10414,140 +10647,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        //Debug.WriteLine("AlbumsItemInvokedCommand: Invoked with Album name: " + album.Name);
-
-        if (!album.IsSongsAcquired)
-        {
-            //album.IsSongsAcquired = true;
-
-            if (!string.IsNullOrEmpty(album.AlbumArtist.Trim()))
-            {
-                //Debug.WriteLine($"AlbumsItemInvokedCommand: Album artist is not empty, searching by album artist. ({album.AlbumArtist})");
-                var r = await SearchArtistSongs(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
-
-                if (r.IsSuccess)
-                {
-                    if (r.SearchResult is null)
-                    {
-                        Debug.WriteLine("AlbumsItemInvokedCommand: SearchResult is null, returning.");
-                        return;
-                    }
-
-                    foreach (var song in r.SearchResult)
-                    {
-                        if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)))
-                        {
-                            //if (song.Album.Trim() == album.Name.Trim())
-                            if (song.Album.Equals(album.Name))
-                            {
-                                //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
-                                album.Songs.Add(song);
-
-                                if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
-                                {
-                                    album.ReleaseYear = song.Date;
-                                }
-                            }
-                        }
-                    }
-                    album.IsSongsAcquired = true;
-
-                    SelectedAlbum = album;
-                    await Task.Yield();
-                    IsAlbumContentPanelVisible = true;
-
-                    /*
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        if (r.SearchResult is null)
-                        {
-                            Debug.WriteLine("AlbumsItemInvokedCommand: SearchResult is null, returning.");
-                            return;
-                        }
-
-                        foreach (var song in r.SearchResult)
-                        {
-                            if ((song.AlbumArtist == album.AlbumArtist) || (song.Artist == album.AlbumArtist))
-                            {
-                                if (song.Album.Trim() == album.Name.Trim())
-                                {
-                                    album.Songs.Add(song);
-                                }
-                            }
-                        }
-                        album.IsSongsAcquired = true;
-
-                        //InvokedAlbum = album;
-                        SelectedAlbum = album;
-                        IsAlbumContentPanelVisible = true;
-                    });
-                    */
-                }
-                else
-                {
-                    Debug.WriteLine("AlbumsItemInvokedCommand: SearchArtistSongs returned false, returning.");
-                    return;
-                }
-            }
-            else
-            {
-                Debug.WriteLine($"AlbumsItemInvokedCommand: No album artist, trying to search by album name. ({album.Name})");
-
-                if (!string.IsNullOrEmpty(album.Name.Trim()))
-                {
-                    var r = await SearchAlbumSongs(album.Name); // no trim() here.
-                    if (r.IsSuccess)
-                    {
-                        if (r.SearchResult is null)
-                        {
-                            Debug.WriteLine("GetAlbumArtistSongs: SearchResult is null, returning.");
-                            return;
-                        }
-
-                        foreach (var song in r.SearchResult)
-                        {
-                            album.Songs.Add(song);
-
-                            if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
-                            {
-                                album.ReleaseYear = song.Date;
-                            }
-                        }
-                        album.IsSongsAcquired = true;
-
-                        //InvokedAlbum = album;
-                        SelectedAlbum = album;
-                        await Task.Yield();
-                        IsAlbumContentPanelVisible = true;
-                        /*
-                        Dispatcher.UIThread.Post(() =>
-                        {
-
-                        });
-                        */
-                    }
-                    else
-                    {
-                        Debug.WriteLine("GetAlbumArtistSongs: SearchArtistSongs returned false, returning.");
-                        return;
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("AlbumsItemInvokedCommand: No album name, no artist name.");
-                    // This should not happen.
-                }
-            }
-        }
-        else
-        {
-            //InvokedAlbum = album;
-            SelectedAlbum = album;
-            await Task.Delay(50);
-            IsAlbumContentPanelVisible = true;
-        }
-
-        UpdateProgress?.Invoke(this, "");
+        GetAlbumSongs(album);
     }
 
     [RelayCommand]
@@ -10632,6 +10732,56 @@ public partial class MainViewModel : ObservableObject
         IsAlbumContentPanelVisible = false;
 
         GoToArtistPage(item);
+    }
+
+    #endregion
+
+    #region == Artists ==
+
+    [RelayCommand]
+    public void ArtistFilterSelect(object obj)//
+    {
+        if (obj is null) return;
+        if (obj is not AlbumArtist artist) return;
+        if (Artists.Count <= 1)return;
+        if (SelectedFilterAlbumArtist is null) return;
+        Debug.WriteLine($"SelectedFilterAlbumArtist: {SelectedFilterAlbumArtist.Name}, artist: {artist.Name}");
+        if (SelectedFilterAlbumArtist.Name != artist.Name) return; // TODO: culture compare.
+
+        var item = Artists.FirstOrDefault(i => i.Name == artist.Name);
+        if (item is null) return;
+
+        SelectedAlbumArtist = item; // Should scroll to the selected item because AutoScrollToSelectedItem is true in ArtistFilter ListView. 
+        //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterAlbumArtist.Index);
+
+    }
+
+    [RelayCommand]
+    public void ArtistFindShowHide()
+    {
+        if (IsArtistFindVisible)
+        {
+            IsArtistFindVisible = false;
+            return;
+        }
+
+        if (Artists is null)
+        {
+            return;
+        }
+
+        SelectedFilterAlbumArtist = null;
+        ArtistsForFilter.Clear();
+
+        // TODO:
+        //QueueForFilter = new ObservableCollection<SongInfoEx>(Queue);
+
+        FilterArtistQuery = "";
+
+        IsArtistFindVisible = true;
+
+        // Set focus textbox in code behind.
+        //ArtistFindWindowVisibilityChangedSetFocus?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion
@@ -12258,9 +12408,30 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void ShowFind()
     {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            IsWorking = true;
+            await Task.Yield();
+            await Task.Delay(100);
+            IsNavigationViewMenuOpen = true; // Need this somehow.
+            await Task.Yield();
+            await Task.Delay(100);
+            _mainMenuItems.SearchDirectory.Selected = true;
+            //SelectedNodeMenu = _mainMenuItems.SearchDirectory;// not good
+            IsWorking = false;
+        });
+    }
+
+    [RelayCommand]
+    public void ShowSearch()
+    {
         if (SelectedNodeMenu is NodeMenuQueue)
         {
             QueueFindShowHide();
+        }
+        else if (SelectedNodeMenu is NodeMenuArtist)
+        {
+            ArtistFindShowHide();
         }
         else if (SelectedNodeMenu is NodeMenuSearch)
         {
@@ -12268,12 +12439,9 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            SelectedNodeMenu = _mainMenuItems.SearchDirectory;
 
-            IsQueueFindVisible = false;
         }
     }
-
 
     #endregion
 
@@ -12288,6 +12456,7 @@ public partial class MainViewModel : ObservableObject
         //IsSettingsShow = false; //Don't.
 
         IsQueueFindVisible = false; // not working?
+        IsArtistFindVisible = false;
 
         // Popups
         if (IsConfirmClearQueuePopupVisible) { IsConfirmClearQueuePopupVisible = false; }

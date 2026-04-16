@@ -31,14 +31,14 @@ public partial class QueuePage : UserControl
         vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
         vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
-        vm.QueueFindWindowVisibilityChangedSetFocus += this.OnQueueFindWindowVisibilityChanged_SetFocus;
+        vm.QueueFindTextBoxSetFocus += this.OnQueueFindTextBoxSetFocus;
 
         this.DetachedFromVisualTree += (s, e) =>
         {
             vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
             vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
             vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
-            vm.QueueFindWindowVisibilityChangedSetFocus -= this.OnQueueFindWindowVisibilityChanged_SetFocus;
+            vm.QueueFindTextBoxSetFocus -= this.OnQueueFindTextBoxSetFocus;
         };
     }
 
@@ -231,11 +231,25 @@ public partial class QueuePage : UserControl
     }
 
     // Sets focus in textbox
-    private async void OnQueueFindWindowVisibilityChanged_SetFocus(object? sender, System.EventArgs e)
+    private async void OnQueueFindTextBoxSetFocus(object? sender, System.EventArgs e)
     {
-        await Task.Yield();
-        await Task.Delay(50); // Need to wait for UI to update
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
 
+            if (FilterQueueQueryTextBox.IsVisible)
+            {
+                if (FilterQueueQueryTextBox.Focusable)
+                {
+                    this.FilterQueueQueryTextBox.Focus();
+                }
+            }
+        }, DispatcherPriority.Render);
+
+
+        //await Task.Yield();
+        //await Task.Delay(50); // Need to wait for UI to update
+        /*
         Dispatcher.UIThread.Post(() =>
         {
             if (this.TglButtonQueueFilter is ToggleButton tb)
@@ -246,6 +260,7 @@ public partial class QueuePage : UserControl
                 }
             }
         });
+        */
     }
 
     // Sets focus in textbox when clicked.
@@ -367,5 +382,30 @@ public partial class QueuePage : UserControl
         }
 
         UpdateColumHeaders();
+    }
+
+    private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (e.Key == Avalonia.Input.Key.Escape)
+        {
+            TglButtonQueueFilter.IsChecked = false;
+        }
+    }
+
+    private void FilterQueuePopup_Opened(object? sender, System.EventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
+            if (FilterQueuePopup.Focusable)
+            {
+                FilterQueuePopup.Focus();
+            }
+
+            if (FilterQueueQueryTextBox.Focusable)
+            {
+                this.FilterQueueQueryTextBox.Focus();
+            }
+        }, DispatcherPriority.Render);
     }
 }

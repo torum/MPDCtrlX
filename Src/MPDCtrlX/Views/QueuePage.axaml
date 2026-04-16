@@ -10,9 +10,10 @@
              x:DataType="vm:MainViewModel"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Core.Properties"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
-             x:CompileBindings="True">
+             x:CompileBindings="True"
+			 KeyDown="Page_KeyDown">
 
-	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
+	<Grid x:Name="PageGrid" RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		
 		<!-- Queue page title and menus -->
@@ -39,7 +40,58 @@
 
 				<!-- Search query input box -->
 				<StackPanel Orientation="Horizontal" x:Name="FindFilterButtonStackPanel">
-					<!-- Find/Filter -->
+
+					<Popup x:Name="FilterQueuePopup" Opened="FilterQueuePopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="False" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
+						<Border Grid.Row="3" Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
+							<StackPanel>
+
+								<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0"></TextBox>
+
+								<ListBox Name="FilterQueueListBox" ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" SelectionMode="AlwaysSelected,Single" DoubleTapped="FilterQueueListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
+									<ListBox.KeyBindings>
+										<!--  Enter CommandParameter="{Binding SelectedItem}" -->
+										<KeyBinding Command="{Binding QueueFilterSelectCommand}" Gesture="Enter" />
+									</ListBox.KeyBindings>
+									<ListBox.ItemContainerTheme>
+
+									</ListBox.ItemContainerTheme>
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<VirtualizingStackPanel />
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
+									<ListBox.ItemTemplate>
+										<DataTemplate x:DataType="mod:SongInfoEx">
+											<StackPanel>
+												<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
+												<!--
+												<TextBlock x:Name="filterListBoxArtist" Text="{Binding Path=Artist, Mode=OneWay}" TextWrapping="Wrap" Margin="0" Padding="3 0 3 0"/>
+												<TextBlock x:Name="fitterListBoxAlbum" Text="{Binding Path=Album, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
+
+												<StackPanel Orientation="Horizontal">
+													<TextBlock x:Name="fitterListBoxGenre" Text="{Binding Path=Genre, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
+												</StackPanel>
+												<TextBlock x:Name="fitterListBoxNewsTimeStamp" Text="{Binding Path=LastModifiedFormated, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right"/>
+												-->
+											</StackPanel>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.Styles>
+										<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
+											<Setter Property="Height" Value="36"/>
+											<Setter Property="MinHeight" Value="32"/>
+											<Setter Property="Padding" Value="0,0,0,0"/>
+											<Setter Property="VerticalAlignment" Value="Center"/>
+
+										</Style>
+									</ListBox.Styles>
+								</ListBox>
+
+							</StackPanel>
+
+						</Border>
+					</Popup>
+
 					<ToggleButton x:Name="TglButtonQueueFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Find}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsQueueFindVisible, Mode=TwoWay}" Click="TglButtonQueueFilter_Click">
 						<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 							<PathIcon Background="Transparent" Width="NaN" Height="NaN"
@@ -519,55 +571,6 @@
 				</ListBox.Styles>
 			</ListBox>
 
-			<!-- Filtered  -->
-			<Border Grid.Row="3" Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="350" MinWidth="280" CornerRadius="3" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
-				<StackPanel>
-
-					<TextBox x:Name="FilterQueueQueryTextBox" Text="{Binding FilterQueueQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0"></TextBox>
-
-					<ListBox Name="FilterQueueListBox" ItemsSource="{Binding QueueForFilter}" SelectedItem="{Binding SelectedQueueFilterSong}" SelectionMode="AlwaysSelected,Single" DoubleTapped="FilterQueueListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
-						<ListBox.KeyBindings>
-							<!--  Enter CommandParameter="{Binding SelectedItem}" -->
-							<KeyBinding Command="{Binding QueueFilterSelectCommand}" Gesture="Enter" />
-						</ListBox.KeyBindings>
-						<ListBox.ItemContainerTheme>
-
-						</ListBox.ItemContainerTheme>
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<VirtualizingStackPanel />
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
-							<DataTemplate x:DataType="mod:SongInfoEx">
-								<StackPanel>
-									<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
-									<!--
-									<TextBlock x:Name="filterListBoxArtist" Text="{Binding Path=Artist, Mode=OneWay}" TextWrapping="Wrap" Margin="0" Padding="3 0 3 0"/>
-									<TextBlock x:Name="fitterListBoxAlbum" Text="{Binding Path=Album, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
-
-									<StackPanel Orientation="Horizontal">
-										<TextBlock x:Name="fitterListBoxGenre" Text="{Binding Path=Genre, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
-									</StackPanel>
-									<TextBlock x:Name="fitterListBoxNewsTimeStamp" Text="{Binding Path=LastModifiedFormated, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right"/>
-									-->
-								</StackPanel>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-						<ListBox.Styles>
-							<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
-								<Setter Property="Height" Value="36"/>
-								<Setter Property="MinHeight" Value="32"/>
-								<Setter Property="Padding" Value="0,0,0,0"/>
-								<Setter Property="VerticalAlignment" Value="Center"/>
-
-							</Style>
-						</ListBox.Styles>
-					</ListBox>
-
-				</StackPanel>
-
-			</Border>
 		</Grid>
 
 	</Grid>

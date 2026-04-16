@@ -16,7 +16,8 @@
 		WindowDecorations="Full"
 		ExtendClientAreaToDecorationsHint="False"
 		MinWidth="320" 
-		MinHeight="460">
+		MinHeight="460"
+		KeyDown="Window_KeyDown">
 
 	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
@@ -62,9 +63,10 @@
 		 Not good for contentdialogs. this steals escape key.
 		<KeyBinding Command="{Binding EscapeCommand}" Gesture="Escape" />
 		-->
-		<!--
-		<KeyBinding Command="{Binding ShowSettingsCommand}" Gesture="Ctrl+S"/>
-		-->
+		<!-- Localized search eg. find song in QueuePage or artist in ArtistPage -->
+		<KeyBinding Command="{Binding ShowSearchCommand}" Gesture="Ctrl+S"/>
+		
+		<!-- Library search -->
 		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
 		<!--
 		<KeyBinding Gesture="Alt+D" Command="{Binding DevCenterViewActivation}">

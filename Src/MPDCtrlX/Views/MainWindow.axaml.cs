@@ -129,7 +129,7 @@ public partial class MainWindow : Window//AppWindow//
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             //this.ExtendClientAreaToDecorationsHint = true;
-            
+
             //TitleBar.ExtendsContentIntoTitleBar = true;
             //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
 
@@ -271,7 +271,7 @@ public partial class MainWindow : Window//AppWindow//
 
             return;
         }
-        
+
         var mainView = App.GetService<MainView>();
         if (nv.Content is not MainView)
         {
@@ -423,5 +423,17 @@ public partial class MainWindow : Window//AppWindow//
 
         // Mark the event as handled to prevent further processing by other controls
         e.Handled = true;
+    }
+
+    private void Window_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Avalonia.Input.Key.Escape)
+        {
+            if (this.DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+            vm.Escape();
+        }
     }
 }
