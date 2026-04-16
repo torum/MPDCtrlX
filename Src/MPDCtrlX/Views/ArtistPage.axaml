@@ -50,7 +50,7 @@
 
 			<StackPanel x:Name="FindFilterButtonStackPanel" Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 				<!-- Find/Filter -->
-				<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="False" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
+				<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
 					<Border Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 						
 						<StackPanel>

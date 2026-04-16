@@ -41,7 +41,7 @@
 				<!-- Search query input box -->
 				<StackPanel Orientation="Horizontal" x:Name="FindFilterButtonStackPanel">
 
-					<Popup x:Name="FilterQueuePopup" Opened="FilterQueuePopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="False" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
+					<Popup x:Name="FilterQueuePopup" Opened="FilterQueuePopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
 
 						<Border Grid.Row="3" Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 							<StackPanel>
