@@ -1,5 +1,4 @@
 using Avalonia.Media.Imaging;
-using System;
 
 namespace MPDCtrlX.Core.Models;
 

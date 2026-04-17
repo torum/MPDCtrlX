@@ -1,14 +1,10 @@
-using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using MPDCtrlX.Core.Models;
 using MPDCtrlX.Core.Services.Contracts;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
@@ -16,9 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using static MPDCtrlX.Core.Services.MpcService;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MPDCtrlX.Core.Services;
 

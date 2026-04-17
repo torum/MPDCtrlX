@@ -1,49 +1,42 @@
-using Avalonia.Controls.Chrome;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MPDCtrlX.Core.ViewModels;
-using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace MPDCtrlX.Core.Models;
-
 
 public class Album : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
 
-    private string _releaseYear = string.Empty;
     public string ReleaseYear
     {
-        get => _releaseYear;
+        get;
         set
         {
-            if (_releaseYear == value)
+            if (field == value)
             {
                 return;
             }
-            _releaseYear = value;
-            OnPropertyChanged(nameof(ReleaseYear));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
     public bool IsSongsAcquired { get; set; } = false;
 
-    public ObservableCollection<SongInfo> _songs = [];
     public ObservableCollection<SongInfo> Songs
     {
-        get => _songs;
+        get;
         set
         {
-            if (_songs == value)
+            if (field == value)
             {
                 return;
             }
-            _songs = value;
-            OnPropertyChanged(nameof(Songs));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 }
 
 public class AlbumEx :Album
@@ -54,19 +47,18 @@ public class AlbumEx :Album
 
     public string? AlbumImagePath { get; set; } = null;
 
-    private Bitmap? _albumImage = null;
     public Bitmap? AlbumImage { 
-        get => _albumImage; 
+        get; 
         set
         {
-            if (_albumImage == value)
+            if (field == value)
             {
                 return;
             }
-            _albumImage = value;
-            OnPropertyChanged(nameof(AlbumImage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = null;
 
     public bool IsImageAcquired { get; set; } = false;
     public bool IsImageLoading { get; set; } = false;
@@ -77,18 +69,17 @@ public class AlbumArtist : ObservableObject
     public string Name { get; set; } = string.Empty;
     public string NameSort { get; set; } = string.Empty;
 
-    public ObservableCollection<Album> _albums = [];
     public ObservableCollection<Album> Albums
     {
-        get => _albums;
+        get;
         private set
         {
-            if (_albums == value)
+            if (field == value)
             {
                 return;
             }
-            _albums = value;
-            OnPropertyChanged(nameof(Albums));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 }

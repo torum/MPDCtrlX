@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging;
-using Avalonia.Threading;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -148,8 +147,7 @@ class Program
                     // Read messages from the new instance.
                     using (var reader = new StreamReader(server))
                     {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
+                        while (reader.ReadLine() is { } line)
                         {
                             // Handle the message on the UI thread.
                             if (line == "ShowMainWindow")
@@ -157,19 +155,16 @@ class Program
                                 Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                                 {
                                     // Your app logic to show/focus the window goes here.
-                                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                                    if (Application.Current?.ApplicationLifetime is not
+                                        IClassicDesktopStyleApplicationLifetime desktop) return;
+                                    var mainWnd = desktop.MainWindow;
+                                    if (mainWnd is null) return;
+                                    if (mainWnd.WindowState == WindowState.Minimized)
                                     {
-                                        var mainWnd = desktop.MainWindow;
-                                        if (mainWnd is not null)
-                                        {
-                                            if (mainWnd.WindowState == WindowState.Minimized)
-                                            {
-                                                mainWnd.WindowState = WindowState.Normal;
-                                            }
-                                            desktop.MainWindow?.Show();
-                                            desktop.MainWindow?.Activate();
-                                        }
+                                        mainWnd.WindowState = WindowState.Normal;
                                     }
+                                    desktop.MainWindow?.Show();
+                                    desktop.MainWindow?.Activate();
 
                                 });
                             }
@@ -301,7 +296,7 @@ class Program
         }
     }
     */
-
+    /*
     private static void FocusExistingWindow(Window window)
     {
         // This is a minimal cross-platform approach.
@@ -312,6 +307,7 @@ class Program
         }
         window.Activate();
     }
+    */
 
     private static void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
     {
@@ -349,26 +345,26 @@ class Program
     }
 
     // Log file.
-    private static readonly StringBuilder _errortxt = new();
-    private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "MPDCtrlX_crash.txt";
+    private static readonly StringBuilder Errortxt = new();
+    private static readonly string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + "MPDCtrlX_crash.txt";
 
     private static void AppendErrorLog(string errorTxt, string kindTxt)
     {
-        DateTime dt = DateTime.Now;
-        string nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
+        var dt = DateTime.Now;
+        var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
 
-        _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
+        Errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
     }
 
     private static void SaveErrorLog()
     {
-        if (string.IsNullOrEmpty(_logFilePath))
+        if (string.IsNullOrEmpty(LogFilePath))
             return;
 #if DEBUG
 
-        string s = _errortxt.ToString();
+        var s = Errortxt.ToString();
         if (!string.IsNullOrEmpty(s))
-            File.WriteAllText(_logFilePath, s);
+            File.WriteAllText(LogFilePath, s);
 #else
 #endif
 

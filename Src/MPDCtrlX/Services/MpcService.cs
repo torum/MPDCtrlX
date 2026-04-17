@@ -1,13 +1,9 @@
-using Avalonia;
-using Avalonia.Controls.Shapes;
 using Avalonia.Threading;
 using MPDCtrlX.Core.Models;
 using MPDCtrlX.Core.Services.Contracts;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,9 +12,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Linq;
-using static MPDCtrlX.Core.Services.MpcService;
 using Path = System.IO.Path;
 
 namespace MPDCtrlX.Core.Services;
@@ -92,23 +85,19 @@ public partial class MpcService : IMpcService
         SeeConnectionErrorEvent
     }
 
-    private ConnectionStatus _connectionState = ConnectionStatus.NeverConnected;
     public ConnectionStatus ConnectionState
     {
-        get
-        {
-            return _connectionState;
-        }
+        get;
         private set
         {
-            if (value == _connectionState)
+            if (value == field)
                 return;
 
-            _connectionState = value;
+            field = value;
 
-            ConnectionStatusChanged?.Invoke(this, _connectionState);
+            ConnectionStatusChanged?.Invoke(this, field);
         }
-    }
+    } = ConnectionStatus.NeverConnected;
 
     private CancellationTokenSource? _cts;// = new();
     //private static readonly CancellationToken token = _cts.Token;
@@ -405,7 +394,7 @@ public partial class MpcService : IMpcService
             cmdDummy = "password ****";
 
         //DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
-        Task nowait = Task.Run(() => DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
+        _= Task.Run(() => DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
 
         try
         {
@@ -556,16 +545,16 @@ public partial class MpcService : IMpcService
                 }
             }
 
-            nowait = Task.Run(() => DebugIdleOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
+            _ = Task.Run(() => DebugIdleOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
 
             if (isAck)
             {
-                nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Idle"));
+                _ = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Idle"));
             }
 
             if (isErr)
             {
-                nowait = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
+                _ = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
                 //ret.IsSuccess = false;
 
                 //return ret;
@@ -1441,7 +1430,7 @@ public partial class MpcService : IMpcService
             string cmdDummy = cmd;
             if (cmd.StartsWith("password "))
                 cmdDummy = "password ****";
-            Task nowait = Task.Run(() => DebugCommandOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
+            _ = Task.Run(() => DebugCommandOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
 
             cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
             await _commandWriter.WriteAsync(cmd.Trim() + "\n");
@@ -1734,16 +1723,16 @@ public partial class MpcService : IMpcService
             else
             {
                 //DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n");
-                Task nowait = Task.Run(() => DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
+                _ = Task.Run(() => DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
 
                 if (isAck)
                 {
-                    nowait = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Command"));
+                    _ = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Command"));
                 }
 
                 if (isErr)
                 {
-                    nowait = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Command"));
+                    _ = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Command"));
                 }
 
                 ret.ResultText = stringBuilder.ToString();

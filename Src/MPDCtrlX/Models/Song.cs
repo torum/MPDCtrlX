@@ -1,15 +1,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using MPDCtrlX.Core.ViewModels;
 using System;
-using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace MPDCtrlX.Core.Models;
 
 /// <summary>
 /// Generic song file class. (for listall)
 /// </summary>
-public partial class SongFile : ObservableObject
+public class SongFile : ObservableObject
 {
     public string File { get; set; } = string.Empty;
 }
@@ -18,7 +15,7 @@ public partial class SongFile : ObservableObject
 /// SongInfo class. Extends SongFile. (for playlist or search result)
 /// </summary>
 
-public partial class SongInfo : SongFile
+public class SongInfo : SongFile
 {
     public string Title { get; set; } = string.Empty;
     public string Track { get; set; } = string.Empty;
@@ -26,7 +23,7 @@ public partial class SongInfo : SongFile
     {
         get
         {
-            int iTrack = 0;
+            var iTrack = 0;
             if (string.IsNullOrEmpty(Disc))
             {
                 return iTrack;
@@ -44,7 +41,7 @@ public partial class SongInfo : SongFile
     {
         get
         {
-            int iDisc = 0;
+            var iDisc = 0;
             if (string.IsNullOrEmpty(Disc))
             {
                 return iDisc;
@@ -62,7 +59,7 @@ public partial class SongInfo : SongFile
     {
         get
         {
-            string _timeFormatted = string.Empty;
+            var timeFormatted = string.Empty;
             try
             {
                 if (!string.IsNullOrEmpty(Time))
@@ -80,19 +77,19 @@ public partial class SongInfo : SongFile
 
                     if ((hour == 0) && min == 0)
                     {
-                        _timeFormatted = String.Format("{0}", s);
+                        timeFormatted = $"{s}";
                     }
                     else if ((hour == 0) && (min != 0))
                     {
-                        _timeFormatted = String.Format("{0}:{1:00}", min, s);
+                        timeFormatted = $"{min}:{s:00}";
                     }
                     else if ((hour != 0) && (min != 0))
                     {
-                        _timeFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+                        timeFormatted = $"{hour}:{min:00}:{s:00}";
                     }
                     else if (hour != 0)
                     {
-                        _timeFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
+                        timeFormatted = $"{hour}:{min:00}:{s:00}";
                     }
                     else
                     {
@@ -107,7 +104,7 @@ public partial class SongInfo : SongFile
                 System.Diagnostics.Debug.WriteLine("Wrong Time format. " + Time + " " + e.Message);
             }
 
-            return _timeFormatted;
+            return timeFormatted;
         }
 
     }
@@ -115,7 +112,7 @@ public partial class SongInfo : SongFile
     {
         get
         {
-            double dtime = double.NaN;
+            var dtime = double.NaN;
             try
             {
                 dtime = double.Parse(Time);
@@ -132,41 +129,37 @@ public partial class SongInfo : SongFile
     public string Composer { get; set; } = string.Empty;
     public string Date { get; set; } = string.Empty;
     public string Genre { get; set; } = string.Empty;
-    
-    private string _lastModified = string.Empty;
+
     public string LastModified
     {
-        get
-        {
-            return _lastModified;
-        }
+        get;
         set
         {
-            if (_lastModified == value)
+            if (field == value)
                 return;
 
-            _lastModified = value;
+            field = value;
 
-            OnPropertyChanged(nameof(LastModified));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(LastModifiedFormated));
         }
-    }
+    } = string.Empty;
 
     public string LastModifiedFormated
     {
         get
         {
-            DateTime _lastModifiedDateTime = default; //new DateTime(1998,04,30)
+            DateTime lastModifiedDateTime = default; //new DateTime(1998,04,30)
 
-            if (!string.IsNullOrEmpty(_lastModified))
+            if (!string.IsNullOrEmpty(LastModified))
             {
                 try
                 {
-                    _lastModifiedDateTime = DateTime.Parse(_lastModified, null, System.Globalization.DateTimeStyles.RoundtripKind);
+                    lastModifiedDateTime = DateTime.Parse(LastModified, null, System.Globalization.DateTimeStyles.RoundtripKind);
                 }
                 catch
                 {
-                    System.Diagnostics.Debug.WriteLine("Wrong LastModified timestamp format. " + _lastModified);
+                    System.Diagnostics.Debug.WriteLine("Wrong LastModified timestamp format. " + LastModified);
                 }
             }
             else
@@ -175,26 +168,22 @@ public partial class SongInfo : SongFile
             }
 
             var culture = System.Globalization.CultureInfo.CurrentCulture;
-            return _lastModifiedDateTime.ToString(culture);
+            return lastModifiedDateTime.ToString(culture);
         }
     }
 
     // for sorting and (playlist pos)
-    private int _index;
     public int Index
     {
-        get
-        {
-            return _index;
-        }
+        get;
         set
         {
-            if (_index == value)
+            if (field == value)
                 return;
 
-            _index = value;
+            field = value;
 
-            OnPropertyChanged(nameof(Index));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(IndexPlusOne));
         }
     }
@@ -219,75 +208,57 @@ public partial class SongInfo : SongFile
     }
     */
 
-    public int IndexPlusOne
-    {
-        get
-        {
-            return _index+1;
-        }
-    }
+    public int IndexPlusOne => Index+1;
 }
 
 /// <summary>
 /// Song class with some extra info. Extends SongInfo. (for queue)
 /// </summary>
-public partial class SongInfoEx : SongInfo
+public class SongInfoEx : SongInfo
 {
     // Queue specific
 
     public string Id { get; set; } = string.Empty;
 
-    private string _pos = string.Empty;
     public string Pos
     {
-        get
-        {
-            return _pos;
-        }
+        get;
         set
         {
-            if (_pos == value)
+            if (field == value)
                 return;
 
-            _pos = value;
+            field = value;
 
-            OnPropertyChanged(nameof(Pos));
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
-    private bool _isPlaying;
     public bool IsPlaying
     {
-        get
-        {
-            return _isPlaying;
-        }
+        get;
         set
         {
-            if (_isPlaying == value)
+            if (field == value)
                 return;
 
-            _isPlaying = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaying));
+            OnPropertyChanged();
         }
     }
 
-    private bool _isAlbumCoverNeedsUpdate = true;
     public bool IsAlbumCoverNeedsUpdate
     {
-        get
-        {
-            return _isAlbumCoverNeedsUpdate;
-        }
+        get;
         set
         {
-            if (_isAlbumCoverNeedsUpdate == value)
+            if (field == value)
                 return;
 
-            _isAlbumCoverNeedsUpdate = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsAlbumCoverNeedsUpdate));
+            OnPropertyChanged();
         }
-    }
+    } = true;
 }

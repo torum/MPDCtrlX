@@ -3098,7 +3098,6 @@ public partial class MainViewModel : ObservableObject
             //if (_hostIpAddress.Equals(value))  return;
 
             field = value;
-
             OnPropertyChanged();
         } }
 

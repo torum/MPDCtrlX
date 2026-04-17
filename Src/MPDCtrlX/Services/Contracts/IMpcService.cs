@@ -1,7 +1,7 @@
+using MPDCtrlX.Core.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using MPDCtrlX.Core.Models;
 
 namespace MPDCtrlX.Core.Services.Contracts;
 

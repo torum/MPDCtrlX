@@ -95,68 +95,19 @@ public class NodeMenuPlaylistItem : NodeMenu
 
 public class MenuTreeBuilder : NodeTree
 {
-    private readonly NodeMenuPlaylists _playlistsDirectory;
-    public NodeMenuPlaylists PlaylistsDirectory
-    {
-        get
-        {
-            return _playlistsDirectory;
-        }
-    }
+    public NodeMenuPlaylists PlaylistsDirectory { get; }
 
-    private readonly NodeMenuSearch _searchDirectory;
-    public NodeMenuSearch SearchDirectory
-    {
-        get
-        {
-            return _searchDirectory;
-        }
-    }
+    public NodeMenuSearch SearchDirectory { get; }
 
-    private readonly NodeMenuAlbum _albumsDirectory;
-    public NodeMenuAlbum AlbumsDirectory
-    {
-        get
-        {
-            return _albumsDirectory;
-        }
-    }
+    public NodeMenuAlbum AlbumsDirectory { get; }
 
-    private readonly NodeMenuArtist _artistsDirectory;
-    public NodeMenuArtist ArtistsDirectory
-    {
-        get
-        {
-            return _artistsDirectory;
-        }
-    }
+    public NodeMenuArtist ArtistsDirectory { get; }
 
-    private readonly NodeMenuLibrary _libraryDirectory;
-    public NodeMenuLibrary LibraryDirectory
-    {
-        get
-        {
-            return _libraryDirectory;
-        }
-    }
+    public NodeMenuLibrary LibraryDirectory { get; }
 
-    private readonly NodeMenuFiles _filesDirectory;
-    public NodeMenuFiles FilesDirectory
-    {
-        get
-        {
-            return _filesDirectory;
-        }
-    }
+    public NodeMenuFiles FilesDirectory { get; }
 
-    private readonly NodeMenuQueue _queueDirectory;
-    public NodeMenuQueue QueueDirectory
-    {
-        get
-        {
-            return _queueDirectory;
-        }
-    }
+    public NodeMenuQueue QueueDirectory { get; }
 
     public MenuTreeBuilder(string name) : base(name)
     {
@@ -169,7 +120,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(queue);
-        _queueDirectory = queue;
+        QueueDirectory = queue;
 
 
         NodeMenuLibrary library = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Library)
@@ -180,7 +131,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(library);
-        _libraryDirectory = library;
+        LibraryDirectory = library;
 
 
         NodeMenuAlbum albums = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Albums)
@@ -191,7 +142,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         library.Children.Add(albums);
-        _albumsDirectory = albums;
+        AlbumsDirectory = albums;
         
 
         NodeMenuArtist artists = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Artists)
@@ -202,7 +153,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         library.Children.Add(artists);
-        _artistsDirectory = artists;
+        ArtistsDirectory = artists;
 
 
         NodeMenuFiles files = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Files)
@@ -213,7 +164,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         library.Children.Add(files);
-        _filesDirectory = files;
+        FilesDirectory = files;
 
 
         NodeMenuSearch search = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Search)
@@ -224,7 +175,7 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         library.Children.Add(search);
-        _searchDirectory = search;
+        SearchDirectory = search;
 
 
         NodeMenuPlaylists playlists = new(MPDCtrlX.Core.Properties.Resources.MenuTreeItem_Playlists)
@@ -235,6 +186,6 @@ public class MenuTreeBuilder : NodeTree
             Parent = this
         };
         Children.Add(playlists);
-        _playlistsDirectory = playlists;
+        PlaylistsDirectory = playlists;
     }
 }

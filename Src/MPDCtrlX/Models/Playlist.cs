@@ -7,45 +7,41 @@ public class Playlist : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
 
-    private string _lastModified = string.Empty;
     public string LastModified
     {
-        get
-        {
-            return _lastModified;
-        }
+        get;
         set
         {
-            if (_lastModified == value)
+            if (field == value)
                 return;
 
-            _lastModified = value;
+            field = value;
 
-            OnPropertyChanged(nameof(LastModified));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(LastModifiedFormated));
         }
-    }
+    } = string.Empty;
 
     public string LastModifiedFormated
     {
         get
         {
-            DateTime _lastModifiedDateTime = default; //new DateTime(1998,04,30)
+            DateTime lastModifiedDateTime = default; //new DateTime(1998,04,30)
 
-            if (!string.IsNullOrEmpty(_lastModified))
+            if (!string.IsNullOrEmpty(LastModified))
             {
                 try
                 {
-                    _lastModifiedDateTime = DateTime.Parse(_lastModified, null, System.Globalization.DateTimeStyles.RoundtripKind);
+                    lastModifiedDateTime = DateTime.Parse(LastModified, null, System.Globalization.DateTimeStyles.RoundtripKind);
                 }
                 catch
                 {
-                    System.Diagnostics.Debug.WriteLine("Wrong LastModified timestamp format. " + _lastModified);
+                    System.Diagnostics.Debug.WriteLine("Wrong LastModified timestamp format. " + LastModified);
                 }
             }
 
             var culture = System.Globalization.CultureInfo.CurrentCulture;
-            return _lastModifiedDateTime.ToString(culture);
+            return lastModifiedDateTime.ToString(culture);
         }
     }
 }

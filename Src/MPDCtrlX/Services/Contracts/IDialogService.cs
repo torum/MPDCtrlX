@@ -1,10 +1,5 @@
 ﻿using MPDCtrlX.Core.Models;
-using MPDCtrlX.Core.Services;
 using MPDCtrlX.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static MPDCtrlX.Core.Services.DialogService;
 

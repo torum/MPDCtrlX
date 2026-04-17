@@ -1,38 +1,33 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using FluentAvalonia.UI.Windowing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MPDCtrlX.Core.Models;
 using MPDCtrlX.Core.Services;
 using MPDCtrlX.Core.Services.Contracts;
 using MPDCtrlX.Core.ViewModels;
 using MPDCtrlX.Core.Views;
 using MPDCtrlX.Core.Views.Dialogs;
 using System;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
 namespace MPDCtrlX.Core;
 
-public partial class App : Application
+public class App : Application
 {
     public static readonly string AppName = "MPDCtrlX";
-    private static readonly string _appDeveloper = "torum";
+    private static readonly string AppDeveloper = "torum";
 
     // Data folder and Config file path.
-    private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-    public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, _appDeveloper)), AppName);
+    private static readonly string EnvDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+    public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(EnvDataFolder, AppDeveloper)), AppName);
     public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
 
     // Temp album cover cache folder.
     private static readonly string _envAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local. //System.IO.Path.GetTempPath();
-    private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, _appDeveloper)), AppName);
+    private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, AppDeveloper)), AppName);
     public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
 
     public IHost AppHost { get; private set; }

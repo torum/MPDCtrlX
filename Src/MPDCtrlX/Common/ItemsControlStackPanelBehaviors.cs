@@ -1,16 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Generators;
-using Avalonia.Controls.Primitives;
-using Avalonia.Interactivity;
 using Avalonia.VisualTree;
-using MPDCtrlX.Core.Models;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace MPDCtrlX.Core.Common;

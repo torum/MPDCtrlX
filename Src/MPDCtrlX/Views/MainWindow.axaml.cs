@@ -28,27 +28,10 @@ namespace MPDCtrlX.Core.Views;
 
 public partial class MainWindow : Window//AppWindow//
 {
-    private int _winRestoreWidth = 1024;//1024;
-    private int _winRestoreHeight = 768;//768;
-    private int _winRestoreTop = 100;
-    private int _winRestoreLeft = 100;
-
-    public int WinRestoreWidth
-    {
-        get { return _winRestoreWidth; }
-    }
-    public int WinRestoreHeight
-    {
-        get { return _winRestoreHeight; }
-    }
-    public int WinRestoreTop
-    {
-        get { return _winRestoreTop; }
-    }
-    public int WinRestoreLeft
-    {
-        get { return _winRestoreLeft; }
-    }
+    public int WinRestoreWidth { get; private set; } = 1024;
+    public int WinRestoreHeight { get; private set; } = 768;
+    public int WinRestoreTop { get; private set; } = 100;
+    public int WinRestoreLeft { get; private set; } = 100;
 
     public MainWindow() { }
     public MainWindow(MainViewModel vm)
@@ -320,10 +303,10 @@ public partial class MainWindow : Window//AppWindow//
         }
         else
         {
-            _winRestoreHeight = (int)this.Height;
-            _winRestoreWidth = (int)this.Width;
-            _winRestoreTop = (int)this.Position.X;
-            _winRestoreLeft = (int)this.Position.X;
+            WinRestoreHeight = (int)this.Height;
+            WinRestoreWidth = (int)this.Width;
+            WinRestoreTop = (int)this.Position.X;
+            WinRestoreLeft = (int)this.Position.X;
         }
     }
 
