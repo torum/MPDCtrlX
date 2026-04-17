@@ -719,4 +719,7 @@ SOFTWARE.</value>
   <data name="Text_UnknownAlbum" xml:space="preserve">
     <value>Unknown Album</value>
   </data>
+  <data name="PageMenu_Sort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
 </root>

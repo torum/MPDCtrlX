@@ -3055,6 +3055,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    // Filter Artists
     private ObservableCollection<AlbumArtist> _artistsForFilter = [];
     public ObservableCollection<AlbumArtist> ArtistsForFilter
     {
@@ -3273,6 +3274,95 @@ public partial class MainViewModel : ObservableObject
             //GetAlbumPictures(VisibleViewportItemsAlbumEx);
         }
     }
+
+    // Filter Albums
+    private ObservableCollection<AlbumEx> _albumsForFilter = [];
+    public ObservableCollection<AlbumEx> AlbumsForFilter
+    {   
+        get
+        {
+            return _albumsForFilter;
+        }
+        set
+        {
+            if (_albumsForFilter == value)
+                return;
+
+            _albumsForFilter = value;
+            OnPropertyChanged(nameof(AlbumsForFilter));
+        }
+    }
+
+    private string _filterAlbumQuery = "";
+    public string FilterAlbumQuery
+    {
+        get
+        {
+            return _filterAlbumQuery;
+        }
+        set
+        {
+            if (_filterAlbumQuery == value)
+                return;
+
+            _filterAlbumQuery = value;
+            OnPropertyChanged(nameof(FilterAlbumQuery));
+
+            if (_filterAlbumQuery == "")
+            {
+                return;
+            }
+
+            var filtered = Albums.Where(album => FilterAlbums(album));
+
+            AlbumsForFilter = new ObservableCollection<AlbumEx>(filtered);
+        }
+    }
+
+    private bool FilterAlbums(AlbumEx album)
+    {
+        return album.Name.Contains(FilterAlbumQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
+    }
+
+    private bool _isAlbumFindVisible;
+    public bool IsAlbumFindVisible
+    {
+        get
+        {
+            return _isAlbumFindVisible;
+        }
+        set
+        {
+            if (_isAlbumFindVisible == value)
+                return;
+
+            _isAlbumFindVisible = value;
+
+            AlbumsForFilter.Clear();
+
+            FilterAlbumQuery = "";
+
+            OnPropertyChanged(nameof(IsAlbumFindVisible));
+        }
+    }
+
+    private AlbumEx? _selectedFilterAlbum;
+    public AlbumEx? SelectedFilterAlbum
+    {
+        get
+        {
+            return _selectedFilterAlbum;
+        }
+        set
+        {
+            if (_selectedFilterAlbum == value)
+                return;
+
+            _selectedFilterAlbum = value;
+            OnPropertyChanged(nameof(SelectedFilterAlbum));
+        }
+    }
+
 
     #endregion
 
@@ -10751,6 +10841,46 @@ public partial class MainViewModel : ObservableObject
         GoToArtistPage(item);
     }
 
+    [RelayCommand]
+    public void AlbumFilterSelect(object obj)//
+    {
+        Debug.WriteLine("AlbumFilterSelectCommand executed.");
+        if (obj is null) return;
+        if (obj is not AlbumEx album) return;
+        if (Albums.Count <= 1) return;
+        if (SelectedFilterAlbum is null) return;
+
+        if (SelectedFilterAlbum.Name != album.Name) return; // TODO: culture compare.
+
+        var item = Albums.FirstOrDefault(i => i.Name == album.Name);
+        if (item is null) return;
+
+        SelectedAlbum = item; // 
+        //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterAlbumArtist.Index);
+    }
+
+    [RelayCommand]
+    public void AlbumFindShowHide()
+    {
+        if (IsAlbumFindVisible)
+        {
+            IsAlbumFindVisible = false;
+            return;
+        }
+
+        if (Albums.Count <= 0)
+        {
+            return;
+        }
+
+        SelectedFilterAlbum = null;
+        AlbumsForFilter.Clear();
+
+        FilterAlbumQuery = "";
+
+        IsAlbumFindVisible = true;
+    }
+
     #endregion
 
     #region == Artists ==
@@ -10762,7 +10892,7 @@ public partial class MainViewModel : ObservableObject
         if (obj is not AlbumArtist artist) return;
         if (Artists.Count <= 1)return;
         if (SelectedFilterAlbumArtist is null) return;
-        Debug.WriteLine($"SelectedFilterAlbumArtist: {SelectedFilterAlbumArtist.Name}, artist: {artist.Name}");
+
         if (SelectedFilterAlbumArtist.Name != artist.Name) return; // TODO: culture compare.
 
         var item = Artists.FirstOrDefault(i => i.Name == artist.Name);
@@ -10770,7 +10900,6 @@ public partial class MainViewModel : ObservableObject
 
         SelectedAlbumArtist = item; // Should scroll to the selected item because AutoScrollToSelectedItem is true in ArtistFilter ListView. 
         //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterAlbumArtist.Index);
-
     }
 
     [RelayCommand]
@@ -12429,13 +12558,17 @@ public partial class MainViewModel : ObservableObject
         {
             QueueFindShowHide();
         }
+        else if (SelectedNodeMenu is NodeMenuAlbum)
+        {
+            AlbumFindShowHide();
+        }
         else if (SelectedNodeMenu is NodeMenuArtist)
         {
             ArtistFindShowHide();
         }
         else if (SelectedNodeMenu is NodeMenuSearch)
         {
-
+            // Nothing to do.
         }
         else if (SelectedNodeMenu is NodeMenuFiles)
         {
@@ -12479,6 +12612,7 @@ public partial class MainViewModel : ObservableObject
         IsQueueFindVisible = false;
         IsArtistFindVisible = false;
         IsFilesFindVisible = false;
+        IsAlbumFindVisible = false;
 
         // Popups
         if (IsConfirmClearQueuePopupVisible) { IsConfirmClearQueuePopupVisible = false; }

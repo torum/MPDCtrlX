@@ -712,4 +712,7 @@ SOFTWARE.</value>
   <data name="Text_UnknownAlbum" xml:space="preserve">
     <value>不明なアルバム</value>
   </data>
+  <data name="PageMenu_Sort" xml:space="preserve">
+    <value>ソート</value>
+  </data>
 </root>

@@ -91,7 +91,6 @@ public partial class ArtistPage : UserControl
                 {
                     if (FilterArtistQueryTextBox.Focusable)
                     {
-                        Debug.WriteLine("Artist filter opened 2");
                         this.FilterArtistQueryTextBox.Focus();
                     }
                 }

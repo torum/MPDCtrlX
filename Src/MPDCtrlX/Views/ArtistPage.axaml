@@ -48,7 +48,7 @@
 				<TextBlock Theme="{StaticResource CaptionTextBlockStyle}" Text="{Binding ArtistPageSubTitleArtistCount, Mode=OneWay}" VerticalAlignment="Bottom" Padding="0,0,0,4" Opacity="0.7"/>
 			</StackPanel>
 
-			<StackPanel x:Name="FindFilterButtonStackPanel" Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+			<StackPanel Grid.Column="2" Height="48" Spacing="6" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 				<!-- Find/Filter -->
 				<ToggleButton x:Name="TglButtonArtistFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Find}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsArtistFindVisible, Mode=TwoWay}" Click="TglButtonArtistFilter_Click">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
@@ -89,9 +89,7 @@
 							</ListBox.ItemTemplate>
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem" x:DataType="mod:AlbumArtist">
-									<Setter Property="Height" Value="36"/>
-									<Setter Property="MinHeight" Value="32"/>
-									<Setter Property="Padding" Value="0,0,0,0"/>
+									<Setter Property="Padding" Value="3"/>
 									<Setter Property="VerticalAlignment" Value="Center"/>
 								</Style>
 							</ListBox.Styles>

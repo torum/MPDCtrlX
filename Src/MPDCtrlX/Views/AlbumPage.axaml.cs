@@ -244,4 +244,64 @@ public partial class AlbumPage : UserControl
             this.HeaderGridSpacer.Width = 24;
         }
     }
+
+    private void TglButtonAlbumFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
+
+            if (this.TglButtonAlbumFilter is ToggleButton tb)
+            {
+                if (tb.IsChecked == true)
+                {
+                    if (FilterAlbumQueryTextBox.Focusable)
+                    {
+                        this.FilterAlbumQueryTextBox.Focus();
+                    }
+                }
+            }
+
+        }, DispatcherPriority.Render);
+    }
+
+    private void FilterAlbumListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (this.FilterAlbumListBox.SelectedItem is AlbumEx album)
+        {
+            if (this.AlbumsListBox is ListBox lb)
+            {
+                var vm = App.GetService<MainViewModel>();
+                if (vm is not null)
+                {
+                    vm.AlbumFilterSelect(album);
+                }
+            }
+        }
+    }
+
+    private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (e.Key == Avalonia.Input.Key.Escape)
+        {
+            TglButtonAlbumFilter.IsChecked = false;
+        }
+    }
+
+    private void FilterAlbumPopup_Opened(object? sender, System.EventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
+            if (FilterAlbumPopup.Focusable)
+            {
+                FilterAlbumPopup.Focus();
+            }
+
+            if (FilterAlbumQueryTextBox.Focusable)
+            {
+                this.FilterAlbumQueryTextBox.Focus();
+            }
+        }, DispatcherPriority.Render);
+    }
 }

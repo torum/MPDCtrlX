@@ -1015,6 +1015,15 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
+        ///   Sort に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string PageMenu_Sort {
+            get {
+                return ResourceManager.GetString("PageMenu_Sort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sort and reorder に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string PageMenu_SortAndReorder {

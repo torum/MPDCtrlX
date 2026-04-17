@@ -171,26 +171,19 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate x:DataType="mod:SongInfoEx">
 									<StackPanel>
-										<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
-										<!--
-										<TextBlock x:Name="filterListBoxArtist" Text="{Binding Path=Artist, Mode=OneWay}" TextWrapping="Wrap" Margin="0" Padding="3 0 3 0"/>
-										<TextBlock x:Name="fitterListBoxAlbum" Text="{Binding Path=Album, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
-
-										<StackPanel Orientation="Horizontal">
-											<TextBlock x:Name="fitterListBoxGenre" Text="{Binding Path=Genre, Mode=OneWay}" TextWrapping="Wrap" FontStyle="Italic" Margin="0" Padding="3 0 3 0"/>
+										<StackPanel>
+											<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
+											
+											<TextBlock Text="{Binding Path=Artist, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" Opacity="0.6" IsVisible="{Binding Artist, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+											<TextBlock Text="{x:Static prop:Resources.Text_UnknownArtist}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" Opacity="0.6" IsVisible="{Binding Artist, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
 										</StackPanel>
-										<TextBlock x:Name="fitterListBoxNewsTimeStamp" Text="{Binding Path=LastModifiedFormated, Mode=OneWay}" Margin="0" Padding="3 0 3 0" HorizontalAlignment="Right"/>
-										-->
 									</StackPanel>
 								</DataTemplate>
 							</ListBox.ItemTemplate>
 							<ListBox.Styles>
 								<Style Selector="ListBoxItem" x:DataType="mod:SongInfoEx">
-									<Setter Property="Height" Value="36"/>
-									<Setter Property="MinHeight" Value="32"/>
-									<Setter Property="Padding" Value="0,0,0,0"/>
+									<Setter Property="Padding" Value="4"/>
 									<Setter Property="VerticalAlignment" Value="Center"/>
-
 								</Style>
 							</ListBox.Styles>
 						</ListBox>

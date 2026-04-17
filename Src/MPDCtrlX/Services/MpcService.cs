@@ -3880,6 +3880,8 @@ public partial class MpcService : IMpcService
 
     private Task<bool> ParseListAlbumGroupAlbumArtist(string result)
     {
+        //Debug.WriteLine($"{result}");
+
         if (MpdStop) return Task.FromResult(false);
 
         if (string.IsNullOrEmpty(result)) return Task.FromResult(false);
