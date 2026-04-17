@@ -50,47 +50,6 @@
 
 			<StackPanel x:Name="FindFilterButtonStackPanel" Grid.Column="2" Height="48" Spacing="24" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
 				<!-- Find/Filter -->
-				<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" PlacementTarget="{Binding #PageGrid}" Placement="AnchorAndGravity" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
-					<Border Margin="0" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="3" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
-						
-						<StackPanel>
-							<TextBox x:Name="FilterArtistQueryTextBox" Text="{Binding FilterArtistQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonArtistFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-								<TextBox.KeyBindings>
-									<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
-								</TextBox.KeyBindings>
-							</TextBox>
-
-							<ListBox Name="FilterArtistListBox" ItemsSource="{Binding ArtistsForFilter}" SelectedItem="{Binding SelectedFilterAlbumArtist}" AutoScrollToSelectedItem="True" SelectionMode="Single" DoubleTapped="FilterArtistListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
-								<ListBox.KeyBindings>
-									<!--  Enter -->
-									<KeyBinding Command="{Binding ArtistFilterSelectCommand}" CommandParameter="{Binding #FilterArtistListBox.SelectedItem}" Gesture="Enter" />
-								</ListBox.KeyBindings>
-								<ListBox.ItemContainerTheme>
-
-								</ListBox.ItemContainerTheme>
-								<ListBox.ItemsPanel>
-									<ItemsPanelTemplate>
-										<VirtualizingStackPanel />
-									</ItemsPanelTemplate>
-								</ListBox.ItemsPanel>
-								<ListBox.ItemTemplate>
-									<DataTemplate x:DataType="mod:AlbumArtist">
-											<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Name, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-								<ListBox.Styles>
-									<Style Selector="ListBoxItem" x:DataType="mod:AlbumArtist">
-										<Setter Property="Height" Value="36"/>
-										<Setter Property="MinHeight" Value="32"/>
-										<Setter Property="Padding" Value="0,0,0,0"/>
-										<Setter Property="VerticalAlignment" Value="Center"/>
-									</Style>
-								</ListBox.Styles>
-							</ListBox>
-						</StackPanel>
-
-					</Border>
-				</Popup>
 				<ToggleButton x:Name="TglButtonArtistFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Find}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsArtistFindVisible, Mode=TwoWay}" Click="TglButtonArtistFilter_Click">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
@@ -99,7 +58,48 @@
 					</Viewbox>
 				</ToggleButton>
 			</StackPanel>
+			
+			<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonArtistFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
+				<Border  BoxShadow="0 4 10 0 #40000000" Margin="12" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="6" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
+						
+					<StackPanel>
+						<TextBox x:Name="FilterArtistQueryTextBox" Text="{Binding FilterArtistQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonArtistFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+							<TextBox.KeyBindings>
+								<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
+							</TextBox.KeyBindings>
+						</TextBox>
 
+						<ListBox Name="FilterArtistListBox" ItemsSource="{Binding ArtistsForFilter}" SelectedItem="{Binding SelectedFilterAlbumArtist}" AutoScrollToSelectedItem="True" SelectionMode="Single" DoubleTapped="FilterArtistListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
+							<ListBox.KeyBindings>
+								<!--  Enter -->
+								<KeyBinding Command="{Binding ArtistFilterSelectCommand}" CommandParameter="{Binding #FilterArtistListBox.SelectedItem}" Gesture="Enter" />
+							</ListBox.KeyBindings>
+							<ListBox.ItemContainerTheme>
+
+							</ListBox.ItemContainerTheme>
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<VirtualizingStackPanel />
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="mod:AlbumArtist">
+										<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Name, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+							<ListBox.Styles>
+								<Style Selector="ListBoxItem" x:DataType="mod:AlbumArtist">
+									<Setter Property="Height" Value="36"/>
+									<Setter Property="MinHeight" Value="32"/>
+									<Setter Property="Padding" Value="0,0,0,0"/>
+									<Setter Property="VerticalAlignment" Value="Center"/>
+								</Style>
+							</ListBox.Styles>
+						</ListBox>
+					</StackPanel>
+
+				</Border>
+			</Popup>
 		</Grid>
 
         <Grid Grid.Row="2" Grid.Column="0">
