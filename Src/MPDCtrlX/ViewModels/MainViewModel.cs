@@ -10844,7 +10844,6 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void AlbumFilterSelect(object obj)//
     {
-        Debug.WriteLine("AlbumFilterSelectCommand executed.");
         if (obj is null) return;
         if (obj is not AlbumEx album) return;
         if (Albums.Count <= 1) return;
@@ -10852,10 +10851,7 @@ public partial class MainViewModel : ObservableObject
 
         if (SelectedFilterAlbum.Name != album.Name) return; // TODO: culture compare.
 
-        var item = Albums.FirstOrDefault(i => i.Name == album.Name);
-        if (item is null) return;
-
-        SelectedAlbum = item; // 
+        SelectedAlbum = album; // 
         //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterAlbumArtist.Index);
     }
 
@@ -10895,10 +10891,7 @@ public partial class MainViewModel : ObservableObject
 
         if (SelectedFilterAlbumArtist.Name != artist.Name) return; // TODO: culture compare.
 
-        var item = Artists.FirstOrDefault(i => i.Name == artist.Name);
-        if (item is null) return;
-
-        SelectedAlbumArtist = item; // Should scroll to the selected item because AutoScrollToSelectedItem is true in ArtistFilter ListView. 
+        SelectedAlbumArtist = artist; // Should scroll to the selected item because AutoScrollToSelectedItem is true in ArtistFilter ListView. 
         //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterAlbumArtist.Index);
     }
 
