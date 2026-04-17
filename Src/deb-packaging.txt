@@ -1,18 +1,19 @@
-# Build and publish
+# Build, publish and package for Linux
 
 MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true --self-contained true
 
 # Grab published binaries
 
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libHarfBuzzSharp.so
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/libSkiaSharp.so
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net9.0/linux-x64/publish/MPDCtrlX
+MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/libHarfBuzzSharp.so
+MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/libSkiaSharp.so
+MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/MPDCtrlX
 
 # Put them in ...
 
 MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
 (Make sure "MPDCtrlX/Src/deb-staging/usr/bin/MPDCtrlX" shell script has "Executable as Program" permission)
+(Make sure "MPDCtrlX/Src/deb-staging/DEBIAN/control" file's version is correct)
 
 # Create a deb package
 

@@ -1,27 +1,18 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Shapes;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentAvalonia.Core;
 using FluentAvalonia.Styling;
-using FluentAvalonia.UI.Data;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting.Internal;
-using MPDCtrlX.Core.Common;
 using MPDCtrlX.Core.Models;
 using MPDCtrlX.Core.Services;
 using MPDCtrlX.Core.Services.Contracts;
 using MPDCtrlX.Core.Views;
 using MPDCtrlX.Core.Views.Dialogs;
-using SkiaSharp;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -31,18 +22,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.Marshalling;
-using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Xml;
 using System.Xml.Linq;
 using Path = System.IO.Path;
@@ -53,88 +39,75 @@ namespace MPDCtrlX.Core.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private string _appVersion = string.Empty;
     public string AppVersion
     {
         get
         {
-            if (!string.IsNullOrEmpty(_appVersion)) return _appVersion;
+            if (!string.IsNullOrEmpty(field)) return field;
             
             var assembly = Assembly.GetExecutingAssembly().GetName();
             var version = assembly.Version;
-            _appVersion = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
+            field = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
 
-            return _appVersion;
+            return field;
         }
-    }
+    } = string.Empty;
 
     #region == Layout ==
 
     #region == Window and loading flag ==
 
-    public int WindowTop = 0;
-    public int WindowLeft = 0;
-    public double WindowHeight = 0;
-    public double WindowWidth = 0;
+    public int WindowTop;
+    public int WindowLeft;
+    public double WindowHeight;
+    public double WindowWidth;
     public WindowState WindowState = WindowState.Normal;
 
-    private bool _isFullyLoaded;
     public bool IsFullyLoaded
     {
-        get
-        {
-            return _isFullyLoaded;
-        }
+        get;
         set
         {
-            if (_isFullyLoaded == value)
+            if (field == value)
                 return;
 
-            _isFullyLoaded = value;
-            OnPropertyChanged(nameof(IsFullyLoaded));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
     // TODO: no longer used...
-    private double _mainLeftPainActualWidth = 241;
     public double MainLeftPainActualWidth
     {
-        get
-        {
-            return _mainLeftPainActualWidth;
-        }
+        get;
         set
         {
-            if (value == _mainLeftPainActualWidth) return;
+            if (value == field) return;
 
-            _mainLeftPainActualWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(MainLeftPainActualWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 241;
 
     // TODO: no longer used...
-    private double _mainLeftPainWidth = 241;
     public double MainLeftPainWidth
     {
-        get
-        {
-            return _mainLeftPainWidth;
-        }
+        get;
         set
         {
-            if (value == _mainLeftPainWidth) return;
+            if (value == field) return;
 
-            _mainLeftPainWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(MainLeftPainWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 241;
 
     private bool _isNavigationViewMenuOpen = true;
     public bool IsNavigationViewMenuOpen
     {
-        get { return _isNavigationViewMenuOpen; }
+        get => _isNavigationViewMenuOpen;
         set
         {
             if (_isNavigationViewMenuOpen == value)
@@ -142,7 +115,7 @@ public partial class MainViewModel : ObservableObject
 
             _isNavigationViewMenuOpen = value;
 
-            OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
+            OnPropertyChanged();
 
             // Needed this. Otherwise, there will be some weird visual bugs when expanding/collapsing the menu via hamburger menu button.
             Dispatcher.UIThread.Post(() =>
@@ -168,1075 +141,853 @@ public partial class MainViewModel : ObservableObject
     #region == Queue column headers ==
 
     // Posiotion header
-    private bool _isQueueColumnHeaderPositionVisible = true;
     public bool IsQueueColumnHeaderPositionVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderPositionVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderPositionVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderPositionVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderPositionVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderPositionWidth = 60;
     public double QueueColumnHeaderPositionWidth
     {
-        get
-        {
-            return _queueColumnHeaderPositionWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderPositionWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderPositionWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderPositionWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 60;
 
     // NowPlaying header
-    private bool _isQueueColumnHeaderNowPlayingVisible = true;
     public bool IsQueueColumnHeaderNowPlayingVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderNowPlayingVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderNowPlayingVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderNowPlayingVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderNowPlayingVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderNowPlayingWidth = 32;
     public double QueueColumnHeaderNowPlayingWidth
     {
-        get
-        {
-            return _queueColumnHeaderNowPlayingWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderNowPlayingWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderNowPlayingWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderNowPlayingWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 32;
 
     // Title header (not user customizable)
-    private double _queueColumnHeaderTitleWidth = 180;
     public double QueueColumnHeaderTitleWidth
     {
-        get
-        {
-            return _queueColumnHeaderTitleWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderTitleWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderTitleWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderTitleWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
-    private bool _isQueueColumnHeaderTimeVisible = true;
     public bool IsQueueColumnHeaderTimeVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderTimeVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderTimeVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderTimeVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderTimeVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderTimeWidth = 62;
     public double QueueColumnHeaderTimeWidth
     {
-        get
-        {
-            return _queueColumnHeaderTimeWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderTimeWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderTimeWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderTimeWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isQueueColumnHeaderArtistVisible = true;
     public bool IsQueueColumnHeaderArtistVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderArtistVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderArtistVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderArtistVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderArtistVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderArtistWidth = 120;
     public double QueueColumnHeaderArtistWidth
     {
-        get
-        {
-            return _queueColumnHeaderArtistWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderArtistWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderArtistWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderArtistWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isQueueColumnHeaderAlbumVisible = true;
     public bool IsQueueColumnHeaderAlbumVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderAlbumVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderAlbumVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderAlbumVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderAlbumVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderAlbumWidth = 120;
     public double QueueColumnHeaderAlbumWidth
     {
-        get
-        {
-            return _queueColumnHeaderAlbumWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderAlbumWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderAlbumWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderAlbumWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isQueueColumnHeaderDiscVisible = true;
     public bool IsQueueColumnHeaderDiscVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderDiscVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderDiscVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderDiscVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderDiscVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderDiscWidth = 62;
     public double QueueColumnHeaderDiscWidth
     {
-        get
-        {
-            return _queueColumnHeaderDiscWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderDiscWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderDiscWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderDiscWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isQueueColumnHeaderTrackVisible = true;
     public bool IsQueueColumnHeaderTrackVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderTrackVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderTrackVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderTrackVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderTrackVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderTrackWidth = 62;
     public double QueueColumnHeaderTrackWidth
     {
-        get
-        {
-            return _queueColumnHeaderTrackWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderTrackWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderTrackWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderTrackWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
     // Genre header
-    private bool _isQueueColumnHeaderGenreVisible = true;
     public bool IsQueueColumnHeaderGenreVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderGenreVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderGenreVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderGenreVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderGenreVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderGenreWidth = 100;
     public double QueueColumnHeaderGenreWidth
     {
-        get
-        {
-            return _queueColumnHeaderGenreWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderGenreWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderGenreWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderGenreWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 100;
 
-    private bool _isQueueColumnHeaderLastModifiedVisible = true;
     public bool IsQueueColumnHeaderLastModifiedVisible
     {
-        get
-        {
-            return _isQueueColumnHeaderLastModifiedVisible;
-        }
+        get;
         set
         {
-            if (value == _isQueueColumnHeaderLastModifiedVisible)
+            if (value == field)
                 return;
 
-            _isQueueColumnHeaderLastModifiedVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsQueueColumnHeaderLastModifiedVisible));
+            OnPropertyChanged();
             QueueHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _queueColumnHeaderLastModifiedWidth = 180;
     public double QueueColumnHeaderLastModifiedWidth
     {
-        get
-        {
-            return _queueColumnHeaderLastModifiedWidth;
-        }
+        get;
         set
         {
-            if (value == _queueColumnHeaderLastModifiedWidth)
+            if (value == field)
                 return;
 
-            _queueColumnHeaderLastModifiedWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(QueueColumnHeaderLastModifiedWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
 
     #endregion
 
     #region == Files column headers == 
 
-    private double _filesColumnHeaderTitleWidth = 260;
     public double FilesColumnHeaderTitleWidth
     {
-        get
-        {
-            return _filesColumnHeaderTitleWidth;
-        }
+        get;
         set
         {
-            if (value == _filesColumnHeaderTitleWidth)
+            if (value == field)
                 return;
 
             if (value > 12)
-                _filesColumnHeaderTitleWidth = value;
+                field = value;
 
-            OnPropertyChanged(nameof(FilesColumnHeaderTitleWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 260;
 
-    private double _filesColumnHeaderFilePathWidth = 250;
     public double FilesColumnHeaderFilePathWidth
     {
-        get
-        {
-            return _filesColumnHeaderFilePathWidth;
-        }
+        get;
         set
         {
-            if (value == _filesColumnHeaderFilePathWidth)
+            if (value == field)
                 return;
 
             if (value > 12)
-                _filesColumnHeaderFilePathWidth = value;
+                field = value;
 
-            OnPropertyChanged(nameof(FilesColumnHeaderFilePathWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 250;
 
-    private bool _isFilesColumnHeaderFilePathVisible = true;
     public bool IsFilesColumnHeaderFilePathVisible
     {
-        get
-        {
-            return _isFilesColumnHeaderFilePathVisible;
-        }
+        get;
         set
         {
-            if (value == _isFilesColumnHeaderFilePathVisible)
+            if (value == field)
                 return;
 
-            _isFilesColumnHeaderFilePathVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsFilesColumnHeaderFilePathVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             FilesHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
     #endregion
 
     #region == Search column headers ==
 
-    private bool _isSearchColumnHeaderPositionVisible = true;
     public bool IsSearchColumnHeaderPositionVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderPositionVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderPositionVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderPositionVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderPositionVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderPositionWidth = 60;
     public double SearchColumnHeaderPositionWidth
     {
-        get
-        {
-            return _searchColumnHeaderPositionWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderPositionWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderPositionWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderPositionWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 60;
 
-    private double _searchColumnHeaderTitleWidth = 180;
     public double SearchColumnHeaderTitleWidth
     {
-        get
-        {
-            return _searchColumnHeaderTitleWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderTitleWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderTitleWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderTitleWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
-    private bool _isSearchColumnHeaderTimeVisible = true;
     public bool IsSearchColumnHeaderTimeVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderTimeVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderTimeVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderTimeVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderTimeVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderTimeWidth = 62;
     public double SearchColumnHeaderTimeWidth
     {
-        get
-        {
-            return _searchColumnHeaderTimeWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderTimeWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderTimeWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderTimeWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isSearchColumnHeaderArtistVisible = true;
     public bool IsSearchColumnHeaderArtistVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderArtistVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderArtistVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderArtistVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderArtistVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderArtistWidth = 120;
     public double SearchColumnHeaderArtistWidth
     {
-        get
-        {
-            return _searchColumnHeaderArtistWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderArtistWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderArtistWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderArtistWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isSearchColumnHeaderAlbumVisible = true;
     public bool IsSearchColumnHeaderAlbumVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderAlbumVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderAlbumVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderAlbumVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderAlbumVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderAlbumWidth = 120;
     public double SearchColumnHeaderAlbumWidth
     {
-        get
-        {
-            return _searchColumnHeaderAlbumWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderAlbumWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderAlbumWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderAlbumWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isSearchColumnHeaderDiscVisible = true;
     public bool IsSearchColumnHeaderDiscVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderDiscVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderDiscVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderDiscVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderDiscVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderDiscWidth = 62;
     public double SearchColumnHeaderDiscWidth
     {
-        get
-        {
-            return _searchColumnHeaderDiscWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderDiscWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderDiscWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderDiscWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isSearchColumnHeaderTrackVisible = true;
     public bool IsSearchColumnHeaderTrackVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderTrackVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderTrackVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderTrackVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderTrackVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderTrackWidth = 62;
     public double SearchColumnHeaderTrackWidth
     {
-        get
-        {
-            return _searchColumnHeaderTrackWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderTrackWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderTrackWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderTrackWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isSearchColumnHeaderGenreVisible = true;
     public bool IsSearchColumnHeaderGenreVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderGenreVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderGenreVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderGenreVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderGenreVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderGenreWidth = 100;
     public double SearchColumnHeaderGenreWidth
     {
-        get
-        {
-            return _searchColumnHeaderGenreWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderGenreWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderGenreWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderGenreWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 100;
 
-    private bool _isSearchColumnHeaderLastModifiedVisible = true;
     public bool IsSearchColumnHeaderLastModifiedVisible
     {
-        get
-        {
-            return _isSearchColumnHeaderLastModifiedVisible;
-        }
+        get;
         set
         {
-            if (value == _isSearchColumnHeaderLastModifiedVisible)
+            if (value == field)
                 return;
 
-            _isSearchColumnHeaderLastModifiedVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsSearchColumnHeaderLastModifiedVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             SearchHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _searchColumnHeaderLastModifiedWidth = 180;
     public double SearchColumnHeaderLastModifiedWidth
     {
-        get
-        {
-            return _searchColumnHeaderLastModifiedWidth;
-        }
+        get;
         set
         {
-            if (value == _searchColumnHeaderLastModifiedWidth)
+            if (value == field)
                 return;
 
-            _searchColumnHeaderLastModifiedWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SearchColumnHeaderLastModifiedWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
 
     #endregion
 
     #region == PlaylistItem headers == 
 
-    private bool _isPlaylistColumnHeaderPositionVisible = true;
     public bool IsPlaylistColumnHeaderPositionVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderPositionVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderPositionVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderPositionVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderPositionVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderPositionWidth = 60;
     public double PlaylistColumnHeaderPositionWidth
     {
-        get
-        {
-            return _playlistColumnHeaderPositionWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderPositionWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderPositionWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderPositionWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 60;
 
-    private double _playlistColumnHeaderTitleWidth = 180;
     public double PlaylistColumnHeaderTitleWidth
     {
-        get
-        {
-            return _playlistColumnHeaderTitleWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderTitleWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderTitleWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderTitleWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
-    private bool _isPlaylistColumnHeaderTimeVisible = true;
     public bool IsPlaylistColumnHeaderTimeVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderTimeVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderTimeVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderTimeVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderTimeVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderTimeWidth = 62;
     public double PlaylistColumnHeaderTimeWidth
     {
-        get
-        {
-            return _playlistColumnHeaderTimeWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderTimeWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderTimeWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderTimeWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isPlaylistColumnHeaderArtistVisible = true;
     public bool IsPlaylistColumnHeaderArtistVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderArtistVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderArtistVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderArtistVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderArtistVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderArtistWidth = 120;
     public double PlaylistColumnHeaderArtistWidth
     {
-        get
-        {
-            return _playlistColumnHeaderArtistWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderArtistWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderArtistWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderArtistWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isPlaylistColumnHeaderAlbumVisible = true;
     public bool IsPlaylistColumnHeaderAlbumVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderAlbumVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderAlbumVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderAlbumVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderAlbumVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderAlbumWidth = 120;
     public double PlaylistColumnHeaderAlbumWidth
     {
-        get
-        {
-            return _playlistColumnHeaderAlbumWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderAlbumWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderAlbumWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderAlbumWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 120;
 
-    private bool _isPlaylistColumnHeaderDiscVisible = true;
     public bool IsPlaylistColumnHeaderDiscVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderDiscVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderDiscVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderDiscVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderDiscVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderDiscWidth = 62;
     public double PlaylistColumnHeaderDiscWidth
     {
-        get
-        {
-            return _playlistColumnHeaderDiscWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderDiscWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderDiscWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderDiscWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isPlaylistColumnHeaderTrackVisible = true;
     public bool IsPlaylistColumnHeaderTrackVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderTrackVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderTrackVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderTrackVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderTrackVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-    }
-    private double _playlistColumnHeaderTrackWidth = 62;
+    } = true;
+
     public double PlaylistColumnHeaderTrackWidth
     {
-        get
-        {
-            return _playlistColumnHeaderTrackWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderTrackWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderTrackWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderTrackWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 62;
 
-    private bool _isPlaylistColumnHeaderGenreVisible = true;
     public bool IsPlaylistColumnHeaderGenreVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderGenreVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderGenreVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderGenreVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderGenreVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
 
-    }
-    private double _playlistColumnHeaderGenreWidth = 100;
+    } = true;
+
     public double PlaylistColumnHeaderGenreWidth
     {
-        get
-        {
-            return _playlistColumnHeaderGenreWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderGenreWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderGenreWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderGenreWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 100;
 
-    private bool _isPlaylistColumnHeaderLastModifiedVisible = true;
     public bool IsPlaylistColumnHeaderLastModifiedVisible
     {
-        get
-        {
-            return _isPlaylistColumnHeaderLastModifiedVisible;
-        }
+        get;
         set
         {
-            if (value == _isPlaylistColumnHeaderLastModifiedVisible)
+            if (value == field)
                 return;
 
-            _isPlaylistColumnHeaderLastModifiedVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsPlaylistColumnHeaderLastModifiedVisible));
+            OnPropertyChanged();
             // Notify code behind to do some work around ...
             PlaylistHeaderVisibilityChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = true;
 
-    private double _playlistColumnHeaderLastModifiedWidth = 180;
     public double PlaylistColumnHeaderLastModifiedWidth
     {
-        get
-        {
-            return _playlistColumnHeaderLastModifiedWidth;
-        }
+        get;
         set
         {
-            if (value == _playlistColumnHeaderLastModifiedWidth)
+            if (value == field)
                 return;
 
-            _playlistColumnHeaderLastModifiedWidth = value;
+            field = value;
 
-            OnPropertyChanged(nameof(PlaylistColumnHeaderLastModifiedWidth));
+            OnPropertyChanged();
         }
-    }
+    } = 180;
 
     #endregion
 
@@ -1244,32 +995,23 @@ public partial class MainViewModel : ObservableObject
 
     #region == Themes ==
 
-    private ObservableCollection<Theme> _themes =
-        [
+
+    public ObservableCollection<Theme> Themes { get; set; } = [
             new Theme() { Id = 0, Name = "System", Label = MPDCtrlX.Core.Properties.Resources.Settings_Opts_Themes_System, IconData="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z"},
             new Theme() { Id = 1, Name = "Dark", Label = MPDCtrlX.Core.Properties.Resources.Settings_Opts_Themes_Dark, IconData="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z"},
             new Theme() { Id = 2, Name = "Light", Label = MPDCtrlX.Core.Properties.Resources.Settings_Opts_Themes_Light, IconData="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"}
         ];
 
-    public ObservableCollection<Theme> Themes
-    {
-        get { return _themes; }
-        set { _themes = value; }
-    }
-
     private Theme _currentTheme;
     public Theme CurrentTheme
     {
-        get
-        {
-            return _currentTheme;
-        }
+        get => _currentTheme;
         set
         {
             if (_currentTheme == value) return;
 
             _currentTheme = value;
-            OnPropertyChanged(nameof(CurrentTheme));
+            OnPropertyChanged();
 
             FluentAvaloniaTheme? faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
             if (_currentTheme.Id == 1)
@@ -1294,103 +1036,72 @@ public partial class MainViewModel : ObservableObject
 
     #region == Status and Visibility switch flags ==  
 
-    private bool _isConnected;
-    public bool IsConnected
-    {
-        get => _isConnected;
-        set
+    public bool IsConnected { get; set
         {
-            if (_isConnected == value)
+            if (field == value)
                 return;
 
-            _isConnected = value;
-            OnPropertyChanged(nameof(IsConnected));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
             OnPropertyChanged(nameof(IsNotConnecting));
 
-            IsConnecting = !_isConnected;
+            IsConnecting = !field;
 
-            if (!_isConnected)
+            if (!field)
             {
                 IsNotConnectingNorConnected = true;
             }
-            if (_isConnected)
+            if (field)
             {
                 IsConnectButtonEnabled = true;
             }
-        }
-    }
+        } }
 
-    private bool _isConnecting;
-    public bool IsConnecting
-    {
-        get
+    public bool IsConnecting { get; set
         {
-            return _isConnecting;
-        }
-        set
-        {
-            if (_isConnecting == value)
+            if (field == value)
                 return;
 
-            _isConnecting = value;
-            OnPropertyChanged(nameof(IsConnecting));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(IsNotConnecting));
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
             OnPropertyChanged(nameof(IsProfileSwitchOK));
-            if (_isConnecting)
+            if (field)
             {
                 IsConnectButtonEnabled = false;
             }
-        }
-    }
+        } }
 
-    private bool _isNotConnectingNorConnected = true;
-    public bool IsNotConnectingNorConnected
-    {
-        get
+    public bool IsNotConnectingNorConnected { get; set
         {
-            return _isNotConnectingNorConnected;
-        }
-        set
-        {
-            if (_isNotConnectingNorConnected == value)
+            if (field == value)
                 return;
 
-            _isNotConnectingNorConnected = value;
-            OnPropertyChanged(nameof(IsNotConnectingNorConnected));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
-            if (_isNotConnectingNorConnected)
+            if (field)
             {
                 IsConnectButtonEnabled = true;
             }
-        }
-    }
+        } } = true;
 
-    private bool _isConnectButtonEnabled = true;
-    public bool IsConnectButtonEnabled
-    {
-        get { return _isConnectButtonEnabled; }
-        set
+    public bool IsConnectButtonEnabled { get; set
         {
-            if (_isConnectButtonEnabled == value)
+            if (field == value)
                 return;
 
-            _isConnectButtonEnabled = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsConnectButtonEnabled));
-        }
-    }
+            OnPropertyChanged();
+        } } = true;
 
-    public bool IsNotConnecting
-    {
-        get
-        {
-            return !_isConnecting;
-        }
-    }
+    public bool IsNotConnecting => !IsConnecting;
+
     /*
     private bool _isSettingsShow;
     public bool IsSettingsShow
@@ -1434,19 +1145,15 @@ public partial class MainViewModel : ObservableObject
         }
     }
     */
-    private bool _isConnectionSettingShow;
-    public bool IsConnectionSettingShow
-    {
-        get { return _isConnectionSettingShow; }
-        set
+    public bool IsConnectionSettingShow { get; set
         {
-            if (_isConnectionSettingShow == value)
+            if (field == value)
                 return;
 
-            _isConnectionSettingShow = value;
-            OnPropertyChanged(nameof(IsConnectionSettingShow));
-        }
-    }
+            field = value;
+            OnPropertyChanged();
+        } }
+
     /*
     private bool _isChangePasswordDialogShow;
     public bool IsChangePasswordDialogShow
@@ -1478,38 +1185,30 @@ public partial class MainViewModel : ObservableObject
     }
     */
 
-    private bool _isAlbumArtVisible = true;
     public bool IsAlbumArtVisible
     {
-        get
-        {
-            return _isAlbumArtVisible;
-        }
+        get;
         set
         {
-            if (_isAlbumArtVisible == value)
+            if (field == value)
                 return;
 
-            _isAlbumArtVisible = value;
-            OnPropertyChanged(nameof(IsAlbumArtVisible));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
-    private bool _isAlbumArtPanelIsOpen = false;
     public bool IsAlbumArtPanelIsOpen
     {
-        get
-        {
-            return _isAlbumArtPanelIsOpen;
-        }
+        get;
         set
         {
-            if (_isAlbumArtPanelIsOpen == value)
+            if (field == value)
                 return;
 
-            _isAlbumArtPanelIsOpen = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsAlbumArtPanelIsOpen));
+            OnPropertyChanged();
         }
     }
 
@@ -1531,20 +1230,16 @@ public partial class MainViewModel : ObservableObject
     }
     */
 
-    private bool _isBusy;
     public bool IsBusy
     {
-        get
-        {
-            return _isBusy;
-        }
+        get;
         set
         {
-            if (_isBusy == value)
+            if (field == value)
                 return;
 
-            _isBusy = value;
-            OnPropertyChanged(nameof(IsBusy));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(IsProfileSwitchOK));
 
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
@@ -1552,107 +1247,99 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isWorking;
     public bool IsWorking
     {
-        get
-        {
-            return _isWorking;
-        }
+        get;
         set
         {
-            if (_isWorking == value)
+            if (field == value)
                 return;
 
-            _isWorking = value;
-            OnPropertyChanged(nameof(IsWorking));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(IsProfileSwitchOK));
 
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
         }
     }
 
-    private bool _isShowInfoWindow;
     public bool IsShowInfoWindow
 
     {
-        get { return _isShowInfoWindow; }
+        get;
         set
         {
-            if (_isShowInfoWindow == value)
+            if (field == value)
                 return;
 
-            _isShowInfoWindow = value;
+            field = value;
 
-            if (!_isShowInfoWindow)
+            if (!field)
             {
                 InfoBarInfoTitle = string.Empty;
                 InfoBarInfoMessage = string.Empty;
             }
 
-            OnPropertyChanged(nameof(IsShowInfoWindow));
+            OnPropertyChanged();
         }
     }
 
-    private bool _isShowAckWindow;
     public bool IsShowAckWindow
 
     {
-        get { return _isShowAckWindow; }
+        get;
         set
         {
-            if (_isShowAckWindow == value)
+            if (field == value)
                 return;
 
-            _isShowAckWindow = value;
+            field = value;
 
-            if (!_isShowAckWindow)
+            if (!field)
             {
                 InfoBarAckTitle = string.Empty;
                 InfoBarAckMessage = string.Empty;
             }
 
-            OnPropertyChanged(nameof(IsShowAckWindow));
+            OnPropertyChanged();
         }
     }
 
-    private bool _isShowErrWindow;
     public bool IsShowErrWindow
 
     {
-        get { return _isShowErrWindow; }
+        get;
         set
         {
-            if (_isShowErrWindow == value)
+            if (field == value)
                 return;
 
-            _isShowErrWindow = value;
+            field = value;
 
-            if (!_isShowErrWindow)
+            if (!field)
             {
                 InfoBarErrTitle = string.Empty;
                 InfoBarErrMessage = string.Empty;
             }
 
-            OnPropertyChanged(nameof(IsShowErrWindow));
+            OnPropertyChanged();
         }
     }
 
-    private bool _isShowDebugWindow;
     public bool IsShowDebugWindow
 
     {
-        get { return _isShowDebugWindow; }
+        get;
         set
         {
-            if (_isShowDebugWindow == value)
+            if (field == value)
                 return;
 
-            _isShowDebugWindow = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsShowDebugWindow));
+            OnPropertyChanged();
 
-            if (_isShowDebugWindow)
+            if (field)
             {
                 /*
                 //Application.Current.Dispatcher.Invoke(() =>
@@ -1677,40 +1364,27 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isEnableDebugWindow;
-    public bool IsEnableDebugWindow
-
-    {
-        get { return _isEnableDebugWindow; }
-        set
+    public bool IsEnableDebugWindow { get; set
         {
-            if (_isEnableDebugWindow == value)
+            if (field == value)
                 return;
 
-            _isEnableDebugWindow = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsEnableDebugWindow));
-        }
-    }
+            OnPropertyChanged();
+        } }
 
     #endregion
 
     #region == CurrentSong, Playback controls, AlbumArt ==  
 
-    private SongInfoEx? _currentSong;
-    public SongInfoEx? CurrentSong
-    {
-        get
+    public SongInfoEx? CurrentSong { get; set
         {
-            return _currentSong;
-        }
-        set
-        {
-            if (_currentSong == value)
+            if (field == value)
                 return;
 
-            _currentSong = value;
-            OnPropertyChanged(nameof(CurrentSong));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(CurrentSongTitle));
             OnPropertyChanged(nameof(CurrentSongArtist));
             OnPropertyChanged(nameof(CurrentSongAlbum));
@@ -1728,34 +1402,20 @@ public partial class MainViewModel : ObservableObject
             {
                 IsCurrentSongNotNull = true;
             }
-        }
-    }
+        } }
 
-    public string CurrentSongTitle
-    {
-        get
-        {
-            if (_currentSong is not null)
-            {
-                return _currentSong.Title;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-    }
+    public string CurrentSongTitle => CurrentSong is not null ? CurrentSong.Title : string.Empty;
 
     public string CurrentSongArtist
     {
         get
         {
-            if (_currentSong is not null)
+            if (CurrentSong is not null)
             {
-                if (!string.IsNullOrEmpty(_currentSong.Artist))
-                    return _currentSong.Artist.Trim();
+                if (!string.IsNullOrEmpty(CurrentSong.Artist))
+                    return CurrentSong.Artist.Trim();
                 else
-                    return "";
+                    return string.Empty;
             }
             else
             {
@@ -1768,12 +1428,12 @@ public partial class MainViewModel : ObservableObject
     {
         get
         {
-            if (_currentSong is not null)
+            if (CurrentSong is not null)
             {
-                if (!string.IsNullOrEmpty(_currentSong.Album))
-                    return _currentSong.Album.Trim();
+                if (!string.IsNullOrEmpty(CurrentSong.Album))
+                    return CurrentSong.Album.Trim();
                 else
-                    return "";
+                    return string.Empty;
             }
             else
             {
@@ -1786,9 +1446,9 @@ public partial class MainViewModel : ObservableObject
     {
         get
         {
-            if (_currentSong is not null)
+            if (CurrentSong is not null)
             {
-                if (!string.IsNullOrEmpty(_currentSong.Artist))
+                if (!string.IsNullOrEmpty(CurrentSong.Artist))
                     return true;
                 else
                     return false;
@@ -1804,9 +1464,9 @@ public partial class MainViewModel : ObservableObject
     {
         get
         {
-            if (_currentSong is not null)
+            if (CurrentSong is not null)
             {
-                if (!string.IsNullOrEmpty(_currentSong.Album))
+                if (!string.IsNullOrEmpty(CurrentSong.Album))
                     return true;
                 else
                     return false;
@@ -1818,52 +1478,44 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private bool _isCurrentSongNotNull;
-    public bool IsCurrentSongNotNull
-    {
-        get
+    public bool IsCurrentSongNotNull { get; set
         {
-            return _isCurrentSongNotNull;
-        }
-        set
-        {
-            if (_isCurrentSongNotNull == value)
+            if (field == value)
                 return;
 
-            _isCurrentSongNotNull = value;
-            OnPropertyChanged(nameof(IsCurrentSongNotNull));
-        }
-    }
+            field = value;
+            OnPropertyChanged();
+        } }
 
     public string CurrentSongStringForWindowTitle
     {
         get
         {
-            if (_currentSong is not null)
+            if (CurrentSong is not null)
             {
                 string s = string.Empty;
 
-                if (!string.IsNullOrEmpty(_currentSong.Title))
+                if (!string.IsNullOrEmpty(CurrentSong.Title))
                 {
-                    s = _currentSong.Title.Trim();
+                    s = CurrentSong.Title.Trim();
                 }
 
-                if (!string.IsNullOrEmpty(_currentSong.Artist))
+                if (!string.IsNullOrEmpty(CurrentSong.Artist))
                 {
                     if (!string.IsNullOrEmpty(s))
                     {
                         s += " by ";
                     }
-                    s += $"{_currentSong.Artist.Trim()}"; 
+                    s += $"{CurrentSong.Artist.Trim()}"; 
                 }
 
-                if (!string.IsNullOrEmpty(_currentSong.Album))
+                if (!string.IsNullOrEmpty(CurrentSong.Album))
                 {
                     if (!string.IsNullOrEmpty(s))
                     {
                         s += " from ";
                     }
-                    s += $"{_currentSong.Album.Trim()}";
+                    s += $"{CurrentSong.Album.Trim()}";
                 }
 
                 return s;
@@ -1879,23 +1531,16 @@ public partial class MainViewModel : ObservableObject
 
     private static readonly string _pathPlayButton = "M10.856 8.155A1.25 1.25 0 0 0 9 9.248v5.504a1.25 1.25 0 0 0 1.856 1.093l5.757-3.189a.75.75 0 0 0 0-1.312l-5.757-3.189ZM12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2ZM3.5 12a8.5 8.5 0 1 1 17 0 8.5 8.5 0 0 1-17 0Z";//"M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm8.856-3.845A1.25 1.25 0 0 0 9 9.248v5.504a1.25 1.25 0 0 0 1.856 1.093l5.757-3.189a.75.75 0 0 0 0-1.312l-5.757-3.189Z";//"M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
     private static readonly string _pathPauseButton = "M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm-1.5 6.25v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 1.5 0Zm4.5 0v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 1.5 0Z";
+
     //private static string _pathStopButton = "M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
-    private string _playButton = _pathPlayButton;
-    public string PlayButton
-    {
-        get
+    public string PlayButton { get; set
         {
-            return _playButton;
-        }
-        set
-        {
-            if (_playButton == value)
+            if (field == value)
                 return;
 
-            _playButton = value;
-            OnPropertyChanged(nameof(PlayButton));
-        }
-    }
+            field = value;
+            OnPropertyChanged();
+        } } = _pathPlayButton;
 
     private double _volume = 20;
     public double Volume
@@ -1905,7 +1550,7 @@ public partial class MainViewModel : ObservableObject
         {
             if (_volume == value) return;
             _volume = value;
-            OnPropertyChanged(nameof(Volume));
+            OnPropertyChanged();
 
             //if (Convert.ToDouble(_mpc.MpdStatus.MpdVolume) == _volume) return;
             
@@ -1933,10 +1578,7 @@ public partial class MainViewModel : ObservableObject
     private System.Timers.Timer? _volumeDelayTimer;
     private async void DoChangeVolume(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (_mpc is not null)
-        {
-            await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
-        }
+        await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
     }
 
     private bool _repeat;
@@ -1946,14 +1588,11 @@ public partial class MainViewModel : ObservableObject
         set
         {
             _repeat = value;
-            OnPropertyChanged(nameof(Repeat));
+            OnPropertyChanged();
 
-            if (_mpc is not null)
+            if (_mpc.MpdStatus.MpdRepeat != value)
             {
-                if (_mpc.MpdStatus.MpdRepeat != value)
-                {
-                    _ = SetRpeat();
-                }
+                _ = SetRpeat();
             }
         }
     }
@@ -1961,18 +1600,15 @@ public partial class MainViewModel : ObservableObject
     private bool _random;
     public bool Random
     {
-        get { return _random; }
+        get => _random;
         set
         {
             _random = value;
-            OnPropertyChanged(nameof(Random));
+            OnPropertyChanged();
 
-            if (_mpc is not null)
+            if (_mpc.MpdStatus.MpdRandom != value)
             {
-                if (_mpc.MpdStatus.MpdRandom != value)
-                {
-                    _ = SetRandom();
-                }
+                _ = SetRandom();
             }
         }
     }
@@ -1980,18 +1616,15 @@ public partial class MainViewModel : ObservableObject
     private bool _consume;
     public bool Consume
     {
-        get { return _consume; }
+        get => _consume;
         set
         {
             _consume = value;
-            OnPropertyChanged(nameof(Consume));
+            OnPropertyChanged();
 
-            if (_mpc is not null)
+            if (_mpc.MpdStatus.MpdConsume != value)
             {
-                if (_mpc.MpdStatus.MpdConsume != value)
-                {
-                    _ = SetConsume();
-                }
+                _ = SetConsume();
             }
         }
     }
@@ -1999,51 +1632,40 @@ public partial class MainViewModel : ObservableObject
     private bool _single;
     public bool Single
     {
-        get { return _single; }
+        get => _single;
         set
         {
             _single = value;
-            OnPropertyChanged(nameof(Single));
+            OnPropertyChanged();
 
-            if (_mpc is not null)
+            if (_mpc.MpdStatus.MpdSingle != value)
             {
-                if (_mpc.MpdStatus.MpdSingle != value)
-                {
-                    _ = SetSingle();
-                }
+                _ = SetSingle();
             }
         }
     }
 
-    private int _time = 0;
-    public int Time
-    {
-        get
+    public int Time { get; set
         {
-            return _time;
-        }
-        set
-        {
-            if (_time == value) 
+            if (field == value)
                 return;
 
-            _time = value;
-            OnPropertyChanged(nameof(Time));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(TimeFormatted));
-        }
-    }
+        } }
 
     public string TimeFormatted
     {
         get
         {
-            int sec, min, hour, s;
+            int min;
 
-            sec = Time / _elapsedTimeMultiplier;
+            var sec = Time / _elapsedTimeMultiplier;
 
             min = sec / 60;
-            s = sec % 60;
-            hour = min / 60;
+            var s = sec % 60;
+            var hour = min / 60;
             min %= 60;
             /*
             if ((hour == 0) && min == 0)
@@ -2063,26 +1685,23 @@ public partial class MainViewModel : ObservableObject
                 _timeFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
             }
             */
-            return string.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            return $"{hour}:{min:00}:{s:00}";
         }
     }
 
     private readonly int _elapsedTimeMultiplier = 1;// or 10
-    private int _elapsed = 0;
+    private int _elapsed ;
     public int Elapsed
     {
-        get
-        {
-            return _elapsed;
-        }
+        get => _elapsed;
         set
         {
-            if ((value < _time) && _elapsed != value)
+            if ((value < Time) && _elapsed != value)
             {
                 _elapsed = value;
                 Dispatcher.UIThread.Post(() =>
                 {
-                    OnPropertyChanged(nameof(Elapsed));
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(ElapsedFormatted));
                 });
                 // If we have a timer and we are in this event handler, a user is still interact with the slider
@@ -2111,13 +1730,11 @@ public partial class MainViewModel : ObservableObject
     {
         get
         {
-            int sec, min, hour, s;
+            var sec = _elapsed / _elapsedTimeMultiplier;
 
-            sec = _elapsed / _elapsedTimeMultiplier;
-
-            min = sec / 60;
-            s = sec % 60;
-            hour = min / 60;
+            var min = sec / 60;
+            var s = sec % 60;
+            var hour = min / 60;
             min %= 60;
             /*
             if ((hour == 0) && min == 0)
@@ -2137,14 +1754,14 @@ public partial class MainViewModel : ObservableObject
                 _elapsedFormatted = String.Format("{0}:{1:00}:{2:00}", hour, min, s);
             }
             */
-            return string.Format("{0}:{1:00}:{2:00}", hour, min, s);
+            return $"{hour}:{min:00}:{s:00}";
         }
     }
 
     private System.Timers.Timer? _elapsedDelayTimer = null;
     private void DoChangeElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if (_mpc is not null && (_elapsed < _time))
+        if (_elapsed < Time)
         {
             _ = SetSeek();
         }
@@ -2154,20 +1771,16 @@ public partial class MainViewModel : ObservableObject
 
     #region == AlbumArt == 
 
-    private AlbumImage? _albumCover;
     public AlbumImage? AlbumCover
     {
-        get
-        {
-            return _albumCover;
-        }
+        get;
         set
         {
-            if (_albumCover == value)
+            if (field == value)
                 return;
-            _albumCover = value;
+            field = value;
 
-            if (_albumCover is null)
+            if (field is null)
             { 
                 //IsAlbumArtVisible = false; 
             }
@@ -2179,25 +1792,22 @@ public partial class MainViewModel : ObservableObject
                 }
             }
 
-            OnPropertyChanged(nameof(AlbumCover));
+            OnPropertyChanged();
         }
     }
 
     private readonly Bitmap? _albumArtBitmapSourceDefault = null;
-    private Bitmap? _albumArtBitmapSource;
+
     public Bitmap? AlbumArtBitmapSource
     {
-        get
-        {
-            return _albumArtBitmapSource;
-        }
+        get;
         set
         {
-            if (_albumArtBitmapSource == value)
+            if (field == value)
                 return;
 
-            _albumArtBitmapSource = value;
-            OnPropertyChanged(nameof(AlbumArtBitmapSource));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
@@ -2212,21 +1822,20 @@ public partial class MainViewModel : ObservableObject
     private readonly MenuTreeBuilder _mainMenuItems = new("");
     public ObservableCollection<NodeTree> MainMenuItems
     {
-        get { return _mainMenuItems.Children; }
+        get => _mainMenuItems.Children;
         set
         {
             _mainMenuItems.Children = value;
-            OnPropertyChanged(nameof(MainMenuItems));
+            OnPropertyChanged();
         }
     }
 
-    private NodeTree? _selectedNodeMenu = new NodeMenu("root");
     public NodeTree? SelectedNodeMenu
     {
-        get { return _selectedNodeMenu; }
+        get;
         set
         {
-            if (_selectedNodeMenu == value)
+            if (field == value)
                 return;
 
             if (value is null)
@@ -2240,8 +1849,8 @@ public partial class MainViewModel : ObservableObject
                     PlaylistSongs.Clear();
                 });
 
-                _selectedNodeMenu = value;
-                OnPropertyChanged(nameof(SelectedNodeMenu));
+                field = value;
+                OnPropertyChanged();
                 return;
             }
 
@@ -2356,138 +1965,93 @@ public partial class MainViewModel : ObservableObject
                 throw new NotImplementedException();
             }
 
-            _selectedNodeMenu = value;
-            OnPropertyChanged(nameof(SelectedNodeMenu));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = new NodeMenu("root");
 
-    private UserControl? _currentpage;
     public UserControl? CurrentPage
     {
-        get { return _currentpage; }
+        get;
         set
         {
-            /*
-            if (SetProperty(ref _currentpage, value))
-            {
-                //
-            }
-            */
-
-            if (_currentpage == value)
+            if (field == value)
                 return;
 
-            _currentpage = value;
-            this.OnPropertyChanged(nameof(CurrentPage));
+            field = value;
+            this.OnPropertyChanged();
         }
     }
 
-    private string _selectedPlaylistName = "";
     public string SelectedPlaylistName
     {
-        get
-        {
-            return _selectedPlaylistName;
-        }
+        get;
         set
         {
-            if (_selectedPlaylistName == value)
+            if (field == value)
                 return;
 
-            _selectedPlaylistName = value;
-            OnPropertyChanged(nameof(SelectedPlaylistName));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
-    private string _renamedSelectPendingPlaylistName = "";
     public string RenamedSelectPendingPlaylistName
     {
-        get
-        {
-            return _renamedSelectPendingPlaylistName;
-        }
+        get;
         set
         {
-            if (_renamedSelectPendingPlaylistName == value)
+            if (field == value)
                 return;
 
-            _renamedSelectPendingPlaylistName = value;
-            OnPropertyChanged(nameof(RenamedSelectPendingPlaylistName));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
     #endregion
 
     #region == Queue ==  
 
-    private ObservableCollection<SongInfoEx> _queue = [];
     public ObservableCollection<SongInfoEx> Queue
     {
-        get
-        {
-            if (_mpc is not null)
-            {
-                return _queue;
-                //return _mpc.CurrentQueue;
-            }
-            else
-            {
-                return _queue;
-            }
-        }
+        get;
         set
         {
-            if (_queue == value)
+            if (field == value)
                 return;
 
-            _queue = value;
-            OnPropertyChanged(nameof(Queue));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(QueuePageSubTitleSongCount));
         }
-    }
+    } = [];
 
-    private SongInfoEx? _selectedQueueSong;
     public SongInfoEx? SelectedQueueSong
     {
-        get
-        {
-            return _selectedQueueSong;
-        }
+        get;
         set
         {
-            if (_selectedQueueSong == value)
+            if (field == value)
                 return;
 
-            _selectedQueueSong = value;
-            OnPropertyChanged(nameof(SelectedQueueSong));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isQueueFindVisible;
     public bool IsQueueFindVisible
     {
-        get
-        {
-            return _isQueueFindVisible;
-        }
+        get;
         set
         {
-            if (_isQueueFindVisible == value)
+            if (field == value)
                 return;
 
-            _isQueueFindVisible = value;
-
+            field = value;
             QueueForFilter.Clear();
-            /*
-            var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
-            collectionView.Filter = x =>
-            {
-                return false;
-            };
-            */
             FilterQueueQuery = "";
-
-            OnPropertyChanged(nameof(IsQueueFindVisible));
+            OnPropertyChanged();
         }
     }
 
@@ -2496,160 +2060,75 @@ public partial class MainViewModel : ObservableObject
         return song.Title.Contains(FilterQueueQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
     }
 
-    private ObservableCollection<SongInfoEx> _queueForFilter = [];
     public ObservableCollection<SongInfoEx> QueueForFilter
     {
-        get
-        {
-            return _queueForFilter;
-        }
+        get;
         set
         {
-            if (_queueForFilter == value)
+            if (field == value)
                 return;
 
-            _queueForFilter = value;
-            OnPropertyChanged(nameof(QueueForFilter));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 
-    private SearchTags _selectedQueueFilterTags = SearchTags.Title;
     public SearchTags SelectedQueueFilterTags
     {
-        get
-        {
-            return _selectedQueueFilterTags;
-        }
+        get;
         set
         {
-            if (_selectedQueueFilterTags == value)
+            if (field == value)
                 return;
 
-            _selectedQueueFilterTags = value;
-            OnPropertyChanged(nameof(SelectedQueueFilterTags));
-
-            if (_filterQueueQuery == "")
-                return;
-            /*
-            var collectionView = CollectionViewSource.GetDefaultView(_queueForFilter);
-            collectionView.Filter = x =>
-            {
-                var entry = (SongInfoEx)x;
-
-                if (SelectedQueueFilterTags == SearchTags.Title)
-                {
-                    return entry.Title.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                }
-                else if (SelectedQueueFilterTags == SearchTags.Artist)
-                {
-                    return entry.Artist.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                }
-                else if (SelectedQueueFilterTags == SearchTags.Album)
-                {
-                    return entry.Album.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                }
-                else if (SelectedQueueFilterTags == SearchTags.Genre)
-                {
-                    return entry.Genre.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                }
-                else
-                {
-                    return false;
-                }
-            };
-            */
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = SearchTags.Title;
 
-    private string _filterQueueQuery = "";
     public string FilterQueueQuery
     {
-        get
-        {
-            return _filterQueueQuery;
-        }
+        get;
         set
         {
-            if (_filterQueueQuery == value)
+            if (field == value)
                 return;
 
-            _filterQueueQuery = value;
-            OnPropertyChanged(nameof(FilterQueueQuery));
+            field = value;
+            OnPropertyChanged();
 
-            if (_filterQueueQuery == "")
+            if (field == string.Empty)
             {
                 return;
             }
 
-            var filtered = Queue.Where(song => FilterSongInfoEx(song));
+            var filtered = Queue.Where(FilterSongInfoEx); // Queue.Where(song => FilterSongInfoEx(song));
 
             QueueForFilter = new ObservableCollection<SongInfoEx>(filtered);
-
-            /*
-            var collectionView = CollectionViewSource.GetDefaultView(_queueForFilter);
-            collectionView.Filter = x =>
-            {
-                if (_filterQueueQuery == "")
-                {
-                    return false;
-                }
-                else
-                {
-                    var entry = (SongInfoEx)x;
-
-                    if (SelectedQueueFilterTags == SearchTags.Title)
-                    {
-                        return entry.Title.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                    else if (SelectedQueueFilterTags == SearchTags.Artist)
-                    {
-                        return entry.Artist.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                    else if (SelectedQueueFilterTags == SearchTags.Album)
-                    {
-                        return entry.Album.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                    else if (SelectedQueueFilterTags == SearchTags.Genre)
-                    {
-                        return entry.Genre.Contains(_filterQueueQuery, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            };
-            */
-            //collectionView.Refresh();
         }
-    }
+    } = string.Empty;
 
-    private SongInfoEx? _selectedQueueFilterSong;
     public SongInfoEx? SelectedQueueFilterSong
     {
-        get
-        {
-            return _selectedQueueFilterSong;
-        }
+        get;
         set
         {
-            if (_selectedQueueFilterSong == value)
+            if (field == value)
                 return;
 
-            _selectedQueueFilterSong = value;
-            OnPropertyChanged(nameof(SelectedQueueFilterSong));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private string _queuePageSubTitleSongCount = "";
     public string QueuePageSubTitleSongCount
     {
         get 
         {
-            _queuePageSubTitleSongCount = string.Format(MPDCtrlX.Core.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
-            return _queuePageSubTitleSongCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
+            return field;
         }
-    }
+    } = string.Empty;
 
     #endregion
 
@@ -2658,25 +2137,25 @@ public partial class MainViewModel : ObservableObject
     private readonly DirectoryTreeBuilder _musicDirectories = new("");
     public ObservableCollection<NodeTree> MusicDirectories
     {
-        get { return _musicDirectories.Children; }
+        get => _musicDirectories.Children;
         set
         {
             _musicDirectories.Children = value;
-            OnPropertyChanged(nameof(MusicDirectories));
+            OnPropertyChanged();
         }
     }
 
     private NodeDirectory _selectedNodeDirectory = new(".", new Uri(@"file:///./"));
     public NodeDirectory SelectedNodeDirectory
     {
-        get { return _selectedNodeDirectory; }
+        get => _selectedNodeDirectory;
         set
         {
             if (_selectedNodeDirectory == value)
                 return;
 
             _selectedNodeDirectory = value;
-            OnPropertyChanged(nameof(SelectedNodeDirectory));
+            OnPropertyChanged();
 
             if (_selectedNodeDirectory is null)
                 return;
@@ -2690,12 +2169,12 @@ public partial class MainViewModel : ObservableObject
             {
                 if (FilterMusicEntriesQuery != "")
                 {
-                    var filtered = _musicEntries.Where(song => song.Name.Contains(FilterMusicEntriesQuery, StringComparison.InvariantCultureIgnoreCase));
+                    var filtered = MusicEntries.Where(song => song.Name.Contains(FilterMusicEntriesQuery, StringComparison.InvariantCultureIgnoreCase));
                     _musicEntriesFiltered = new ObservableCollection<NodeFile>(filtered);
                 }
                 else
                 {
-                    _musicEntriesFiltered = new ObservableCollection<NodeFile>(_musicEntries);
+                    _musicEntriesFiltered = new ObservableCollection<NodeFile>(MusicEntries);
                 }
             }
             else
@@ -2704,142 +2183,34 @@ public partial class MainViewModel : ObservableObject
             }
 
             OnPropertyChanged(nameof(MusicEntriesFiltered));
-            
-            /*
-            bool filteringMode = true;
-            
-            var collectionView = CollectionViewSource.GetDefaultView(MusicEntries);
-            if (collectionView is null)
-                return;
-
-            try
-            {
-                collectionView.Filter = x =>
-                {
-                    var entry = (NodeFile)x;
-
-                    if (entry is null)
-                        return false;
-
-                    if (entry.FileUri is null)
-                        return false;
-
-                    string path = entry.FileUri.LocalPath; //person.FileUri.AbsoluteUri;
-                    if (string.IsNullOrEmpty(path))
-                        return false;
-                    string filename = System.IO.Path.GetFileName(path);//System.IO.Path.GetFileName(uri.LocalPath);
-                    if (string.IsNullOrEmpty(filename))
-                        return false;
-
-                    if ((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath == "/")
-                    {
-                        if (filteringMode)
-                        {
-                            if (!string.IsNullOrEmpty(FilterMusicEntriesQuery))
-                            {
-                                return (filename.Contains(FilterMusicEntriesQuery, StringComparison.CurrentCultureIgnoreCase));
-                            }
-                            else
-                            {
-                                return true;
-                            }
-                        }
-                        else
-                        {
-                            // Only the matched(in the folder) items
-                            path = path.Replace("/", "");
-
-                            if (!string.IsNullOrEmpty(FilterMusicEntriesQuery))
-                            {
-                                return ((path == filename) && filename.Contains(FilterMusicEntriesQuery, StringComparison.CurrentCultureIgnoreCase));
-                            }
-                            else
-                            {
-                                return (path == filename);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        path = path.Replace(("/" + filename), "");
-
-                        if (filteringMode)
-                        {
-                            // testing (adding "/")
-                            path += "/";
-
-                            if (!string.IsNullOrEmpty(FilterMusicEntriesQuery))
-                            {
-                                // testing (adding "/")
-                                return (path.StartsWith((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath + "/") && filename.Contains(FilterMusicEntriesQuery, StringComparison.CurrentCultureIgnoreCase));
-                            }
-                            else
-                            {
-                                // This is not enough. eg. "/Hoge/Hoge" and /Hoge/Hoge2
-                                //return (path.StartsWith((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath));
-
-                                // testing (adding "/")
-                                return (path.StartsWith((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath + "/"));
-                            }
-                        }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(FilterMusicEntriesQuery))
-                            {
-                                return (path.StartsWith((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath) && filename.Contains(FilterMusicEntriesQuery, StringComparison.CurrentCultureIgnoreCase));
-                            }
-                            else
-                            {
-                                return (path == (_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath);
-                            }
-                        }
-                    }
-                };
-
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("collectionView.Filter = x => " + e.Message);
-
-                //Application.Current?.Dispatcher.Invoke(() => { (Application.Current as App)?.AppendErrorLog("Exception@SelectedNodeDirectory collectionView.Filter = x =>", e.Message); });
-                Dispatcher.UIThread.Post(async () => { (Application.Current as App)?.AppendErrorLog("Exception@SelectedNodeDirectory collectionView.Filter = x =>", e.Message); });
-            }
-            */
         }
     }
 
-    private ObservableCollection<NodeFile> _musicEntries = [];
     public ObservableCollection<NodeFile> MusicEntries
     {
-        get
-        {
-            return _musicEntries;
-        }
+        get;
         set
         {
-            if (value == _musicEntries)
+            if (value == field)
                 return;
 
-            _musicEntries = value;
-            OnPropertyChanged(nameof(MusicEntries));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(FilesPageSubTitleFileCount));
         }
-    }
+    } = [];
 
     private ObservableCollection<NodeFile> _musicEntriesFiltered = [];
     public ObservableCollection<NodeFile> MusicEntriesFiltered
     {
-        get
-        {
-            return _musicEntriesFiltered;
-        }
+        get => _musicEntriesFiltered;
         set
         {
             if (_musicEntriesFiltered == value)
                 return;
 
             _musicEntriesFiltered = value;
-            OnPropertyChanged(nameof(MusicEntriesFiltered));
+            OnPropertyChanged();
         }
     }
 
@@ -2847,7 +2218,7 @@ public partial class MainViewModel : ObservableObject
     {
         _musicEntriesFiltered.Clear();
 
-        foreach (var entry in _musicEntries)
+        foreach (var entry in MusicEntries)
         {
             string path = entry.FileUri.LocalPath; //person.FileUri.AbsoluteUri;
             if (string.IsNullOrEmpty(path))
@@ -2875,34 +2246,31 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private string _filterMusicEntriesQuery = "";
     public string FilterMusicEntriesQuery
     {
-        get
-        {
-            return _filterMusicEntriesQuery;
-        }
+        get;
         set
         {
-            if (_filterMusicEntriesQuery == value)
+            if (field == value)
                 return;
 
-            _filterMusicEntriesQuery = value;
-            OnPropertyChanged(nameof(FilterMusicEntriesQuery));
+            field = value;
+            OnPropertyChanged();
 
             if (_selectedNodeDirectory is null)
                 return;
 
-            if ((_selectedNodeDirectory as NodeDirectory).DireUri.LocalPath == "/")
+            if (_selectedNodeDirectory.DireUri.LocalPath == "/")
             {
                 if (FilterMusicEntriesQuery != "")
                 {
-                    var filtered = _musicEntries.Where(song => song.Name.Contains(FilterMusicEntriesQuery, StringComparison.InvariantCultureIgnoreCase));
+                    var filtered = MusicEntries.Where(song =>
+                        song.Name.Contains(FilterMusicEntriesQuery, StringComparison.InvariantCultureIgnoreCase));
                     MusicEntriesFiltered = new ObservableCollection<NodeFile>(filtered);
                 }
                 else
                 {
-                    MusicEntriesFiltered = new ObservableCollection<NodeFile>(_musicEntries);
+                    MusicEntriesFiltered = new ObservableCollection<NodeFile>(MusicEntries);
                 }
             }
             else
@@ -2911,33 +2279,28 @@ public partial class MainViewModel : ObservableObject
                 OnPropertyChanged(nameof(MusicEntriesFiltered));
             }
         }
-    }
+    } = string.Empty;
 
-    private string _filesPageSubTitleFileCount = "";
     public string FilesPageSubTitleFileCount
     {
         get
         {
-            _filesPageSubTitleFileCount = string.Format(MPDCtrlX.Core.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
-            return _filesPageSubTitleFileCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
+            return field;
         }
-    }
+    } = string.Empty;
 
-    private bool _isFilesFindVisible;
     public bool IsFilesFindVisible
     {
-        get
-        {
-            return _isFilesFindVisible;
-        }
+        get;
         set
         {
-            if (_isFilesFindVisible == value)
+            if (field == value)
                 return;
 
-            _isFilesFindVisible = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsFilesFindVisible));
+            OnPropertyChanged();
         }
     }
 
@@ -2945,56 +2308,53 @@ public partial class MainViewModel : ObservableObject
 
     #region == Artists ==
 
-    private ObservableCollection<AlbumArtist> _artists = [];
     public ObservableCollection<AlbumArtist> Artists
     {
-        get { return _artists; }
+        get;
         set
         {
-            if (_artists == value)
+            if (field == value)
                 return;
 
-            _artists = value;
+            field = value;
 
             SelectedAlbumArtist = null;
             SelectedArtistAlbums = null;
 
-            OnPropertyChanged(nameof(Artists));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(ArtistPageSubTitleArtistCount));
         }
-    }
+    } = [];
 
-    private string _artistPageSubTitleArtistCount = "";
     public string ArtistPageSubTitleArtistCount
     {
         get
         {
-            _artistPageSubTitleArtistCount = string.Format(MPDCtrlX.Core.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
-            return _artistPageSubTitleArtistCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
+            return field;
         }
-    }
+    } = string.Empty;
 
-    private AlbumArtist? _selectedAlbumArtist;
     public AlbumArtist? SelectedAlbumArtist
     {
-        get { return _selectedAlbumArtist; }
+        get => field;
         set
         {
-            if (_selectedAlbumArtist == value)
+            if (field == value)
             {
                 return;
             }
             
-            _selectedAlbumArtist = value;
-            OnPropertyChanged(nameof(SelectedAlbumArtist));
+            field = value;
+            OnPropertyChanged();
 
-            if (_selectedAlbumArtist is null)
+            if (field is null)
             {
                 SelectedArtistAlbums = null;
                 return;
             }
 
-            SelectedArtistAlbums = _selectedAlbumArtist?.Albums;
+            SelectedArtistAlbums = field?.Albums;
             //OnPropertyChanged(nameof(ArtistPageSubTitleArtistAlbumCount));
             if (SelectedArtistAlbums is null)
             {
@@ -3026,127 +2386,101 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private ObservableCollection<Album>? _selectedArtistAlbums = [];
     public ObservableCollection<Album>? SelectedArtistAlbums
     {
-        get 
-        {
-            return _selectedArtistAlbums;
-        }
+        get;
         set
         {
-            if (_selectedArtistAlbums == value)
+            if (field == value)
                 return;
 
-            _selectedArtistAlbums = value;
+            field = value;
 
-            if (_selectedArtistAlbums is not null)
+            if (field is not null)
             {
                 if (IsAlbumSortWithoutThePrefix)
                 {
                     // Sort
                     var ci = CultureInfo.CurrentCulture;
                     var comp = StringComparer.Create(ci, true);
-                    _selectedArtistAlbums = new ObservableCollection<Album>(_selectedArtistAlbums.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                    field = new ObservableCollection<Album>(field.OrderBy(x => x.NameSort, comp)); // COPY. // Sort without prefix like "The" or "A".
                 }
             }
 
-            OnPropertyChanged(nameof(SelectedArtistAlbums));
+            OnPropertyChanged();
         }
-    }
+    } = [];
 
     // Filter Artists
-    private ObservableCollection<AlbumArtist> _artistsForFilter = [];
     public ObservableCollection<AlbumArtist> ArtistsForFilter
     {
-        get
-        {
-            return _artistsForFilter;
-        }
+        get;
         set
         {
-            if (_artistsForFilter == value)
+            if (field == value)
                 return;
 
-            _artistsForFilter = value;
-            OnPropertyChanged(nameof(ArtistsForFilter));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 
-    private string _filterArtistQuery = "";
     public string FilterArtistQuery
     {
-        get
-        {
-            return _filterArtistQuery;
-        }
+        get;
         set
         {
-            if (_filterArtistQuery == value)
+            if (field == value)
                 return;
 
-            _filterArtistQuery = value;
-            OnPropertyChanged(nameof(FilterArtistQuery));
+            field = value;
+            OnPropertyChanged();
 
-            if (_filterArtistQuery == "")
+            if (field == "")
             {
                 return;
             }
 
-            var filtered = Artists.Where(artist => FilterArtists(artist));
+            var filtered = Artists.Where(FilterArtists);
 
             ArtistsForFilter = new ObservableCollection<AlbumArtist>(filtered);
 
         }
-    }
+    } = "";
 
     private bool FilterArtists(AlbumArtist artist)
     {
         return artist.Name.Contains(FilterArtistQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
     }
 
-    private bool _isArtistFindVisible;
     public bool IsArtistFindVisible
     {
-        get
-        {
-            return _isArtistFindVisible;
-        }
+        get;
         set
         {
-            if (_isArtistFindVisible == value)
+            if (field == value)
                 return;
 
-            _isArtistFindVisible = value;
+            field = value;
 
             ArtistsForFilter.Clear();
-            /*
-            var collectionView = CollectionViewSource.GetDefaultView(QueueForFilter);
-            collectionView.Filter = x =>
-            {
-                return false;
-            };
-            */
+
             FilterArtistQuery = "";
 
-            OnPropertyChanged(nameof(IsArtistFindVisible));
+            OnPropertyChanged();
         }
     }
 
-    private AlbumArtist? _selectedFilterAlbumArtist;
     public AlbumArtist? SelectedFilterAlbumArtist
     {
-        get
-        {
-            return _selectedFilterAlbumArtist;
-        }
+        get;
         set
         {
-            if (_selectedFilterAlbumArtist == value)
+            if (field == value)
                 return;
 
-            _selectedFilterAlbumArtist = value;
-            OnPropertyChanged(nameof(SelectedFilterAlbumArtist));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
@@ -3154,50 +2488,47 @@ public partial class MainViewModel : ObservableObject
 
     #region == Albums ==
 
-    private ObservableCollection<AlbumEx> _albums = [];
     public ObservableCollection<AlbumEx> Albums
     {
-        get { return _albums; }
+        get;
         set
         {
-            if (_albums == value)
+            if (field == value)
                 return;
 
-            _albums = value;
+            field = value;
 
             SelectedAlbum = null;
 
-            OnPropertyChanged(nameof(Albums));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(AlbumPageSubTitleAlbumCount));
         }
-    }
+    } = [];
 
-    private bool _isAlbumContentPanelVisible = false;
     public bool IsAlbumContentPanelVisible
     {
-        get { return _isAlbumContentPanelVisible; }
+        get;
         set
         {
-            if (_isAlbumContentPanelVisible == value)
+            if (field == value)
                 return;
 
-            _isAlbumContentPanelVisible = value;
-            OnPropertyChanged(nameof(IsAlbumContentPanelVisible));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = false;
 
-    private AlbumEx? _selectedAlbum = new();
     public AlbumEx? SelectedAlbum
     {
-        get { return _selectedAlbum; }
+        get;
         set
         {
-            if (_selectedAlbum == value)
+            if (field == value)
                 return;
 
-            _selectedAlbum = value;
+            field = value;
 
-            OnPropertyChanged(nameof(SelectedAlbum));
+            OnPropertyChanged();
             OnPropertyChanged(nameof(SelectedAlbumSongs));
 
             //OpenAlbumPane?.Invoke(this, EventArgs.Empty);
@@ -3221,47 +2552,44 @@ public partial class MainViewModel : ObservableObject
             }
             */
         }
-    }
+    } = new();
 
-    private ObservableCollection<SongInfo> _selectedAlbumSongs = [];
     public ObservableCollection<SongInfo> SelectedAlbumSongs
     {
         get
         {
-            if (_selectedAlbum is not null)
+            if (SelectedAlbum is not null)
             {
-                return _selectedAlbum.Songs;
+                return SelectedAlbum.Songs;
             }
 
-            return _selectedAlbumSongs;
+            return field;
         }
         set
         {
-            if (_selectedAlbumSongs == value)
+            if (field == value)
                 return;
 
-            _selectedAlbumSongs = value;
-            OnPropertyChanged(nameof(SelectedAlbumSongs));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 
-    private string _albumPageSubTitleAlbumCount = "";
     public string AlbumPageSubTitleAlbumCount
     {
         get
         {
-            _albumPageSubTitleAlbumCount = string.Format(MPDCtrlX.Core.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
-            return _albumPageSubTitleAlbumCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
+            return field;
         }
-    }
+    } = "";
 
-    private IEnumerable<object>? _visibleViewportItemsAlbumEx;
     public IEnumerable<object>? VisibleViewportItemsAlbumEx
     {
-        get => _visibleViewportItemsAlbumEx;
+        get;
         set
         {
-            _visibleViewportItemsAlbumEx = value;
+            field = value;
 
             //OnPropertyChanged(nameof(VisibleViewportItemsAlbumEx));
 
@@ -3276,39 +2604,31 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Filter Albums
-    private ObservableCollection<AlbumEx> _albumsForFilter = [];
     public ObservableCollection<AlbumEx> AlbumsForFilter
     {   
-        get
-        {
-            return _albumsForFilter;
-        }
+        get;
         set
         {
-            if (_albumsForFilter == value)
+            if (field == value)
                 return;
 
-            _albumsForFilter = value;
-            OnPropertyChanged(nameof(AlbumsForFilter));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
 
-    private string _filterAlbumQuery = "";
     public string FilterAlbumQuery
     {
-        get
-        {
-            return _filterAlbumQuery;
-        }
+        get;
         set
         {
-            if (_filterAlbumQuery == value)
+            if (field == value)
                 return;
 
-            _filterAlbumQuery = value;
-            OnPropertyChanged(nameof(FilterAlbumQuery));
+            field = value;
+            OnPropertyChanged();
 
-            if (_filterAlbumQuery == "")
+            if (field == "")
             {
                 return;
             }
@@ -3317,49 +2637,41 @@ public partial class MainViewModel : ObservableObject
 
             AlbumsForFilter = new ObservableCollection<AlbumEx>(filtered);
         }
-    }
+    } = "";
 
     private bool FilterAlbums(AlbumEx album)
     {
         return album.Name.Contains(FilterAlbumQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
     }
 
-    private bool _isAlbumFindVisible;
     public bool IsAlbumFindVisible
     {
-        get
-        {
-            return _isAlbumFindVisible;
-        }
+        get;
         set
         {
-            if (_isAlbumFindVisible == value)
+            if (field == value)
                 return;
 
-            _isAlbumFindVisible = value;
+            field = value;
 
             AlbumsForFilter.Clear();
 
             FilterAlbumQuery = "";
 
-            OnPropertyChanged(nameof(IsAlbumFindVisible));
+            OnPropertyChanged();
         }
     }
 
-    private AlbumEx? _selectedFilterAlbum;
     public AlbumEx? SelectedFilterAlbum
     {
-        get
-        {
-            return _selectedFilterAlbum;
-        }
+        get;
         set
         {
-            if (_selectedFilterAlbum == value)
+            if (field == value)
                 return;
 
-            _selectedFilterAlbum = value;
-            OnPropertyChanged(nameof(SelectedFilterAlbum));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
@@ -3368,27 +2680,23 @@ public partial class MainViewModel : ObservableObject
 
     #region == Search ==
 
-    private ObservableCollection<SongInfo>? _searchResult = [];
     public ObservableCollection<SongInfo>? SearchResult
     {
-        get
-        {
-            return _searchResult;
-        }
+        get;
         set
         {
-            if (_searchResult == value)
+            if (field == value)
                 return;
 
-            _searchResult = value;
-            OnPropertyChanged(nameof(SearchResult));
+            field = value;
+            OnPropertyChanged();
             OnPropertyChanged(nameof(SearchPageSubTitleResultCount));
         }
-    }
+    } = [];
 
     // Search Tags
-    private readonly ObservableCollection<Models.SearchOption> _searchTagList = 
-    [
+
+    public ObservableCollection<Models.SearchOption> SearchTagList { get; } = [
         new Models.SearchOption(SearchTags.Title, MPDCtrlX.Core.Properties.Resources.ListviewColumnHeader_Title),
         new Models.SearchOption(SearchTags.Artist, MPDCtrlX.Core.Properties.Resources.ListviewColumnHeader_Artist),
         new Models.SearchOption(SearchTags.Album, MPDCtrlX.Core.Properties.Resources.ListviewColumnHeader_Album),
@@ -3396,112 +2704,80 @@ public partial class MainViewModel : ObservableObject
         new Models.SearchOption(SearchTags.Any, MPDCtrlX.Core.Properties.Resources.SearchOption_Any)
     ];
 
-    public ObservableCollection<Models.SearchOption> SearchTagList
-    {
-        get
-        {
-            return _searchTagList;
-        }
-    }
-
-    private Models.SearchOption _selectedSearchTag = new(SearchTags.Title, MPDCtrlX.Core.Properties.Resources.ListviewColumnHeader_Title);
     public Models.SearchOption SelectedSearchTag
     {
-        get
-        {
-            return _selectedSearchTag;
-        }
+        get;
         set
         {
-            if (_selectedSearchTag == value)
+            if (field == value)
                 return;
 
-            _selectedSearchTag = value;
-            OnPropertyChanged(nameof(SelectedSearchTag));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = new(SearchTags.Title, MPDCtrlX.Core.Properties.Resources.ListviewColumnHeader_Title);
 
     // Search Shiki (contain/==)
-    private readonly ObservableCollection<Models.SearchWith> _searchShikiList =
-[
+
+    public ObservableCollection<Models.SearchWith> SearchShikiList { get; } = [
     new Models.SearchWith(SearchShiki.Contains, MPDCtrlX.Core.Properties.Resources.Search_Shiki_Contains),
         new Models.SearchWith(SearchShiki.Equals, MPDCtrlX.Core.Properties.Resources.Search_Shiki_Equals)
 ];
 
-    public ObservableCollection<Models.SearchWith> SearchShikiList
-    {
-        get
-        {
-            return _searchShikiList;
-        }
-    }
-
-    private Models.SearchWith _selectedSearchShiki = new(SearchShiki.Contains, "Contains");
     public Models.SearchWith SelectedSearchShiki
     {
-        get
-        {
-            return _selectedSearchShiki;
-        }
+        get;
         set
         {
-            if (_selectedSearchShiki == value)
+            if (field == value)
                 return;
 
-            _selectedSearchShiki = value;
-            OnPropertyChanged(nameof(SelectedSearchShiki));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = new(SearchShiki.Contains, "Contains");
 
     // 
-    private string _searchQuery = "";
     public string SearchQuery
     {
-        get
-        {
-            return _searchQuery;
-        }
+        get;
         set
         {
-            if (_searchQuery == value)
+            if (field == value)
                 return;
 
-            _searchQuery = value;
-            OnPropertyChanged(nameof(SearchQuery));
+            field = value;
+            OnPropertyChanged();
             //SearchExecCommand.NotifyCanExecuteChanged();
         }
-    }
+    } = "";
 
-    private string _searchPageSubTitleResultCount = "";
     public string SearchPageSubTitleResultCount
     {
         get
         {
-            _searchPageSubTitleResultCount = string.Format(MPDCtrlX.Core.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
-            return _searchPageSubTitleResultCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
+            return field;
         }
-    }
+    } = "";
 
     #endregion
 
     #region == Playlists ==  
 
-    private ObservableCollection<Playlist> _playlists = [];
     public ObservableCollection<Playlist> Playlists
     {
-        get
-        {
-            return _playlists;
-        }
+        get;
         set
         {
-            if (_playlists == value)
+            if (field == value)
                 return;
 
-            _playlists = value;
-            OnPropertyChanged(nameof(Playlists));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = [];
+
     /*
     private Playlist? _selectedPlaylist;
     public Playlist? SelectedPlaylist
@@ -3524,74 +2800,58 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playlist Items ==
 
-    private ObservableCollection<SongInfo> _playlistSongs = [];
     public ObservableCollection<SongInfo> PlaylistSongs
     {
-        get
-        {
-            return _playlistSongs;
-        }
+        get;
         set
         {
-            if (_playlistSongs != value)
-            {
-                _playlistSongs = value;
-                OnPropertyChanged(nameof(PlaylistSongs));
-                OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
-            }
+            if (field == value) return;
+            field = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
         }
-    }
+    } = [];
 
-    private SongInfo? _selectedPlaylistSong;
     public SongInfo? SelectedPlaylistSong
     {
-        get
-        {
-            return _selectedPlaylistSong;
-        }
+        get;
         set
         {
-            if (_selectedPlaylistSong != value)
-            {
-                _selectedPlaylistSong = value;
-                OnPropertyChanged(nameof(SelectedPlaylistSong));
-            }
+            if (field == value) return;
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private string _playlistPageSubTitleSongCount = "";
     public string PlaylistPageSubTitleSongCount
     {
         get
         {
-            _playlistPageSubTitleSongCount = string.Format(MPDCtrlX.Core.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
-            return _playlistPageSubTitleSongCount;
+            field = string.Format(MPDCtrlX.Core.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
+            return field;
         }
-    }
+
+        private set;
+    } = "";
 
     #endregion
 
     #region == Settings ==
 
-    public static string AlbumCacheFolderPath
-    {
-        get => App.AppDataCacheFolder;
-    }
-
-    private string _albumCacheFolderSizeFormatted = string.Empty;
+    public static string AlbumCacheFolderPath => App.AppDataCacheFolder;
 
     public string AlbumCacheFolderSizeFormatted
     {
-        get => _albumCacheFolderSizeFormatted;
+        get;
         set
         {
-            if (_albumCacheFolderSizeFormatted == value)
+            if (field == value)
                 return;
 
-            _albumCacheFolderSizeFormatted = value;
-            OnPropertyChanged(nameof(AlbumCacheFolderSizeFormatted));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
     #endregion
 
@@ -3599,263 +2859,185 @@ public partial class MainViewModel : ObservableObject
 
     #region == Debug ==
 
-    private string _debugCommandText = string.Empty;
     public string DebugCommandText
     {
-        get
-        {
-            return _debugCommandText;
-        }
+        get => field;
         set
         {
-            if (_debugCommandText == value)
+            if (field == value)
                 return;
 
-            _debugCommandText = value;
-            OnPropertyChanged(nameof(DebugCommandText));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
 
-    private string _debugIdleText = string.Empty;
     public string DebugIdleText
     {
-        get
-        {
-            return _debugIdleText;
-        }
+        get => field;
         set
         {
-            if (_debugIdleText == value)
+            if (field == value)
                 return;
 
-            _debugIdleText = value;
-            OnPropertyChanged(nameof(DebugIdleText));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = string.Empty;
 
     #endregion
 
     #region == Options ==
 
-    private bool _isUpdateOnStartup = true;
     public bool IsUpdateOnStartup
     {
-        get { return _isUpdateOnStartup; }
+        get;
         set
         {
-            if (_isUpdateOnStartup == value)
+            if (field == value)
                 return;
 
-            _isUpdateOnStartup = value;
-
-            OnPropertyChanged(nameof(IsUpdateOnStartup));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
-    private bool _isAutoScrollToNowPlaying = false;
     public bool IsAutoScrollToNowPlaying
     {
-        get { return _isAutoScrollToNowPlaying; }
+        get;
         set
         {
-            if (_isAutoScrollToNowPlaying == value)
+            if (field == value)
                 return;
 
-            _isAutoScrollToNowPlaying = value;
-
-            OnPropertyChanged(nameof(IsAutoScrollToNowPlaying));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = false;
 
-    private bool _isArtistSortWithoutThePrefix = true;
     public bool IsArtistSortWithoutThePrefix
     {
-        get { return _isArtistSortWithoutThePrefix; }
+        get;
         set
         {
-            if (_isArtistSortWithoutThePrefix == value)
+            if (field == value)
                 return;
 
-            _isArtistSortWithoutThePrefix = value;
-
-            OnPropertyChanged(nameof(IsArtistSortWithoutThePrefix));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
-    private bool _isAlbumSortWithoutThePrefix = true;
     public bool IsAlbumSortWithoutThePrefix
     {
-        get { return _isAlbumSortWithoutThePrefix; }
+        get;
         set
         {
-            if (_isAlbumSortWithoutThePrefix == value)
+            if (field == value)
                 return;
 
-            _isAlbumSortWithoutThePrefix = value;
-
-            OnPropertyChanged(nameof(IsAlbumSortWithoutThePrefix));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
-    private bool _isSaveLog;
     public bool IsSaveLog
     {
-        get { return _isSaveLog; }
+        get;
         set
         {
-            if (_isSaveLog == value)
+            if (field == value)
                 return;
 
-            _isSaveLog = value;
-
-            OnPropertyChanged(nameof(IsSaveLog));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isDownloadAlbumArt = true;
     public bool IsDownloadAlbumArt
     {
-        get { return _isDownloadAlbumArt; }
+        get => field;
         set
         {
-            if (_isDownloadAlbumArt == value)
+            if (field == value)
                 return;
 
-            _isDownloadAlbumArt = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsDownloadAlbumArt));
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
-    private bool _isDownloadAlbumArtEmbeddedUsingReadPicture = true;
     public bool IsDownloadAlbumArtEmbeddedUsingReadPicture
     {
-        get { return _isDownloadAlbumArtEmbeddedUsingReadPicture; }
+        get;
         set
         {
-            if (_isDownloadAlbumArtEmbeddedUsingReadPicture == value)
+            if (field == value)
                 return;
 
-            _isDownloadAlbumArtEmbeddedUsingReadPicture = value;
+            field = value;
 
-            OnPropertyChanged(nameof(IsDownloadAlbumArtEmbeddedUsingReadPicture));
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
     #endregion
 
     #region == Profile settings ==
 
-    private readonly ObservableCollection<Profile> _profiles = [];
-    public ObservableCollection<Profile> Profiles
-    {
-        get { return _profiles; }
-    }
+    public ObservableCollection<Profile> Profiles { get; } = [];
 
-    private Profile? _currentProfile;
     public Profile? CurrentProfile
     {
-        get { return _currentProfile; }
+        get;
         set
         {
-            if (_currentProfile == value)
+            if (field == value)
                 return;
 
-            _currentProfile = value;
-            OnPropertyChanged(nameof(CurrentProfile));
+            field = value;
+            OnPropertyChanged();
 
-            SelectedProfile = _currentProfile;
+            SelectedProfile = field;
 
-            if (_currentProfile is not null)
-            {
-                _volume = _currentProfile.Volume;
-                OnPropertyChanged(nameof(Volume));
+            if (field is null) return;
+            _volume = field.Volume;
+            OnPropertyChanged(nameof(Volume));
 
-                Host = _currentProfile.Host;
-                Port = _currentProfile.Port.ToString();
-                _password = _currentProfile.Password;
-                OnPropertyChanged(nameof(Password));
-            }
+            Host = field.Host;
+            Port = field.Port.ToString();
+            _password = field.Password;
+            OnPropertyChanged(nameof(Password));
         }
     }
 
-    private Profile? _selectedProfile;
     public Profile? SelectedProfile
     {
-        get
-        {
-            return _selectedProfile;
-        }
+        get;
         set
         {
-            if (_selectedProfile == value)
+            if (field == value)
                 return;
 
-            _selectedProfile = value;
-
-            OnPropertyChanged(nameof(SelectedProfile));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _setIsDefault = true;
     public bool SetIsDefault
     {
-        get { return _setIsDefault; }
+        get;
         set
         {
-            if (_setIsDefault == value)
+            if (field == value)
                 return;
 
-            _setIsDefault = value;
-
-            OnPropertyChanged(nameof(SetIsDefault));
+            field = value;
+            OnPropertyChanged();
         }
-    }
-    /*
-    private Profile? _selectedProfile;
-    public Profile? SelectedProfile
-    {
-        get
-        {
-            return _selectedProfile;
-        }
-        set
-        {
-            if (_selectedProfile == value)
-                return;
-
-            _selectedProfile = value;
-
-            if (_selectedProfile is not null)
-            {
-                //ClearError(nameof(Host));
-                //ClearError(nameof(Port));
-                Host = _selectedProfile.Host;
-                Port = _selectedProfile.Port.ToString();
-                Password = _selectedProfile.Password;
-                SetIsDefault = _selectedProfile.IsDefault;
-            }
-            else
-            {
-                //ClearError(nameof(Host));
-                //ClearError(nameof(Port));
-                Host = "";
-                Port = "6600";
-                Password = "";
-            }
-
-            OnPropertyChanged(nameof(SelectedProfile));
-
-            // "quietly"
-            if (_selectedProfile is not null)
-            {
-                _selectedQuickProfile = _selectedProfile;
-                OnPropertyChanged(nameof(SelectedQuickProfile));
-            }
-        }
-    }
-    */
+    } = true;
 
     public bool IsProfileSwitchOK
     {
@@ -3868,42 +3050,10 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-
-    /*
-    private Profile? _selectedQuickProfile;
-    public Profile? SelectedQuickProfile
-    {
-        get
-        {
-            return _selectedQuickProfile;
-        }
-        set
-        {
-            if (_selectedQuickProfile == value)
-                return;
-
-            if (IsProfileSwitchOK)
-            {
-                _selectedQuickProfile = value;
-
-                if (_selectedQuickProfile is not null)
-                {
-                    SelectedProfile = _selectedQuickProfile;
-                    CurrentProfile = _selectedQuickProfile;
-
-                    ChangeConnection(_selectedQuickProfile);
-                }
-            }
-
-            OnPropertyChanged(nameof(SelectedQuickProfile));
-        }
-    }
-    */
-
     private string _host = "";
     public string Host
     {
-        get { return _host; }
+        get => _host;
         set
         {
             //ClearError(nameof(Host));
@@ -3938,24 +3088,19 @@ public partial class MainViewModel : ObservableObject
             }
             */
 
-            OnPropertyChanged(nameof(Host));
+            OnPropertyChanged();
         }
     }
 
-    private IPAddress? _hostIpAddress;
-    public IPAddress? HostIpAddress
-    {
-        get { return _hostIpAddress; }
-        set
+    public IPAddress? HostIpAddress { get; set
         {
             //if (_hostIpAddress is null) return;
             //if (_hostIpAddress.Equals(value))  return;
 
-            _hostIpAddress = value;
+            field = value;
 
-            OnPropertyChanged(nameof(HostIpAddress));
-        }
-    }
+            OnPropertyChanged();
+        } }
 
     private int _port = 6600;
     public string Port
@@ -3987,7 +3132,7 @@ public partial class MainViewModel : ObservableObject
                 }
             }
 
-            OnPropertyChanged(nameof(Port));
+            OnPropertyChanged();
         }
     }
 
@@ -4003,7 +3148,7 @@ public partial class MainViewModel : ObservableObject
 
             //OnPropertyChanged(nameof(IsNotPasswordSet));
             //OnPropertyChanged(nameof(IsPasswordSet));
-            OnPropertyChanged(nameof(Password));
+            OnPropertyChanged();
         }
     }
 
@@ -4025,7 +3170,7 @@ public partial class MainViewModel : ObservableObject
             }
             catch
             {
-                Debug.WriteLine($"Encrypt fail.");
+                Debug.WriteLine("Encrypt fail.");
                 return s;
             }
         }
@@ -4133,249 +3278,118 @@ public partial class MainViewModel : ObservableObject
         }
         return e;
     }
-    /*
-    private string _settingProfileEditMessage = "";
-    public string SettingProfileEditMessage
-    {
-        get
-        {
-            return _settingProfileEditMessage;
-        }
-        set
-        {
-            _settingProfileEditMessage = value;
-            OnPropertyChanged(nameof(SettingProfileEditMessage));
-        }
-    }
 
-    public bool IsPasswordSet
-    {
-        get
-        {
-            if (SelectedProfile is not null)
-            {
-                if (!string.IsNullOrEmpty(SelectedProfile.Password))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
-    public bool IsNotPasswordSet
-    {
-        get
-        {
-            if (IsPasswordSet)
-                return false;
-            else
-                return true;
-        }
-    }
-
-
-
-    private bool _isSwitchingProfile;
-    public bool IsSwitchingProfile
-    {
-        get
-        {
-            return _isSwitchingProfile;
-        }
-        set
-        {
-            if (_isSwitchingProfile == value)
-                return;
-
-            _isSwitchingProfile = value;
-            OnPropertyChanged(nameof(IsSwitchingProfile));
-        }
-    }
-
-    private string _changePasswordDialogMessage = "";
-    public string ChangePasswordDialogMessage
-    {
-        get { return _changePasswordDialogMessage; }
-        set
-        {
-            if (_changePasswordDialogMessage == value)
-                return;
-
-            _changePasswordDialogMessage = value;
-            OnPropertyChanged(nameof(ChangePasswordDialogMessage));
-        }
-    }
-    */
-
-    private bool _isRememberAsProfile = true;
     public bool IsRememberAsProfile
     {
-        get
-        {
-            return _isRememberAsProfile;
-        }
+        get;
         set
         {
-            if (_isRememberAsProfile == value)
+            if (field == value)
                 return;
 
-            _isRememberAsProfile = value;
-            OnPropertyChanged(nameof(IsRememberAsProfile));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = true;
 
     #endregion
 
     #region == Status Messages == 
 
-    private string _statusBarMessage = "";
     public string StatusBarMessage
     {
-        get
-        {
-            return _statusBarMessage;
-        }
+        get;
         set
         {
-            _statusBarMessage = value;
-            OnPropertyChanged(nameof(StatusBarMessage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _connectionStatusMessage = "";
     public string ConnectionStatusMessage
     {
-        get
-        {
-            return _connectionStatusMessage;
-        }
+        get;
         set
         {
-            _connectionStatusMessage = value;
-            OnPropertyChanged(nameof(ConnectionStatusMessage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _mpdStatusMessage = "";
     public string MpdStatusMessage
     {
-        get
-        {
-            return _mpdStatusMessage;
-        }
+        get;
         set
         {
-            _mpdStatusMessage = value;
-            OnPropertyChanged(nameof(MpdStatusMessage));
+            field = value;
+            OnPropertyChanged();
 
-            if (_mpdStatusMessage != "")
-                _isMpdStatusMessageContainsText = true;
-            else
-                _isMpdStatusMessageContainsText = false;
+            IsMpdStatusMessageContainsText = field != "";
             OnPropertyChanged(nameof(IsMpdStatusMessageContainsText));
         }
-    }
+    } = "";
 
-    private bool _isMpdStatusMessageContainsText;
-    public bool IsMpdStatusMessageContainsText
-    {
-        get
-        {
-            return _isMpdStatusMessageContainsText;
-        }
-    }
+    public bool IsMpdStatusMessageContainsText { get; private set; }
 
-    private string _infoBarInfoTitle = "";
     public string InfoBarInfoTitle
     {
-        get
-        {
-            return _infoBarInfoTitle;
-        }
+        get;
         set
         {
-            _infoBarInfoTitle = value;
-            OnPropertyChanged(nameof(InfoBarInfoTitle));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _infoBarInfoMessage = "";
     public string InfoBarInfoMessage
     {
-        get
-        {
-            return _infoBarInfoMessage;
-        }
+        get;
         set
         {
-            _infoBarInfoMessage = value;
-            OnPropertyChanged(nameof(InfoBarInfoMessage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _infoBarAckTitle = "";
     public string InfoBarAckTitle
     {
-        get
-        {
-            return _infoBarAckTitle;
-        }
+        get;
         set
         {
-            _infoBarAckTitle = value;
-            OnPropertyChanged(nameof(InfoBarAckTitle));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _infoBarAckMessage = "";
     public string InfoBarAckMessage
     {
-        get
-        {
-            return _infoBarAckMessage;
-        }
+        get;
         set
         {
-            _infoBarAckMessage = value;
-            OnPropertyChanged(nameof(InfoBarAckMessage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _infoBarErrTitle = "";
     public string InfoBarErrTitle
     {
-        get
-        {
-            return _infoBarErrTitle;
-        }
+        get;
         set
         {
-            _infoBarErrTitle = value;
-            OnPropertyChanged(nameof(InfoBarErrTitle));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
-    private string _infoBarErrMessage = "";
     public string InfoBarErrMessage
     {
-        get
-        {
-            return _infoBarErrMessage;
-        }
+        get;
         set
         {
-            _infoBarErrMessage = value;
-            OnPropertyChanged(nameof(InfoBarErrMessage));
+            field = value;
+            OnPropertyChanged();
         }
-    }
+    } = "";
 
 
     private static readonly string _pathDefaultNoneButton = "";
@@ -4388,55 +3402,35 @@ public partial class MainViewModel : ObservableObject
     private static readonly string _pathNewConnectionButton = "M20,4C21.11,4 22,4.89 22,6V18C22,19.11 21.11,20 20,20H4C2.89,20 2,19.11 2,18V6C2,4.89 2.89,4 4,4H20M8.5,15V9H7.25V12.5L4.75,9H3.5V15H4.75V11.5L7.3,15H8.5M13.5,10.26V9H9.5V15H13.5V13.75H11V12.64H13.5V11.38H11V10.26H13.5M20.5,14V9H19.25V13.5H18.13V10H16.88V13.5H15.75V9H14.5V14A1,1 0 0,0 15.5,15H19.5A1,1 0 0,0 20.5,14Z";
     private static readonly string _pathErrorInfoButton = "M23,12L20.56,14.78L20.9,18.46L17.29,19.28L15.4,22.46L12,21L8.6,22.47L6.71,19.29L3.1,18.47L3.44,14.78L1,12L3.44,9.21L3.1,5.53L6.71,4.72L8.6,1.54L12,3L15.4,1.54L17.29,4.72L20.9,5.54L20.56,9.22L23,12M20.33,12L18.5,9.89L18.74,7.1L16,6.5L14.58,4.07L12,5.18L9.42,4.07L8,6.5L5.26,7.09L5.5,9.88L3.67,12L5.5,14.1L5.26,16.9L8,17.5L9.42,19.93L12,18.81L14.58,19.92L16,17.5L18.74,16.89L18.5,14.1L20.33,12M11,15H13V17H11V15M11,7H13V13H11V7";
 
-    private string _statusButton = _pathDefaultNoneButton;
-    public string StatusButton
-    {
-        get
+    public string StatusButton { get; set
         {
-            return _statusButton;
-        }
-        set
-        {
-            if (_statusButton == value)
+            if (field == value)
                 return;
 
-            _statusButton = value;
-            OnPropertyChanged(nameof(StatusButton));
-        }
-    }
+            field = value;
+            OnPropertyChanged();
+        } } = _pathDefaultNoneButton;
 
     private static readonly string _pathMpdOkButton = "M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z";
 
     private static readonly string _pathMpdAckErrorButton = "M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z";
 
-    private string _mpdStatusButton = _pathMpdOkButton;
-    public string MpdStatusButton
-    {
-        get
+    public string MpdStatusButton { get; set
         {
-            return _mpdStatusButton;
-        }
-        set
-        {
-            if (_mpdStatusButton == value)
+            if (field == value)
                 return;
 
-            _mpdStatusButton = value;
-            OnPropertyChanged(nameof(MpdStatusButton));
-        }
-    }
+            field = value;
+            OnPropertyChanged();
+        } } = _pathMpdOkButton;
 
-    private bool _isUpdatingMpdDb;
     public bool IsUpdatingMpdDb
     {
-        get
-        {
-            return _isUpdatingMpdDb;
-        }
+        get;
         set
         {
-            _isUpdatingMpdDb = value;
-            OnPropertyChanged(nameof(IsUpdatingMpdDb));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
@@ -4457,7 +3451,7 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             _mpdVersion = value;
-            OnPropertyChanged(nameof(MpdVersion));
+            OnPropertyChanged();
         }
     }
 
@@ -4466,7 +3460,6 @@ public partial class MainViewModel : ObservableObject
     {
         get
         {
-
             if (IsConnected)
             {
                 if (!string.IsNullOrEmpty(_mpdVersion))
@@ -4505,16 +3498,8 @@ public partial class MainViewModel : ObservableObject
             }
             else
             {
-                if (IsNotConnectingNorConnected)
-                {
-                    return "Not connected";
-                }
-
-
-                return "Not connected";
+                return IsNotConnectingNorConnected ? "Not connected" : "Not connected";
             }
-
-
         }
     }
 
@@ -4526,207 +3511,159 @@ public partial class MainViewModel : ObservableObject
     //private List<string> searchResultListviewSelectedQueueSongUriForPopup = [];
     //private List<string> songFilesListviewSelectedQueueSongUriForPopup = [];
 
-    private bool _isConfirmClearQueuePopupVisible;
     public bool IsConfirmClearQueuePopupVisible
     {
-        get
-        {
-            return _isConfirmClearQueuePopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmClearQueuePopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmClearQueuePopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmClearQueuePopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isSelectedSaveToPopupVisible;
     public bool IsSelectedSaveToPopupVisible
     {
-        get
-        {
-            return _isSelectedSaveToPopupVisible;
-        }
+        get;
         set
         {
-            if (_isSelectedSaveToPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isSelectedSaveToPopupVisible = value;
-            OnPropertyChanged(nameof(IsSelectedSaveToPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isSelectedSaveAsPopupVisible;
     public bool IsSelectedSaveAsPopupVisible
     {
-        get
-        {
-            return _isSelectedSaveAsPopupVisible;
-        }
+        get;
         set
         {
-            if (_isSelectedSaveAsPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isSelectedSaveAsPopupVisible = value;
-            OnPropertyChanged(nameof(IsSelectedSaveAsPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isConfirmDeleteQueuePopupVisible;
     public bool IsConfirmDeleteQueuePopupVisible
     {
-        get
-        {
-            return _isConfirmDeleteQueuePopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmDeleteQueuePopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmDeleteQueuePopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmDeleteQueuePopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isConfirmUpdatePlaylistSongsPopupVisible;
     public bool IsConfirmUpdatePlaylistSongsPopupVisible
     {
-        get
-        {
-            return _isConfirmUpdatePlaylistSongsPopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmUpdatePlaylistSongsPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmUpdatePlaylistSongsPopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmUpdatePlaylistSongsPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible;
     public bool IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible
     {
-        get
-        {
-            return _isConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmMultipleDeletePlaylistSongsNotSupportedPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isConfirmDeletePlaylistSongPopupVisible;
     public bool IsConfirmDeletePlaylistSongPopupVisible
     {
-        get
-        {
-            return _isConfirmDeletePlaylistSongPopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmDeletePlaylistSongPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmDeletePlaylistSongPopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmDeletePlaylistSongPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isConfirmPlaylistClearPopupVisible;
     public bool IsConfirmPlaylistClearPopupVisible
     {
-        get
-        {
-            return _isConfirmPlaylistClearPopupVisible;
-        }
+        get;
         set
         {
-            if (_isConfirmPlaylistClearPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isConfirmPlaylistClearPopupVisible = value;
-            OnPropertyChanged(nameof(IsConfirmPlaylistClearPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isSearchResultSelectedSaveAsPopupVisible;
     public bool IsSearchResultSelectedSaveAsPopupVisible
     {
-        get
-        {
-            return _isSearchResultSelectedSaveAsPopupVisible;
-        }
+        get;
         set
         {
-            if (_isSearchResultSelectedSaveAsPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isSearchResultSelectedSaveAsPopupVisible = value;
-            OnPropertyChanged(nameof(IsSearchResultSelectedSaveAsPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isSearchResultSelectedSaveToPopupVisible;
     public bool IsSearchResultSelectedSaveToPopupVisible
     {
-        get
-        {
-            return _isSearchResultSelectedSaveToPopupVisible;
-        }
+        get;
         set
         {
-            if (_isSearchResultSelectedSaveToPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isSearchResultSelectedSaveToPopupVisible = value;
-            OnPropertyChanged(nameof(IsSearchResultSelectedSaveToPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _sSongFilesSelectedSaveAsPopupVisible;
     public bool IsSongFilesSelectedSaveAsPopupVisible
     {
-        get
-        {
-            return _sSongFilesSelectedSaveAsPopupVisible;
-        }
+        get;
         set
         {
-            if (_sSongFilesSelectedSaveAsPopupVisible == value)
+            if (field == value)
                 return;
 
-            _sSongFilesSelectedSaveAsPopupVisible = value;
-            OnPropertyChanged(nameof(IsSongFilesSelectedSaveAsPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
-    private bool _isSongFilesSelectedSaveToPopupVisible;
     public bool IsSongFilesSelectedSaveToPopupVisible
     {
-        get
-        {
-            return _isSongFilesSelectedSaveToPopupVisible;
-        }
+        get;
         set
         {
-            if (_isSongFilesSelectedSaveToPopupVisible == value)
+            if (field == value)
                 return;
 
-            _isSongFilesSelectedSaveToPopupVisible = value;
-            OnPropertyChanged(nameof(IsSongFilesSelectedSaveToPopupVisible));
+            field = value;
+            OnPropertyChanged();
         }
     }
 
@@ -4800,29 +3737,29 @@ public partial class MainViewModel : ObservableObject
 
         #region == Subscribe to events ==
 
-        _mpc.IsBusy += new MpcService.IsBusyEvent(OnMpcIsBusy);
+        _mpc.IsBusy += OnMpcIsBusy;
 
-        _mpc.MpdIdleConnected += new MpcService.IsMpdIdleConnectedEvent(OnMpdIdleConnected);
+        _mpc.MpdIdleConnected += OnMpdIdleConnected;
 
-        _mpc.DebugCommandOutput += new MpcService.DebugCommandOutputEvent(OnDebugCommandOutput);
-        _mpc.DebugIdleOutput += new MpcService.DebugIdleOutputEvent(OnDebugIdleOutput);
+        _mpc.DebugCommandOutput += OnDebugCommandOutput;
+        _mpc.DebugIdleOutput += OnDebugIdleOutput;
 
-        _mpc.ConnectionStatusChanged += new MpcService.ConnectionStatusChangedEvent(OnConnectionStatusChanged);
-        _mpc.ConnectionError += new MpcService.ConnectionErrorEvent(OnConnectionError);
+        _mpc.ConnectionStatusChanged += OnConnectionStatusChanged;
+        _mpc.ConnectionError += OnConnectionError;
 
-        _mpc.MpdPlayerStatusChanged += new MpcService.MpdPlayerStatusChangedEvent(OnMpdPlayerStatusChanged);
-        _mpc.MpdCurrentQueueChanged += new MpcService.MpdCurrentQueueChangedEvent(OnMpdCurrentQueueChanged);
-        _mpc.MpdPlaylistsChanged += new MpcService.MpdPlaylistsChangedEvent(OnMpdPlaylistsChanged);
+        _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
+        _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
+        _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
 
-        _mpc.MpdAckError += new MpcService.MpdAckErrorEvent(OnMpdAckError);
-        _mpc.MpdFatalError += new MpcService.MpdFatalErrorEvent(OnMpdFatalError);
+        _mpc.MpdAckError += OnMpdAckError;
+        _mpc.MpdFatalError += OnMpdFatalError;
 
-        _mpc.MpdAlbumArtChanged += new MpcService.MpdAlbumArtChangedEvent(OnAlbumArtChanged);
+        _mpc.MpdAlbumArtChanged += OnAlbumArtChanged;
 
         //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
 
         // [Background][UI] etc
-        _mpc.MpcProgress += new MpcService.MpcProgressEvent(OnMpcProgress);
+        _mpc.MpcProgress += OnMpcProgress;
         this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
 
         #endregion
@@ -4831,7 +3768,7 @@ public partial class MainViewModel : ObservableObject
 
         // Init Song's time elapsed timer.
         _elapsedTimer = new System.Timers.Timer(1000); // adjust this when _elapsedTimeMultiplier value is not 1.
-        _elapsedTimer.Elapsed += new System.Timers.ElapsedEventHandler(ElapsedTimer);
+        _elapsedTimer.Elapsed += ElapsedTimer;
 
         #endregion
 
@@ -4848,8 +3785,8 @@ public partial class MainViewModel : ObservableObject
         // Sets default if not set in "load settings".
         if (_currentTheme is null)
         {
-            CurrentTheme = _themes[0]; // needs this.
-            _currentTheme = _themes[0]; // just because VS IDE complains to me to set.
+            CurrentTheme = Themes[0]; // needs this.
+            _currentTheme = Themes[0]; // just because VS IDE complains to me to set.
         }
 
         // On linux there seems to be a bug where user prefered color is not picked up.
@@ -4971,7 +3908,7 @@ public partial class MainViewModel : ObservableObject
                         {
                             if ((hoge.Value == "Dark") || hoge.Value == "Light" || hoge.Value == "System")
                             {
-                                Theme? theme = _themes.FirstOrDefault(x => x.Name == hoge.Value);
+                                Theme? theme = Themes.FirstOrDefault(x => x.Name == hoge.Value);
                                 if (theme is not null)
                                 {
                                     CurrentTheme = theme;
@@ -6311,14 +5248,7 @@ public partial class MainViewModel : ObservableObject
             //Window w = (sender as Window);
             // Main Window attributes
             attrs = doc.CreateAttribute("height");
-            if (w.WindowState == WindowState.Normal)
-            {
-                attrs.Value = w.Height.ToString();
-            }
-            else
-            {
-                attrs.Value = w.WinRestoreHeight.ToString();
-            }
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Height.ToString() : w.WinRestoreHeight.ToString();
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("width");
@@ -6334,41 +5264,21 @@ public partial class MainViewModel : ObservableObject
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("top");
-            if (w.WindowState == WindowState.Normal)
-            {
-                attrs.Value = w.Position.Y.ToString();
-            }
-            else
-            {
-                attrs.Value = w.WinRestoreTop.ToString();
-            }
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.Y.ToString() : w.WinRestoreTop.ToString();
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("left");
-            if (w.WindowState == WindowState.Normal)
-            {
-                attrs.Value = w.Position.X.ToString();
-            }
-            else
-            {
-                attrs.Value = w.WinRestoreLeft.ToString();
-            }
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.X.ToString() : w.WinRestoreLeft.ToString();
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("state");
-            if (w.WindowState == WindowState.Maximized)
+            attrs.Value = w.WindowState switch
             {
-                attrs.Value = "Maximized";
-            }
-            else if (w.WindowState == WindowState.Normal)
-            {
-                attrs.Value = "Normal";
-
-            }
-            else if (w.WindowState == WindowState.Minimized)
-            {
-                attrs.Value = "Minimized";
-            }
+                WindowState.Maximized => "Maximized",
+                WindowState.Normal => "Normal",
+                WindowState.Minimized => "Minimized",
+                _ => attrs.Value
+            };
             mainWindow.SetAttributeNode(attrs);
 
             // set MainWindow element to root.
@@ -6380,24 +5290,14 @@ public partial class MainViewModel : ObservableObject
 
             #region == Layout ==
 
-            XmlElement lay = doc.CreateElement(string.Empty, "Layout", string.Empty);
-
-            XmlElement leftpain;
-            XmlAttribute lAttrs;
+            var lay = doc.CreateElement(string.Empty, "Layout", string.Empty);
 
             // LeftPain
-            leftpain = doc.CreateElement(string.Empty, "LeftPain", string.Empty);
-            lAttrs = doc.CreateAttribute("Width");
+            var leftpain = doc.CreateElement(string.Empty, "LeftPain", string.Empty);
+            var lAttrs = doc.CreateAttribute("Width");
             if (IsFullyLoaded) // instead of IsFullyRendered
             {
-                if (windowWidth > (MainLeftPainActualWidth - 24))
-                {
-                    lAttrs.Value = MainLeftPainActualWidth.ToString();
-                }
-                else
-                {
-                    lAttrs.Value = "241";
-                }
+                lAttrs.Value = windowWidth > (MainLeftPainActualWidth - 24) ? MainLeftPainActualWidth.ToString() : "241";
             }
             else
             {
@@ -6406,14 +5306,7 @@ public partial class MainViewModel : ObservableObject
             leftpain.SetAttributeNode(lAttrs);
 
             lAttrs = doc.CreateAttribute("NavigationViewMenuOpen");
-            if (_isNavigationViewMenuOpen)
-            {
-                lAttrs.Value = "True";
-            }
-            else
-            {
-                lAttrs.Value = "False";
-            }
+            lAttrs.Value = _isNavigationViewMenuOpen ? "True" : "False";
             leftpain.SetAttributeNode(lAttrs);
 
             //
@@ -6421,461 +5314,7 @@ public partial class MainViewModel : ObservableObject
 
             #region == Header columns ==
 
-            XmlElement headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
-
-            #region == Queue header ==
-            /*
-            // Queue page
-            XmlElement queueHeader;
-            XmlElement queueHeaderColumn;
-            XmlAttribute qAttrs;
-
-            queueHeader = doc.CreateElement(string.Empty, "Queue", string.Empty);
-
-            // Position
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderPositionVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderPositionWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Now Playing
-            queueHeaderColumn = doc.CreateElement(string.Empty, "NowPlaying", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderNowPlayingVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderNowPlayingWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Title skip visibility
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Title", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderTitleWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Time
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderTimeVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderTimeWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Artist
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderArtistVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderArtistWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Album
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderAlbumVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderAlbumWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Disc
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderDiscVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderDiscWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Track
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderTrackVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderTrackWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Genre
-            queueHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderGenreVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderGenreWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            // Last Modified
-            queueHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
-
-            qAttrs = doc.CreateAttribute("Visible");
-            qAttrs.Value = IsQueueColumnHeaderLastModifiedVisible.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            qAttrs = doc.CreateAttribute("Width");
-            qAttrs.Value = QueueColumnHeaderLastModifiedWidth.ToString();
-            queueHeaderColumn.SetAttributeNode(qAttrs);
-
-            queueHeader.AppendChild(queueHeaderColumn);
-
-            //
-            headers.AppendChild(queueHeader);
-            */
-            #endregion
-
-            #region == Files header ==
-            /*
-            // FilesPage
-            XmlElement filesHeader;
-            XmlElement filesHeaderColumn;
-            XmlAttribute fAttrs;
-
-            filesHeader = doc.CreateElement(string.Empty, "Files", string.Empty);
-
-            filesHeaderColumn = doc.CreateElement(string.Empty, "FileName", string.Empty);
-
-            fAttrs = doc.CreateAttribute("Width");
-            fAttrs.Value = LibraryColumnHeaderTitleWidth.ToString();
-            filesHeaderColumn.SetAttributeNode(fAttrs);
-            //
-            filesHeader.AppendChild(filesHeaderColumn);
-
-
-            filesHeaderColumn = doc.CreateElement(string.Empty, "FilePath", string.Empty);
-
-            fAttrs = doc.CreateAttribute("Width");
-            fAttrs.Value = LibraryColumnHeaderFilePathWidth.ToString();
-            filesHeaderColumn.SetAttributeNode(fAttrs);
-            //
-            filesHeader.AppendChild(filesHeaderColumn);
-
-            //
-            headers.AppendChild(filesHeader);
-            */
-            #endregion
-
-            #region == Playlist header ==
-            /*
-            // Playlist page
-            XmlElement PlaylistHeader;
-            XmlElement PlaylistHeaderColumn;
-            XmlAttribute pAttrs;
-
-            PlaylistHeader = doc.CreateElement(string.Empty, "Playlist", string.Empty);
-
-            // Position
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderPositionVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderPositionWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Now Playing
-            //PlaylistHeaderColumn = doc.CreateElement(string.Empty, "NowPlaying", string.Empty);
-
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderNowPlayingVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            //pAttrs = doc.CreateAttribute("Width");
-            //pAttrs.Value = PlaylistColumnHeaderNowPlayingWidth.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            //PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Title skip visibility
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Title", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderTitleWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Time
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderTimeVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderTimeWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Artist
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderArtistVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderArtistWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Album
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderAlbumVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderAlbumWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Disc
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderDiscVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderDiscWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Track
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderTrackVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderTrackWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Genre
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderGenreVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderGenreWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Last Modified
-            PlaylistHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
-
-            pAttrs = doc.CreateAttribute("Visible");
-            pAttrs.Value = IsPlaylistColumnHeaderLastModifiedVisible.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            pAttrs = doc.CreateAttribute("Width");
-            pAttrs.Value = PlaylistColumnHeaderLastModifiedWidth.ToString();
-            PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            //
-            headers.AppendChild(PlaylistHeader);
-            */
-            #endregion
-
-            #region == Search header == 
-            /*
-            // Search page
-            XmlElement SearchHeader;
-            XmlElement SearchHeaderColumn;
-            XmlAttribute sAttrs;
-
-            SearchHeader = doc.CreateElement(string.Empty, "Search", string.Empty);
-
-            // Position
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Position", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderPositionVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderPositionWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Now Playing
-            //PlaylistHeaderColumn = doc.CreateElement(string.Empty, "NowPlaying", string.Empty);
-
-            //pAttrs = doc.CreateAttribute("Visible");
-            //pAttrs.Value = IsPlaylistColumnHeaderNowPlayingVisible.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            //pAttrs = doc.CreateAttribute("Width");
-            //pAttrs.Value = PlaylistColumnHeaderNowPlayingWidth.ToString();
-            //PlaylistHeaderColumn.SetAttributeNode(pAttrs);
-
-            //PlaylistHeader.AppendChild(PlaylistHeaderColumn);
-
-            // Title skip visibility
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Title", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderTitleWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Time
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Time", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderTimeVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderTimeWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Artist
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Artist", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderArtistVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderArtistWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Album
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Album", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderAlbumVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderAlbumWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Disc
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Disc", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderDiscVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderDiscWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Track
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Track", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderTrackVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderTrackWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Genre
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "Genre", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderGenreVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderGenreWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            // Last Modified
-            SearchHeaderColumn = doc.CreateElement(string.Empty, "LastModified", string.Empty);
-
-            sAttrs = doc.CreateAttribute("Visible");
-            sAttrs.Value = IsSearchColumnHeaderLastModifiedVisible.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            sAttrs = doc.CreateAttribute("Width");
-            sAttrs.Value = SearchColumnHeaderLastModifiedWidth.ToString();
-            SearchHeaderColumn.SetAttributeNode(sAttrs);
-
-            SearchHeader.AppendChild(SearchHeaderColumn);
-
-            //
-            headers.AppendChild(SearchHeader);
-            */
-            #endregion
-
-            // TODO: more
-
+            var headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
 
             ////
             lay.AppendChild(headers);
@@ -6890,102 +5329,46 @@ public partial class MainViewModel : ObservableObject
 
         #region == Options ==
 
-        XmlElement opts = doc.CreateElement(string.Empty, "Options", string.Empty);
+        var opts = doc.CreateElement(string.Empty, "Options", string.Empty);
 
         //
         attrs = doc.CreateAttribute("AutoScrollToNowPlaying");
-        if (IsAutoScrollToNowPlaying)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsAutoScrollToNowPlaying ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("ArtistSortWithoutThePrefix");
-        if (IsArtistSortWithoutThePrefix)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsArtistSortWithoutThePrefix ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("AlbumSortWithoutThePrefix");
-        if (IsAlbumSortWithoutThePrefix)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsAlbumSortWithoutThePrefix ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         // 
         attrs = doc.CreateAttribute("UpdateOnStartup");
-        if (IsUpdateOnStartup)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsUpdateOnStartup ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("ShowDebugWindow");
-        if (IsShowDebugWindow)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsShowDebugWindow ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("SaveLog");
-        if (IsSaveLog)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsSaveLog ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("DownloadAlbumArt");
-        if (IsDownloadAlbumArt)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsDownloadAlbumArt ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         //
         attrs = doc.CreateAttribute("DownloadAlbumArtEmbeddedUsingReadPicture");
-        if (IsDownloadAlbumArtEmbeddedUsingReadPicture)
-        {
-            attrs.Value = "True";
-        }
-        else
-        {
-            attrs.Value = "False";
-        }
+        attrs.Value = IsDownloadAlbumArtEmbeddedUsingReadPicture ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         /// 
@@ -6995,7 +5378,7 @@ public partial class MainViewModel : ObservableObject
 
         #region == Profiles  ==
 
-        XmlElement xProfiles = doc.CreateElement(string.Empty, "Profiles", string.Empty);
+        var xProfiles = doc.CreateElement(string.Empty, "Profiles", string.Empty);
 
         XmlElement xProfile;
         XmlAttribute xAttrs;
@@ -7031,16 +5414,8 @@ public partial class MainViewModel : ObservableObject
             }
 
             xAttrs = doc.CreateAttribute("Volume");
-            if (p == CurrentProfile)
-            {
-                xAttrs.Value = _volume.ToString();
-            }
-            else
-            {
-                xAttrs.Value = p.Volume.ToString();
-            }
+            xAttrs.Value = p == CurrentProfile ? _volume.ToString() : p.Volume.ToString();
             xProfile.SetAttributeNode(xAttrs);
-
 
             xProfiles.AppendChild(xProfile);
         }
@@ -7091,10 +5466,7 @@ public partial class MainViewModel : ObservableObject
         if (IsSaveLog)
         {
             // Save error logs.
-            Dispatcher.UIThread.Post(() =>
-            {
-                App.SaveErrorLog();
-            });
+            Dispatcher.UIThread.Post(App.SaveErrorLog);
         }
 
         #endregion
@@ -7311,7 +5683,7 @@ public partial class MainViewModel : ObservableObject
                     if (item is not null)
                     {
                         //Debug.WriteLine("Currentsong is set. @UpdateStatus()");
-                        CurrentSong = (item as SongInfoEx);
+                        CurrentSong = item;
                         CurrentSong.IsPlaying = true;
                         CurrentSong.IsAlbumCoverNeedsUpdate = true;
 
@@ -9798,7 +8170,7 @@ public partial class MainViewModel : ObservableObject
     private readonly System.Timers.Timer _elapsedTimer;
     private void ElapsedTimer(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if ((_elapsed < _time) && (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play))
+        if ((_elapsed < Time) && (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play))
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -9875,9 +8247,9 @@ public partial class MainViewModel : ObservableObject
     {
         if (IsBusy) return;
         if (Queue.Count < 1) return;
-        if (_selectedQueueSong is null) return;
+        if (SelectedQueueSong is null) return;
 
-        await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), _selectedQueueSong.Id);
+        await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), SelectedQueueSong.Id);
     }
 
     [RelayCommand]
@@ -10102,12 +8474,12 @@ public partial class MainViewModel : ObservableObject
         {
             return;
         }
-        if (_selectedQueueSong is null)
+        if (SelectedQueueSong is null)
         {
             return;
         }
 
-        await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), _selectedQueueSong.Id);
+        await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), SelectedQueueSong.Id);
     }
 
     // TODO: Actually used as ContextMenu Play.
@@ -10118,7 +8490,7 @@ public partial class MainViewModel : ObservableObject
         {
             return;
         }
-        if (_selectedQueueSong is null)
+        if (SelectedQueueSong is null)
         {
             return;
         }
@@ -10984,12 +9356,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void PlaylistRenamePlaylist(string playlist)
     {
-        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        if (string.IsNullOrEmpty(SelectedPlaylistName))
         {
             return;
         }
 
-        if (_selectedPlaylistName != playlist)
+        if (SelectedPlaylistName != playlist)
         {
             return;
         }
@@ -11017,33 +9389,27 @@ public partial class MainViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             RenamedSelectPendingPlaylistName = string.Empty;
-            _playlistPageSubTitleSongCount = ""; 
+            PlaylistPageSubTitleSongCount = ""; 
             OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
 
             foreach (var hoge in MainMenuItems)
             {
-                if (hoge is NodeMenuPlaylists)
+                if (hoge is not NodeMenuPlaylists) continue;
+                foreach (var fuga in hoge.Children)
                 {
-                    foreach (var fuga in hoge.Children)
-                    {
-                        if (fuga is NodeMenuPlaylistItem)
-                        {
-                            if (string.Equals(playlist, fuga.Name))
-                            {
-                                //Debug.WriteLine($"{playlist} is now selected....");
+                    if (fuga is not NodeMenuPlaylistItem) continue;
+                    if (!string.Equals(playlist, fuga.Name)) continue;
+                    //Debug.WriteLine($"{playlist} is now selected....");
                                 
-                                // Needed this. Otherwise, Playlist name wouldn't update. 
-                                Dispatcher.UIThread.Post(() =>
-                                {
-                                    IsNavigationViewMenuOpen = true;
-                                    fuga.Selected = true;
-                                    SelectedNodeMenu = fuga;
-                                    SelectedPlaylistName = fuga.Name;
-                                });
-                                break;
-                            }
-                        }
-                    }
+                    // Needed this. Otherwise, Playlist name wouldn't update. 
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        IsNavigationViewMenuOpen = true;
+                        fuga.Selected = true;
+                        SelectedNodeMenu = fuga;
+                        SelectedPlaylistName = fuga.Name;
+                    });
+                    break;
                 }
             }
         });
@@ -11054,16 +9420,12 @@ public partial class MainViewModel : ObservableObject
     {
         bool match = false;
 
-        if (Playlists.Count > 0)
+        if (Playlists.Count <= 0) return match;
+        foreach (var hoge in Playlists)
         {
-            foreach (var hoge in Playlists)
-            {
-                if (string.Equals(playlistName, hoge.Name, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    match = true;
-                    break;
-                }
-            }
+            if (!string.Equals(playlistName, hoge.Name, StringComparison.CurrentCultureIgnoreCase)) continue;
+            match = true;
+            break;
         }
 
         return match;
@@ -11072,12 +9434,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public async Task PlaylistRemovePlaylistWithoutPrompt(string playlist)
     {
-        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        if (string.IsNullOrEmpty(SelectedPlaylistName))
         {
             return;
         }
 
-        if (_selectedPlaylistName != playlist)
+        if (SelectedPlaylistName != playlist)
         {
             return;
         }
@@ -11088,7 +9450,7 @@ public partial class MainViewModel : ObservableObject
             _mainMenuItems.PlaylistsDirectory.Selected = true;
         });
 
-        var ret = await _mpc.MpdRemovePlaylist(_selectedPlaylistName);
+        var ret = await _mpc.MpdRemovePlaylist(SelectedPlaylistName);
 
         if (ret.IsSuccess)
         {
@@ -11098,7 +9460,7 @@ public partial class MainViewModel : ObservableObject
             PlaylistSongs.Clear();
             //CurrentPage = App.GetService<QueuePage>();
 
-            _playlistPageSubTitleSongCount = string.Empty;
+            PlaylistPageSubTitleSongCount = string.Empty;
             OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
         }
     }
@@ -11121,7 +9483,6 @@ public partial class MainViewModel : ObservableObject
             if (nmpli.IsUpdateRequied)
             {
                 Debug.WriteLine("nmpli.IsUpdateRequied @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
-                return;
             }
             else 
             {
@@ -11134,7 +9495,6 @@ public partial class MainViewModel : ObservableObject
         else
         {
             Debug.WriteLine("SelectedNodeMenu is NOT NodeMenuPlaylistItem nmpli @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
-            return;
         }
     }
 
@@ -11142,12 +9502,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public async Task PlaylistClearPlaylistWithoutPrompt(string playlist)
     {
-        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        if (string.IsNullOrEmpty(SelectedPlaylistName))
         {
             return;
         }
 
-        if (_selectedPlaylistName != playlist)
+        if (SelectedPlaylistName != playlist)
         {
             return;
         }
@@ -11174,12 +9534,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public void PlaylistRemoveDuplicates(string playlist)
     {
-        if (string.IsNullOrEmpty(_selectedPlaylistName))
+        if (string.IsNullOrEmpty(SelectedPlaylistName))
         {
             return;
         }
 
-        if (_selectedPlaylistName != playlist)
+        if (SelectedPlaylistName != playlist)
         {
             return;
         }
@@ -11204,8 +9564,8 @@ public partial class MainViewModel : ObservableObject
             uris.Add(song.File);
         }
 
-        _mpc.MpdPlaylistClear(_selectedPlaylistName);
-        _mpc.MpdPlaylistAdd(_selectedPlaylistName, uris);
+        _mpc.MpdPlaylistClear(SelectedPlaylistName);
+        _mpc.MpdPlaylistAdd(SelectedPlaylistName, uris);
     }
 
     #endregion
