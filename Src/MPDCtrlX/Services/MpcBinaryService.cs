@@ -75,6 +75,7 @@ public class MpcBinaryService : IMpcBinaryService
         {
             await _binaryConnection.ConnectAsync(_host, _port);
 
+            // TODO: always false
             if (_binaryConnection.Client is null)
             {
                 Debug.WriteLine("_binaryConnection.Client is null. " + host + " " + port.ToString());
@@ -90,8 +91,8 @@ public class MpcBinaryService : IMpcBinaryService
 
                 tcpStream.ReadTimeout = 3000;
 
-                _binaryReader = new(tcpStream);
-                _binaryWriter = new(tcpStream)
+                _binaryReader = new StreamReader(tcpStream);
+                _binaryWriter = new StreamWriter(tcpStream)
                 {
                     AutoFlush = true
                 };
@@ -163,6 +164,7 @@ public class MpcBinaryService : IMpcBinaryService
             return ret;
         }
 
+        // TODO: always false
         if (_binaryConnection.Client is null)
         {
             return ret;
@@ -186,12 +188,6 @@ public class MpcBinaryService : IMpcBinaryService
         try
         {
             //IsBusy?.Invoke(this, true);
-
-            string cmdDummy = cmd;
-            if (cmd.StartsWith("password "))
-                cmdDummy = "password ****";
-
-            cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
 
             await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
         }
@@ -354,6 +350,7 @@ public class MpcBinaryService : IMpcBinaryService
             return ret;
         }
 
+        // TODO: always false
         if (_binaryConnection.Client is null)
         {
             Debug.WriteLine("@MpdBinarySendBinaryCommand: " + "TcpClient.Client is null");
@@ -392,6 +389,9 @@ public class MpcBinaryService : IMpcBinaryService
                 cmdDummy = "password ****";
 
             cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
+
+            // TODO:
+            //
 
             await _binaryWriter.WriteAsync(cmd.Trim() + "\n");
         }

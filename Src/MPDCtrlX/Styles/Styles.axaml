@@ -31,6 +31,9 @@
 				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX.Core/Styles/NavigationViewItemPresenterStyles.axaml" />
 
+				<ResourceDictionary>
+				</ResourceDictionary>
+
 			</ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

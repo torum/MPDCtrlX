@@ -22,6 +22,7 @@ public class Album : ObservableObject
             OnPropertyChanged();
         }
     } = string.Empty;
+
     public bool IsSongsAcquired { get; set; } = false;
 
     public ObservableCollection<SongInfo> Songs
