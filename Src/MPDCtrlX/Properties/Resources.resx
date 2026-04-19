@@ -467,7 +467,7 @@ SOFTWARE.</value>
     <value>Light</value>
   </data>
   <data name="Settings_Opts_UpdateDatabaseOnStartup" xml:space="preserve">
-    <value>Update MPD database on startup. (It may take a while to update)</value>
+    <value>Update MPD database on startup (require control or admin permission). (It may take a while to update)</value>
   </data>
   <data name="Settings_Opts_UseReadPicture" xml:space="preserve">
     <value>Use "readpicture" command instead of "albumart". (applicable when MPD protocol version is 0.22.0 or up)</value>
@@ -721,5 +721,11 @@ SOFTWARE.</value>
   </data>
   <data name="PageMenu_Sort" xml:space="preserve">
     <value>Sort</value>
+  </data>
+  <data name="Settings_Opts_AudioOutputs" xml:space="preserve">
+    <value>Audio Outputs</value>
+  </data>
+  <data name="Settings_Opts_ToggleEnableAudioOutput" xml:space="preserve">
+    <value>Toggle enable/disable (require admin permission)</value>
   </data>
 </root>

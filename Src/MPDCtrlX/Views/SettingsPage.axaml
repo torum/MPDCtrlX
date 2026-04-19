@@ -136,6 +136,35 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_UseReadPicture}" IsEnabled="{Binding IsDownloadAlbumArt}" IsChecked="{Binding IsDownloadAlbumArtEmbeddedUsingReadPicture}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
 
+						<ui:FASettingsExpanderItem>
+<StackPanel Orientation="Vertical" Spacing="12" VerticalAlignment="Top">
+	<TextBlock Text="{x:Static prop:Resources.Settings_Opts_AudioOutputs}" VerticalAlignment="Center"></TextBlock>
+	<ListBox ItemsSource="{Binding AudioOutputs, Mode=OneWay}" SelectedItem="{Binding SelectedAudioOutput, Mode=TwoWay}" HorizontalAlignment="Stretch" MaxHeight="100">
+		<ListBox.ItemTemplate>
+			<DataTemplate x:DataType="mod:AudioOutput">
+				<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="{Binding PathIconData, Mode=OneWay}"></PathIcon>
+					</Viewbox>
+					<TextBlock Text="{Binding Name}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
+				</StackPanel>
+			</DataTemplate>
+		</ListBox.ItemTemplate>
+		<ListBox.Styles>
+					<Style Selector="ListBoxItem" x:DataType="mod:AudioOutput">
+						<Setter Property="ContextFlyout">
+							<Setter.Value>
+								<MenuFlyout>
+									<MenuItem Header="{x:Static prop:Resources.Settings_Opts_ToggleEnableAudioOutput}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).AudioOutputToggleEnableCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}">
+									</MenuItem>
+								</MenuFlyout>
+							</Setter.Value>
+						</Setter>
+					</Style>
+		</ListBox.Styles>
+	</ListBox>
+</StackPanel>
+						</ui:FASettingsExpanderItem>
 
 						<ui:FASettingsExpander.Footer>
 							<!-- Footer connection status with MPD protocol version -->

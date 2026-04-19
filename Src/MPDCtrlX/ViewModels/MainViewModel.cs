@@ -1264,7 +1264,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     public bool IsShowInfoWindow
-
     {
         get;
         set
@@ -1285,7 +1284,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     public bool IsShowAckWindow
-
     {
         get;
         set
@@ -1306,7 +1304,6 @@ public partial class MainViewModel : ObservableObject
     }
 
     public bool IsShowErrWindow
-
     {
         get;
         set
@@ -3293,6 +3290,34 @@ public partial class MainViewModel : ObservableObject
 
     #endregion
 
+    #region == Audio Outputs ==
+
+    public ObservableCollection<AudioOutput> AudioOutputs
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+            field = value;
+            OnPropertyChanged();
+        }
+    } = [];
+
+    public AudioOutput? SelectedAudioOutput
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+            field = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #endregion
+
     #region == Status Messages == 
 
     public string StatusBarMessage
@@ -3749,6 +3774,7 @@ public partial class MainViewModel : ObservableObject
         _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
         _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
         _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
+        _mpc.MpdOutputChanged += OnMpdOutputChanged;
 
         _mpc.MpdAckError += OnMpdAckError;
         _mpc.MpdFatalError += OnMpdFatalError;
@@ -5528,9 +5554,9 @@ public partial class MainViewModel : ObservableObject
                 ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
                 //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
 
-                InfoBarAckTitle = "Error";
-                InfoBarAckMessage = "Could not retrive IP Address from the hostname.";
-                IsShowAckWindow = true;
+                InfoBarErrTitle = "Error";
+                InfoBarErrMessage = "Could not retrive IP Address from the hostname.";
+                IsShowErrWindow = true;
 
                 return;
             }
@@ -5541,9 +5567,9 @@ public partial class MainViewModel : ObservableObject
             ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
             //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
 
-            InfoBarAckTitle = "Error";
-            InfoBarAckMessage = "Could not retrive IP Address from the hostname.";
-            IsShowAckWindow = true;
+            InfoBarErrTitle = "Error";
+            InfoBarErrMessage = "Could not retrive IP Address from the hostname.";
+            IsShowErrWindow = true;
 
             return;
         }
@@ -5599,8 +5625,14 @@ public partial class MainViewModel : ObservableObject
                     await Task.Delay(50);
                     UpdateCurrentQueue();
 
+                    await Task.Delay(50);
+                    await _mpc.MpdIdleQueryOutputs();
+                    UpdateAudioOutputs();
+
                     await Task.Delay(300);
                     await _mpc.MpdQueryListAlbumArtists();
+
+                    await Task.Delay(50);
                     UpdateAlbumsAndArtists();
 
                     await Task.Delay(50);
@@ -5705,7 +5737,7 @@ public partial class MainViewModel : ObservableObject
                                 //Debug.WriteLine("getting album cover. @UpdateStatus()");
                                 var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
 
-                                if (res != null) 
+                                if ((res != null) && (CurrentSong is not null))
                                 {
                                     if (res.IsSuccess && (res.AlbumCover?.SongFilePath != null) && (CurrentSong.File != null))
                                     {
@@ -6462,6 +6494,18 @@ public partial class MainViewModel : ObservableObject
                 GetAlbumPictures(_albums);
             }
             */
+        });
+    }
+
+    private void UpdateAudioOutputs()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            UpdateProgress?.Invoke(this, "[UI] Updating the audio outputs...");
+            AudioOutputs = new ObservableCollection<AudioOutput>(_mpc.AudioOutputs);
+
+
+            UpdateProgress?.Invoke(this, "");
         });
     }
 
@@ -7727,7 +7771,6 @@ public partial class MainViewModel : ObservableObject
         return totalSize;
     }
 
-
     private static string ToFileSizeString(long size)
     {
         if (size < 1024)
@@ -7806,8 +7849,9 @@ public partial class MainViewModel : ObservableObject
 
             IsConnected = true;
 
-            IsShowAckWindow = false;
-            IsShowErrWindow = false;
+            // Not good.
+            //IsShowAckWindow = false;
+            //IsShowErrWindow = false;
 
             if (_initWin is not null)
             {
@@ -7884,6 +7928,12 @@ public partial class MainViewModel : ObservableObject
         //
     }
 
+    private void OnMpdOutputChanged(MpcService sender)
+    {
+        //Debug.WriteLine("OnMpdOutputChanged");
+        UpdateAudioOutputs();
+    }
+
     private void OnDebugCommandOutput(MpcService sender, string data)
     {
         if (IsShowDebugWindow)
@@ -7920,9 +7970,9 @@ public partial class MainViewModel : ObservableObject
 
         StatusBarMessage = ConnectionStatusMessage;
 
-        InfoBarAckTitle = MPDCtrlX.Core.Properties.Resources.ConnectionStatus_ConnectionError;
-        InfoBarAckMessage = msg;
-        IsShowAckWindow = true;
+        InfoBarErrTitle = MPDCtrlX.Core.Properties.Resources.ConnectionStatus_ConnectionError;
+        InfoBarErrMessage = msg;
+        IsShowErrWindow = true;
     }
 
     private void OnConnectionStatusChanged(MpcService sender, MpcService.ConnectionStatus status)
@@ -8103,9 +8153,11 @@ public partial class MainViewModel : ObservableObject
         InfoBarInfoMessage = s;
 
         IsShowInfoWindow = true;
+
+        //await _mpc.MpdClearError();
     }
 
-    private void OnMpdFatalError(MpcService sender, string errMsg, string origin)
+    private async void OnMpdFatalError(MpcService sender, string errMsg, string origin)
     {
         if (string.IsNullOrEmpty(errMsg))
             return;
@@ -8140,6 +8192,8 @@ public partial class MainViewModel : ObservableObject
         InfoBarErrMessage = s;
 
         IsShowErrWindow = true;
+
+        await _mpc.MpdClearError();
     }
 
     private void OnMpcProgress(MpcService sender, string msg)
@@ -9939,6 +9993,20 @@ public partial class MainViewModel : ObservableObject
         */
     }
 
+    [RelayCommand]
+    public async Task AudioOutputToggleEnable(AudioOutput item) 
+    {
+        if (item is null)
+            return;
+        if (string.IsNullOrEmpty(item.Id))
+            return;
+        if (AudioOutputs.Count == 0)
+            return;
+
+        //Debug.WriteLine($"Toggling audio output with id: {item.Id}");
+        await _mpc.MpdToggleOutput(item.Id);
+    }
+
     #endregion
 
     #region == Connection ==
@@ -10013,6 +10081,8 @@ public partial class MainViewModel : ObservableObject
         SelectedAlbumArtist = null;
         SelectedAlbumSongs = [];
         SelectedArtistAlbums = null;
+        IsShowAckWindow = false;
+        IsShowErrWindow = false;
 
         // TODO: more?
 

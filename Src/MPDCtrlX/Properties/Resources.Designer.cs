@@ -1456,6 +1456,15 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
+        ///   Audio Outputs に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_AudioOutputs {
+            get {
+                return ResourceManager.GetString("Settings_Opts_AudioOutputs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Auto scroll to current song. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_Opts_AutoScrollToNowPlaying {
@@ -1600,7 +1609,16 @@ namespace MPDCtrlX.Core.Properties {
         }
         
         /// <summary>
-        ///   Update MPD database on startup. (It may take a while to update) に類似しているローカライズされた文字列を検索します。
+        ///   Toggle enable/disable (require admin permission) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Settings_Opts_ToggleEnableAudioOutput {
+            get {
+                return ResourceManager.GetString("Settings_Opts_ToggleEnableAudioOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Update MPD database on startup (require control or admin permission). (It may take a while to update) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Settings_Opts_UpdateDatabaseOnStartup {
             get {

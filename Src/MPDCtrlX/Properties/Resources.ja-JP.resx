@@ -464,7 +464,7 @@ SOFTWARE.</value>
     <value>ライト</value>
   </data>
   <data name="Settings_Opts_UpdateDatabaseOnStartup" xml:space="preserve">
-    <value>起動時にMPDサーバーの楽曲データベースを最新の状態に更新する (更新されるまで、しばらくかかる場合があります)</value>
+    <value>起動時にMPDサーバーの楽曲データベースを最新の状態に更新する（要controlかadmin権限）。 (更新されるまで、しばらくかかる場合があります)</value>
   </data>
   <data name="Settings_Opts_UseReadPicture" xml:space="preserve">
     <value>"albumart"の代わりに"readpicture" コマンドを使用する。 (MPD プロトコルのバージョンが0.22.0以上の時のみ)</value>
@@ -714,5 +714,11 @@ SOFTWARE.</value>
   </data>
   <data name="PageMenu_Sort" xml:space="preserve">
     <value>ソート</value>
+  </data>
+  <data name="Settings_Opts_AudioOutputs" xml:space="preserve">
+    <value>オーディオの出力先</value>
+  </data>
+  <data name="Settings_Opts_ToggleEnableAudioOutput" xml:space="preserve">
+    <value>有効・無効を切り替える（要admin権限）</value>
   </data>
 </root>
