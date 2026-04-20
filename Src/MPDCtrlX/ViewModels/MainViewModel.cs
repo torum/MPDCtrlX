@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -1937,8 +1938,10 @@ public partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
-                Dispatcher.UIThread.Post(() =>
+                Dispatcher.UIThread.Post(async () =>
                 {
+                    //CurrentPage = null; // Just for the animation of page transition...
+
                     CurrentPage = App.GetService<PlaylistItemPage>();
 
                     SelectedPlaylistSong = null;
@@ -3738,6 +3741,8 @@ public partial class MainViewModel : ObservableObject
     public event EventHandler? GoToSettingsPage;
 
     public event EventHandler? AlbumsCollectionHasBeenReset;
+
+    public event EventHandler? UserCanExecuteChanged;
 
     #endregion
 
@@ -5597,7 +5602,10 @@ public partial class MainViewModel : ObservableObject
 
                 if (IsUpdateOnStartup)
                 {
-                    await _mpc.MpdSendUpdate();
+                    if (_mpc.Commands.Contains("update"))
+                    {
+                        await _mpc.MpdSendUpdate();
+                    }
                 }
 
                 result = await _mpc.MpdIdleQueryStatus();
@@ -5612,6 +5620,9 @@ public partial class MainViewModel : ObservableObject
 
                     await Task.Delay(50);
                     UpdateCurrentSong();
+
+                    await Task.Delay(50);
+                    UpdateCommandStatus();
 
                     await Task.Delay(50);
                     await _mpc.MpdIdleQueryPlaylists();
@@ -6618,6 +6629,40 @@ public partial class MainViewModel : ObservableObject
                 GoToRenamedPlaylistPage(RenamedSelectPendingPlaylistName);
                 RenamedSelectPendingPlaylistName = string.Empty;
             }
+        });
+    }
+
+    private void UpdateCommandStatus()
+    {
+        Dispatcher.UIThread.Post(async () => 
+        {
+            PlayCommand.NotifyCanExecuteChanged();
+            PlayNextCommand.NotifyCanExecuteChanged();
+            PlayPrevCommand.NotifyCanExecuteChanged();
+            ChangeSongCommand.NotifyCanExecuteChanged();
+            PlayPauseCommand.NotifyCanExecuteChanged();
+            PlayStopCommand.NotifyCanExecuteChanged();
+            SetRandomCommand.NotifyCanExecuteChanged();
+            SetRpeatCommand.NotifyCanExecuteChanged();
+            SetConsumeCommand.NotifyCanExecuteChanged();
+            SetSingleCommand.NotifyCanExecuteChanged();
+            SetVolumeCommand.NotifyCanExecuteChanged();
+            SetSeekCommand.NotifyCanExecuteChanged();
+            VolumeMuteCommand.NotifyCanExecuteChanged();
+            VolumeDownCommand.NotifyCanExecuteChanged();
+            VolumeUpCommand.NotifyCanExecuteChanged();
+            
+            QueueSaveToCommand.NotifyCanExecuteChanged();
+            QueueListviewSaveSelectedToCommand.NotifyCanExecuteChanged();
+            QueueClearWithoutPromptCommand.NotifyCanExecuteChanged();
+            QueueListviewSortByCommand.NotifyCanExecuteChanged();
+            QueueListviewSortReverseCommand.NotifyCanExecuteChanged();
+            QueueListviewLeftDoubleClickCommand.NotifyCanExecuteChanged();
+            QueueListviewDeleteSelectedWithoutPromptCommand.NotifyCanExecuteChanged();
+            
+            // TODO: more.
+
+            UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
         });
     }
 
@@ -8117,7 +8162,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private void OnMpdAckError(MpcService sender, string ackMsg, string origin)
+    private async void OnMpdAckError(MpcService sender, string ackMsg, string origin)
     {
         if (string.IsNullOrEmpty(ackMsg))
             return;
@@ -8154,7 +8199,10 @@ public partial class MainViewModel : ObservableObject
 
         IsShowInfoWindow = true;
 
-        //await _mpc.MpdClearError();
+        if (_mpc.Commands.Contains("clearerror"))
+        {
+            await _mpc.MpdClearError();
+        }
     }
 
     private async void OnMpdFatalError(MpcService sender, string errMsg, string origin)
@@ -8193,7 +8241,10 @@ public partial class MainViewModel : ObservableObject
 
         IsShowErrWindow = true;
 
-        await _mpc.MpdClearError();
+        if (_mpc.Commands.Contains("clearerror"))
+        {
+            await _mpc.MpdClearError();
+        }
     }
 
     private void OnMpcProgress(MpcService sender, string msg)
@@ -8245,7 +8296,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playback play ==
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayCanExecute))]
     public async Task Play()
     {
         if (IsBusy) return;
@@ -8276,8 +8327,16 @@ public partial class MainViewModel : ObservableObject
                 throw new ArgumentOutOfRangeException();
         }
     }
+    public bool PlayCanExecute()
+    {
+        if (!_mpc.Commands.Contains("play")) { return false; }
+        if (!_mpc.Commands.Contains("stop")) { return false; }
+        if (!_mpc.Commands.Contains("pause")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayNextCanExecute))]
     public async Task PlayNext()
     {
         if (IsBusy) return;
@@ -8285,8 +8344,14 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdPlaybackNext(Convert.ToInt32(_volume));
     }
+    public bool PlayNextCanExecute()
+    {
+        if (!_mpc.Commands.Contains("next")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayPrevCanExecute))]
     public async Task PlayPrev()
     {
         if (IsBusy) return;
@@ -8294,8 +8359,14 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdPlaybackPrev(Convert.ToInt32(_volume));
     }
+    public bool PlayPrevCanExecute()
+    {
+        if (!_mpc.Commands.Contains("previous")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ChangeSongCanExecute))]
     public async Task ChangeSong()
     {
         if (IsBusy) return;
@@ -8304,80 +8375,132 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume), SelectedQueueSong.Id);
     }
+    public bool ChangeSongCanExecute()
+    {
+        if (!_mpc.Commands.Contains("play")) { return false; }
+        if (!_mpc.Commands.Contains("playid")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayPauseCanExecute))]
     public async Task PlayPause()
     {
         if (IsBusy) return;
         await _mpc.MpdPlaybackPause();
     }
+    public bool PlayPauseCanExecute()
+    {
+        if (!_mpc.Commands.Contains("pause")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayStopCanExecute))]
     public async Task PlayStop()
     {
         if (IsBusy) return;
         await _mpc.MpdPlaybackStop();
+    }
+    public bool PlayStopCanExecute()
+    {
+        if (!_mpc.Commands.Contains("stop")) { return false; }
+        return true;
     }
 
     #endregion
 
     #region == Playback opts ==
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetRandomCanExecute))]
     public async Task SetRandom()
     {
         if (IsBusy) return;
         await _mpc.MpdSetRandom(_random);
     }
+    public bool SetRandomCanExecute()
+    {
+        if (!_mpc.Commands.Contains("random")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetRpeatCanExecute))]
     public async Task SetRpeat()
     {
         if (IsBusy) return;
         await _mpc.MpdSetRepeat(_repeat);
     }
+    public bool SetRpeatCanExecute()
+    {
+        if (!_mpc.Commands.Contains("repeat")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetConsumeCanExecute))]
     public async Task SetConsume()
     {
         if (IsBusy) return;
         await _mpc.MpdSetConsume(_consume);
     }
+    public bool SetConsumeCanExecute()
+    {
+        if (!_mpc.Commands.Contains("consume")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetSingleCanExecute))]
     public async Task SetSingle()
     {
         if (IsBusy) return;
         await _mpc.MpdSetSingle(_single);
+    }
+    public bool SetSingleCanExecute()
+    {
+        if (!_mpc.Commands.Contains("single")) { return false; }
+        return true;
     }
 
     #endregion
 
     #region == Playback seek and volume ==
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetVolumeCanExecute))]
     public async Task SetVolume()
     {
         if (IsBusy) return;
         await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
     }
+    public bool SetVolumeCanExecute()
+    {
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SetSeekCanExecute))]
     public async Task SetSeek()
     {
         if (IsBusy) return;
         double elapsed = _elapsed / _elapsedTimeMultiplier;
         await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, elapsed);
     }
+    public bool SetSeekCanExecute()
+    {
+        if (!_mpc.Commands.Contains("seekid")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(VolumeMuteCanExecute))]
     public async Task VolumeMute()
     {
         if (IsBusy) return;
         await _mpc.MpdSetVolume(0);
     }
+    public bool VolumeMuteCanExecute()
+    {
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(VolumeDownCanExecute))]
     public void VolumeDown()
     {
         if (IsBusy) return;
@@ -8391,8 +8514,13 @@ public partial class MainViewModel : ObservableObject
             Volume = 0;
         }
     }
+    public bool VolumeDownCanExecute()
+    {
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(VolumeUpCanExecute))]
     public void VolumeUp()
     {
         if (IsBusy) return;
@@ -8405,6 +8533,11 @@ public partial class MainViewModel : ObservableObject
         {
             Volume = 100;
         }
+    }
+    public bool VolumeUpCanExecute()
+    {
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        return true;
     }
 
     #endregion
@@ -8423,7 +8556,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task QueueSaveTo()
     {
         if (Queue.Count == 0)
@@ -8441,6 +8574,12 @@ public partial class MainViewModel : ObservableObject
 #pragma warning restore IDE0305
 
         //QueueSaveToDialogShow?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool PlaylistAddCanExecute()
+    {
+        if (!_mpc.Commands.Contains("playlistadd")) { return false; }
+        return true;
     }
 
     public async Task AddTo(string playlistName, List<string> uris)
@@ -8483,7 +8622,7 @@ public partial class MainViewModel : ObservableObject
 
 
     // Add selected to playlist
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task QueueListviewSaveSelectedTo(object obj)
     {
         if (obj is null)
@@ -8520,7 +8659,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // TODO:  Enter or double click from code behind.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayCanExecute))]
     public async Task QueueListviewEnterKey()
     {
         if (Queue.Count < 1)
@@ -8536,7 +8675,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // TODO: Actually used as ContextMenu Play.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlayCanExecute))]
     public async Task QueueListviewLeftDoubleClick(SongInfoEx song)
     {
         if (Queue.Count < 1)
@@ -8551,7 +8690,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Command to clear the queue listview.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueClearWithoutPromptCanExecute))]
     public async Task QueueClearWithoutPrompt()
     {
         if (Queue.Count == 0) { return; }
@@ -8559,9 +8698,15 @@ public partial class MainViewModel : ObservableObject
         await _mpc.MpdPlaybackStop();
         await _mpc.MpdClear();
     }
+    public bool QueueClearWithoutPromptCanExecute()
+    {
+        if (!_mpc.Commands.Contains("stop")) { return false; }
+        if (!_mpc.Commands.Contains("clear")) { return false; }
+        return true;
+    }
 
     // Command to delete selected songs from the queue listview.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueListviewDeleteSelectedWithoutPromptCanExecute))]
     public async Task QueueListviewDeleteSelectedWithoutPrompt(object obj)
     {
         if (IsBusy) return;
@@ -8590,9 +8735,14 @@ public partial class MainViewModel : ObservableObject
                 break;
         }
     }
+    public bool QueueListviewDeleteSelectedWithoutPromptCanExecute()
+    {
+        if (!_mpc.Commands.Contains("deleteid")) { return false; }
+        return true;
+    }
 
     // Move selected songs up in the queue listview.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
     public async Task QueueListviewMoveUp(object obj)
     {
         if (obj is null) return;
@@ -8620,9 +8770,14 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdMoveId(idToNewPos);
     }
+    public bool QueueListviewMoveCanExecute()
+    {
+        if (!_mpc.Commands.Contains("moveid")) { return false; }
+        return true;
+    }
 
     // Move down
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
     public async Task QueueListviewMoveDown(object obj)
     {
         if (obj is null) return;
@@ -8653,7 +8808,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Sort reverse
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
     public async Task QueueListviewSortReverse()
     {
         if (IsBusy) return;
@@ -8674,7 +8829,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Sort
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
     public async Task QueueListviewSortBy(string key)
     {
         if (IsBusy) return;
@@ -8856,7 +9011,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task SearchListviewSaveSelectedTo(object obj)
     {
         if (obj is null) return;
@@ -8888,7 +9043,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Add to playlist
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task SearchPageSongsAddToPlaylist(object obj)
     {
         if (obj is null) return;
@@ -8921,7 +9076,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Files ==
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task FilesListviewAddSelectedToQueue(object obj)
     {
         if (obj is null) return;
@@ -8949,7 +9104,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Save to
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task FilesListviewSaveSelectedTo(object obj)
     {
         if (obj is null) return;
@@ -9013,7 +9168,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Play all
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SongsPlayCanExecute))]
     public async Task FilesPlay(object obj)
     {
         if (obj is null) return;
@@ -9045,7 +9200,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Queue all
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task FilesAddToQueue(object obj)
     {
         if (obj is null) return;
@@ -9074,7 +9229,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Add to playlist
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     public async Task FilesPageFilesAddToPlaylist(object obj)
     {
         if (obj is null) return;
@@ -9104,7 +9259,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SongsPlayCanExecute))]
     public async Task FilesListviewPlayThis(object obj)
     {
         if (obj is null) return;
@@ -9125,7 +9280,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task FilesListviewAddThis(object obj)
     {
         if (obj is null) return;
@@ -9352,7 +9507,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Playlist ==
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(LoadPlaylistCanExecute))]
     public async Task PlaylistLoadPlaylist()
     {
         if (IsBusy) return;
@@ -9369,8 +9524,13 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdLoadPlaylist(SelectedNodeMenu.Name);
     }
+    public bool LoadPlaylistCanExecute()
+    {
+        if (!_mpc.Commands.Contains("load")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ChangePlaylistCanExecute))]
     public async Task PlaylistClearLoadPlaylist()
     {
         /*
@@ -9405,8 +9565,18 @@ public partial class MainViewModel : ObservableObject
         await Task.Delay(200);
         UpdateCurrentSong();
     }
+    public bool ChangePlaylistCanExecute()
+    {
+        if (!_mpc.Commands.Contains("stop")) { return false; }
+        if (!_mpc.Commands.Contains("clear")) { return false; }
+        if (!_mpc.Commands.Contains("load")) { return false; }
+        if (!_mpc.Commands.Contains("play")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        if (!_mpc.Commands.Contains("currentsong")) { return false; }
+        return true;
+    }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(RenamePlaylistCanExecute))]
     public void PlaylistRenamePlaylist(string playlist)
     {
         if (string.IsNullOrEmpty(SelectedPlaylistName))
@@ -9420,6 +9590,11 @@ public partial class MainViewModel : ObservableObject
         }
 
         PlaylistRenameToDialogShow?.Invoke(this, playlist);
+    }
+    public bool RenamePlaylistCanExecute()
+    {
+        if (!_mpc.Commands.Contains("rename")) { return false; }
+        return true;
     }
 
     // Rename playlist.
@@ -9484,7 +9659,7 @@ public partial class MainViewModel : ObservableObject
         return match;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistRemoveCanExecute))]
     public async Task PlaylistRemovePlaylistWithoutPrompt(string playlist)
     {
         if (string.IsNullOrEmpty(SelectedPlaylistName))
@@ -9517,9 +9692,14 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
         }
     }
+    public bool PlaylistRemoveCanExecute()
+    {
+        if (!_mpc.Commands.Contains("rm")) { return false; }
+        return true;
+    }
 
     // Deletes song in a playlist.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistDeletePosCanExecute))]
     public async Task PlaylistListviewDeleteSelectedWithoutPrompt(object obj)
     {
         /*
@@ -9550,9 +9730,14 @@ public partial class MainViewModel : ObservableObject
             Debug.WriteLine("SelectedNodeMenu is NOT NodeMenuPlaylistItem nmpli @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
         }
     }
+    public bool PlaylistDeletePosCanExecute()
+    {
+        if (!_mpc.Commands.Contains("playlistdelete")) { return false; }
+        return true;
+    }
 
     // Playlist Clear
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistClearCanExecute))]
     public async Task PlaylistClearPlaylistWithoutPrompt(string playlist)
     {
         if (string.IsNullOrEmpty(SelectedPlaylistName))
@@ -9572,6 +9757,11 @@ public partial class MainViewModel : ObservableObject
             PlaylistSongs.Clear();
         }
     }
+    public bool PlaylistClearCanExecute()
+    {
+        if (!_mpc.Commands.Contains("playlistclear")) { return false; }
+        return true;
+    }
 
     // double clicked in a playlist listview (currently NOT USED)
     [RelayCommand]
@@ -9584,7 +9774,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Remove duplicated songs in a playlist. 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(PlaylistRemoveDuplicatesCanExecute))]
     public void PlaylistRemoveDuplicates(string playlist)
     {
         if (string.IsNullOrEmpty(SelectedPlaylistName))
@@ -9620,13 +9810,19 @@ public partial class MainViewModel : ObservableObject
         _mpc.MpdPlaylistClear(SelectedPlaylistName);
         _mpc.MpdPlaylistAdd(SelectedPlaylistName, uris);
     }
+    public bool PlaylistRemoveDuplicatesCanExecute()
+    {
+        if (!_mpc.Commands.Contains("playlistclear")) { return false; }
+        if (!_mpc.Commands.Contains("playlistadd")) { return false; }
+        return true;
+    }
 
     #endregion
 
     #region == Common Listview selected/collection songs command ==
 
     // used in context menu of Search result, Playlist etc.
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task SongsListviewAddSelectedToQueue(object obj)
     {
         if (obj is null) return;
@@ -9656,7 +9852,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     // Play (Used in Albums, Artists, Search pages etc.)
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(SongsPlayCanExecute))]
     public async Task SongsPlay(object obj)
     {
         if (obj is null) return;
@@ -9683,9 +9879,18 @@ public partial class MainViewModel : ObservableObject
         await Task.Delay(200);
         UpdateCurrentSong();
     }
+    public bool SongsPlayCanExecute()
+    {
+        if (!_mpc.Commands.Contains("clear")) { return false; }
+        if (!_mpc.Commands.Contains("add")) { return false; }
+        if (!_mpc.Commands.Contains("play")) { return false; }
+        if (!_mpc.Commands.Contains("setvol")) { return false; }
+        if (!_mpc.Commands.Contains("currentsong")) { return false; }
+        return true;
+    }
 
     // Add to queue (Used in Albums, Artists, Search pages etc.)
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task SongsAddToQueue(object obj)
     {
         if (obj is null) return;
@@ -9712,7 +9917,13 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    public bool AddToQueueCanExecute()
+    {
+        if (!_mpc.Commands.Contains("add")) { return false; }
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(SongsPlayCanExecute))]
     public async Task SongsListviewPlayThis(object obj)
     {
         if (obj is null) return;
@@ -9726,7 +9937,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
     public async Task SongsListviewAddThis(object obj)
     {
         if (obj is null) return;
@@ -9993,7 +10204,7 @@ public partial class MainViewModel : ObservableObject
         */
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(AudioOutputToggleCanExecute))]
     public async Task AudioOutputToggleEnable(AudioOutput item) 
     {
         if (item is null)
@@ -10005,6 +10216,11 @@ public partial class MainViewModel : ObservableObject
 
         //Debug.WriteLine($"Toggling audio output with id: {item.Id}");
         await _mpc.MpdToggleOutput(item.Id);
+    }
+    public bool AudioOutputToggleCanExecute()
+    {
+        if (!_mpc.Commands.Contains("toggleoutput")) { return false; }
+        return true;
     }
 
     #endregion

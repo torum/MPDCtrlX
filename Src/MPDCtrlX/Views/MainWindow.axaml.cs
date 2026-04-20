@@ -82,6 +82,7 @@ public partial class MainWindow : Window//AppWindow//
         vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
         vm.GoToSettingsPage += OnGoToSettingsPage;
+        vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
 
         this.DetachedFromVisualTree += (s, e) =>
         {
@@ -141,6 +142,22 @@ public partial class MainWindow : Window//AppWindow//
             //
         }
 
+    }
+
+    private void OnUserCanExecuteChanged(object? sender, EventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        VolumeSlider.IsEnabled = vm.SetVolumeCanExecute();
+        SeekSlider.IsEnabled = vm.SetSeekCanExecute();
+
+        RepeatButton.IsEnabled = vm.SetRpeatCanExecute();
+        SingleButton.IsEnabled = vm.SetSingleCanExecute();
+        RandomButton.IsEnabled = vm.SetRandomCanExecute();
+        ConsumeButton.IsEnabled = vm.SetConsumeCanExecute();
     }
 
     private void NavigationView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -436,7 +436,8 @@ public partial class PlaylistItemPage : UserControl
             }
             else
             {
-                vm.PlaylistRenamePlaylist_Execute(playlist, plname.Trim());
+                if (vm.RenamePlaylistCanExecute())
+                    vm.PlaylistRenamePlaylist_Execute(playlist, plname.Trim());
             }
 
         }

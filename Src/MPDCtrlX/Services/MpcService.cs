@@ -55,9 +55,7 @@ public partial class MpcService : IMpcService
 
     public ObservableCollection<AudioOutput> AudioOutputs { get; private set; } = [];
 
-    //private ObservableCollection<SongInfo> SearchResult { get; set; } = [];
-
-    //private AlbumImage AlbumCover { get; set; } = new();
+    public List<string> Commands { get; private set; } = [];
 
     #endregion
 
@@ -1128,8 +1126,8 @@ public partial class MpcService : IMpcService
                 // BinaryConnection start.
                 await _binaryDownloader.MpdBinaryConnectionStart(MpdHost, MpdPort, MpdPassword);
 
-                // ここでIdleにして、以降はnoidle + cmd + idleの組み合わせでやる。
-                // ただし、実際にはidleのあとReadしていないからタイムアウトで切断されてしまう模様。
+                // Get available commands
+                await MpdCommands();
 
                 return d.IsSuccess;
             }
@@ -1943,14 +1941,14 @@ public partial class MpcService : IMpcService
 
     #region == Command Connection's MPD Commands with results other than OK == 
 
-    public async Task<CommandResult> MpdSendIdle()
+    public async Task<CommandResult> MpdCommands()
     {
-        return await MpdCommandSendCommand("idle player");
-    }
-
-    public async Task<CommandResult> MpdSendNoIdle()
-    {
-        return await MpdCommandSendCommand("noidle");
+        CommandResult result = await MpdCommandSendCommand("commands");
+        if (result.IsSuccess)
+        {
+            result.IsSuccess = await ParseCommands(result.ResultText);
+        }
+        return result;
     }
 
     public async Task<CommandResult> MpdQueryStatus(bool autoIdling = true)
@@ -2357,9 +2355,19 @@ public partial class MpcService : IMpcService
 
     #region == Command Connection's MPD Commands with boolean result ==
 
+    public async Task<CommandResult> MpdSendIdle()
+    {
+        return await MpdCommandSendCommand("idle player");
+    }
+
+    public async Task<CommandResult> MpdSendNoIdle()
+    {
+        return await MpdCommandSendCommand("noidle");
+    }
+
     public async Task<CommandResult> MpdSendUpdate()
     {
-        CommandResult result = await MpdCommandSendCommand("update");// TEST: no autoIdling
+        CommandResult result = await MpdCommandSendCommand("update");
 
         return result;
     }
@@ -3035,6 +3043,28 @@ public partial class MpcService : IMpcService
         Debug.WriteLine(result);
 
         return Task.FromResult(true); 
+    }
+
+    private Task<bool> ParseCommands(string result)
+    {
+        if (MpdStop) { return Task.FromResult(false); }
+        if (string.IsNullOrEmpty(result)) return Task.FromResult(false);
+        List<string> resultLines = result.Split('\n').ToList();
+        if (resultLines.Count == 0) return Task.FromResult(false);
+
+        //Debug.WriteLine(result);
+
+        Commands.Clear();
+
+        foreach (string value in resultLines)
+        {
+            if (value.StartsWith("command: "))
+            {
+                Commands.Add(value.Replace("command: ", "").Trim());
+            }
+        }
+
+        return Task.FromResult(true);
     }
 
     private Task<bool> ParseOutputs(string result)

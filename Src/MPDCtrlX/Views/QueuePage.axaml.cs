@@ -170,7 +170,7 @@ public partial class QueuePage : UserControl
         {
             if (this.QueueListBox is ListBox lb)
             {
-                //lb.AutoScrollToSelectedItem = true;
+                // This does not work when Queue page is not visible...
                 lb.ScrollIntoView(ind);
             }
         });
@@ -209,7 +209,10 @@ public partial class QueuePage : UserControl
     {
         if (DataContext is MainViewModel vm)
         {
-            _ = vm.QueueListviewEnterKey();
+            if (vm.PlayCanExecute())
+            {
+                _ = vm.QueueListviewEnterKey();
+            }
         }
     }
 
