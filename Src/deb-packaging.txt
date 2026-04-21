@@ -1,12 +1,12 @@
 # Build, publish and package for Linux
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true --self-contained true
+MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true --self-contained true
 
 # Grab published binaries
 
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/libHarfBuzzSharp.so
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/libSkiaSharp.so
-MPDCtrlX/Src/MPDCtrlX.Desktop/bin/Release/net10.0/linux-x64/publish/MPDCtrlX
+MPDCtrlX/Src/bin/Release/net10.0/linux-x64/publish/libHarfBuzzSharp.so
+MPDCtrlX/Src/bin/Release/net10.0/linux-x64/publish/libSkiaSharp.so
+MPDCtrlX/Src/bin/Release/net10.0/linux-x64/publish/MPDCtrlX
 
 # Put them in ...
 
@@ -17,16 +17,16 @@ MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
 # Create a deb package
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.2.0_amd64.deb
+MPDCtrlX/Src$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.2.0_amd64.deb
 
 # Test it
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ sudo apt install ./MPDCtrlX_1.0.2.0_amd64.deb
+MPDCtrlX/Src$ sudo apt install ./MPDCtrlX_1.0.2.0_amd64.deb
 
 
 =======================
 For Windows:
 
-MPDCtrlX/Src/MPDCtrlX.Desktop$ dotnet publish MPDCtrlX.Desktop.csproj -c Release -r win-x64 -f net10.0 -p:PublishAot=true --self-contained true
+MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r win-x64 -f net10.0 -p:PublishAot=true --self-contained true
 
 

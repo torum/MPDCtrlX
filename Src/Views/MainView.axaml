@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="MPDCtrlX.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             x:CompileBindings="True">
+	<Grid x:Name="PageGrid">
+		<!-- Pages -->
+		<!-- Use ContentControl because Avalonia UI does not have a cache mechanism in page navigation... resulting in multiple creation of page instance. -->
+		<TransitioningContentControl x:Name="ContentFrame" Content="{Binding CurrentPage, Mode=TwoWay}" Margin="0">
+			<TransitioningContentControl.PageTransition>
+				<CompositePageTransition>
+					<CrossFade Duration="0:00:00.100" />
+					<!--
+					<CrossFade Duration="0:00:00.120" />
+					<PageSlide Duration="0:00:00.120" Orientation="Vertical" />
+					-->
+				</CompositePageTransition>
+			</TransitioningContentControl.PageTransition>
+		</TransitioningContentControl>
+	</Grid>
+</UserControl>

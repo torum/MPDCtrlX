@@ -1,0 +1,127 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+	  <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+
+	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
+	  <AssemblyName>MPDCtrlX</AssemblyName>
+
+	  <VersionPrefix>1.0.4.0</VersionPrefix>
+	  <FileVersion>1.0.4.0</FileVersion>
+	  <IsAotCompatible>true</IsAotCompatible>
+	  
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<PublishAot>True</PublishAot>
+		<!-- Recommended Avalonia trimming settings for Native AOT -->
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<TrimMode>link</TrimMode>
+		<!-- <TrimMode>partial</TrimMode> -->
+		<PublishTrimmed>True</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+		<DebugSymbols>false</DebugSymbols>
+		<!-- 
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> -->
+	</PropertyGroup>
+
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaNameGeneratorAttachDevTools>False</AvaloniaNameGeneratorAttachDevTools>
+		<Title>MPDCtrl</Title>
+		<Company>torum</Company>
+		<Product>MPDCtrlX</Product>
+		<Description>MPD client.</Description>
+		<Copyright>torum</Copyright>
+		<PackageProjectUrl>https://github.com/torum/MPDCtrlX</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/torum/MPDCtrlX</RepositoryUrl>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>embedded</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<IsPublishable>True</IsPublishable>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>embedded</DebugType>
+		<IsTrimmable>True</IsTrimmable>
+		<IsPublishable>True</IsPublishable>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Avalonia">
+		<AvaloniaXamlIlDebuggerLaunch>False</AvaloniaXamlIlDebuggerLaunch>
+		<AvaloniaXamlVerboseExceptions>False</AvaloniaXamlVerboseExceptions>
+		<AvaloniaXamlReportImportance>Normal</AvaloniaXamlReportImportance>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AvaloniaNameGeneratorAttachDevTools>False</AvaloniaNameGeneratorAttachDevTools>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <AvaloniaXaml Remove="deb-staging\**" />
+	  <Compile Remove="deb-staging\**" />
+	  <EmbeddedResource Remove="deb-staging\**" />
+	  <None Remove="deb-staging\**" />
+	  
+		<None Remove="deb-packaging.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="MPDCtrlX.parcel" />
+		<None Remove=".gitignore" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Avalonia" Version="12.0.1" />
+	  <PackageReference Include="Avalonia.Desktop" Version="12.0.1" />
+	  <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.1" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
+	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.0" />
+	  <PackageReference Include="FluentAvaloniaUI" Version="3.0.0-preview1" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.6" />
+	  <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.6" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="MPDCtrlX.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<EmbeddedResource Include="Assets\MPDCtrlX.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\MPDCtrlX-24.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</AvaloniaResource>
+		<AvaloniaResource Update="Assets\MPDCtrlX-24.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</AvaloniaResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+
+</Project>
+
+
