@@ -83,6 +83,7 @@ public partial class MainWindow : Window//AppWindow//
         vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
         vm.GoToSettingsPage += OnGoToSettingsPage;
         vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
+        vm.WorkingStateChanged += OnWorkingStateChanged;
 
         this.DetachedFromVisualTree += (s, e) =>
         {
@@ -140,6 +141,19 @@ public partial class MainWindow : Window//AppWindow//
         else
         {
             //
+        }
+
+    }
+
+    private void OnWorkingStateChanged(object? sender, bool e)
+    {
+        if (e)
+        {
+            this.Cursor = new Cursor(StandardCursorType.AppStarting);
+        }
+        else
+        {
+            this.Cursor = new Cursor(StandardCursorType.Arrow);
         }
 
     }

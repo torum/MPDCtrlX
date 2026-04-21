@@ -22,21 +22,7 @@
 	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
 	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
 	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
-	<!-- TODO: Replace Interaction.Behaviors -->
-	<Interaction.Behaviors>
-		<DataTriggerBehavior Binding="{Binding IsBusy}" ComparisonCondition="Equal" Value="True">
-			<ChangePropertyAction PropertyName="Cursor" Value="Wait" />
-		</DataTriggerBehavior>
-		<DataTriggerBehavior Binding="{Binding IsBusy}" ComparisonCondition="Equal" Value="False">
-			<ChangePropertyAction PropertyName="Cursor" Value="Arrow" />
-		</DataTriggerBehavior>
-		<DataTriggerBehavior Binding="{Binding IsWorking}" ComparisonCondition="Equal" Value="True">
-			<ChangePropertyAction PropertyName="Cursor" Value="AppStarting" />
-		</DataTriggerBehavior>
-		<DataTriggerBehavior Binding="{Binding IsWorking}" ComparisonCondition="Equal" Value="False">
-			<ChangePropertyAction PropertyName="Cursor" Value="Arrow" />
-		</DataTriggerBehavior>
-	</Interaction.Behaviors>
+
 	<Window.KeyBindings>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Play" />
 		<!--

@@ -1260,7 +1260,9 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsProfileSwitchOK));
 
-            //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
+            Dispatcher.UIThread.Post(() => {
+                WorkingStateChanged?.Invoke(this, value);
+            }, DispatcherPriority.Input);
         }
     }
 
@@ -3698,51 +3700,35 @@ public partial class MainViewModel : ObservableObject
 
     #region == Events ==
 
-    // DebugWindow
     public delegate void DebugWindowShowHideEventHandler();
     public event DebugWindowShowHideEventHandler? DebugWindowShowHide;
-
     public event EventHandler<string>? DebugCommandOutput;
-
     public event EventHandler<string>? DebugIdleOutput;
-
     public delegate void DebugCommandClearEventHandler();
     public event DebugCommandClearEventHandler? DebugCommandClear;
-
     public delegate void DebugIdleClearEventHandler();
     public event DebugIdleClearEventHandler? DebugIdleClear;
-
     // AckWindow
     //public event EventHandler<string>? AckWindowOutput;
     // ErrWindow
     //public event EventHandler<string>? ErrWindowOutput;
-
     public delegate void AckWindowClearEventHandler();
     public event AckWindowClearEventHandler? AckWindowClear;
-
     // Queue listview ScrollIntoView
     public event EventHandler<int>? ScrollIntoView;
-
     // Queue listview ScrollIntoView and select (for filter and first time loading the queue)
     public event EventHandler<int>? ScrollIntoViewAndSelect;
-
     public event EventHandler<string>? UpdateProgress;
-
     public event EventHandler<string>? CurrentSongChanged;
-
     public event EventHandler? QueueHeaderVisibilityChanged;
-
     public event EventHandler? SearchHeaderVisibilityChanged;
     public event EventHandler? PlaylistHeaderVisibilityChanged;
     public event EventHandler? FilesHeaderVisibilityChanged;
-
     public event EventHandler<string>? PlaylistRenameToDialogShow;
-
     public event EventHandler? GoToSettingsPage;
-
     public event EventHandler? AlbumsCollectionHasBeenReset;
-
     public event EventHandler? UserCanExecuteChanged;
+    public event EventHandler<bool>? WorkingStateChanged;
 
     #endregion
 
