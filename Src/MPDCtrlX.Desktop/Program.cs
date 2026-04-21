@@ -117,6 +117,7 @@ class Program
                 }
                 catch (Exception ex)
                 {
+                    _ = ex;// avoid trimming warning.
                     // Log the error.
                     Debug.WriteLine($"Error deleting named pipe: {ex.Message}");
                 }
@@ -185,7 +186,7 @@ class Program
                     AppendErrorLog(ex.Message + Environment.NewLine + ex.StackTrace, "Exception in StartPipeServer");
                     SaveErrorLog();
 #else
-                    //
+                    _ = ex; //avoid trim warning.
 #endif
 
                     // Just break out the loop in case of exception.

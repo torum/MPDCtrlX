@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Core.Models;
@@ -96,7 +97,7 @@ public partial class FilesPage : UserControl
         FilesFilterQueryTextBox.Text = string.Empty;
 
         if (e is Avalonia.Interactivity.RoutedEventArgs args && args.Source is ToggleButton toggleButton && toggleButton.IsChecked == true)
-        { 
+        {
             Dispatcher.UIThread.Post(async () =>
             {
                 await Task.Yield(); // Ensure the UI has processed the opened event
@@ -161,4 +162,13 @@ public partial class FilesPage : UserControl
         UpdateColumHeaders();
     }
 
+    private void TreeView_DoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Source is not Control control) return;
+
+        var myTvNodeItem = control.GetVisualAncestors().OfType<TreeViewItem>().FirstOrDefault();
+        if (myTvNodeItem is null) return;
+
+        myTvNodeItem.IsExpanded = !myTvNodeItem.IsExpanded;
+    }
 }
