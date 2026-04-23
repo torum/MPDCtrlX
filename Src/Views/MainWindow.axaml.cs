@@ -279,7 +279,7 @@ public partial class MainWindow : Window//AppWindow//
         // Not really "invoked" now that we use clicking on the settings icon....
         if (e.IsSettingsInvoked == true)
         {
-            await vm.GetCacheFolderSize();
+            await vm.GetCacheFolderSizeAsync();
 
             nv.Content = App.GetService<SettingsPage>();
 
@@ -391,7 +391,7 @@ public partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        await vm.GetCacheFolderSize();
+        await vm.GetCacheFolderSizeAsync();
 
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;

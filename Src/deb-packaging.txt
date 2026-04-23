@@ -17,7 +17,7 @@ MPDCtrlX/Src/deb-staging/usr/lib/MPDCtrlX/
 
 # Create a deb package
 
-MPDCtrlX/Src$ dpkg-deb --root-owner-group --build ../deb-staging ./MPDCtrlX_1.0.2.0_amd64.deb
+MPDCtrlX/Src$ dpkg-deb --root-owner-group --build ./deb-staging ./MPDCtrlX_1.0.2.0_amd64.deb
 
 # Test it
 

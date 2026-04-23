@@ -1240,9 +1240,9 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             field = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IsProfileSwitchOK));
 
+            Dispatcher.UIThread.Post(() => { OnPropertyChanged(); });
+            OnPropertyChanged(nameof(IsProfileSwitchOK));
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
             //Dispatcher.UIThread.Post(async () => { CommandManager.InvalidateRequerySuggested()});
         }
@@ -1257,12 +1257,13 @@ public partial class MainViewModel : ObservableObject
                 return;
 
             field = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IsProfileSwitchOK));
 
             Dispatcher.UIThread.Post(() => {
+                OnPropertyChanged();
                 WorkingStateChanged?.Invoke(this, value);
             }, DispatcherPriority.Input);
+
+            OnPropertyChanged(nameof(IsProfileSwitchOK));
         }
     }
 
@@ -3753,23 +3754,17 @@ public partial class MainViewModel : ObservableObject
         #region == Subscribe to events ==
 
         _mpc.IsBusy += OnMpcIsBusy;
-
         _mpc.MpdIdleConnected += OnMpdIdleConnected;
-
         _mpc.DebugCommandOutput += OnDebugCommandOutput;
         _mpc.DebugIdleOutput += OnDebugIdleOutput;
-
         _mpc.ConnectionStatusChanged += OnConnectionStatusChanged;
         _mpc.ConnectionError += OnConnectionError;
-
         _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
         _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
         _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
         _mpc.MpdOutputChanged += OnMpdOutputChanged;
-
         _mpc.MpdAckError += OnMpdAckError;
         _mpc.MpdFatalError += OnMpdFatalError;
-
         _mpc.MpdAlbumArtChanged += OnAlbumArtChanged;
 
         //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
@@ -5226,8 +5221,10 @@ public partial class MainViewModel : ObservableObject
         _volume = CurrentProfile.Volume;
         OnPropertyChanged(nameof(Volume));
 
+        // TODO: let's not await for faster start up.
         // start the connection
-        await Task.Run(()=>Start(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+        await Task.Run(async ()=> await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+        //_ = Task.Run(() => StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
     }
 
     private void SaveSettings(Window sender)
@@ -5491,16 +5488,41 @@ public partial class MainViewModel : ObservableObject
     // Closing
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
+        #region == Subscribe to events ==
+
+        // Unsubscribe events to avoid callbacks after shutdown
+        _mpc.IsBusy -= OnMpcIsBusy;
+        _mpc.MpdIdleConnected -= OnMpdIdleConnected;
+        _mpc.DebugCommandOutput -= OnDebugCommandOutput;
+        _mpc.DebugIdleOutput -= OnDebugIdleOutput;
+        _mpc.ConnectionStatusChanged -= OnConnectionStatusChanged;
+        _mpc.ConnectionError -= OnConnectionError;
+        _mpc.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
+        _mpc.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
+        _mpc.MpdPlaylistsChanged -= OnMpdPlaylistsChanged;
+        _mpc.MpdOutputChanged -= OnMpdOutputChanged;
+        _mpc.MpdAckError -= OnMpdAckError;
+        _mpc.MpdFatalError -= OnMpdFatalError;
+        _mpc.MpdAlbumArtChanged -= OnAlbumArtChanged;
+
+        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
+
+        // [Background][UI] etc
+        _mpc.MpcProgress -= OnMpcProgress;
+        this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
+
+        #endregion
+
         try
         {
-            _cts.Cancel();
-
             if (IsConnected)
             {
                 _mpc.MpdStop = true;
 
                 _mpc.MpdDisconnect(false);
             }
+
+            _cts.Cancel();
         }
         catch (Exception ex)
         { 
@@ -5522,7 +5544,7 @@ public partial class MainViewModel : ObservableObject
 
     #region == Methods ==
 
-    private async Task Start(string host, int port)
+    private async Task StartAsync(string host, int port)
     {
         HostIpAddress = null;
         try
@@ -5566,11 +5588,13 @@ public partial class MainViewModel : ObservableObject
         }
 
         // Start MPD connection.
-        await Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+        await Task.Run(async () => await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
     }
 
     private async Task LoadInitialData()
     {
+        // "UIThread.CheckAccess() = FALSE"
+
         IsBusy = true;
 
         await Task.Delay(5);
@@ -5669,6 +5693,8 @@ public partial class MainViewModel : ObservableObject
 
     private void UpdateStatus()
     {
+        // "UIThread.CheckAccess() = FALSE"
+
         UpdateButtonStatus();
 
         Dispatcher.UIThread.Post(async () =>
@@ -6956,7 +6982,7 @@ public partial class MainViewModel : ObservableObject
                 if (!string.IsNullOrEmpty(album.AlbumArtist.Trim()))
                 {
                     //Debug.WriteLine($"GetAlbumSongs: Album artist is not empty, searching by album artist. ({album.AlbumArtist})");
-                    var r = await SearchArtistSongs(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
+                    var r = await SearchArtistSongsAsync(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
 
                     if (r.IsSuccess)
                     {
@@ -7028,7 +7054,7 @@ public partial class MainViewModel : ObservableObject
 
                     if (!string.IsNullOrEmpty(album.Name.Trim()))
                     {
-                        var r = await SearchAlbumSongs(album.Name); // no trim() here.
+                        var r = await SearchAlbumSongsAsync(album.Name); // no trim() here.
                         if (r.IsSuccess)
                         {
                             if (r.SearchResult is null)
@@ -7097,7 +7123,7 @@ public partial class MainViewModel : ObservableObject
             IsWorking = true;
             await Task.Yield();
 
-            var r = await SearchArtistSongs(artist.Name);//.ConfigureAwait(ConfigureAwaitOptions.None);
+            var r = await SearchArtistSongsAsync(artist.Name);//.ConfigureAwait(ConfigureAwaitOptions.None);
 
             UpdateProgress?.Invoke(this, "");
 
@@ -7168,7 +7194,7 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    private async Task<CommandSearchResult> SearchArtistSongs(string name)
+    private async Task<CommandSearchResult> SearchArtistSongsAsync(string name)
     {
         if (name is null)
         {
@@ -7196,7 +7222,7 @@ public partial class MainViewModel : ObservableObject
         return res;
     }
 
-    private async Task<CommandSearchResult> SearchAlbumSongs(string name)
+    private async Task<CommandSearchResult> SearchAlbumSongsAsync(string name)
     {
         if (name is null)
         {
@@ -7354,7 +7380,7 @@ public partial class MainViewModel : ObservableObject
                         continue; // Skip if temp file exists, it means the album art has found to have no image.
                     }
 
-                    var ret = await SearchAlbumSongs(album.Name);
+                    var ret = await SearchAlbumSongsAsync(album.Name);
                     if (!ret.IsSuccess)
                     {
                         Debug.WriteLine("GetAlbumPictures: SearchAlbumSongs failed: " + ret.ErrorMessage);
@@ -7493,183 +7519,6 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    /*
-    private async void GetAlbumPictures(ObservableCollection<AlbumEx> albums)
-    {
-        if (albums.Count < 1)
-        {
-            Debug.WriteLine("GetAlbumPictures: Albums.Count < 1, returning.");
-            return;
-        }
-        if (IsAlbumArtsDownLoaded)
-        {
-            return;
-        }
-
-        UpdateProgress?.Invoke(this, "[UI] Loading album covers ...");
-        //IsBusy = true;
-        IsWorking = true;
-
-        IsAlbumArtsDownLoaded = true;
-
-        foreach (var album in albums)
-        {
-            if (album is null)
-            {
-                Debug.WriteLine("GetAlbumPictures: album is null, skipping.");
-                continue;
-            }
-            if (album.IsImageAcquired)
-            {
-                Debug.WriteLine("GetAlbumPictures: album.IsImageAcquired is true, skipping.");
-                continue;
-            }
-            if (string.IsNullOrEmpty(album.Name.Trim()))
-            {
-                //Debug.WriteLine($"GetAlbumPictures: album.Name is null or empty, skipping. {album.AlbumArtist}");
-                continue;
-            }
-
-            var strArtist = EscapeFilePathNames(album.AlbumArtist).Trim();
-            var strAlbum = EscapeFilePathNames(album.Name).Trim();
-            if (string.IsNullOrEmpty(strArtist))
-            {
-                strArtist = "Unknown Artist";
-            }
-
-            string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
-            string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
-            string fileTempPath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
-
-            if (File.Exists(filePath))
-            {
-                try
-                {
-                    Bitmap? bitmap = new(filePath);
-                    album.AlbumImage = bitmap;
-                    album.IsImageAcquired = true;
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("GetAlbumPictures: Exception while loading: " + filePath + Environment.NewLine + e.Message);
-                    continue;
-                }
-
-                // Testing
-                await Task.Delay(5);
-                await Task.Yield();
-
-                //Debug.WriteLine($"GetAlbumPictures: Successfully loaded album art from cache {filePath}");
-            }
-            else
-            {
-                if (File.Exists(fileTempPath))
-                {
-                    continue; // Skip if temp file exists, it means the album art has found to have no image.
-                }
-
-                bool isCoverExists = false;
-
-                // TODO: Different artists have the same album name eg."Greatest Hits" like bob dylan and 2pac. Use better MpdSearch query.
-                var ret = await SearchAlbumSongs(album.Name);
-                if (!ret.IsSuccess)
-                {
-                    Debug.WriteLine("GetAlbumPictures: SearchAlbumSongs failed: " + ret.ErrorMessage);
-                    continue;
-                }
-
-                if (ret.SearchResult is not null)
-                {
-                    var sresult = new ObservableCollection<SongInfo>(ret.SearchResult);
-                    if (sresult.Count < 1)
-                    {
-                        Debug.WriteLine("GetAlbumPictures: ret.SearchResult.Count < 1, skipping. -> " + album.Name);
-                        continue;
-                    }
-
-                    foreach (var albumsong in sresult)
-                    {
-                        if (albumsong is null)
-                        {
-                            continue;
-                        }
-
-                        var aat = albumsong.Artist.Trim();
-                        if (string.IsNullOrEmpty(aat))
-                        {
-                            aat = albumsong.AlbumArtist;
-                        }
-                        if (aat == album.AlbumArtist)
-                        {
-                            Debug.WriteLine($"GetAlbumPictures: Processing song {albumsong.File} from album {album.Name}");
-                            var r = await _mpc.MpdQueryAlbumArtForAlbumView(albumsong.File, true);
-                            if (!r.IsSuccess) continue;
-                            if (r.AlbumCover is null) continue;
-                            if (!r.AlbumCover.IsSuccess) continue;
-                            //Dispatcher.UIThread.Post(() =>
-                            //{
-                            album.AlbumImage = r.AlbumCover.AlbumImageSource;
-                            album.IsImageAcquired = true;
-                            //});
-
-                            //Debug.WriteLine($"GetAlbumPictures: Successfully retrieved album art for {albumsong.File}");
-                            //Debug.WriteLine($"GetAlbumPictures: Successfully retrieved album art for {album.Name} by {album.AlbumArtist}");
-
-                            Directory.CreateDirectory(strDirPath);
-                            album.AlbumImage?.Save(filePath, 100);
-
-                            //Debug.WriteLine("GetAlbumPictures: Successfully saved at " + Path.Combine(AppDataCacheFolder, Path.Combine(strArtist, strAlbum)) + ".bmp");
-
-                            isCoverExists = true;
-
-                            // Testing
-                            await Task.Delay(10);
-                            await Task.Yield();
-
-                            break; // Break after first successful album art retrieval.
-                        }
-                        else
-                        {
-                            //Debug.WriteLine($" {album.Name} > {album.AlbumArtist} : {albumsong.AlbumArtist},  {albumsong.Artist}");
-                        }
-                    }
-
-                    if (isCoverExists) continue;
-
-                    try
-                    {
-                        Directory.CreateDirectory(strDirPath);
-                        DateTimeOffset dto = new(DateTime.UtcNow);
-                        // Get the unix timestamp in seconds
-                        var unixTime = dto.ToUnixTimeSeconds().ToString();
-
-                        await using StreamWriter file = new(fileTempPath);
-                        await file.WriteLineAsync(unixTime);
-                        file.Close();
-
-                        // Testing
-                        await Task.Delay(10);
-                        await Task.Yield();
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("GetAlbumPictures: Exception while saving album art DUMMY file: " + e.Message);
-                    }
-                }
-                else
-                {
-                    Debug.WriteLine("GetAlbumPictures: ret.SearchResult is null, skipping.");
-                }
-            }
-        }
-        Debug.WriteLine("Done loading AlbumCovers.");
-
-        UpdateProgress?.Invoke(this, "");
-        //IsBusy = false;
-        IsWorking = false;
-    }
-    */
-
     private static void SaveAlbumCoverImage(SongInfoEx? current, AlbumImage? album)
     {
         Dispatcher.UIThread.Post(() =>
@@ -7719,23 +7568,6 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    /*
-    private static string EscapeFilePathNames(string str)
-    {
-        string s = str.Replace("<", "LT");
-        s = s.Replace(">", "GT");
-        s = s.Replace(":", "COL");
-        s = s.Replace("\"", "DQ");
-        s = s.Replace("/", "FS");
-        s = s.Replace("\\", "BS");
-        s = s.Replace("/", "FS");
-        s = s.Replace("|", "PIP");
-        s = s.Replace("?", "QM");
-        s = s.Replace("*", "ASTR");
-
-        return s;
-    }
-    */
     public static string SanitizeFilename(string name)
     {
         // 1. Get the list of invalid characters for the current system
@@ -7773,7 +7605,7 @@ public partial class MainViewModel : ObservableObject
         return (new System.Version(a)).CompareTo(new System.Version(b));
     }
 
-    private static async Task<long> GetFolderSize(string path)
+    private static async Task<long> GetFolderSizeAsync(string path)
     {
         long totalSize = 0;
 
@@ -7793,7 +7625,7 @@ public partial class MainViewModel : ObservableObject
         // Recursively add the size of files in subdirectories
         foreach (DirectoryInfo subDirectory in directoryInfo.GetDirectories())
         {
-            totalSize += await GetFolderSize(subDirectory.FullName);
+            totalSize += await GetFolderSizeAsync(subDirectory.FullName);
         }
 
         //long totalSize = dInfo.EnumerateFiles().Sum(file => file.Length);
@@ -7834,9 +7666,9 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public async Task GetCacheFolderSize()
+    public async Task GetCacheFolderSizeAsync()
     {
-        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSize(App.AppDataCacheFolder).ConfigureAwait(true));
+        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(App.AppDataCacheFolder).ConfigureAwait(true));
     }
 
     public static void DeleteAllContents(string directoryPath)
@@ -7926,6 +7758,7 @@ public partial class MainViewModel : ObservableObject
 
         // 
         await Task.Run(LoadInitialData, _cts.Token);
+        //_ = Task.Run(LoadInitialData, _cts.Token);
     }
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
@@ -8577,35 +8410,6 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdPlaylistAdd(playlistName, uris);
     }
-
-    /*
-    // common used by many
-    public async void AddToPlaylist_Execute(string playlistName, List<string> list)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-            return;
-
-        if (list.Count < 1)
-            return;
-
-        await _mpc.MpdPlaylistAdd(playlistName, list);
-    }
-    */
-    /*
-    // called from code behind.
-    public async void QueueSaveToDialog_Execute(string playlistName)
-    {
-        if (string.IsNullOrEmpty(playlistName))
-            return;
-        if (Queue.Count == 0)
-            return;
-
-#pragma warning disable IDE0305
-        await _mpc.MpdPlaylistAdd(playlistName, Queue.Select(s => s.File).ToList());
-#pragma warning restore IDE0305
-    }
-    */
-
 
     // Add selected to playlist
     [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
@@ -9583,7 +9387,7 @@ public partial class MainViewModel : ObservableObject
         return true;
     }
 
-    // Rename playlist.
+    // Rename playlist. Called from codebehind.
     public async void PlaylistRenamePlaylist_Execute(string oldPlaylistName, string newPlaylistName)
     {
         var ret = await _mpc.MpdRenamePlaylist(oldPlaylistName, newPlaylistName);
@@ -10064,7 +9868,7 @@ public partial class MainViewModel : ObservableObject
         DeleteAllContents(App.AppDataCacheFolder);
 
         // Update folder size.
-        await GetCacheFolderSize();
+        await GetCacheFolderSizeAsync();
     }
 
     public bool SaveProfileCanExecute()
@@ -10291,7 +10095,7 @@ public partial class MainViewModel : ObservableObject
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        await Task.Run(() => Start(_host, _port), _cts.Token);
+        await Task.Run(async () => await StartAsync(_host, _port), _cts.Token);
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -10704,7 +10508,7 @@ public partial class MainViewModel : ObservableObject
     public async Task TryConnect()
     {
         Debug.WriteLine("_host: "+ _host);
-        await Task.Run(() => Start(_host, _port), _cts.Token);
+        await Task.Run(async () => await StartAsync(_host, _port), _cts.Token);
     }
 
     #endregion

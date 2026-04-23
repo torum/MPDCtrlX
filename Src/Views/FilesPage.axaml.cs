@@ -165,6 +165,8 @@ public partial class FilesPage : UserControl
     private void TreeView_DoubleTapped(object? sender, TappedEventArgs e)
     {
         if (e.Source is not Control control) return;
+        // Need this.
+        if (e.Source is FluentAvalonia.UI.Controls.FASymbolIcon) return;
 
         var myTvNodeItem = control.GetVisualAncestors().OfType<TreeViewItem>().FirstOrDefault();
         if (myTvNodeItem is null) return;

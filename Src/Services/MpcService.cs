@@ -356,6 +356,18 @@ public partial class MpcService : IMpcService
     {
         CommandResult ret = new();
 
+        if (MpdStop)
+        {
+            Debug.WriteLine("@MpdIdleSendCommand: MpdStop1");
+            return ret;
+        }
+
+        if (_cts is null)
+        {
+            Debug.WriteLine("@MpdIdleSendCommand: _cts is null)");
+            return ret;
+        }
+
         // TODO: always false
         if (_idleConnection.Client is null)
         {
@@ -3902,8 +3914,7 @@ public partial class MpcService : IMpcService
                 }
                 else if (value.StartsWith("Last-Modified: "))
                 {
-                    if (pl is not null)
-                        pl.LastModified = value.Replace("Last-Modified: ", "");
+                    pl?.LastModified = value.Replace("Last-Modified: ", "");
                 }
                 else if (value.StartsWith("OK"))
                 {
