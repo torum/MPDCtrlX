@@ -11,10 +11,10 @@
 	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 	  <AssemblyName>MPDCtrlX</AssemblyName>
 
-	  <VersionPrefix>1.0.4.0</VersionPrefix>
-	  <FileVersion>1.0.4.0</FileVersion>
-	  <IsAotCompatible>true</IsAotCompatible>
+	  <VersionPrefix>1.0.5.0</VersionPrefix>
+	  <FileVersion>1.0.5.0</FileVersion>
 	  
+	  <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
