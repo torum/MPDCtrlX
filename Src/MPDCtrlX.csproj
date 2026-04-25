@@ -48,6 +48,7 @@
 		<IsTrimmable>True</IsTrimmable>
 		<IsPublishable>True</IsPublishable>
 		<IsAotCompatible>True</IsAotCompatible>
+		<Optimize>True</Optimize>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>embedded</DebugType>

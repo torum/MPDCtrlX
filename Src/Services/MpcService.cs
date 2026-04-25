@@ -409,8 +409,7 @@ public partial class MpcService : IMpcService
         if (cmd.StartsWith("password "))
             cmdDummy = "password ****";
 
-        //DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
-        _= Task.Run(() => DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
+        DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
 
         try
         {
@@ -564,16 +563,16 @@ public partial class MpcService : IMpcService
                 }
             }
 
-            _ = Task.Run(() => DebugIdleOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
+            DebugIdleOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n");
 
             if (isAck)
             {
-                _ = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Idle"));
+                MpdAckError?.Invoke(this, ackText, "Idle");
             }
 
             if (isErr)
             {
-                _ = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
+                MpdFatalError?.Invoke(this, errText, "Idle");
                 //ret.IsSuccess = false;
 
                 //return ret;
@@ -908,12 +907,12 @@ public partial class MpcService : IMpcService
 
             if (isAck)
             {
-                _ = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Idle"));
+                MpdAckError?.Invoke(this, ackText, "Idle");
             }
 
             if (isErr)
             {
-                _ = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Idle"));
+                MpdFatalError?.Invoke(this, errText, "Idle");
 
                 //ret.IsSuccess = false;
 
@@ -1498,7 +1497,7 @@ public partial class MpcService : IMpcService
             string cmdDummy = cmd;
             if (cmd.StartsWith("password "))
                 cmdDummy = "password ****";
-            _ = Task.Run(() => DebugCommandOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n"));
+            DebugCommandOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
             //cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
 
             await _commandWriter.WriteAsync(cmd.Trim() + "\n");
@@ -1794,16 +1793,16 @@ public partial class MpcService : IMpcService
             else
             {
                 //DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n");
-                _ = Task.Run(() => DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n"));
+                DebugCommandOutput?.Invoke(this, "<<<<" + stringBuilder.ToString().Trim().Replace("\n", "\n" + "<<<<") + "\n" + "\n");
 
                 if (isAck)
                 {
-                    _ = Task.Run(() => MpdAckError?.Invoke(this, ackText, "Command"));
+                    MpdAckError?.Invoke(this, ackText, "Command");
                 }
 
                 if (isErr)
                 {
-                    _ = Task.Run(() => MpdFatalError?.Invoke(this, errText, "Command"));
+                    MpdFatalError?.Invoke(this, errText, "Command");
                 }
 
                 ret.ResultText = stringBuilder.ToString();

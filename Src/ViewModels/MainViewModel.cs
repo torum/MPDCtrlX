@@ -2380,10 +2380,10 @@ public partial class MainViewModel : ObservableObject
             Dispatcher.UIThread.Post(async () =>  // Test
             {
                 IsWorking = true;
-                //await Task.Yield();
-                //await Task.Delay(20);
-                GetArtistSongs(SelectedAlbumArtist);
-                GetAlbumPictures(SelectedArtistAlbums);
+                await Task.Yield();
+                await GetArtistSongsAsync(SelectedAlbumArtist); // await or not?
+                await Task.Delay(20);
+                await GetAlbumPicturesAsync(SelectedArtistAlbums);// await or not?
                 IsWorking = false;
             }, DispatcherPriority.Default);
         }
@@ -2601,8 +2601,16 @@ public partial class MainViewModel : ObservableObject
                 return;
             }
 
-            _ = Task.Run(() => GetAlbumPictures(VisibleViewportItemsAlbumEx), _cts.Token);
-            //GetAlbumPictures(VisibleViewportItemsAlbumEx);
+            try
+            {
+                _ = Task.Run(() => GetAlbumPicturesAsync(VisibleViewportItemsAlbumEx), _cts.Token);
+                //GetAlbumPictures(VisibleViewportItemsAlbumEx);
+            }
+            catch (Exception ex)
+            {
+                _ = ex;
+                Debug.WriteLine($"Exception @VisibleViewportItemsAlbumEx {ex}");
+            }
         }
     }
 
@@ -5221,10 +5229,19 @@ public partial class MainViewModel : ObservableObject
         _volume = CurrentProfile.Volume;
         OnPropertyChanged(nameof(Volume));
 
-        // TODO: let's not await for faster start up.
-        // start the connection
-        await Task.Run(async ()=> await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
-        //_ = Task.Run(() => StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+        try
+        {
+            // start the connection
+            //await Task.Run(async () => await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+            // let's not await for faster start up.
+            _ = Task.Run(() => StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+        }
+        catch (Exception ex)
+        {
+            _ = ex;
+            Debug.WriteLine($"Exception @OnWindowLoaded {ex}");
+        }
+
     }
 
     private void SaveSettings(Window sender)
@@ -5587,8 +5604,18 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        // Start MPD connection.
-        await Task.Run(async () => await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+        try
+        {
+            // Start MPD connection.
+            await Task.Run(async () => await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+            // let's not await for faster start up.
+            //_ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+        }
+        catch (Exception ex)
+        {
+            _ = ex;
+            Debug.WriteLine($"Exception @StartAsync {ex}");
+        }
     }
 
     private async Task LoadInitialData()
@@ -7110,9 +7137,9 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    private void GetArtistSongs(AlbumArtist? artist)
+    private async Task GetArtistSongsAsync(AlbumArtist? artist)
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (artist is null)
             {
@@ -7245,7 +7272,7 @@ public partial class MainViewModel : ObservableObject
         return res;
     }
     
-    private void GetAlbumPictures(IEnumerable<object>? albumExItems)
+    private async Task GetAlbumPicturesAsync(IEnumerable<object>? albumExItems)
     {
         if (_mpc.MpdStop)
         {
@@ -7259,7 +7286,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (albumExItems is null)
             {
