@@ -6200,8 +6200,23 @@ public partial class MainViewModel : ObservableObject
                     //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
                     //collectionView.Refresh();
 
-                    // This is not good, all the selections will be cleared, but no problem for Avalonia UI?.
-                    Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
+                    // This is not good, all the selections will be cleared, but no problem for Avalonia UI?. TOO slow for WinUI3.
+                    //Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
+                    Debug.WriteLine("Queue sort started. @UpdateCurrentQueue");
+                    var sortableList = new List<SongInfoEx>(Queue);
+                    sortableList.Sort((a, b) => a.Index.CompareTo(b.Index));
+                    for (int i = 0; i < sortableList.Count; i++)
+                    {
+                        var hoge = sortableList[i] as SongInfoEx;
+                        var oldIndex = Queue.IndexOf(hoge);
+                        if (hoge.Index != oldIndex)
+                        {
+                            Debug.WriteLine($"Song index {hoge.Index}, list index {oldIndex}");
+                            Queue.Move(oldIndex, i);
+                        }
+                    }
+                    Debug.WriteLine("Queue sort end. @UpdateCurrentQueue");
+
                     //UpdateProgress?.Invoke(this, "");
 
                     UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
