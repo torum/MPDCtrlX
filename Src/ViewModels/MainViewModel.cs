@@ -1912,7 +1912,7 @@ public partial class MainViewModel : ObservableObject
 
                     CurrentPage = App.GetService<AlbumPage>();
 
-                    await Task.Delay(20);
+                    await Task.Delay(1);
                     IsWorking = false;
                 });
             }
@@ -1922,6 +1922,7 @@ public partial class MainViewModel : ObservableObject
                 {
                     IsWorking = true;
                     await Task.Yield();
+                    await Task.Delay(1);
 
                     CurrentPage = App.GetService<FilesPage>();
 
@@ -8536,10 +8537,14 @@ public partial class MainViewModel : ObservableObject
     public async Task QueueListviewDeleteSelectedWithoutPrompt(object obj)
     {
         if (IsBusy) return;
+
         if (IsWorking) return;
 
         if (obj is null) return;
+
         System.Collections.IList items = (System.Collections.IList)obj;
+
+        if (items.Count == 0) return;
 
         var collection = items.Cast<SongInfoEx>();
 
