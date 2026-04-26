@@ -329,10 +329,9 @@
 						</Setter>
 					</ControlTheme>
 				</ListBox.Resources>
-				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.KeyBindings>
-					<!--  Enter  -->
 					<KeyBinding Command="{Binding QueueListviewEnterKeyCommand}" Gesture="Enter" />
+					<KeyBinding Command="{Binding QueueListviewDeleteSelectedWithoutPromptCommand}" CommandParameter="{Binding #QueueListBox.SelectedItems}" Gesture="Ctrl+Delete"/>
 				</ListBox.KeyBindings>
 				<ListBox.ItemsPanel>
 					<ItemsPanelTemplate>
