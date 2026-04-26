@@ -7349,6 +7349,7 @@ public partial class MainViewModel : ObservableObject
                     continue;
                 }
                 album.IsImageLoading = true;
+                //Debug.WriteLine($"GetAlbumPictures: Artist:{album.AlbumArtist}, Album:{album.Name}");
 
                 var strArtist = album.AlbumArtist.Trim();
                 if (string.IsNullOrEmpty(strArtist))
@@ -7472,6 +7473,7 @@ public partial class MainViewModel : ObservableObject
                         //if (aat == album.AlbumArtist)
                         if (string.Equals(aat, album.AlbumArtist, StringComparison.CurrentCulture))
                         {
+                            //Debug.WriteLine($"GetAlbumPictures: Album:{album.Name}, Song {albumsong.File}");
                             //Debug.WriteLine($"GetAlbumPictures: Processing song {albumsong.File} from album {album.Name}");
                             var r = await _mpc.MpdQueryAlbumArtForAlbumView(albumsong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
                             if (!r.IsSuccess)
@@ -7513,7 +7515,11 @@ public partial class MainViewModel : ObservableObject
                     if (isCoverExists) continue;
 
                     // WaitFiled. Don't save temp file.
-                    if (isWaitFailed) continue;
+                    if (isWaitFailed)
+                    {
+                        album.IsImageLoading = false;
+                        continue;
+                    }
 
                     if (isNoAlbumCover)
                     {

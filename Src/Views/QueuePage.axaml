@@ -144,7 +144,7 @@
 
 			</StackPanel>
 			<!-- Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" -->
-			<Popup x:Name="FilterQueuePopup" Opened="FilterQueuePopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonQueueFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
+			<Popup x:Name="FilterQueuePopup" ShouldUseOverlayLayer="True" Opened="FilterQueuePopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonQueueFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}">
 
 				<Border Grid.Row="3" BoxShadow="0 4 10 0 #40000000" Margin="12" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="6" IsVisible="{Binding IsChecked, ElementName=TglButtonQueueFilter, Mode=TwoWay}" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 					<StackPanel>

@@ -18,6 +18,7 @@ namespace MPDCtrlX
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .WithInterFont()
+                .With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
                 .LogToTrace(LogEventLevel.Error);
     }
 }

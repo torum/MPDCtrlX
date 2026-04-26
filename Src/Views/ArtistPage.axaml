@@ -59,7 +59,7 @@
 				</ToggleButton>
 			</StackPanel>
 			
-			<Popup x:Name="FilterArtistPopup" Opened="FilterArtistPopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonArtistFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
+			<Popup x:Name="FilterArtistPopup" ShouldUseOverlayLayer="True" Opened="FilterArtistPopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonArtistFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonArtistFilter, Mode=TwoWay}">
 				<Border  BoxShadow="0 4 10 0 #40000000" Margin="12" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="6" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
 						
 					<StackPanel>
