@@ -87,7 +87,7 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
 	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.0" />
-	  <PackageReference Include="FluentAvaloniaUI" Version="3.0.0-preview1" />
+	  <PackageReference Include="FluentAvaloniaUI" Version="3.0.0-preview2" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0-preview.3.26207.106" />
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.3.26207.106" />
 	  <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="11.0.0-preview.3.26207.106" />

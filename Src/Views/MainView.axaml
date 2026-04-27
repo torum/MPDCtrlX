@@ -9,7 +9,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="MPDCtrlX.Views.MainView"
              x:DataType="vm:MainViewModel"
-             x:CompileBindings="True">
+             x:CompileBindings="True"
+			 Margin="{OnPlatform Default='0', Windows='0,30,0,0'}" 
+			 WindowDecorationProperties.ElementRole="None"
+			 >
 	<Grid x:Name="PageGrid">
 		<!-- Pages -->
 		<!-- Use ContentControl because Avalonia UI does not have a cache mechanism in page navigation... resulting in multiple creation of page instance. -->

@@ -10,7 +10,9 @@
 	</Application.Styles>
 	<Application.Resources>
 		<ResourceDictionary>
+
 			<conv:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

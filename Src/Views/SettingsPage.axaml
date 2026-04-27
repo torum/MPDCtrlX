@@ -14,7 +14,7 @@
 	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 
-		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 
 		<!-- PlaylistItem page title and menus -->
 		<Grid Grid.Row="1" Margin="0,0,0,12">
@@ -41,7 +41,7 @@
 
 		<Grid Grid.Row="2" RowDefinitions="1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+			<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 			<ScrollViewer Grid.Row="1" Padding="24,0,24,24" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
 
 				<StackPanel Spacing="24" Margin="0,12,0,0">

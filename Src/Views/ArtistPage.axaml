@@ -29,9 +29,9 @@
 
 		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		
-		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 		<!-- Artists page title and menus -->
-		<Grid x:Name="ArtistPageTitleGrid" Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
+		<Grid x:Name="ArtistPageTitleGrid" Grid.Row="1" Margin="0,0,0,0" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -100,11 +100,11 @@
 			</Popup>
 		</Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0">
+        <Grid Grid.Row="2" Grid.Column="0" Margin="24,24,0,0">
 			<!-- 
-			<Border Grid.Row="0" BorderThickness="0,1,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border> -->
-			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.6"></Border>
-			<ListBox x:Name="ArtistListBox" Margin="3,0,3,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
+			 Background="{DynamicResource NavigationViewDefaultPaneBackground}" -->
+			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+			<ListBox x:Name="ArtistListBox" Margin="0,0,3,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
@@ -181,9 +181,9 @@
 			</ListBox>
         </Grid>
 
-		<Border Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<Border Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected artist -->
-		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="8,0,0,0">
+		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="24,24,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
@@ -192,7 +192,7 @@
 				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 
-			<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="8,0,0,0">
+			<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="0,0,0,0">
 				<Border Grid.Row="0" BorderThickness="1,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 
 				<ScrollViewer Grid.Row="3" x:Name="SelectedArtistAlbumsScrollViewer">
@@ -219,7 +219,7 @@
 										<ColumnDefinition Width="*"></ColumnDefinition>
 									</Grid.ColumnDefinitions>
 
-									<Border Grid.Row="0" Grid.Column="0" Margin="16,16,16,0" Width="184" Height="184" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
+									<Border Grid.Row="0" Grid.Column="0" Margin="12,16,16,0" Width="184" Height="184" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
 										<Grid>
 											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center">
 												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -260,13 +260,13 @@
 											<TextBlock Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
 											<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
 
-											<TextBlock Text="{Binding ReleaseYear}" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding ReleaseYear, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{Binding ReleaseYear}" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0,0,0" Padding="0" Opacity="0.9" IsVisible="{Binding ReleaseYear, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
 
 										</StackPanel>
 
 										<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="24" Margin="16,0,16,16" HorizontalAlignment="Left">
 											<!-- Play button -->
-											<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding Path=$parent[ItemsControl].((vm:MainViewModel)DataContext).SongsPlayCommand}" CommandParameter="{Binding Songs}">
+											<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="6,0,0,0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding Path=$parent[ItemsControl].((vm:MainViewModel)DataContext).SongsPlayCommand}" CommandParameter="{Binding Songs}">
 												<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 													<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 														Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z">
@@ -304,7 +304,7 @@
 											</Button>
 										</StackPanel>
 
-										<Border Grid.Row="2">
+										<Border Grid.Row="2" Margin="4,0,0,0">
 
 
 											<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->

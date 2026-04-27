@@ -6,6 +6,7 @@
 	<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 	<!-- Changed: ItemsContainerGrid margin=0 for footer buttom margin -->
 	<!-- Added to TogglePaneButton: Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonWidth}" -->
+    <!-- Added  WindowDecorationProperties.ElementRole="User" -->
 	
     <ControlTheme x:Key="{x:Type ui:FANavigationView}" TargetType="ui:FANavigationView">
         <!--<Setter Property="KeyboardNavigation.IsTabStop" Value="False" />-->
@@ -40,6 +41,7 @@
                                     ToolTip.Tip="Close Navigation" />
                             
                             <Button Name="TogglePaneButton"
+                                     WindowDecorationProperties.ElementRole="User"
                                     Theme="{StaticResource PaneToggleButtonStyle}"
                                     HorizontalAlignment="Center"
                                     IsVisible="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"

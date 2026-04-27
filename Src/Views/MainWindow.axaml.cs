@@ -68,9 +68,6 @@ public partial class MainWindow : Window//AppWindow//
         this.NavigateViewControl.Content = App.GetService<MainView>();
         //this.ContentFrame.Navigate(typeof(MainView));
 
-        // Temp
-        //GoToSettingsPage(null,EventArgs.Empty);
-
         //this.Icon = new WindowIcon(new Bitmap())
 
         this.Loaded += vm.OnWindowLoaded;

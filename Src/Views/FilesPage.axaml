@@ -19,16 +19,16 @@
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="4*"/>
 			<ColumnDefinition Width="1"/>
-			<ColumnDefinition Width="2*"/>
+			<ColumnDefinition Width="7*"/>
 		</Grid.ColumnDefinitions>
 
 		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 
-		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 		<!-- Files page title and menus -->
-		<Grid Grid.Row="1" Margin="0,0,0,12" Grid.ColumnSpan="3">
+		<Grid Grid.Row="1" Margin="0,0,0,0" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -97,10 +97,10 @@
 		</Grid>
 		
 		<!--
-		<TreeDataGrid Grid.Row="0" Grid.Column="0" BorderThickness="0 0 0 0" Source="{Binding MusicDirectoriesSource, Mode=TwoWay}" />
+		 Background="{DynamicResource NavigationViewDefaultPaneBackground}"
 		-->
-		<Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6" Background="{DynamicResource NavigationViewDefaultPaneBackground}"></Border>
-		<TreeView Grid.Row="2" Grid.Column="0" Margin="3,0,3,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" DoubleTapped="TreeView_DoubleTapped" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+		<Border Grid.Row="2" Margin="24,24,0,0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<TreeView Grid.Row="2" Grid.Column="0" Margin="24,24,0,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" DoubleTapped="TreeView_DoubleTapped" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.Resources>
 				<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 				<ControlTheme TargetType="TreeView" x:Key="{x:Type TreeView}">
@@ -159,9 +159,9 @@
 			</TreeView.Styles>
 		</TreeView>
 
-		<Border Grid.Row="2" Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<Border Grid.Row="2" Grid.Column="1" Margin="0,24,0,0" BorderThickness="1,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected directory -->
-		<Grid Grid.Row="2" Grid.Column="2" Margin="0,0,0,0">
+		<Grid Grid.Row="2" Grid.Column="2" Margin="0,24,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
@@ -173,7 +173,7 @@
 
 			<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,Auto,1,*" Margin="0,0,0,0">
 				<Border Grid.Row="0" BorderThickness="1,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-				<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+				<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 				<ScrollViewer Grid.Row="1" x:Name="FilesListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
 					<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
 					<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">

@@ -3,6 +3,8 @@
         xmlns:ui="using:FluentAvalonia.UI.Controls">
     <Styles.Resources>
 
+
+
         <ResourceDictionary>
 
 			<!-- v12 no need for v12? 
@@ -30,10 +32,10 @@
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemStyles.axaml" />
 				<ResourceInclude Source="avares://MPDCtrlX/Styles/NavigationViewItemPresenterStyles.axaml" />
-
-				<ResourceDictionary>
-				</ResourceDictionary>
-
+				<!--
+				<ResourceInclude Source="avares://MPDCtrlX/Styles/WindowDrawnDecorations.axaml" />
+				-->
+				<ResourceInclude Source="avares://MPDCtrlX/Styles/WindowDecorations.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

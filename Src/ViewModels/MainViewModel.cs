@@ -6098,8 +6098,9 @@ public partial class MainViewModel : ObservableObject
 
                     #region == better way ==
 
-
                     IsWorking = true;
+                    await Task.Yield();
+                    await Task.Delay(1);
 
                     UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
 
@@ -6211,7 +6212,7 @@ public partial class MainViewModel : ObservableObject
                         var oldIndex = Queue.IndexOf(hoge);
                         if (hoge.Index != oldIndex)
                         {
-                            Debug.WriteLine($"Song index {hoge.Index}, list index {oldIndex}");
+                            //Debug.WriteLine($"Song index {hoge.Index}, list index {oldIndex}");
                             Queue.Move(oldIndex, i);
                         }
                     }
@@ -6296,6 +6297,8 @@ public partial class MainViewModel : ObservableObject
                 }
 
                 IsWorking = false;
+                await Task.Yield();
+                await Task.Delay(1);
             }
             else
             {

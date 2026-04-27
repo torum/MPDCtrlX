@@ -16,9 +16,9 @@
 	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		
-		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 		<!-- Search page title and menus -->
-		<Grid Grid.Row="1" Margin="0,0,0,12">
+		<Grid Grid.Row="1" Margin="0,0,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
@@ -129,7 +129,7 @@
 
 			</StackPanel>
 
-			<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="48" Margin="12,0,12,0" HorizontalAlignment="Stretch">
+			<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="48" Margin="24,12,12,0" HorizontalAlignment="Stretch">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -138,7 +138,7 @@
 				</Grid.ColumnDefinitions>
 
 				<!-- Search tag combobox -->
-				<ComboBox Grid.Column="0" SelectedIndex="0" MinWidth="140" Margin="6,0,0,0" ItemsSource="{Binding SearchTagList,Mode=OneWay}" SelectedItem="{Binding SelectedSearchTag,Mode=TwoWay}" VerticalAlignment="Bottom">
+				<ComboBox Grid.Column="0" SelectedIndex="0" MinWidth="140" Margin="0,0,0,0" ItemsSource="{Binding SearchTagList,Mode=OneWay}" SelectedItem="{Binding SelectedSearchTag,Mode=TwoWay}" VerticalAlignment="Bottom">
 					<ComboBox.ItemTemplate>
 						<DataTemplate x:DataType="mod:SearchOption">
 							<TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
@@ -178,9 +178,9 @@
 		</Grid>
 
 		<!-- Search ListBox -->
-		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*">
+		<Grid Grid.Row="2" RowDefinitions="1,Auto,1,*" Margin="24,12,0,0">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-			<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4"></Border>
+			<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 			<ScrollViewer Grid.Row="1" x:Name="SearchListViewHeaderScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled">
 				<!-- This is a workaround to keep the header in sync with the ListBox scrolling. -->
 				<Grid Name="DummyHeader" Height="34" Margin="1,0,0,0">
