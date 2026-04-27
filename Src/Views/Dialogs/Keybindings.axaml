@@ -30,7 +30,7 @@
 					</SelectableTextBlock>
 					<SelectableTextBlock>
 						<Run Text="Volume Down: " FontWeight="SemiBold"/>
-						<Run Text="Ctrl+OemMinus, Ctrl+Subtract"/>
+						<Run Text="VolumeDown, Ctrl+OemMinus, Ctrl+Subtract"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
 						<Run Text="Volume Up: " FontWeight="SemiBold"/>
@@ -74,7 +74,7 @@
 				<TextBlock Text="Files page" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="Filter file in the Files: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Filter files in the Files: " FontWeight="SemiBold" FontSize="16"/>
 						<Run Text="Ctrl+F"/>
 					</SelectableTextBlock>
 				</StackPanel>
