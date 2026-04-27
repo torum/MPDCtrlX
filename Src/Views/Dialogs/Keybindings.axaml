@@ -8,7 +8,7 @@
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
              x:Class="MPDCtrlX.Views.Dialogs.Keybindings">
 	<Grid>
-		<ScrollViewer Margin="10" Width="480" Height="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+		<ScrollViewer Margin="10,10,0,10" Width="480" Height="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="0,0,12,0">
 			<StackPanel Spacing="14" Margin="0,0,0,24">
 				<TextBlock Text="Application Global" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">

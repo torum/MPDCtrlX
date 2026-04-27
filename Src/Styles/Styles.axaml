@@ -3,8 +3,6 @@
         xmlns:ui="using:FluentAvalonia.UI.Controls">
     <Styles.Resources>
 
-
-
         <ResourceDictionary>
 
 			<!-- v12 no need for v12? 

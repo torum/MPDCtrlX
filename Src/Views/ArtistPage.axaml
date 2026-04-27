@@ -213,13 +213,13 @@
 						</ItemsControl.ItemsPanel>
 						<ItemsControl.ItemTemplate>
 							<DataTemplate x:DataType="mod:AlbumEx">
-								<Grid Margin="0,0,0,24">
+								<Grid Margin="0,0,0,48">
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="Auto"></ColumnDefinition>
 										<ColumnDefinition Width="*"></ColumnDefinition>
 									</Grid.ColumnDefinitions>
 
-									<Border Grid.Row="0" Grid.Column="0" Margin="12,16,16,0" Width="184" Height="184" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
+									<Border Grid.Row="0" Grid.Column="0" Margin="12,0,16,16" Width="184" Height="184" HorizontalAlignment="Left" VerticalAlignment="Top" ClipToBounds="True" CornerRadius="6">
 										<Grid>
 											<Viewbox Margin="0" Width="184" Height="184" HorizontalAlignment="Center" VerticalAlignment="Center">
 												<PathIcon Background="Transparent" Width="NaN" Height="NaN" Margin="8" Opacity="0.1" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -247,26 +247,15 @@
 											<RowDefinition Height="*"></RowDefinition>
 										</Grid.RowDefinitions>
 
-										<StackPanel Grid.Row="0" Margin="16,16,16,16">
-											<!--
-											<TextBlock Grid.Row="0" Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9">
-												<Interaction.Behaviors>
-													<DataTriggerBehavior Binding="{Binding Name}" ComparisonCondition="Equal" Value="">
-														<ChangePropertyAction PropertyName="Text" Value="Unknown Album" />
-													</DataTriggerBehavior>
-												</Interaction.Behaviors>
-											</TextBlock>
-											-->
-											<TextBlock Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
-											<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0" Padding="4" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
-
-											<TextBlock Text="{Binding ReleaseYear}" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0,0,0" Padding="0" Opacity="0.9" IsVisible="{Binding ReleaseYear, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
-
+										<StackPanel Grid.Row="0" Margin="16,0,16,16">
+											<TextBlock Text="{Binding Name}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Padding="0" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{x:Static prop:Resources.Text_UnknownAlbum}" Theme="{StaticResource TitleTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0" Padding="0" Opacity="0.9" IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"></TextBlock>
+											<TextBlock Text="{Binding ReleaseYear}" Theme="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3" Padding="0" Opacity="0.9" IsVisible="{Binding ReleaseYear, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"></TextBlock>
 										</StackPanel>
 
 										<StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="24" Margin="16,0,16,16" HorizontalAlignment="Left">
 											<!-- Play button -->
-											<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="6,0,0,0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding Path=$parent[ItemsControl].((vm:MainViewModel)DataContext).SongsPlayCommand}" CommandParameter="{Binding Songs}">
+											<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,0,0" Height="34" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}" Command="{Binding Path=$parent[ItemsControl].((vm:MainViewModel)DataContext).SongsPlayCommand}" CommandParameter="{Binding Songs}">
 												<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 													<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 														Data="M5.74514 3.06445C5.41183 2.87696 5 3.11781 5 3.50023V12.5005C5 12.8829 5.41182 13.1238 5.74512 12.9363L13.7454 8.43631C14.0852 8.24517 14.0852 7.75589 13.7454 7.56474L5.74514 3.06445ZM4 3.50023C4 2.35298 5.2355 1.63041 6.23541 2.19288L14.2357 6.69317C15.2551 7.26664 15.2551 8.73446 14.2356 9.3079L6.23537 13.8079C5.23546 14.3703 4 13.6477 4 12.5005V3.50023Z">
@@ -304,13 +293,11 @@
 											</Button>
 										</StackPanel>
 
-										<Border Grid.Row="2" Margin="4,0,0,0">
-
-
+										<Border Grid.Row="2" Margin="0,0,0,0">
 											<!--<TransitioningContentControl x:Name="ContentAlbumSongs" Content="ArtistAlbumSongs"/>-->
 											<!--  Content="{Binding CurrentAlbumSongs}" -->
 											<!-- " SelectedItem="{Binding SelectedSong}" -->
-											<ListBox ItemsSource="{Binding Songs}" SelectionMode="Single" BorderThickness="0" Margin="16,3,0,0">
+											<ListBox ItemsSource="{Binding Songs}" SelectionMode="Single" BorderThickness="0" Margin="14,3,0,0">
 												<!--<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
 													<VirtualizingStackPanel />
