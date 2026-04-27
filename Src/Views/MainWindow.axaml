@@ -73,7 +73,8 @@
 			<ui:FANavigationView.PaneHeader>
 				<Grid ColumnDefinitions="*,Auto">
 
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="True">
+					<!-- App Icon and Title hide when x11 -->
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{OnPlatform Default=False, Windows=True, x:TypeArguments=x:Boolean}">
 						<Image x:Name="ImageAppIcon" Width="16" Height="16" Margin="0,0,6,0" Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 						<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold" Margin="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 					</StackPanel>
@@ -229,7 +230,7 @@
 					</Border>
 					<Button Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Stretch" BorderThickness="0" MinWidth="78" Margin="4,0,0,4" VerticalContentAlignment="Top">
 						<Button.Flyout>
-							<MenuFlyout>
+							<MenuFlyout Placement="Top">
 								<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ScrollIntoNowPlaying}" Command="{Binding ScrollIntoNowPlayingCommand}"/>
 								<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_GoToAlbumPage}" Command="{Binding JumpToAlbumPageCommand}" />
 								<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_GoToArtistPage}" Command="{Binding JumpToArtistPageCommand}"/>
