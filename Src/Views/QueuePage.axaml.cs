@@ -170,7 +170,7 @@ public partial class QueuePage : UserControl
         {
             if (this.QueueListBox is ListBox lb)
             {
-                // This does not work when Queue page is not visible...
+                // TODO: This does not work when Queue page is not visible...
                 lb.ScrollIntoView(ind);
             }
         });

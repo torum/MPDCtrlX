@@ -5679,7 +5679,7 @@ public partial class MainViewModel : ObservableObject
                     UpdateAudioOutputs();
 
                     await Task.Delay(300);
-                    await _mpc.MpdQueryListAlbumArtists();
+                    await _mpc.MpdIdleQueryListAlbumArtists();
 
                     await Task.Delay(50);
                     UpdateAlbumsAndArtists();
