@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
+			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
+			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
+             x:Class="MPDCtrlX.Views.Dialogs.Keybindings">
+	<Grid>
+		<ScrollViewer Margin="10" Width="480" Height="250" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+			<StackPanel Spacing="14" Margin="0,0,0,24">
+				<TextBlock Text="Application Global" FontWeight="Bold" FontSize="16"/>
+				<StackPanel Spacing="14" Margin="12,0,0,0">
+					<SelectableTextBlock>
+						<Run Text="Play/Pause: " FontWeight="SemiBold"/>
+						<Run Text="MediaPlay, MediaPlayPause, MediaStop, Ctrl+Space, Ctrl+P"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Play Next: " FontWeight="SemiBold"/>
+						<Run Text="MediaNextTrack, Ctrl+N, Ctrl+Right"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Play Previous: " FontWeight="SemiBold"/>
+						<Run Text="MediaPreviousTrack, Ctrl+B, Ctrl+Left"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Volume Mute: " FontWeight="SemiBold"/>
+						<Run Text="VolumeMute"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Volume Down: " FontWeight="SemiBold"/>
+						<Run Text="Ctrl+OemMinus, Ctrl+Subtract"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Volume Up: " FontWeight="SemiBold"/>
+						<Run Text="VolumeUp, Ctrl+OemPlus, Ctrl+Add"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Search library: " FontWeight="SemiBold"/>
+						<Run Text="Ctrl+S"/>
+					</SelectableTextBlock>
+				</StackPanel>
+				<TextBlock Text="Queue page" FontWeight="Bold" FontSize="16"/>
+				<StackPanel Spacing="14" Margin="12,0,0,0">
+					<SelectableTextBlock>
+						<Run Text="(On the list) Play selected: " FontWeight="SemiBold"/>
+						<Run Text="Enter"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="(On the list) Remove selected: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Ctrl+Delete"/>
+					</SelectableTextBlock>
+					<SelectableTextBlock>
+						<Run Text="Find song in the Queue: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Ctrl+F"/>
+					</SelectableTextBlock>
+				</StackPanel>
+
+				<TextBlock Text="Albums page" FontWeight="Bold" FontSize="16"/>
+				<StackPanel Spacing="14" Margin="12,0,0,0">
+					<SelectableTextBlock>
+						<Run Text="Find album in the Albums: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Ctrl+F"/>
+					</SelectableTextBlock>
+				</StackPanel>
+				<TextBlock Text="Artists page" FontWeight="Bold" FontSize="16"/>
+				<StackPanel Spacing="14" Margin="12,0,0,0">
+					<SelectableTextBlock>
+						<Run Text="Find artist in the Artists: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Ctrl+F"/>
+					</SelectableTextBlock>
+				</StackPanel>
+				<TextBlock Text="Files page" FontWeight="Bold" FontSize="16"/>
+				<StackPanel Spacing="14" Margin="12,0,0,0">
+					<SelectableTextBlock>
+						<Run Text="Filter file in the Files: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Ctrl+F"/>
+					</SelectableTextBlock>
+				</StackPanel>
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

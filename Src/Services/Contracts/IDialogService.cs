@@ -7,6 +7,8 @@ namespace MPDCtrlX.Services.Contracts;
 
 public interface IDialogService
 {
+    Task ShowKeybindingsDialog();
+
     Task<AddToDialogResult?> ShowAddToDialog(MainViewModel vm);
 
     Task<Profile?> ShowProfileEditDialog(Profile slectedProfile);

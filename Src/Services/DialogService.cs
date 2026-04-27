@@ -18,6 +18,26 @@ public class DialogService : IDialogService
 
     }
 
+    public async Task ShowKeybindingsDialog()
+    {
+        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
+        {
+            Title = "Keyboard Shortcuts",
+            IsPrimaryButtonEnabled = true,
+            PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
+            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
+            IsSecondaryButtonEnabled = false,
+
+            Content = new Views.Dialogs.Keybindings()
+            {
+                //DataContext = new DialogViewModel()
+            }
+        };
+
+        await dialog.ShowAsync();
+    }
+
+
     public async Task<AddToDialogResult?> ShowAddToDialog(ViewModels.MainViewModel vm)
     {
         if (vm is null)

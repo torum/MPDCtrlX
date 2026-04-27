@@ -54,13 +54,8 @@
 		
 		<!-- Library search -->
 		<KeyBinding Command="{Binding ShowSearchCommand}" Gesture="Ctrl+S"/>
-		<!--
-		<KeyBinding Gesture="Alt+D" Command="{Binding DevCenterViewActivation}">
-			<KeyBinding.CommandParameter>
-				<x:Int32>0</x:Int32>
-			</KeyBinding.CommandParameter>
-		</KeyBinding>
-		-->
+
+		<KeyBinding Command="{Binding ShowKeybindingsCommand}" Gesture="F1"/>
 	</Window.KeyBindings>
 
 	<Grid WindowDecorationProperties.ElementRole="None" Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='0,*,Auto,1,128,Auto,Auto', Windows='0,*,Auto,1,128,Auto,Auto'}">

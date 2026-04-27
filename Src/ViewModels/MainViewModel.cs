@@ -11350,6 +11350,12 @@ public partial class MainViewModel : ObservableObject
         GoToArtistPage(item);
     }
 
+    [RelayCommand]
+    public async Task ShowKeybindings()
+    {
+        await _dialog.ShowKeybindingsDialog();
+    }
+
     #endregion
 
 
