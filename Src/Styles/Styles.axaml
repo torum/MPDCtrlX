@@ -5,9 +5,9 @@
 
         <ResourceDictionary>
 
-			<!-- v12 no need for v12? 
+			<!-- v12 no need for v12. Also, expricitly specified in App.axaml.cs. 
 			Temp workaround for https://github.com/AvaloniaUI/Avalonia/issues/19592 
-			<FontFamily x:Key="ContentControlThemeFontFamily">Inter</FontFamily>
+			<FontFamily x:Key="ContentControlThemeFontFamily">fonts:Inter#Inter</FontFamily>
 			 -->
 			<CornerRadius x:Key="NavigationViewContentGridCornerRadius">0,0,0,0</CornerRadius>
 			<Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>

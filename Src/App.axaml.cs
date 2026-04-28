@@ -3,17 +3,19 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
+using MPDCtrlX.ViewModels;
+using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MPDCtrlX
@@ -78,25 +80,21 @@ namespace MPDCtrlX
 
         public override void OnFrameworkInitializationCompleted()
         {
-            // TMP:
+            // TMP: For testing locale strings
             //Properties.Resources.Culture = new CultureInfo("en-US");
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                /*
-                desktop.MainWindow = new MainWindow
+                // Set custom font for non-Windows platforms.
+                if (Application.Current != null)
                 {
-                    DataContext = new MainWindowViewModel(),
-                };
-                */
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        Application.Current.Resources["ContentControlThemeFontFamily"] = new FontFamily("fonts:Inter#Inter");
+                    }
+                }
 
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
-                /*
-                desktop.MainWindow = new MainWindow()
-                {
-
-                };
-                */
 
                 desktop.MainWindow = App.GetService<MainWindow>();
                 //desktop.MainWindow.Show();
@@ -111,7 +109,7 @@ namespace MPDCtrlX
 
         private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            // Prevent the application from crashing
+            // 
             e.Handled = true;
 
             // Log the exception for debugging
