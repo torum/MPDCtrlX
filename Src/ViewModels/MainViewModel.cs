@@ -2848,9 +2848,10 @@ public partial class MainViewModel : ObservableObject
 
     #endregion
 
-    #region == Settings ==
+    #endregion
 
-    public static string AlbumCacheFolderPath => App.AppDataCacheFolder;
+    #region == Settings ==
+    public static string AlbumCacheFolderPath => (Application.Current as App)!.AppDataAlbumCoverCacheFolder;
 
     public string AlbumCacheFolderSizeFormatted
     {
@@ -2864,8 +2865,6 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged();
         }
     } = string.Empty;
-
-    #endregion
 
     #endregion
 
@@ -7390,9 +7389,9 @@ public partial class MainViewModel : ObservableObject
                     strAlbum = SanitizeFilename(strAlbum);
                 }
 
-                string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+                string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
                 
-                string fileTempPath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
+                string fileTempPath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
                 if (File.Exists(fileTempPath))
                 {
                     album.IsImageLoading = false;
@@ -7458,7 +7457,7 @@ public partial class MainViewModel : ObservableObject
                         continue;
                     }
 
-                    string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
+                    string strDirPath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist);
                     bool isWaitFailed = false;
                     bool isCoverExists = false;
                     bool isNoAlbumCover = false;
@@ -7608,8 +7607,8 @@ public partial class MainViewModel : ObservableObject
                 strAlbum = SanitizeFilename(strAlbum);
             }
 
-            string strDirPath = System.IO.Path.Combine(App.AppDataCacheFolder, strArtist);
-            string filePath = System.IO.Path.Combine(App.AppDataCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+            string strDirPath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist);
+            string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
             try
             {
                 Directory.CreateDirectory(strDirPath);
@@ -7723,7 +7722,7 @@ public partial class MainViewModel : ObservableObject
 
     public async Task GetCacheFolderSizeAsync()
     {
-        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(App.AppDataCacheFolder).ConfigureAwait(true));
+        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(AlbumCacheFolderPath).ConfigureAwait(true));
     }
 
     public static void DeleteAllContents(string directoryPath)
@@ -9924,7 +9923,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public async Task ClearAlbumCacheFolder()
     {
-        DeleteAllContents(App.AppDataCacheFolder);
+        DeleteAllContents(AlbumCacheFolderPath);
 
         // Update folder size.
         await GetCacheFolderSizeAsync();

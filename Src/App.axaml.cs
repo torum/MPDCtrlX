@@ -34,22 +34,27 @@ namespace MPDCtrlX
         private static readonly string EnvAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(EnvAppLocalFolder, AppDeveloper)), AppName);
 
         // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
-        private static string _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local for Windows. //System.IO.Path.GetTempPath();
-        private static readonly string EnvAppCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
-        public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(EnvAppCacheAppFolder, "AlbumCoverCache");
+        private readonly string _envAppCacheFolder;
+        private readonly string _envAppCacheAppFolder;
+        public string AppDataAlbumCoverCacheFolder { get; }
 
         public IHost AppHost { get;}
 
         public App()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            // Platform specific Cache folder path
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); //System.IO.Path.GetTempPath();// Use Local for Windows. 
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
+                // /home/<User>/.cache/
                 _envAppCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
             }
+            else
+            {
+                // Use Local for Windows and other. 
+                _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
+            }
+            _envAppCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
+            AppDataAlbumCoverCacheFolder = System.IO.Path.Combine(_envAppCacheAppFolder, "AlbumCoverCache");
 
             AppHost = Microsoft.Extensions.Hosting.Host
                     .CreateDefaultBuilder()

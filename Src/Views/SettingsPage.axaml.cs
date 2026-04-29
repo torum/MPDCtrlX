@@ -70,7 +70,7 @@ public partial class SettingsPage : UserControl
 
     private async void HyperlinkButton_AlbumCacheFolderPath_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var dir = App.AppDataCacheFolder;
+        var dir = (Application.Current as App)!.AppDataAlbumCoverCacheFolder;
 
         var mainWin = App.GetService<MainWindow>();
         var launcher = TopLevel.GetTopLevel(mainWin)?.Launcher;
