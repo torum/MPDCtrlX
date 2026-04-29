@@ -99,8 +99,8 @@
 		<!--
 		 Background="{DynamicResource NavigationViewDefaultPaneBackground}"
 		-->
-		<Border Grid.Row="2" Margin="24,24,0,0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-		<TreeView Grid.Row="2" Grid.Column="0" Margin="24,24,0,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" DoubleTapped="TreeView_DoubleTapped" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+		<Border Grid.Row="2" Margin="24,24,24,0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<TreeView Grid.Row="2" Grid.Column="0" Margin="24,24,24,0" BorderThickness="0 0 0 0" Opacity="0.8" ItemsSource="{Binding MusicDirectories, Mode=OneWay}" SelectionMode="AlwaysSelected" SelectedItem="{Binding SelectedNodeDirectory, Mode=TwoWay}" DoubleTapped="TreeView_DoubleTapped" ScrollViewer.AllowAutoHide="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 			<TreeView.Resources>
 				<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 				<ControlTheme TargetType="TreeView" x:Key="{x:Type TreeView}">

@@ -11,7 +11,8 @@ namespace MPDCtrlX.Views;
 
 public partial class SettingsPage : UserControl
 {
-    public SettingsPage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public SettingsPage() { InitializeComponent(); }
     public SettingsPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

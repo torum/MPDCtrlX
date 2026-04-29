@@ -104,7 +104,7 @@
 			<!-- 
 			 Background="{DynamicResource NavigationViewDefaultPaneBackground}" -->
 			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-			<ListBox x:Name="ArtistListBox" Margin="0,0,3,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
+			<ListBox x:Name="ArtistListBox" Margin="0,0,0,4" MinWidth="182" ItemsSource="{Binding Artists, Mode=TwoWay}" SelectedItem="{Binding SelectedAlbumArtist,Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ListBox_SelectionChanged" BorderThickness="0" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" AutoScrollToSelectedItem="True">
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
 					<ControlTheme x:Key="{x:Type ListBox}" TargetType="ListBox">
@@ -183,7 +183,7 @@
 
 		<Border Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected artist -->
-		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="24,24,0,0">
+		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="12,24,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>

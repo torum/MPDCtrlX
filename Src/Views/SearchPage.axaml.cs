@@ -19,7 +19,8 @@ public partial class SearchPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public SearchPage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public SearchPage() { InitializeComponent(); }
     public SearchPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

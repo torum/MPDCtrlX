@@ -24,7 +24,8 @@ public partial class FilesPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public FilesPage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public FilesPage() { InitializeComponent(); }
     public FilesPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

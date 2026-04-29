@@ -13,7 +13,8 @@ public partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public PlaylistItemPage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public PlaylistItemPage() { InitializeComponent(); }
     public PlaylistItemPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

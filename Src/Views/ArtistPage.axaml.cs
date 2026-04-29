@@ -13,7 +13,8 @@ namespace MPDCtrlX.Views;
 
 public partial class ArtistPage : UserControl
 {
-    public ArtistPage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public ArtistPage() { InitializeComponent(); }
     public ArtistPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

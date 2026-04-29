@@ -81,9 +81,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="12.0.1" />
-	  <PackageReference Include="Avalonia.Desktop" Version="12.0.1" />
-	  <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.1" />
+	  <PackageReference Include="Avalonia" Version="12.0.2" />
+	  <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
+	  <PackageReference Include="Avalonia.Fonts.Inter" Version="12.0.2" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
 	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.0" />

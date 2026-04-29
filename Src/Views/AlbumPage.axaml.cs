@@ -20,7 +20,9 @@ public partial class AlbumPage : UserControl
 {
     //private ScrollViewer? _scrollViewer;
     //private WrapPanel? _wrapPanel;
-    public AlbumPage() { }
+
+    // Optional parameterless constructor for XAML Previewer
+    public AlbumPage() { InitializeComponent(); }
     public AlbumPage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

@@ -3,10 +3,12 @@
                     xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated">
 	
-	<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->
+	<!-- Added: VerticalScrollViewerAnimatedBehavior. -->
 	<!-- Changed: ItemsContainerGrid margin=0 for footer buttom margin -->
 	<!-- Added to TogglePaneButton: Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonWidth}" -->
-    <!-- Added  WindowDecorationProperties.ElementRole="User" -->
+    <!-- Added  WindowDecorationProperties.ElementRole="User" for TogglePaneButton etc -->
+    <!-- Added TitleBar border row in SplitView.Content -->
+    <!-- Added WindowDecorationProperties.ElementRole="TitleBar" Margin="6,0,0,0" Background to PaneHeaderContentBorder-->
 	
     <ControlTheme x:Key="{x:Type ui:FANavigationView}" TargetType="ui:FANavigationView">
         <!--<Setter Property="KeyboardNavigation.IsTabStop" Value="False" />-->
@@ -251,6 +253,7 @@
                                         </Grid.ColumnDefinitions>
 
                                         <ContentControl Name="PaneHeaderContentBorder"
+                                                        WindowDecorationProperties.ElementRole="TitleBar" Margin="6,0,0,0" Background="{DynamicResource NavigationViewDefaultPaneBackground}"
                                                         KeyboardNavigation.IsTabStop="True"
                                                         VerticalContentAlignment="Stretch"
                                                         HorizontalContentAlignment="Stretch"
@@ -350,47 +353,54 @@
                             </SplitView.Pane>
 
                             <SplitView.Content>
+                                <Grid RowDefinitions="{OnPlatform Default='0,*', Windows='32,*'}">
+                                    <!-- Added for v12.0.2 -->
+                                    <Border Grid.Row="0" 
+                                            WindowDecorationProperties.ElementRole="TitleBar" 
+                                            Background="{DynamicResource NavigationViewContentBackground}"
+                                            BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
+                                            BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}">
+                                    </Border>
+								    <Border Name="ContentGridBorder"
+                                            Grid.Row="1"
+                                            ClipToBounds="True"
+                                            Background="{DynamicResource NavigationViewContentBackground}"
+                                            BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
+                                            BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}"
+                                            Margin="{DynamicResource NavigationViewContentMargin}"
+                                            CornerRadius="{DynamicResource NavigationViewContentGridCornerRadius}">
+                                        <Grid Name="ContentGrid"
+                                              RowDefinitions="Auto,Auto,*"
+                                              ColumnDefinitions="Auto,*">
+                                        
+                                            <Rectangle Name="ContentTopPadding"
+                                                       Grid.ColumnSpan="2"
+                                                       Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
+                                                       IsVisible="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}" />
 
-                                <Border Name="ContentGridBorder"
-                                        ClipToBounds="True"
-                                        Background="{DynamicResource NavigationViewContentBackground}"
-                                        BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
-                                        BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}"
-                                        Margin="{DynamicResource NavigationViewContentMargin}"
-                                        CornerRadius="{DynamicResource NavigationViewContentGridCornerRadius}">
-                                    <Grid Name="ContentGrid"
-                                          RowDefinitions="Auto,Auto,*"
-                                          ColumnDefinitions="Auto,*">
+                                            <Rectangle Name="ContentLeftPadding" Grid.Row="1" />
 
-                                        <Rectangle Name="ContentTopPadding"
-                                                   Grid.ColumnSpan="2"
-                                                   Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
-                                                   IsVisible="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}" />
+                                            <ContentControl Name="HeaderContent"
+                                                            Grid.Row="1"
+                                                            Grid.Column="1"
+                                                            MinHeight="{StaticResource PaneToggleButtonHeight}"
+                                                            KeyboardNavigation.IsTabStop="True"
+                                                            Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Header}"
+                                                            ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HeaderTemplate}"
+                                                            VerticalContentAlignment="Stretch"
+                                                            HorizontalContentAlignment="Stretch"
+                                                            Theme="{StaticResource NavigationViewTitleHeaderContentControlTextStyle}" />
 
-                                        <Rectangle Name="ContentLeftPadding" Grid.Row="1" />
+                                            <ContentPresenter Grid.Row="2"
+                                                              Grid.ColumnSpan="2"
+                                                              Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
+                                                              ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ContentTemplate}"
+                                                              Margin="{DynamicResource NavigationViewContentPresenterMargin}"
+                                                              Name="ContentPresenter" />
 
-                                        <ContentControl Name="HeaderContent"
-                                                        Grid.Row="1"
-                                                        Grid.Column="1"
-                                                        MinHeight="{StaticResource PaneToggleButtonHeight}"
-                                                        KeyboardNavigation.IsTabStop="True"
-                                                        Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Header}"
-                                                        ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HeaderTemplate}"
-                                                        VerticalContentAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
-                                                        Theme="{StaticResource NavigationViewTitleHeaderContentControlTextStyle}" />
-
-                                        <ContentPresenter Grid.Row="2"
-                                                          Grid.ColumnSpan="2"
-                                                          Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"
-                                                          ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ContentTemplate}"
-                                                          Margin="{DynamicResource NavigationViewContentPresenterMargin}"
-                                                          Name="ContentPresenter" />
-
-                                    </Grid>
-                                </Border>
-
-
+                                        </Grid>
+                                    </Border>
+                                </Grid>
                             </SplitView.Content>
 
                         </SplitView>

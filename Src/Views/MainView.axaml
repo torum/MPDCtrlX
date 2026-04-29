@@ -10,7 +10,6 @@
              x:Class="MPDCtrlX.Views.MainView"
              x:DataType="vm:MainViewModel"
              x:CompileBindings="True"
-			 Margin="{OnPlatform Default='0', Windows='0,30,0,0'}" 
 			 WindowDecorationProperties.ElementRole="None"
 			 >
 	<Grid x:Name="PageGrid">

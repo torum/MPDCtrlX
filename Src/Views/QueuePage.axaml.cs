@@ -20,7 +20,8 @@ public partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    public QueuePage() { }
+    // Optional parameterless constructor for XAML Previewer
+    public QueuePage() { InitializeComponent(); }
     public QueuePage(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();
