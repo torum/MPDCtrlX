@@ -12,14 +12,8 @@
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:CompileBindings="True"
 			 KeyDown="Page_KeyDown">
-
-	<Grid x:Name="PageGrid" WindowDecorationProperties.ElementRole="None" Margin="{OnPlatform Default='0', Windows='0,0,0,0'}" RowDefinitions="{OnPlatform Default='0,Auto,*', Windows='0,Auto,*'}" SizeChanged="PageGrid_SizeChanged">
-		<Border Grid.Row="0" Height="0" Background="Blue" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></Border>
-		
-		<!-- Queue page title and menus -->
-		<!-- v12  Background="{DynamicResource NavigationViewDefaultPaneBackground}" -->
-		<Border Grid.Row="1" Opacity="0.4"></Border>
-		<Grid Grid.Row="1" Margin="0,0,0,0" x:Name="HeaderGrid">
+	<Grid x:Name="PageGrid" WindowDecorationProperties.ElementRole="None" Margin="0" RowDefinitions="Auto,*" SizeChanged="PageGrid_SizeChanged">
+		<Grid Grid.Row="0" Margin="0,0,0,0" x:Name="HeaderGrid">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -197,7 +191,7 @@
 		</Grid>
 
 		<!-- Queue ListBox  Margin="16,4,0,0"-->
-		<Grid Grid.Row="2" Margin="24,24,0,0" RowDefinitions="1,Auto,1,*">
+		<Grid Grid.Row="1" Margin="24,24,0,0" RowDefinitions="1,Auto,1,*">
 			<Border Grid.Row="0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<Border Grid.Row="1" Opacity="0.4"></Border>
 			<!-- v12  Background="{DynamicResource NavigationViewDefaultPaneBackground}" -->

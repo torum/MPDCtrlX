@@ -18,11 +18,6 @@
 		MinWidth="320" 
 		MinHeight="460"
 		KeyDown="Window_KeyDown">
-
-	<!-- Icon="/Assets/MPDCtrlX.ico" Background="Transparent" ExtendClientAreaToDecorationsHint="True" TransparencyLevelHint="AcrylicBlur" -->
-	<!-- {OnPlatform Default='0,120,*,0,Auto,28', Windows='32,120,*,0,Auto,28'} -->
-	<!-- ,x:TypeArguments='RowDefinitions' or ,x:TypeArguments='GridLength'-->
-
 	<Window.KeyBindings>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Play" />
 		<!--
@@ -51,15 +46,11 @@
 		-->
 		<!-- Localized search eg. find song in QueuePage or artist in ArtistPage -->
 		<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
-		
 		<!-- Library search -->
 		<KeyBinding Command="{Binding ShowSearchCommand}" Gesture="Ctrl+S"/>
-
 		<KeyBinding Command="{Binding ShowKeybindingsCommand}" Gesture="F1"/>
 	</Window.KeyBindings>
-
 	<Grid Margin="0" RowDefinitions="*,Auto,1,128,Auto,Auto" WindowDecorationProperties.ElementRole="None">
-
 		<!-- NavigationView -->
 		<ui:FANavigationView Grid.Row="0" Margin="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
 			<ui:FANavigationView.PaneHeader>

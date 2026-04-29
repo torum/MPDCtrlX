@@ -17,7 +17,6 @@
 	<!-- Artists -->
 	<Grid x:Name="PageGrid" SizeChanged="PageGrid_SizeChanged">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="1"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
@@ -27,11 +26,8 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 
-		<Border Grid.Row="0" Grid.ColumnSpan="3" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-		
-		<Border Grid.Row="1" Grid.ColumnSpan="3" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
 		<!-- Artists page title and menus -->
-		<Grid x:Name="ArtistPageTitleGrid" Grid.Row="1" Margin="0,0,0,0" Grid.ColumnSpan="3">
+		<Grid x:Name="ArtistPageTitleGrid" Grid.Row="0" Margin="0,0,0,0" Grid.ColumnSpan="3">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -100,7 +96,8 @@
 			</Popup>
 		</Grid>
 
-        <Grid Grid.Row="2" Grid.Column="0" Margin="24,24,0,0">
+		<!-- Artists listbox -->
+        <Grid Grid.Row="1" Grid.Column="0" Margin="24,24,0,0">
 			<!-- 
 			 Background="{DynamicResource NavigationViewDefaultPaneBackground}" -->
 			<Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
@@ -181,9 +178,10 @@
 			</ListBox>
         </Grid>
 
-		<Border Grid.Row="2" Grid.Column="1" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
+		<!-- Albums and Songs of selected Artist -->
+		<Border Grid.Row="1" Grid.Column="1" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 		<!-- Song list of selected artist -->
-		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="2" Grid.Column="2" Margin="12,24,0,0">
+		<Grid x:Name="SelectedArtistSongsGrid" Grid.Row="1" Grid.Column="2" Margin="12,24,0,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>

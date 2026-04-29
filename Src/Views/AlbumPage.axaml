@@ -13,14 +13,10 @@
 			 x:DataType="vm:MainViewModel"
              x:CompileBindings="True"
 			 KeyDown="Page_KeyDown">
-
 	<!-- Album -->
-	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
-		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
-		
-		<Border Grid.Row="1" Background="{DynamicResource NavigationViewDefaultPaneBackground}" Opacity="0.4" IsVisible="False"></Border>
+	<Grid RowDefinitions="Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<!-- Albums page title and menus -->
-		<Grid Grid.Row="1" Margin="0,0,0,0">
+		<Grid Grid.Row="0" Margin="0,0,0,0">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -109,11 +105,10 @@
 
 			</StackPanel>
 		</Grid>
-
-		<Grid Grid.Row="2" Grid.Column="0" RowDefinitions="1,*" Margin="0,24,0,0">
+		<!-- Album listview body with SplitView -->
+		<Grid Grid.Row="1" Grid.Column="0" RowDefinitions="1,*" Margin="0,24,0,0">
 			<Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
 			<SplitView Grid.Row="1" PanePlacement="Right" Background="Transparent" IsPaneOpen="{Binding IsAlbumContentPanelVisible, Mode=TwoWay}" DisplayMode="Overlay" OpenPaneLength="{Binding Bounds.Size.Width, ElementName=AlbumsListBoxGrid}">
-				
 				<!-- Selected Album (Its Cover and Songs)  -->
 				<SplitView.Pane>
 					<Grid>
@@ -361,11 +356,9 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 					</Grid>
 
 				</SplitView.Pane>
-
 				<!-- Album view ListBox -->
 				<Grid Name="AlbumsListBoxGrid">
-
-					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="6,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
+					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Padding="0,0,12,0" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
 							
@@ -542,7 +535,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 						</ListBox.Resources>
 						<ListBox.ItemsPanel>
 							<ItemsPanelTemplate>
-								<UniformGrid Columns="4" HorizontalAlignment="Stretch"/>
+								<UniformGrid Columns="4" HorizontalAlignment="Stretch" Margin="0"/>
 								<!-- Use VirtualizedUniformPanel when Avalonia implements it.  -->
 								<!-- <WrapPanel HorizontalAlignment="Left"/> WrapPanel works but slow. -->
 								<!-- <VirtualizingStackPanel /> virtualized, but only vertical one col. -->
@@ -639,14 +632,12 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<Setter Property="Width" Value="226"/>
 								<Setter Property="Height" Value="260"/>
 								<Setter Property="Padding" Value="0"/>
+								<Setter Property="Margin" Value="0"/>
 							</Style>
 						</ListBox.Styles>
 					</ListBox>
-
 				</Grid>
 			</SplitView>
-			
 		</Grid>
-
 	</Grid>
 </UserControl>
