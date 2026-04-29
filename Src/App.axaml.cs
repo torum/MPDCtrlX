@@ -1,7 +1,5 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -17,28 +15,42 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using static System.Environment;
 
 namespace MPDCtrlX
 {
-    public partial class App : Application
+    public class App : Application
     {
         public static readonly string AppName = "MPDCtrlX";
         private static readonly string AppDeveloper = "torum";
 
-        // Data folder and Config file path.
+        // Config file path.(/home/<User>/.config/)
         private static readonly string EnvDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(EnvDataFolder, AppDeveloper)), AppName);
         public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
 
-        // Temp album cover cache folder.
-        private static readonly string _envAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local. //System.IO.Path.GetTempPath();
-        private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, AppDeveloper)), AppName);
-        public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
+        // Data folder.(/home/<User>/.local/share/)
+        private static readonly string EnvAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local.
+        private static readonly string EnvAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(EnvAppLocalFolder, AppDeveloper)), AppName);
 
-        public IHost AppHost { get; private set; }
+        // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
+        private static string _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local for Windows. //System.IO.Path.GetTempPath();
+        private static readonly string EnvAppCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
+        public static string AppDataCacheFolder { get; } = System.IO.Path.Combine(EnvAppCacheAppFolder, "AlbumCoverCache");
+
+        public IHost AppHost { get;}
 
         public App()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); //System.IO.Path.GetTempPath();// Use Local for Windows. 
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                _envAppCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
+            }
+
             AppHost = Microsoft.Extensions.Hosting.Host
                     .CreateDefaultBuilder()
                     .UseContentRoot(AppContext.BaseDirectory)
@@ -104,8 +116,8 @@ namespace MPDCtrlX
         }
 
         // Log file.
-        private static readonly StringBuilder _errortxt = new();
-        private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
+        private static readonly StringBuilder Errortxt = new();
+        private static readonly string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
 
         private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -124,17 +136,17 @@ namespace MPDCtrlX
             var dt = DateTime.Now;
             var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
 
-            _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
+            Errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
         }
 
         public static void SaveErrorLog()
         {
-            if (string.IsNullOrEmpty(_logFilePath))
+            if (string.IsNullOrEmpty(LogFilePath))
                 return;
 
-            var s = _errortxt.ToString();
+            var s = Errortxt.ToString();
             if (!string.IsNullOrEmpty(s))
-                File.WriteAllText(_logFilePath, s);
+                File.WriteAllText(LogFilePath, s);
         }
     }
 }
