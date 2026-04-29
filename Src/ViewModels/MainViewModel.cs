@@ -2851,7 +2851,7 @@ public partial class MainViewModel : ObservableObject
     #endregion
 
     #region == Settings ==
-    public static string AlbumCacheFolderPath => (Application.Current as App)!.AppDataAlbumCoverCacheFolder;
+    public static string AlbumCacheFolderPath => App.AppDataAlbumCoverCacheFolder;
 
     public string AlbumCacheFolderSizeFormatted
     {

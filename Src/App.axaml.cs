@@ -35,8 +35,8 @@ namespace MPDCtrlX
 
         // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
         private readonly string _envAppCacheFolder;
-        private readonly string _envAppCacheAppFolder;
-        public string AppDataAlbumCoverCacheFolder { get; }
+        private readonly string _envAppCacheAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
+        public static string AppDataAlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(EnvAppLocalAppFolder, "AlbumCoverCache");
 
         public IHost AppHost { get;}
 
