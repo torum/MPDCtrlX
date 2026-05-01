@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
@@ -171,7 +172,7 @@ public partial class QueuePage : UserControl
         {
             if (this.QueueListBox is ListBox lb)
             {
-                // TODO: This does not work when Queue page is not visible...
+                // TODO: This does not work when Queue page is not IsAttachedToVisualTree()...
                 lb.ScrollIntoView(ind);
             }
         });

@@ -34,9 +34,9 @@ namespace MPDCtrlX
         private static readonly string EnvAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(EnvAppLocalFolder, AppDeveloper)), AppName);
 
         // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
-        private readonly string _envAppCacheFolder;
-        private readonly string _envAppCacheAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
-        public static string AppDataAlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(EnvAppLocalAppFolder, "AlbumCoverCache");
+        private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
+        private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
+        public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(EnvAppLocalAppFolder, "AlbumCoverCache");
 
         public IHost AppHost { get;}
 
@@ -45,16 +45,33 @@ namespace MPDCtrlX
             // Platform specific Cache folder path
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
+                var oldCachePath = AlbumCoverCacheFolder;
                 // /home/<User>/.cache/
-                _envAppCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
+                _envCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
+                _envCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envCacheFolder, AppDeveloper)), AppName);
+                AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
+
+                if (Directory.Exists(oldCachePath) && (!Directory.Exists(AlbumCoverCacheFolder)))
+                {
+                    try
+                    {
+                        Directory.Move(oldCachePath, AlbumCoverCacheFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the exception for debugging
+                        AppendErrorLog("Failed to clear AlbumCoverCache folder on startup.", ex.ToString());
+                        SaveErrorLog();
+                    }
+                }
             }
             else
             {
                 // Use Local for Windows and other. 
-                _envAppCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
+                _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
+                _envCacheAppFolder = System.IO.Path.Combine(System.IO.Path.Combine(_envCacheFolder, AppDeveloper), AppName);
+                AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
             }
-            _envAppCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
-            AppDataAlbumCoverCacheFolder = System.IO.Path.Combine(_envAppCacheAppFolder, "AlbumCoverCache");
 
             AppHost = Microsoft.Extensions.Hosting.Host
                     .CreateDefaultBuilder()

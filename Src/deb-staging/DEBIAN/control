@@ -8,4 +8,4 @@ Depends: libx11-6, libice6, libsm6, libfontconfig1, ca-certificates, tzdata, lib
 Maintainer: torum
 Homepage: https://github.com/torum/MPDCtrlX
 Description: Music Player Daemon Client
-Copyright: torum 2025
+Copyright: torum 2026
