@@ -15,6 +15,9 @@
 	  <FileVersion>1.0.8.0</FileVersion>
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
+
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

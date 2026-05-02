@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
@@ -209,27 +210,27 @@ public partial class QueuePage : UserControl
     // Double click to play
     private void QueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
-        if (DataContext is MainViewModel vm)
+        if (e.Source is Visual visual && visual.FindAncestorOfType<ListBoxItem>() is { } item)
         {
-            if (vm.PlayCanExecute())
-            {
-                _ = vm.QueueListviewEnterKey();
-            }
+            item.IsSelected = true;
+
+            if (DataContext is not MainViewModel vm) return;
+
+            if (!vm.PlayCanExecute()) return;
+
+            _ = vm.QueueListviewEnterKey();
         }
     }
 
     // FilterBox
     private void FilterQueueListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
-        if (this.FilterQueueListBox.SelectedItem is SongInfoEx song)
+        if ((this.FilterQueueListBox.SelectedItem is SongInfoEx song) && (this.QueueListBox is ListBox lb))
         {
-            if (this.QueueListBox is ListBox lb)
-            {
-                lb.ScrollIntoView(song.Index);
+            lb.ScrollIntoView(song.Index);
 
-                lb.SelectedIndex = song.Index;
-                //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
-            }
+            lb.SelectedIndex = song.Index;
+            //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
         }
     }
 
