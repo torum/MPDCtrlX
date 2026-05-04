@@ -455,7 +455,8 @@ public sealed partial class MainWindow : Window//AppWindow//
         else if (e.Key == Avalonia.Input.Key.Space)
         {
             var focusedControl = this.FocusManager?.GetFocusedElement();
-            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox)
+            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox
+                || focusedControl is Avalonia.Controls.Button || focusedControl is Avalonia.Controls.ToggleSplitButton || focusedControl is Avalonia.Controls.CheckBox)
             {
                 Debug.WriteLine($"Focused control: {focusedControl?.GetType().Name}. Space key pressed, but focus is on a control that should handle it. Ignoring for play/pause.");
 
@@ -471,8 +472,30 @@ public sealed partial class MainWindow : Window//AppWindow//
             //Debug.WriteLine("Space key pressed. Toggling play/pause.");
 
             await vm.Play();
-            e.Handled = true;
-            
+
+            // keydown only handled is not good.
+            //e.Handled = true;
+
         }
+    }
+
+    private async void PlaybackPlay_Loaded(object? sender, RoutedEventArgs e)
+    {
+        // Delays focus until all current layout/focus cycles are finished
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Delay(500);
+            if (PlaybackPlay.Focusable)
+            {
+                PlaybackPlay.Focus();
+            }
+            else
+            {
+                Debug.WriteLine("PlaybackPlay button is not focusable. Cannot set initial focus.");
+            }
+
+            this.FocusManager?.Focus(PlaybackPlay, NavigationMethod.Unspecified);
+
+        }, DispatcherPriority.Background);
     }
 }
