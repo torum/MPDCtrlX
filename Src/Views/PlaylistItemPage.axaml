@@ -10,7 +10,8 @@
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Views.PlaylistItemPage"
 			 x:DataType="vm:MainViewModel"
-             x:CompileBindings="True">
+             x:CompileBindings="True"
+			 KeyDown="Page_KeyDown">
 	
 	<Grid RowDefinitions="1,Auto,*" SizeChanged="PageGrid_SizeChanged">
 		<Border Grid.Row="0" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.6"></Border>
@@ -42,6 +43,14 @@
 			
 			<!-- Page command menu buttons (filter, more) -->
 			<StackPanel Grid.Column="2" Height="48" Spacing="6" Margin="0,0,12,0" Orientation="Horizontal" HorizontalAlignment="Right">
+				<!-- Find/Filter -->	
+				<ToggleButton x:Name="TglButtonPlaylistSongFilter" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Find}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Width="34" Height="34" IsChecked="{Binding IsPlaylistSongFindVisible, Mode=TwoWay}" Click="TglButtonPlaylistSongFilter_Click">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">	
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							Data="M10.0195 10.7266C9.06578 11.5217 7.83875 12 6.5 12C3.46243 12 1 9.53757 1 6.5C1 3.46243 3.46243 1 6.5 1C9.53757 1 12 3.46243 12 6.5C12 7.83875 11.5217 9.06578 10.7266 10.0195L13.8535 13.1464C14.0488 13.3417 14.0488 13.6583 13.8535 13.8536C13.6583 14.0488 13.3417 14.0488 13.1464 13.8536L10.0195 10.7266ZM11 6.5C11 4.01472 8.98528 2 6.5 2C4.01472 2 2 4.01472 2 6.5C2 8.98528 4.01472 11 6.5 11C8.98528 11 11 8.98528 11 6.5Z">
+						</PathIcon>
+					</Viewbox>
+				</ToggleButton>
 
 				<!-- Play button -->
 				<SplitButton VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34" Command="{Binding PlaylistClearLoadPlaylistCommand}" ToolTip.Tip="{x:Static prop:Resources.PageMenu_PlayAll}">
@@ -138,6 +147,45 @@
 
 			</StackPanel>
 			
+			<Popup x:Name="FilterPlaylistSongPopup" ShouldUseOverlayLayer="True" Opened="FilterPlaylistSongPopup_Opened" Margin="0" PlacementTarget="{Binding #TglButtonPlaylistSongFilter}" Placement="BottomEdgeAlignedRight" HorizontalOffset="-26" VerticalOffset="-52" IsLightDismissEnabled="True" IsOpen="{Binding IsChecked, ElementName=TglButtonPlaylistSongFilter, Mode=TwoWay}">
+				<Border  BoxShadow="0 4 10 0 #40000000" Margin="12" Padding="6" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" MinWidth="280" Height="280" MinHeight="280" MaxHeight="280" CornerRadius="6" Background="{DynamicResource MenuFlyoutPresenterBackground}" BorderThickness="1" BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}">
+						
+					<StackPanel>
+						<TextBox x:Name="FilterPlaylistSongQueryTextBox" Text="{Binding FilterPlaylistSongQuery,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,0" IsVisible="{Binding IsChecked, ElementName=TglButtonPlaylistSongFilter}" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+							<TextBox.KeyBindings>
+								<KeyBinding Command="{Binding ShowFindCommand}" Gesture="Ctrl+F"/>
+							</TextBox.KeyBindings>
+						</TextBox>
+
+						<ListBox Name="FilterPlaylistSongListBox" ItemsSource="{Binding PlaylistSongsForFilter}" SelectedItem="{Binding SelectedFilterPlaylistSong}" AutoScrollToSelectedItem="True" SelectionMode="Single" DoubleTapped="FilterPlaylistSongListBox_DoubleTapped" MaxHeight="240" BorderThickness="0">
+							<ListBox.KeyBindings>
+								<!--  Enter -->
+								<KeyBinding Command="{Binding PlaylistSongFilterSelectCommand}" CommandParameter="{Binding #FilterPlaylistSongListBox.SelectedItem}" Gesture="Enter" />
+							</ListBox.KeyBindings>
+							<ListBox.ItemContainerTheme>
+
+							</ListBox.ItemContainerTheme>
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<VirtualizingStackPanel />
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+							<ListBox.ItemTemplate>
+								<DataTemplate x:DataType="mod:SongInfo">
+										<TextBlock x:Name="filterListBoxTitle" Text="{Binding Path=Title, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0" Padding="12 0 3 0" />
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+							<ListBox.Styles>
+								<Style Selector="ListBoxItem" x:DataType="mod:AlbumArtist">
+									<Setter Property="Padding" Value="3"/>
+									<Setter Property="VerticalAlignment" Value="Center"/>
+								</Style>
+							</ListBox.Styles>
+						</ListBox>
+					</StackPanel>
+
+				</Border>
+			</Popup>
 		</Grid>
 
 		<!-- PlaylistItem ListBox -->
@@ -217,7 +265,7 @@
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
+			<ListBox x:Name="PlaylistSongListBox" Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->

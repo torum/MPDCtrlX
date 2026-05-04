@@ -2054,13 +2054,6 @@ public partial class MpcService : IMpcService
 
         CommandSearchResult result = new();
 
-        /*
-        Dispatcher.UIThread.Post(() =>
-        {
-            SearchResult.Clear();
-        });
-        */
-
         if (string.IsNullOrEmpty(queryTag) || string.IsNullOrEmpty(queryShiki)) // || string.IsNullOrEmpty(queryValue) 
         {
             result.IsSuccess = false;
@@ -2089,22 +2082,10 @@ public partial class MpcService : IMpcService
         if (cm.IsSuccess)
         {
             //MpcProgress?.Invoke(this, "[Background] Parsing search result...");
-            /*
-            if (await ParseSearchResult(cm.ResultText))
-            {
-                result.IsSuccess = true;
-
-                result.SearchResult = this.SearchResult;
-
-                //result.ResultText = cm.ResultText;
-
-                MpcProgress?.Invoke(this, "[Background] Search result updated.");
-            }
-            */
-            //MpcProgress?.Invoke(this, "[Background] Search completed.");
             result.IsSuccess = true;
             result.ResultText = cm.ResultText;
             result.SearchResult = await ParseSearchResult(cm.ResultText);
+            //MpcProgress?.Invoke(this, "[Background] Search completed.");
         }
         else
         {

@@ -2846,6 +2846,79 @@ public partial class MainViewModel : ObservableObject
         private set;
     } = "";
 
+    // Filter Playlist
+    public ObservableCollection<SongInfo> PlaylistSongsForFilter
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+
+            field = value;
+            OnPropertyChanged();
+        }
+    } = [];
+
+    public string FilterPlaylistSongQuery
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+
+            field = value;
+            OnPropertyChanged();
+
+            if (field == "")
+            {
+                return;
+            }
+
+            var filtered = PlaylistSongs.Where(FilterPlaylistSong);
+
+            PlaylistSongsForFilter = new ObservableCollection<SongInfo>(filtered);
+
+        }
+    } = "";
+
+    private bool FilterPlaylistSong(SongInfo song)
+    {
+        return song.Title.Contains(FilterPlaylistSongQuery, StringComparison.CurrentCultureIgnoreCase);// InvariantCultureIgnoreCase
+    }
+
+    public bool IsPlaylistSongFindVisible
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+
+            field = value;
+
+            PlaylistSongsForFilter.Clear();
+
+            FilterPlaylistSongQuery = "";
+
+            OnPropertyChanged();
+        }
+    }
+
+    public SongInfo? SelectedFilterPlaylistSong
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+
+            field = value;
+            OnPropertyChanged();
+        }
+    }
+
     #endregion
 
     #endregion
@@ -8377,9 +8450,9 @@ public partial class MainViewModel : ObservableObject
     public void VolumeDown()
     {
         if (IsBusy) return;
-        if (_volume >= 10)
+        if (_volume >= 5)
         {
-            Volume -= 10;
+            Volume -= 5;
             //await _mpc.MpdSetVolume(Convert.ToInt32(_volume - 10));
         }
         else
@@ -8397,9 +8470,9 @@ public partial class MainViewModel : ObservableObject
     public void VolumeUp()
     {
         if (IsBusy) return;
-        if (_volume <= 90)
+        if (_volume <= 95)
         {
-            Volume += 10;
+            Volume += 5;
             //await _mpc.MpdSetVolume(Convert.ToInt32(_volume + 10));
         }
         else
@@ -9365,6 +9438,43 @@ public partial class MainViewModel : ObservableObject
     #endregion
 
     #region == Playlist ==
+
+    [RelayCommand]
+    public void PlaylistSongsFindShowHide()
+    {
+        if (IsPlaylistSongFindVisible)
+        {
+            IsPlaylistSongFindVisible = false;
+            return;
+        }
+
+        if (PlaylistSongs.Count <= 0)
+        {
+            return;
+        }
+
+        SelectedFilterPlaylistSong = null;
+        PlaylistSongsForFilter.Clear();
+
+        FilterPlaylistSongQuery = "";
+
+        IsPlaylistSongFindVisible = true;
+    }
+
+
+    [RelayCommand]
+    public void PlaylistSongFilterSelect(object obj)//
+    {
+        if (obj is null) return;
+        if (obj is not SongInfo song) return;
+        if (PlaylistSongs.Count <= 1) return;
+        if (SelectedFilterPlaylistSong is null) return;
+
+        if (SelectedFilterPlaylistSong.Title != song.Title) return; // TODO: culture compare.
+
+        SelectedPlaylistSong = song; // Should scroll to the selected item because AutoScrollToSelectedItem is true in PlaylistSongFilter ListView. 
+        //ScrollIntoViewAndSelect?.Invoke(this, SelectedFilterPlaylistSong.Index);
+    }
 
     [RelayCommand(CanExecute = nameof(LoadPlaylistCanExecute))]
     public async Task PlaylistLoadPlaylist()
@@ -11107,6 +11217,10 @@ public partial class MainViewModel : ObservableObject
         {
             FilesFindShowHide();
         }
+        else if (SelectedNodeMenu is NodeMenuPlaylistItem)
+        {
+            PlaylistSongsFindShowHide();
+        }
         else
         {
 
@@ -11146,6 +11260,7 @@ public partial class MainViewModel : ObservableObject
         IsArtistFindVisible = false;
         IsFilesFindVisible = false;
         IsAlbumFindVisible = false;
+        IsPlaylistSongFindVisible = false;
 
         // Popups
         if (IsConfirmClearQueuePopupVisible) { IsConfirmClearQueuePopupVisible = false; }

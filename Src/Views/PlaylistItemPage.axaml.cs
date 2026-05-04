@@ -1,8 +1,11 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -390,7 +393,7 @@ public partial class PlaylistItemPage : UserControl
         }
     }
 
-    private async void OnPlaylistRenameToDialogShowAsync(object? sender,string playlist)
+    private async void OnPlaylistRenameToDialogShowAsync(object? sender, string playlist)
     {
         if (DataContext is not MainViewModel vm)
         {
@@ -442,5 +445,69 @@ public partial class PlaylistItemPage : UserControl
             }
 
         }
+    }
+
+    private void TglButtonPlaylistSongFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
+
+            if (this.TglButtonPlaylistSongFilter is ToggleButton tb)
+            {
+                if (tb.IsChecked == true)
+                {
+                    if (FilterPlaylistSongQueryTextBox.Focusable)
+                    {
+                        this.FilterPlaylistSongQueryTextBox.Focus();
+                    }
+                }
+            }
+
+        }, DispatcherPriority.Render);
+    }
+
+    private void FilterPlaylistSongListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    {
+        if (this.FilterPlaylistSongListBox.SelectedItem is AlbumArtist artist)
+        {
+            if (this.PlaylistSongListBox is ListBox lb)
+            {
+                //lb.ScrollIntoView(artist.Index);
+                //lb.SelectedIndex = artist.Index;
+                //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
+                //lb.SelectedItem = artist;
+                var vm = App.GetService<MainViewModel>();
+                if (vm is not null)
+                {
+                    vm.PlaylistSongFilterSelect(artist);
+                }
+
+            }
+        }
+    }
+    private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (e.Key == Avalonia.Input.Key.Escape)
+        {
+            TglButtonPlaylistSongFilter.IsChecked = false;
+        }
+    }
+
+    private void FilterPlaylistSongPopup_Opened(object? sender, System.EventArgs e)
+    {
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await Task.Yield(); // Ensure the UI has processed the opened event
+            if (FilterPlaylistSongPopup.Focusable)
+            {
+                FilterPlaylistSongPopup.Focus();
+            }
+
+            if (FilterPlaylistSongQueryTextBox.Focusable)
+            {
+                this.FilterPlaylistSongQueryTextBox.Focus();
+            }
+        }, DispatcherPriority.Render);
     }
 }
