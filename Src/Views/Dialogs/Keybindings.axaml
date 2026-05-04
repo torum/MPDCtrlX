@@ -13,46 +13,46 @@
 				<TextBlock Text="Application Global" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="Play/Pause: " FontWeight="SemiBold"/>
-						<Run Text="MediaPlay, MediaPlayPause, MediaStop, Ctrl+Space, Ctrl+P"/>
+						<Run Text="Play/Pause: "/>
+						<Run Text="MediaPlay, MediaPlayPause, MediaStop, Ctrl+P, Space(when not focused on list)"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Play Next: " FontWeight="SemiBold"/>
+						<Run Text="Play Next: "/>
 						<Run Text="MediaNextTrack, Ctrl+N, Ctrl+Right"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Play Previous: " FontWeight="SemiBold"/>
+						<Run Text="Play Previous: "/>
 						<Run Text="MediaPreviousTrack, Ctrl+B, Ctrl+Left"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Volume Mute: " FontWeight="SemiBold"/>
+						<Run Text="Volume Mute: "/>
 						<Run Text="VolumeMute"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Volume Down: " FontWeight="SemiBold"/>
+						<Run Text="Volume Down: "/>
 						<Run Text="VolumeDown, Ctrl+OemMinus, Ctrl+Subtract"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Volume Up: " FontWeight="SemiBold"/>
+						<Run Text="Volume Up: "/>
 						<Run Text="VolumeUp, Ctrl+OemPlus, Ctrl+Add"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Search library: " FontWeight="SemiBold"/>
+						<Run Text="Search library: "/>
 						<Run Text="Ctrl+S"/>
 					</SelectableTextBlock>
 				</StackPanel>
 				<TextBlock Text="Queue page" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="(On the list) Play selected: " FontWeight="SemiBold"/>
+						<Run Text="(On the list) Play selected: "/>
 						<Run Text="Enter"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="(On the list) Remove selected: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="(On the list) Remove selected: "/>
 						<Run Text="Ctrl+Delete"/>
 					</SelectableTextBlock>
 					<SelectableTextBlock>
-						<Run Text="Find song in the Queue: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Find song in the Queue: "/>
 						<Run Text="Ctrl+F"/>
 					</SelectableTextBlock>
 				</StackPanel>
@@ -60,21 +60,21 @@
 				<TextBlock Text="Albums page" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="Find album in the Albums: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Find album in the Albums: "/>
 						<Run Text="Ctrl+F"/>
 					</SelectableTextBlock>
 				</StackPanel>
 				<TextBlock Text="Artists page" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="Find artist in the Artists: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Find artist in the Artists: "/>
 						<Run Text="Ctrl+F"/>
 					</SelectableTextBlock>
 				</StackPanel>
 				<TextBlock Text="Files page" FontWeight="Bold" FontSize="16"/>
 				<StackPanel Spacing="14" Margin="12,0,0,0">
 					<SelectableTextBlock>
-						<Run Text="Filter files in the Files: " FontWeight="SemiBold" FontSize="16"/>
+						<Run Text="Filter files in the Files: "/>
 						<Run Text="Ctrl+F"/>
 					</SelectableTextBlock>
 				</StackPanel>

@@ -1060,7 +1060,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Play/Pause (Ctrl+Space/Ctrl+P/MediaKeys).
+        ///   Looks up a localized string similar to Play/Pause (Ctrl+P/Space*/MediaKeys).
         /// </summary>
         public static string Playback_PlayPauseButton {
             get {

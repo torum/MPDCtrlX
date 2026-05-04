@@ -1,11 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media.Animation;
 using FluentAvalonia.UI.Navigation;
@@ -143,6 +145,7 @@ public sealed partial class MainWindow : Window//AppWindow//
             //
         }
 
+        this.AddHandler(InputElement.KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
     }
 
     private void OnWorkingStateChanged(object? sender, bool e)
@@ -439,7 +442,7 @@ public sealed partial class MainWindow : Window//AppWindow//
         e.Handled = true;
     }
 
-    private void Window_KeyDown(object? sender, KeyEventArgs e)
+    private async void OnPreviewKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Avalonia.Input.Key.Escape)
         {
@@ -448,6 +451,28 @@ public sealed partial class MainWindow : Window//AppWindow//
                 return;
             }
             vm.Escape();
+        }
+        else if (e.Key == Avalonia.Input.Key.Space)
+        {
+            var focusedControl = this.FocusManager?.GetFocusedElement();
+            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox)
+            {
+                Debug.WriteLine($"Focused control: {focusedControl?.GetType().Name}. Space key pressed, but focus is on a control that should handle it. Ignoring for play/pause.");
+
+                return;
+            }
+
+            if (this.DataContext is not MainViewModel vm)
+            {
+                Debug.WriteLine("DataContext is not MainViewModel. Cannot toggle play/pause.");
+                return;
+            }
+
+            //Debug.WriteLine("Space key pressed. Toggling play/pause.");
+
+            await vm.Play();
+            e.Handled = true;
+            
         }
     }
 }
