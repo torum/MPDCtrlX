@@ -8734,6 +8734,17 @@ public partial class MainViewModel : ObservableObject
         await _mpc.MpdMoveId(idToNewPos);
     }
 
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
+    public async Task QueueListviewMovePos(Dictionary<string, string> idToNewPos)
+    {
+        if (idToNewPos is null) return;
+        if (idToNewPos.Count == 0) return;
+
+        if (Queue.Count <= 1) return;
+
+        await _mpc.MpdMoveId(idToNewPos);
+    }
+
     // ScrollIntoNowPlaying
     [RelayCommand]
     public void ScrollIntoNowPlaying()
@@ -9581,6 +9592,42 @@ public partial class MainViewModel : ObservableObject
     public bool PlaylistDeletePosCanExecute()
     {
         if (!_mpc.Commands.Contains("playlistdelete")) { return false; }
+        return true;
+    }
+
+    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
+    public async Task PlaylistMovePos(Dictionary<string, string> posToNewPos)
+    {
+        if (posToNewPos is null) return;
+        if (posToNewPos.Count == 0) return;
+
+        if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
+        {
+            if (SelectedPlaylistName != nmpli.Name)
+            {
+                Debug.WriteLine("_selectedPlaylistName != nmpli.Name @PlaylistMovePos");
+                return;
+            }
+
+            if (nmpli.IsUpdateRequied)
+            {
+                Debug.WriteLine("nmpli.IsUpdateRequied @PlaylistMovePos");
+                return;
+            }
+            else
+            {
+                await _mpc.MpdPlaylistMove(SelectedPlaylistName, posToNewPos);
+            }
+        }
+        else
+        {
+            Debug.WriteLine("SelectedNodeMenu is NOT NodeMenuPlaylistItem nmpli @PlaylistMovePos");
+            return;
+        }
+    }
+    public bool PlaylistMovePosCanExecute()
+    {
+        if (!_mpc.Commands.Contains("playlistmove")) { return false; }
         return true;
     }
 
