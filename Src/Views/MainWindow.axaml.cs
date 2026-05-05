@@ -20,6 +20,7 @@ using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -146,6 +147,7 @@ public sealed partial class MainWindow : Window//AppWindow//
         }
 
         this.AddHandler(InputElement.KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+        this.AddHandler(InputElement.KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
     }
 
     private void OnWorkingStateChanged(object? sender, bool e)
@@ -454,6 +456,18 @@ public sealed partial class MainWindow : Window//AppWindow//
         }
         else if (e.Key == Avalonia.Input.Key.Space)
         {
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
+            {
+                // Alt + Space pressed.
+                Debug.WriteLine("OnPreviewKeyDown: Alt + Space pressed. Ignoring for play/pause to allow system menu access.");
+
+                // Handle this at keyup.
+                //if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
+                //NativeMethods.ShowSystemWindowMenu(handle.Handle);
+                e.Handled = true;
+                return;
+            }
+            /*
             var focusedControl = this.FocusManager?.GetFocusedElement();
             if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox
                 || focusedControl is Avalonia.Controls.Button || focusedControl is Avalonia.Controls.ToggleSplitButton || focusedControl is Avalonia.Controls.CheckBox)
@@ -469,13 +483,54 @@ public sealed partial class MainWindow : Window//AppWindow//
                 return;
             }
 
-            //Debug.WriteLine("Space key pressed. Toggling play/pause.");
+            Debug.WriteLine("Space key pressed. Toggling play/pause.");
 
             await vm.Play();
+            */
 
-            // keydown only handled is not good.
+            // TODO:
             //e.Handled = true;
+        }
+    }
 
+    private async void OnPreviewKeyUp(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Avalonia.Input.Key.Space)
+        {
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
+            {
+                // Alt + Space pressed.
+                Debug.WriteLine("OnPreviewKeyUp: Alt + Space pressed. Ignoring for play/pause to allow system menu access.");
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
+                    NativeMethods.ShowSystemWindowMenu(handle.Handle);
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            var focusedControl = this.FocusManager?.GetFocusedElement();
+            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox
+                || focusedControl is Avalonia.Controls.Button || focusedControl is Avalonia.Controls.ToggleSplitButton || focusedControl is Avalonia.Controls.CheckBox)
+            {
+                Debug.WriteLine($"OnPreviewKeyUp: Focused control: {focusedControl?.GetType().Name}. Space key pressed, but focus is on a control that should handle it. Ignoring for play/pause.");
+
+                return;
+            }
+
+            if (this.DataContext is not MainViewModel vm)
+            {
+                Debug.WriteLine("OnPreviewKeyUp: DataContext is not MainViewModel. Cannot toggle play/pause.");
+                return;
+            }
+
+            Debug.WriteLine("OnPreviewKeyUp: Space key pressed. Toggling play/pause.");
+            await vm.Play();
+
+            // TODO:
+            //e.Handled = true;
         }
     }
 
@@ -497,5 +552,23 @@ public sealed partial class MainWindow : Window//AppWindow//
             this.FocusManager?.Focus(PlaybackPlay, NavigationMethod.Unspecified);
 
         }, DispatcherPriority.Background);
+    }
+
+    public static partial class NativeMethods
+    {
+        public const int WM_SYSCOMMAND = 0x0112;
+        public const int SC_KEYMENU = 0xF100;
+
+        //[DllImport("user32.dll", SetLastError = true)]
+        //private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+
+        [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW")]
+        private static partial IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        // Helper method to show the Windows System Menu (aka the Control Menu) for a given window handle
+        public static void ShowSystemWindowMenu(IntPtr hWnd)
+        {
+            DefWindowProc(hWnd, WM_SYSCOMMAND, (IntPtr)SC_KEYMENU, (IntPtr)32);
+        }
     }
 }

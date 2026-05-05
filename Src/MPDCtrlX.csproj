@@ -7,7 +7,8 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	  <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	  <PlatformTarget>AnyCPU</PlatformTarget>
-
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  
 	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 	  <AssemblyName>MPDCtrlX</AssemblyName>
 
