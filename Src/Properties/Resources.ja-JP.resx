@@ -721,4 +721,16 @@ SOFTWARE.</value>
   <data name="Settings_Opts_ToggleEnableAudioOutput" xml:space="preserve">
     <value>有効・無効を切り替える（要admin権限）</value>
   </data>
+  <data name="ConnectionSettings_IsDefault" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="Dialog_Title_KeyboardShortcuts" xml:space="preserve">
+    <value>キーボードショートカット</value>
+  </data>
+  <data name="Dialog_Title_Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Dialog_Title_Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
 </root>

@@ -728,4 +728,16 @@ SOFTWARE.</value>
   <data name="Settings_Opts_ToggleEnableAudioOutput" xml:space="preserve">
     <value>Toggle enable/disable (require admin permission)</value>
   </data>
+  <data name="ConnectionSettings_IsDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Dialog_Title_KeyboardShortcuts" xml:space="preserve">
+    <value>Keyboard Shortcuts</value>
+  </data>
+  <data name="Dialog_Title_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Dialog_Title_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
 </root>

@@ -22,7 +22,7 @@ public class DialogService : IDialogService
     {
         var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
-            Title = "Keyboard Shortcuts",
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_KeyboardShortcuts,
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
             DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
@@ -115,7 +115,7 @@ public class DialogService : IDialogService
 
         var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
-            Title = "EDIT",
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_Edit,
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
             DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
@@ -154,7 +154,7 @@ public class DialogService : IDialogService
     {
         var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
         {
-            Title = "ADD",
+            Title = MPDCtrlX.Properties.Resources.Dialog_Title_Add,
             IsPrimaryButtonEnabled = true,
             PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
             DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,

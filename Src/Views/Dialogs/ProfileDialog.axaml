@@ -26,7 +26,7 @@
 				</StackPanel>
 			</StackPanel>
 			<StackPanel Spacing="3" HorizontalAlignment="Left">
-				<CheckBox x:Name="IsDefaultCheckBox" Content="IsDefault" HorizontalAlignment="Left" />
+				<CheckBox x:Name="IsDefaultCheckBox" Content="{x:Static prop:Resources.ConnectionSettings_IsDefault}" HorizontalAlignment="Left" />
 			</StackPanel>
 		</StackPanel>
 	</Grid>
