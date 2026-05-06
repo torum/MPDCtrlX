@@ -2881,6 +2881,9 @@ public partial class MpcService : IMpcService
 
                 if (string.IsNullOrEmpty(result.ErrorMessage) && !MpdStatus.MpdVolumeIsSet)
                 {
+                    // Needed this...
+                    await Task.Delay(200);
+
                     Debug.WriteLine($"MpdMultiplePlay. State is stop. Sending setvol command separately. Volume: {volume}");
                     // MPD's volume is reset to 100% when the state is stop. So set the volume.
                     // Also, if you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
@@ -2952,6 +2955,9 @@ public partial class MpcService : IMpcService
 
                 if (string.IsNullOrEmpty(result.ErrorMessage) && !MpdStatus.MpdVolumeIsSet)
                 {
+                    // Needed this...
+                    await Task.Delay(200);
+
                     Debug.WriteLine($"MpdSinglePlay. State is stop. Sending setvol command separately. Volume: {volume}");
                     // MPD's volume is reset to 100% when the state is stop. So set the volume.
                     // Also, if you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
@@ -3025,6 +3031,9 @@ public partial class MpcService : IMpcService
 
             if (result.IsSuccess && string.IsNullOrEmpty(result.ErrorMessage) && !MpdStatus.MpdVolumeIsSet)
             {
+                // Needed this...
+                await Task.Delay(200);
+
                 Debug.WriteLine("MpdChangePlaylist. State is stop. Sending setvol command separately.");
                 // MPD's volume is reset to 100% when the state is stop. So set the volume.
                 // Also, if you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
