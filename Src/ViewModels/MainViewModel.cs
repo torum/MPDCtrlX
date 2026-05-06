@@ -9879,10 +9879,11 @@ public partial class MainViewModel : ObservableObject
 
         await _mpc.MpdMultiplePlay(uriList, Convert.ToInt32(_volume));
 
+        // TODO: Do we need this now?
         // get album cover.
-        await Task.Yield();
-        await Task.Delay(200);
-        UpdateCurrentSong();
+        //await Task.Yield();
+        //await Task.Delay(200);
+        //UpdateCurrentSong();
     }
     public bool SongsPlayCanExecute()
     {
