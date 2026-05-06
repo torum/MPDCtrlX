@@ -131,19 +131,19 @@
 			
 			<Grid Grid.Row="0" Grid.Column="0">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="74"></ColumnDefinition>
+					<ColumnDefinition Width="80"></ColumnDefinition>
 					<ColumnDefinition Width="*"></ColumnDefinition>
-					<ColumnDefinition Width="74"></ColumnDefinition>
+					<ColumnDefinition Width="80"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 
 				<Grid Grid.Row="0" Grid.Column="0">
-					<TextBlock Text="{Binding ElapsedFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,18,0"></TextBlock>
+					<TextBlock Text="{Binding ElapsedFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="14,0,14,0"></TextBlock>
 				</Grid>
-				<Border Grid.Row="0" Grid.Column="1" Margin="6,0,6,0">
+				<Border Grid.Row="0" Grid.Column="1" Margin="0,0,0,0">
 					<Slider x:Name="SeekSlider" PointerWheelChanged="SeekSlider_PointerWheelChanged" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderSeek}" Maximum="{Binding Mode=OneWay,Path=Time}" Value="{Binding Mode=TwoWay,Path=Elapsed,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Minimum="0" Margin="0" Padding="0"></Slider>
 				</Border>
 				<Grid Grid.Row="0" Grid.Column="2">
-					<TextBlock Text="{Binding TimeFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="18,0,14,0"></TextBlock>
+					<TextBlock Text="{Binding TimeFormatted, Mode=OneWay}" FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="14,0,14,0"></TextBlock>
 				</Grid>
 
 			</Grid>
