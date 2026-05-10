@@ -16,7 +16,9 @@
 		WindowDecorations="Full"
 		ExtendClientAreaToDecorationsHint="True"
 		MinWidth="320" 
-		MinHeight="460">
+		MinHeight="460"
+		Activated="Window_Activated"
+		Deactivated="Window_Deactivated">
 	<Window.KeyBindings>
 		<KeyBinding Command="{Binding PlayCommand}" Gesture="Play" />
 		<!--
@@ -56,7 +58,7 @@
 				<Border WindowDecorationProperties.ElementRole="TitleBar" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 					<Grid ColumnDefinitions="*,Auto">
 						<!-- App Icon and Title hide when x11 -->
-						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{OnPlatform Default=False, Windows=True, x:TypeArguments=x:Boolean}">
+						<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{OnPlatform Default=False, Windows=True, x:TypeArguments=x:Boolean}">
 							<Image x:Name="ImageAppIcon" Width="16" Height="16" Margin="0,0,6,0" Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 							<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold" Margin="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 						</StackPanel>
@@ -166,7 +168,7 @@
 							<TransitioningContentControl Content="{Binding AlbumArtBitmapSource, Mode=OneWay}" IsVisible="{Binding AlbumArtBitmapSource, Converter={x:Static ObjectConverters.IsNotNull}}">
 								<TransitioningContentControl.ContentTemplate>
 									<DataTemplate DataType="Bitmap">
-										<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center"/>
+										<Image Margin="0" Source="{Binding}" Stretch="Uniform" VerticalAlignment="Center"/>
 									</DataTemplate>
 								</TransitioningContentControl.ContentTemplate>
 								<TransitioningContentControl.PageTransition>

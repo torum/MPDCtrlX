@@ -107,6 +107,7 @@ namespace MPDCtrlX
             return service;
 
         }
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);

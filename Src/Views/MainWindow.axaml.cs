@@ -571,4 +571,14 @@ public sealed partial class MainWindow : Window//AppWindow//
             DefWindowProc(hWnd, WM_SYSCOMMAND, (IntPtr)SC_KEYMENU, (IntPtr)32);
         }
     }
+
+    private void Window_Activated(object? sender, EventArgs e)
+    {
+        this.AppTitle.Opacity = 1;
+    }
+
+    private void Window_Deactivated(object? sender, EventArgs e)
+    {
+        this.AppTitle.Opacity = 0.5;
+    }
 }
