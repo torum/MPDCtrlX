@@ -556,20 +556,115 @@ public sealed partial class MainWindow : Window//AppWindow//
 
     public static partial class NativeMethods
     {
-        public const int WM_SYSCOMMAND = 0x0112;
-        public const int SC_KEYMENU = 0xF100;
+
+        private const int WM_SYSCOMMAND = 0x0112;
+        private const int SC_KEYMENU = 0xF100;
+
+        private const uint TPM_RETURNCMD = 0x0100;
+
+        private const uint MF_BYCOMMAND = 0x00000000;
+        private const uint MF_ENABLED = 0x00000000;
+        private const uint MF_GRAYED = 0x00000001;
+
+        private const uint SC_RESTORE = 0xF120;
+        private const uint SC_MOVE = 0xF010;
+        private const uint SC_SIZE = 0xF000;
+        private const uint SC_MINIMIZE = 0xF020;
+        private const uint SC_MAXIMIZE = 0xF030;
+        private const uint SC_CLOSE = 0xF060;
 
         //[DllImport("user32.dll", SetLastError = true)]
-        //private static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+        //public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
-        [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW")]
+        [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW", SetLastError = true)]
         private static partial IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-        // Helper method to show the Windows System Menu (aka the Control Menu) for a given window handle
+        [LibraryImport("user32.dll", SetLastError = true)]
+        private static partial IntPtr GetSystemMenu(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bRevert);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool EnableMenuItem(IntPtr hMenu, uint uIDEnableItem, uint uEnable);
+
+        [LibraryImport("user32.dll", SetLastError = true)]
+        private static partial int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
+
+        [LibraryImport("user32.dll", EntryPoint = "PostMessageW", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        // Helper method to show the system window menu (aka the Control Menu) for a given window handle
         public static void ShowSystemWindowMenu(IntPtr hWnd)
         {
-            DefWindowProc(hWnd, WM_SYSCOMMAND, (IntPtr)SC_KEYMENU, (IntPtr)32);
+            //DefWindowProc(hWnd, WM_SYSCOMMAND, (IntPtr)SC_KEYMENU, (IntPtr)32);
+
+            IntPtr sysMenu = GetSystemMenu(hWnd, false);
+            if (sysMenu != IntPtr.Zero)
+            {
+                // Close is always active
+                EnableMenuItem(sysMenu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+
+                // FORCE WINDOWS TO RE-EVALUATE/ENABLE SYSTEM MENU ITEMS
+                // wParam is the menu handle; lParam contains flags (0 is standard)
+                //SendMessage(hWnd, WM_INITMENUPOPUP, sysMenu, IntPtr.Zero);
+
+                DefWindowProc(hWnd, WM_SYSCOMMAND, (IntPtr)SC_KEYMENU, (IntPtr)32);
+            }
         }
+
+        public static void ShowNativeSystemMenu(PointerPressedEventArgs e, IntPtr hWnd, PixelPoint screenPoint, WindowState windowState, bool canResize)
+        {
+            // Fetch the window's live System Menu handle
+            IntPtr sysMenu = GetSystemMenu(hWnd, false);
+            if (sysMenu != IntPtr.Zero)
+            {
+                // FORCE WINDOWS TO RE-EVALUATE/ENABLE SYSTEM MENU ITEMS
+                // wParam is the menu handle; lParam contains flags (IntPtr.Zero is standard)
+                // 0x00010000 tells Windows: "This is the System Menu, update states relative to the window"
+                //IntPtr lParam = new IntPtr(0x00010000);
+                //SendMessage(hWnd, WM_INITMENUPOPUP, sysMenu, lParam);
+
+                // Explicitly force the Close menu option to become enabled
+
+                // Close is always active
+                EnableMenuItem(sysMenu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+
+                // Adjust actions based on WindowState
+                if (windowState == WindowState.Maximized)
+                {
+                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
+                    EnableMenuItem(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND | MF_GRAYED);
+                    EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_GRAYED);
+                    EnableMenuItem(sysMenu, SC_SIZE, MF_BYCOMMAND | MF_GRAYED);
+                }
+                else if (windowState == WindowState.Minimized)
+                {
+                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
+                    EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_GRAYED);
+                }
+                else // Normal / Restored
+                {
+                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_GRAYED);
+                    EnableMenuItem(sysMenu, SC_MAXIMIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
+                    EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_ENABLED);
+                    EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_ENABLED);
+                    EnableMenuItem(sysMenu, SC_SIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
+                }
+
+                // Display the native menu at the cursor context.
+                // TPM_RETURNCMD forces TrackPopupMenu to return the ID of the clicked menu item.
+                int command = TrackPopupMenu(sysMenu, TPM_RETURNCMD, screenPoint.X, screenPoint.Y, 0, hWnd, IntPtr.Zero);
+
+                if (command > 0)
+                {
+                    // Post the selected command back to the window loop so Windows handles it (Minimize, Maximize, Close, Move, etc.)
+                    PostMessage(hWnd, WM_SYSCOMMAND, (IntPtr)command, IntPtr.Zero);
+                }
+
+                e.Handled = true;
+            }
+        }
+
     }
 
     private void Window_Activated(object? sender, EventArgs e)
