@@ -38,7 +38,7 @@ using Path = System.IO.Path;
 
 namespace MPDCtrlX.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+internal sealed partial class MainViewModel : ObservableObject
 {
     public string AppVersion
     {
@@ -7695,7 +7695,7 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    public static string SanitizeFilename(string name)
+    private static string SanitizeFilename(string name)
     {
         // 1. Get the list of invalid characters for the current system
         // and add additional common invalid path characters.
@@ -7793,12 +7793,13 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    // TODO: make this a command (or make changes so that we don't have to call this from code behind).
     public async Task GetCacheFolderSizeAsync()
     {
         AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(AlbumCacheFolderPath).ConfigureAwait(true));
     }
 
-    public static void DeleteAllContents(string directoryPath)
+    private static void DeleteAllContents(string directoryPath)
     {
         if (Directory.Exists(directoryPath))
         {

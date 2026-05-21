@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
-public partial class QueuePage : UserControl
+internal sealed partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 

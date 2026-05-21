@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
-public partial class ArtistPage : UserControl
+internal sealed partial class ArtistPage : UserControl
 {
     // Optional parameterless constructor for XAML Previewer
     public ArtistPage() { InitializeComponent(); }

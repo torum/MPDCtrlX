@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
-public partial class SettingsPage : UserControl
+internal sealed partial class SettingsPage : UserControl
 {
     // Optional parameterless constructor for XAML Previewer
     public SettingsPage() { InitializeComponent(); }

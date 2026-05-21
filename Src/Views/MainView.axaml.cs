@@ -10,7 +10,7 @@ using System.Text;
 
 namespace MPDCtrlX.Views;
 
-public partial class MainView : UserControl
+internal sealed partial class MainView : UserControl
 {
     // Optional parameterless constructor for XAML Previewer
     public MainView() { InitializeComponent(); }

@@ -29,7 +29,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace MPDCtrlX.Views;
 
-public sealed partial class MainWindow : Window//AppWindow//
+internal sealed partial class MainWindow : Window//AppWindow//
 {
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
@@ -40,7 +40,7 @@ public sealed partial class MainWindow : Window//AppWindow//
     // Optional parameterless constructor for XAML Previewer
     public MainWindow() { InitializeComponent(); }
 #pragma warning restore CS8618
-    public MainWindow(MainViewModel vm) : base()
+    public MainWindow(MainViewModel vm) 
     {
         //var vm = App.GetService<MainViewModel>();
         this.DataContext = vm;

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Services;
 
-public class DialogService : IDialogService
+internal sealed class DialogService : IDialogService
 {
-    public record AddToDialogResult(string PlaylistName, bool AsNew);
+    public sealed record AddToDialogResult(string PlaylistName, bool AsNew);
 
     public DialogService()
     {

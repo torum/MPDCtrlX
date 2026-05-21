@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
-public partial class PlaylistItemPage : UserControl
+internal sealed partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 

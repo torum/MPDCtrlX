@@ -5,7 +5,7 @@ using static MPDCtrlX.Services.DialogService;
 
 namespace MPDCtrlX.Services.Contracts;
 
-public interface IDialogService
+internal interface IDialogService
 {
     Task ShowKeybindingsDialog();
 

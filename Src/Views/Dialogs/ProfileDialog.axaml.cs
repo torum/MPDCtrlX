@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class ProfileDialog : UserControl
+internal sealed partial class ProfileDialog : UserControl
 {
     private Profile? _pro;
 

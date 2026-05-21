@@ -6,7 +6,7 @@ using Avalonia.Threading;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class Keybindings : UserControl
+internal sealed partial class Keybindings : UserControl
 {
     public Keybindings()
     {

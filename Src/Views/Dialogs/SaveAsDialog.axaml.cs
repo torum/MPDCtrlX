@@ -6,7 +6,7 @@ using Avalonia.Threading;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class SaveAsDialog : UserControl
+internal sealed partial class SaveAsDialog : UserControl
 {
     public SaveAsDialog()
     {

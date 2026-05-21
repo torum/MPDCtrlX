@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace MPDCtrlX.Views;
 
-public partial class SearchPage : UserControl
+internal sealed partial class SearchPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 

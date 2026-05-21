@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
-public partial class FilesPage : UserControl
+internal sealed partial class FilesPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 

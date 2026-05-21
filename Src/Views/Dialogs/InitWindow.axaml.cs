@@ -8,7 +8,7 @@ using FluentAvalonia.UI.Windowing;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class InitWindow : FAAppWindow
+internal sealed partial class InitWindow : FAAppWindow
 {
     public InitWindow()
     {

@@ -6,7 +6,7 @@ using Avalonia.Threading;
 
 namespace MPDCtrlX.Views.Dialogs;
 
-public partial class RenameNewPlaylistDialog : UserControl
+internal sealed partial class RenameNewPlaylistDialog : UserControl
 {
     public RenameNewPlaylistDialog()
     {

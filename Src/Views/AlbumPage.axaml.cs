@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
-public partial class AlbumPage : UserControl
+internal sealed partial class AlbumPage : UserControl
 {
     //private ScrollViewer? _scrollViewer;
     //private WrapPanel? _wrapPanel;
