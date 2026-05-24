@@ -1,7 +1,5 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Models;
 
@@ -71,7 +69,7 @@ public class DirectoryTreeBuilder : NodeTree
         };
 
         Children.Add(root);
-        
+
         foreach (var pathDir in dirs)
         {
             // for responsivenesss.
@@ -158,7 +156,7 @@ public class DirectoryTreeBuilder : NodeTree
                             // set parent node
                             parent = hoge;
                         }
-                        
+
                     }
                 }
                 else if (ValuePair.Length == 1)

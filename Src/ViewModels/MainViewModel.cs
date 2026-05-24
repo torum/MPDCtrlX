@@ -27,6 +27,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Path = System.IO.Path;
 
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0028
 
 namespace MPDCtrlX.ViewModels;
@@ -38,7 +39,7 @@ internal sealed partial class MainViewModel : ObservableObject
         get
         {
             if (!string.IsNullOrEmpty(field)) return field;
-            
+
             var assembly = Assembly.GetExecutingAssembly().GetName();
             var version = assembly.Version;
             field = $"{version?.Major}.{version?.Minor}.{version?.Build}.{version?.Revision}";
@@ -1030,7 +1031,9 @@ internal sealed partial class MainViewModel : ObservableObject
 
     #region == Status and Visibility switch flags ==  
 
-    public bool IsConnected { get; set
+    public bool IsConnected
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1050,9 +1053,12 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 IsConnectButtonEnabled = true;
             }
-        } }
+        }
+    }
 
-    public bool IsConnecting { get; set
+    public bool IsConnecting
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1067,9 +1073,12 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 IsConnectButtonEnabled = false;
             }
-        } }
+        }
+    }
 
-    public bool IsNotConnectingNorConnected { get; set
+    public bool IsNotConnectingNorConnected
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1082,9 +1091,12 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 IsConnectButtonEnabled = true;
             }
-        } } = true;
+        }
+    } = true;
 
-    public bool IsConnectButtonEnabled { get; set
+    public bool IsConnectButtonEnabled
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1092,7 +1104,8 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
 
             OnPropertyChanged();
-        } } = true;
+        }
+    } = true;
 
     public bool IsNotConnecting => !IsConnecting;
 
@@ -1139,14 +1152,17 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
     */
-    public bool IsConnectionSettingShow { get; set
+    public bool IsConnectionSettingShow
+    {
+        get; set
         {
             if (field == value)
                 return;
 
             field = value;
             OnPropertyChanged();
-        } }
+        }
+    }
 
     /*
     private bool _isChangePasswordDialogShow;
@@ -1251,7 +1267,8 @@ internal sealed partial class MainViewModel : ObservableObject
 
             field = value;
 
-            Dispatcher.UIThread.Post(() => {
+            Dispatcher.UIThread.Post(() =>
+            {
                 OnPropertyChanged();
                 WorkingStateChanged?.Invoke(this, value);
             }, DispatcherPriority.Input);
@@ -1358,7 +1375,9 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    public bool IsEnableDebugWindow { get; set
+    public bool IsEnableDebugWindow
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1366,13 +1385,16 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
 
             OnPropertyChanged();
-        } }
+        }
+    }
 
     #endregion
 
     #region == CurrentSong, Playback controls, AlbumArt ==  
 
-    public SongInfoEx? CurrentSong { get; set
+    public SongInfoEx? CurrentSong
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1396,7 +1418,8 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 IsCurrentSongNotNull = true;
             }
-        } }
+        }
+    }
 
     public string CurrentSongTitle => CurrentSong is not null ? CurrentSong.Title : string.Empty;
 
@@ -1472,14 +1495,17 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    public bool IsCurrentSongNotNull { get; set
+    public bool IsCurrentSongNotNull
+    {
+        get; set
         {
             if (field == value)
                 return;
 
             field = value;
             OnPropertyChanged();
-        } }
+        }
+    }
 
     public string CurrentSongStringForWindowTitle
     {
@@ -1500,7 +1526,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     {
                         s += " by ";
                     }
-                    s += $"{CurrentSong.Artist.Trim()}"; 
+                    s += $"{CurrentSong.Artist.Trim()}";
                 }
 
                 if (!string.IsNullOrEmpty(CurrentSong.Album))
@@ -1527,14 +1553,17 @@ internal sealed partial class MainViewModel : ObservableObject
     private static readonly string _pathPauseButton = "M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm-1.5 6.25v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 1.5 0Zm4.5 0v7.5a.75.75 0 0 1-1.5 0v-7.5a.75.75 0 0 1 1.5 0Z";
 
     //private static string _pathStopButton = "M10,16.5V7.5L16,12M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z";
-    public string PlayButton { get; set
+    public string PlayButton
+    {
+        get; set
         {
             if (field == value)
                 return;
 
             field = value;
             OnPropertyChanged();
-        } } = _pathPlayButton;
+        }
+    } = _pathPlayButton;
 
     private double _volume = 20;
     public double Volume
@@ -1547,7 +1576,7 @@ internal sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged();
 
             //if (Convert.ToDouble(_mpc.MpdStatus.MpdVolume) == _volume) return;
-            
+
             // If we have a timer and we are in this event handler, a user is still interact with the slider
             // we stop the timer
             _volumeDelayTimer?.Stop();
@@ -1639,7 +1668,9 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    public int Time { get; set
+    public int Time
+    {
+        get; set
         {
             if (field == value)
                 return;
@@ -1647,7 +1678,8 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TimeFormatted));
-        } }
+        }
+    }
 
     public string TimeFormatted
     {
@@ -1684,7 +1716,7 @@ internal sealed partial class MainViewModel : ObservableObject
     }
 
     private readonly int _elapsedTimeMultiplier = 1;// or 10
-    private int _elapsed ;
+    private int _elapsed;
     public int Elapsed
     {
         get => _elapsed;
@@ -1775,7 +1807,7 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
 
             if (field is null)
-            { 
+            {
                 //IsAlbumArtVisible = false; 
             }
             else
@@ -2120,7 +2152,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     public string QueuePageSubTitleSongCount
     {
-        get 
+        get
         {
             field = string.Format(MPDCtrlX.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
             return field;
@@ -2334,14 +2366,14 @@ internal sealed partial class MainViewModel : ObservableObject
 
     public AlbumArtist? SelectedAlbumArtist
     {
-        get => field;
+        get;
         set
         {
             if (field == value)
             {
                 return;
             }
-            
+
             field = value;
             OnPropertyChanged();
 
@@ -2610,7 +2642,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     // Filter Albums
     public ObservableCollection<AlbumEx> AlbumsForFilter
-    {   
+    {
         get;
         set
         {
@@ -2938,7 +2970,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     public string DebugCommandText
     {
-        get => field;
+        get;
         set
         {
             if (field == value)
@@ -2952,7 +2984,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     public string DebugIdleText
     {
-        get => field;
+        get;
         set
         {
             if (field == value)
@@ -3034,7 +3066,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     public bool IsDownloadAlbumArt
     {
-        get => field;
+        get;
         set
         {
             if (field == value)
@@ -3169,14 +3201,17 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    public IPAddress? HostIpAddress { get; set
+    public IPAddress? HostIpAddress
+    {
+        get; set
         {
             //if (_hostIpAddress is null) return;
             //if (_hostIpAddress.Equals(value))  return;
 
             field = value;
             OnPropertyChanged();
-        } }
+        }
+    }
 
     private int _port = 6600;
     public string Port
@@ -3506,27 +3541,33 @@ internal sealed partial class MainViewModel : ObservableObject
     private static readonly string _pathNewConnectionButton = "M20,4C21.11,4 22,4.89 22,6V18C22,19.11 21.11,20 20,20H4C2.89,20 2,19.11 2,18V6C2,4.89 2.89,4 4,4H20M8.5,15V9H7.25V12.5L4.75,9H3.5V15H4.75V11.5L7.3,15H8.5M13.5,10.26V9H9.5V15H13.5V13.75H11V12.64H13.5V11.38H11V10.26H13.5M20.5,14V9H19.25V13.5H18.13V10H16.88V13.5H15.75V9H14.5V14A1,1 0 0,0 15.5,15H19.5A1,1 0 0,0 20.5,14Z";
     private static readonly string _pathErrorInfoButton = "M23,12L20.56,14.78L20.9,18.46L17.29,19.28L15.4,22.46L12,21L8.6,22.47L6.71,19.29L3.1,18.47L3.44,14.78L1,12L3.44,9.21L3.1,5.53L6.71,4.72L8.6,1.54L12,3L15.4,1.54L17.29,4.72L20.9,5.54L20.56,9.22L23,12M20.33,12L18.5,9.89L18.74,7.1L16,6.5L14.58,4.07L12,5.18L9.42,4.07L8,6.5L5.26,7.09L5.5,9.88L3.67,12L5.5,14.1L5.26,16.9L8,17.5L9.42,19.93L12,18.81L14.58,19.92L16,17.5L18.74,16.89L18.5,14.1L20.33,12M11,15H13V17H11V15M11,7H13V13H11V7";
 
-    public string StatusButton { get; set
+    public string StatusButton
+    {
+        get; set
         {
             if (field == value)
                 return;
 
             field = value;
             OnPropertyChanged();
-        } } = _pathDefaultNoneButton;
+        }
+    } = _pathDefaultNoneButton;
 
     private static readonly string _pathMpdOkButton = "M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z";
 
     private static readonly string _pathMpdAckErrorButton = "M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z";
 
-    public string MpdStatusButton { get; set
+    public string MpdStatusButton
+    {
+        get; set
         {
             if (field == value)
                 return;
 
             field = value;
             OnPropertyChanged();
-        } } = _pathMpdOkButton;
+        }
+    } = _pathMpdOkButton;
 
     public bool IsUpdatingMpdDb
     {
@@ -4392,7 +4433,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                             if (s == "True")
                                                 IsQueueColumnHeaderArtistVisible = true;
                                             else
-                                                IsQueueColumnHeaderArtistVisible= false;
+                                                IsQueueColumnHeaderArtistVisible = false;
                                         }
                                     }
                                     if (column.Attribute("Width") is not null)
@@ -4714,7 +4755,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderTimeVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4745,7 +4786,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderArtistVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4776,7 +4817,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderAlbumVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4807,7 +4848,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderDiscVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4838,7 +4879,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderTrackVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4869,7 +4910,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderGenreVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -4900,7 +4941,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsPlaylistColumnHeaderLastModifiedVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5026,7 +5067,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderTimeVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5057,7 +5098,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderArtistVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5088,7 +5129,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderAlbumVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5119,7 +5160,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderDiscVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5150,7 +5191,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderTrackVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5181,7 +5222,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderGenreVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5212,7 +5253,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                                 IsSearchColumnHeaderLastModifiedVisible = false;
                                         }
                                     }
-                                    
+
                                     if (column.Attribute("Width") is not null)
                                     {
                                         var s = column.Attribute("Width")?.Value;
@@ -5268,7 +5309,7 @@ internal sealed partial class MainViewModel : ObservableObject
         #endregion
 
         if (Profiles.Count <= 0) return;
-        
+
         if (CurrentProfile is not null) return;
         var prof = Profiles.FirstOrDefault(x => x.IsDefault);
         CurrentProfile = prof ?? Profiles[0];
@@ -5611,8 +5652,8 @@ internal sealed partial class MainViewModel : ObservableObject
             _cts.Cancel();
         }
         catch (Exception ex)
-        { 
-           Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+        {
+            Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
         }
 
         if (sender is Window w)
@@ -5991,7 +6032,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     private void UpdateCurrentSong()
     {
-        Dispatcher.UIThread.Post( () =>
+        Dispatcher.UIThread.Post(() =>
         {
             bool isSongChanged = false;
             bool isCurrentSongWasNull = false;
@@ -6587,7 +6628,7 @@ internal sealed partial class MainViewModel : ObservableObject
             IsWorking = false;
         });
     }
-    
+
     private void UpdateAlbumsAndArtists()
     {
         Dispatcher.UIThread.Post(() =>
@@ -6760,7 +6801,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     private void UpdateCommandStatus()
     {
-        Dispatcher.UIThread.Post(async () => 
+        Dispatcher.UIThread.Post(async () =>
         {
             PlayCommand.NotifyCanExecuteChanged();
             PlayNextCommand.NotifyCanExecuteChanged();
@@ -6777,7 +6818,7 @@ internal sealed partial class MainViewModel : ObservableObject
             VolumeMuteCommand.NotifyCanExecuteChanged();
             VolumeDownCommand.NotifyCanExecuteChanged();
             VolumeUpCommand.NotifyCanExecuteChanged();
-            
+
             QueueSaveToCommand.NotifyCanExecuteChanged();
             QueueListviewSaveSelectedToCommand.NotifyCanExecuteChanged();
             QueueClearWithoutPromptCommand.NotifyCanExecuteChanged();
@@ -6785,7 +6826,7 @@ internal sealed partial class MainViewModel : ObservableObject
             QueueListviewSortReverseCommand.NotifyCanExecuteChanged();
             QueueListviewLeftDoubleClickCommand.NotifyCanExecuteChanged();
             QueueListviewDeleteSelectedWithoutPromptCommand.NotifyCanExecuteChanged();
-            
+
             // TODO: more.
 
             UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
@@ -6795,7 +6836,7 @@ internal sealed partial class MainViewModel : ObservableObject
     private Task UpdateLibraryMusicAsync()
     {
         // Music files
-        Dispatcher.UIThread.Post(async () => 
+        Dispatcher.UIThread.Post(async () =>
         {
             UpdateProgress?.Invoke(this, "[UI] Library songs loading...");
 
@@ -6885,7 +6926,7 @@ internal sealed partial class MainViewModel : ObservableObject
     private Task UpdateLibraryDirectoriesAsync()
     {
         // Directories
-        Dispatcher.UIThread.Post(async () => 
+        Dispatcher.UIThread.Post(async () =>
         {
             UpdateProgress?.Invoke(this, "[UI] Library directories loading...");
 
@@ -6961,7 +7002,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     private void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
     {
-        Dispatcher.UIThread.Post(async () => 
+        Dispatcher.UIThread.Post(async () =>
         {
             if (playlistNode is null)
                 return;
@@ -7010,7 +7051,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     fuga.Selected = true;
                     SelectedNodeMenu = fuga;
                     SelectedPlaylistName = fuga.Name;
-                                    
+
                     break;
                 }
             }
@@ -7358,7 +7399,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
         return res;
     }
-    
+
     private async Task GetAlbumPicturesAsync(IEnumerable<object>? albumExItems)
     {
         if (_mpc.MpdStop)
@@ -7459,7 +7500,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 }
 
                 string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
-                
+
                 string fileTempPath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
                 if (File.Exists(fileTempPath))
                 {
@@ -7826,7 +7867,7 @@ internal sealed partial class MainViewModel : ObservableObject
         Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
 
         // Connected from InitWindow, so save and clean up. 
-        Dispatcher.UIThread.Post( () =>
+        Dispatcher.UIThread.Post(() =>
         {
             MpdVersion = _mpc.MpdVerText;
 
@@ -8017,7 +8058,7 @@ internal sealed partial class MainViewModel : ObservableObject
             IsConnecting = false;
             IsNotConnectingNorConnected = true;
             IsConnectionSettingShow = true;
-            
+
             _elapsedTimer.Stop();
 
             Debug.WriteLine("ConnectionStatus_SeeConnectionErrorEvent");
@@ -8127,7 +8168,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
         if (origin.Equals("Command", StringComparison.OrdinalIgnoreCase))
         {
-            InfoBarInfoTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandResponse; 
+            InfoBarInfoTitle = MpdVersion + " " + MPDCtrlX.Properties.Resources.MPD_CommandResponse;
         }
         else if (origin.Equals("Idle", StringComparison.OrdinalIgnoreCase))
         {
@@ -8668,7 +8709,7 @@ internal sealed partial class MainViewModel : ObservableObject
         if (Queue.Count <= 1) return;
 
         if (obj is not SongInfoEx song) return;
-        
+
         Dictionary<string, string> idToNewPos = [];
 
         try
@@ -8704,7 +8745,7 @@ internal sealed partial class MainViewModel : ObservableObject
             return;
 
         if (obj is not SongInfoEx song) return;
-        
+
         Dictionary<string, string> idToNewPos = [];
 
         try
@@ -8879,7 +8920,7 @@ internal sealed partial class MainViewModel : ObservableObject
         //IsQueueFindVisible = false;
 
         ScrollIntoViewAndSelect?.Invoke(this, SelectedQueueFilterSong.Index);
-        
+
         /*
         if (obj is null)
             return;
@@ -9106,9 +9147,10 @@ internal sealed partial class MainViewModel : ObservableObject
         {
             if (list.Count > 0)
             {
-                Dispatcher.UIThread.Post(() => {
+                Dispatcher.UIThread.Post(() =>
+                {
                     Queue.Clear();
-                    CurrentSong = null;        
+                    CurrentSong = null;
                 });
 
                 List<string> uriList = [];
@@ -9195,7 +9237,8 @@ internal sealed partial class MainViewModel : ObservableObject
 
         if (obj is NodeFile song)
         {
-            Dispatcher.UIThread.Post(() => {
+            Dispatcher.UIThread.Post(() =>
+            {
                 Queue.Clear();
                 CurrentSong = null;
             });
@@ -9229,7 +9272,7 @@ internal sealed partial class MainViewModel : ObservableObject
             return;
         }
 
-        if (MusicDirectories.Count <= 0) 
+        if (MusicDirectories.Count <= 0)
         {
             return;
         }
@@ -9395,7 +9438,7 @@ internal sealed partial class MainViewModel : ObservableObject
     {
         if (obj is null) return;
         if (obj is not AlbumArtist artist) return;
-        if (Artists.Count <= 1)return;
+        if (Artists.Count <= 1) return;
         if (SelectedFilterAlbumArtist is null) return;
 
         if (SelectedFilterAlbumArtist.Name != artist.Name) return; // TODO: culture compare.
@@ -9514,9 +9557,10 @@ internal sealed partial class MainViewModel : ObservableObject
             return;
         }
 
-        Dispatcher.UIThread.Post(() => {
+        Dispatcher.UIThread.Post(() =>
+        {
             Queue.Clear();
-            CurrentSong = null;        
+            CurrentSong = null;
         });
 
         //await _mpc.MpdPlaybackStop(); // nomore needed -> changed _mpc.MpdChangePlaylist
@@ -9584,7 +9628,7 @@ internal sealed partial class MainViewModel : ObservableObject
         Dispatcher.UIThread.Post(() =>
         {
             RenamedSelectPendingPlaylistName = string.Empty;
-            PlaylistPageSubTitleSongCount = ""; 
+            PlaylistPageSubTitleSongCount = "";
             OnPropertyChanged(nameof(PlaylistPageSubTitleSongCount));
 
             foreach (var hoge in MainMenuItems)
@@ -9595,7 +9639,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     if (fuga is not NodeMenuPlaylistItem) continue;
                     if (!string.Equals(playlist, fuga.Name)) continue;
                     //Debug.WriteLine($"{playlist} is now selected....");
-                                
+
                     // Needed this. Otherwise, Playlist name wouldn't update. 
                     Dispatcher.UIThread.Post(() =>
                     {
@@ -9685,7 +9729,7 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 Debug.WriteLine("nmpli.IsUpdateRequied @PlaylistListviewDeleteSelectedWithoutPromptCommand_Execute");
             }
-            else 
+            else
             {
                 if (obj is SongInfo song)
                 {
@@ -9836,19 +9880,19 @@ internal sealed partial class MainViewModel : ObservableObject
         switch (items.Count)
         {
             case > 1:
-            {
-                var collection = items.Cast<SongInfo>();
-
-                List<string> uriList = [];
-
-                foreach (var item in collection)
                 {
-                    uriList.Add((item as SongInfo).File);
-                }
+                    var collection = items.Cast<SongInfo>();
 
-                await _mpc.MpdAdd(uriList);
-                break;
-            }
+                    List<string> uriList = [];
+
+                    foreach (var item in collection)
+                    {
+                        uriList.Add((item as SongInfo).File);
+                    }
+
+                    await _mpc.MpdAdd(uriList);
+                    break;
+                }
             case 1 when (items[0] is SongInfo si):
                 await _mpc.MpdAdd(si.File);
                 break;
@@ -9864,9 +9908,10 @@ internal sealed partial class MainViewModel : ObservableObject
         if (obj is not ObservableCollection<SongInfo> list) return;
         if (list.Count <= 0) return;
 
-        Dispatcher.UIThread.Post(() => {
+        Dispatcher.UIThread.Post(() =>
+        {
             Queue.Clear();
-            CurrentSong = null;        
+            CurrentSong = null;
         });
 
         List<string> uriList = [];
@@ -9904,18 +9949,18 @@ internal sealed partial class MainViewModel : ObservableObject
         switch (list.Count)
         {
             case > 1:
-            {
-                List<string> uriList = [];
-
-                foreach (var song in list)
                 {
-                    uriList.Add(song.File);
-                }
-                //uriList.AddRange(list.Select(song => song.File));
+                    List<string> uriList = [];
 
-                await _mpc.MpdAdd(uriList);
-                break;
-            }
+                    foreach (var song in list)
+                    {
+                        uriList.Add(song.File);
+                    }
+                    //uriList.AddRange(list.Select(song => song.File));
+
+                    await _mpc.MpdAdd(uriList);
+                    break;
+                }
             case 1 when (list[0] is SongInfo si):
                 await _mpc.MpdAdd(si.File);
                 break;
@@ -10008,7 +10053,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
         if (pro.IsDefault)
         {
-            foreach(var hoge in Profiles)
+            foreach (var hoge in Profiles)
             {
                 hoge.IsDefault = false;
             }
@@ -10210,7 +10255,7 @@ internal sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(AudioOutputToggleCanExecute))]
-    private async Task AudioOutputToggleEnable(AudioOutput item) 
+    private async Task AudioOutputToggleEnable(AudioOutput item)
     {
         if (item is null)
             return;
@@ -10454,7 +10499,7 @@ internal sealed partial class MainViewModel : ObservableObject
             SelectedQueueSong = null;
         }
 
-        
+
         Dispatcher.UIThread.Post(() =>
         {
             SelectedNodeMenu = null;
@@ -10533,7 +10578,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else
             {
-                var prof = new Profile      
+                var prof = new Profile
                 {
                     Name = _host,
                     Host = _host,
@@ -10615,7 +10660,7 @@ internal sealed partial class MainViewModel : ObservableObject
             SelectedQueueSong = null;
         }
 
-        
+
         Dispatcher.UIThread.Post(() =>
         {
             SelectedNodeMenu = null;
@@ -10722,7 +10767,7 @@ internal sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task TryConnect()
     {
-        Debug.WriteLine("_host: "+ _host);
+        Debug.WriteLine("_host: " + _host);
         await Task.Run(async () => await StartAsync(_host, _port), _cts.Token);
     }
 
@@ -11148,8 +11193,9 @@ internal sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ClearDebugCommandText()
     {
-        
-        Dispatcher.UIThread.Post(() => {
+
+        Dispatcher.UIThread.Post(() =>
+        {
             DebugCommandClear?.Invoke();
         });
     }
@@ -11157,8 +11203,9 @@ internal sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ClearDebugIdleText()
     {
-        
-        Dispatcher.UIThread.Post(() => {
+
+        Dispatcher.UIThread.Post(() =>
+        {
             DebugIdleClear?.Invoke();
         });
     }
@@ -11166,8 +11213,9 @@ internal sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ShowDebugWindow()
     {
-        
-        Dispatcher.UIThread.Post(() => {
+
+        Dispatcher.UIThread.Post(() =>
+        {
             DebugWindowShowHide?.Invoke();
         });
     }
@@ -11175,8 +11223,9 @@ internal sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ClearAckText()
     {
-        
-        Dispatcher.UIThread.Post(() => {
+
+        Dispatcher.UIThread.Post(() =>
+        {
             AckWindowClear?.Invoke();
         });
     }
@@ -11410,13 +11459,13 @@ internal sealed partial class MainViewModel : ObservableObject
             await Task.Delay(100);
             SelectedAlbumArtist = null; //Test.
             CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
-            await Task.Yield(); 
+            await Task.Yield();
             await Task.Delay(100);
             SelectedAlbumArtist = artist;
-            await Task.Yield(); 
-            await Task.Delay(100); 
+            await Task.Yield();
+            await Task.Delay(100);
             IsNavigationViewMenuOpen = true; // Need this somehow.
-            await Task.Yield(); 
+            await Task.Yield();
             await Task.Delay(100);
             _mainMenuItems.ArtistsDirectory.Selected = true;
             IsWorking = false;

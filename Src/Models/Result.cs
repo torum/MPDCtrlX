@@ -9,7 +9,7 @@ public class Result
     public string ErrorMessage = string.Empty;
 }
 
-public class ConnectionResult: Result
+public class ConnectionResult : Result
 {
 
 }
@@ -29,7 +29,7 @@ public class CommandBinaryResult : Result
     public byte[]? BinaryData;
 }
 
-public class  CommandImageResult : Result
+public class CommandImageResult : Result
 {
     public bool IsNoBinaryFound = false;
     public bool IsTimeOut = false;

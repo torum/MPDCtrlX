@@ -24,7 +24,7 @@ internal sealed partial class MainWindow : Window//AppWindow//
     // Optional parameterless constructor for XAML Previewer
     public MainWindow() { InitializeComponent(); }
 #pragma warning restore CS8618
-    public MainWindow(MainViewModel vm) 
+    public MainWindow(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();
         this.DataContext = vm;

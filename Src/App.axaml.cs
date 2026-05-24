@@ -34,7 +34,7 @@ namespace MPDCtrlX
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
         public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(EnvAppLocalAppFolder, "AlbumCoverCache");
 
-        public IHost AppHost { get;}
+        public IHost AppHost { get; }
 
         public App()
         {

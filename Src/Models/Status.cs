@@ -13,7 +13,7 @@ public class Status
 
     public bool MpdVolumeIsReturned { get; set; }
 
-    public bool MpdVolumeIsSet { get; set; } 
+    public bool MpdVolumeIsSet { get; set; }
 
     public bool MpdRepeat { get; set; }
 
@@ -24,9 +24,9 @@ public class Status
 
     public string MpdSongID { get; set; } = "";
 
-    public double MpdSongTime { get; set; } 
+    public double MpdSongTime { get; set; }
 
-    public double MpdSongElapsed { get; set; } 
+    public double MpdSongElapsed { get; set; }
     public string MpdError { get; set; } = "";
 
     public void Reset()

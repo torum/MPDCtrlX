@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 
 namespace MPDCtrlX.Models;
 
@@ -208,7 +207,7 @@ public class SongInfo : SongFile
     }
     */
 
-    public int IndexPlusOne => Index+1;
+    public int IndexPlusOne => Index + 1;
 }
 
 /// <summary>

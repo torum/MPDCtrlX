@@ -1336,7 +1336,7 @@ public partial class MpcService : IMpcService
 
                 try
                 {
-                    ret = await MpdCommandSendCommandProtected(cmd, false);
+                    ret = await MpdCommandSendCommandProtected(cmd);
                 }
                 finally
                 {
@@ -1362,11 +1362,8 @@ public partial class MpcService : IMpcService
         return ret;
     }
 
-    private async Task<CommandResult> MpdCommandSendCommandProtected(string cmd, bool isAutoIdling = false, int reTryCount = 0)
+    private async Task<CommandResult> MpdCommandSendCommandProtected(string cmd, int reTryCount = 0)
     {
-        // TEST: 
-        isAutoIdling = false;
-
         CommandResult ret = new();
 
         if (_cts is null)
@@ -1564,7 +1561,7 @@ public partial class MpcService : IMpcService
 
                         ConnectionState = ConnectionStatus.Connected;
 
-                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
                         //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
@@ -1631,7 +1628,7 @@ public partial class MpcService : IMpcService
 
             StringBuilder stringBuilder = new();
 
-            var isDoubleOk = false;
+            //var isDoubleOk = false;
             var isAck = false;
             var ackText = "";
             var isNullReturn = false;
@@ -1641,7 +1638,7 @@ public partial class MpcService : IMpcService
             while (true)
             {
                 var line = await _commandReader.ReadLineAsync(_cts.Token);
-                
+
                 if (_cts.Token.IsCancellationRequested)
                 {
                     Debug.WriteLine("IsCancellationRequested in while loop @MpdCommandSendCommandProtected");
@@ -1676,33 +1673,12 @@ public partial class MpcService : IMpcService
                     }
                     else if (line.StartsWith("OK"))
                     {
-                        if (isAutoIdling)
-                        {
-                            if (isDoubleOk)
-                            {
-                                if (!string.IsNullOrEmpty(line))
-                                    stringBuilder.Append(line + "\n");
+                        ret.IsSuccess = true;
 
-                                ret.IsSuccess = true;
+                        if (!string.IsNullOrEmpty(line))
+                            stringBuilder.Append(line + "\n");
 
-                                break;
-                            }
-
-                            if (!string.IsNullOrEmpty(line))
-                                stringBuilder.Append(line + "\n");
-
-                            isDoubleOk = true;
-
-                        }
-                        else
-                        {
-                            ret.IsSuccess = true;
-
-                            if (!string.IsNullOrEmpty(line))
-                                stringBuilder.Append(line + "\n");
-
-                            break;
-                        }
+                        break;
                     }
                     else if (line.StartsWith("changed: "))
                     {
@@ -1774,7 +1750,7 @@ public partial class MpcService : IMpcService
 
                         ConnectionState = ConnectionStatus.Connected;
 
-                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
                         //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
@@ -1917,7 +1893,7 @@ public partial class MpcService : IMpcService
 
                         ConnectionState = ConnectionStatus.Connected;
 
-                        ret = await MpdCommandSendCommandProtected(cmd, isAutoIdling, reTryCount++);
+                        ret = await MpdCommandSendCommandProtected(cmd, reTryCount++);
 
                         // Fixing the MPD's volume 100% on re-connect problem once on for all...with dirty hack. 
                         //ret = await MpdCommandSendCommandProtected(("setvol " + MpdStatus.MpdVolume.ToString()), isAutoIdling, reTryCount++);
@@ -3261,7 +3237,7 @@ public partial class MpcService : IMpcService
 
         Debug.WriteLine(result);
 
-        return Task.FromResult(true); 
+        return Task.FromResult(true);
     }
 
     private Task<bool> ParseCommands(string result)
@@ -3895,7 +3871,7 @@ public partial class MpcService : IMpcService
 
             // test
             MpcProgress?.Invoke(this, "[Background] Updating internal queue list...");
-            
+
             //Application.Current.Dispatcher.Invoke((Action)(() =>
             Dispatcher.UIThread.Post(() =>
             {
@@ -4070,7 +4046,7 @@ public partial class MpcService : IMpcService
             Dispatcher.UIThread.Post(() =>
             {
                 App.AppendErrorLog("Exception@MPC@FillSongInfoEx", e.Message);
-                });
+            });
 
             return null;
         }
@@ -4267,7 +4243,7 @@ public partial class MpcService : IMpcService
             Debug.WriteLine("Error@ParseListAll: " + e);
 
             //Application.Current?.Dispatcher.Invoke(() => { (Application.Current as App)?.AppendErrorLog("Exception@MPC@ParseListAll", e.Message); });
-            Dispatcher.UIThread.Post(() =>{ App.AppendErrorLog("Exception@MPC@ParseListAll", e.Message); });
+            Dispatcher.UIThread.Post(() => { App.AppendErrorLog("Exception@MPC@ParseListAll", e.Message); });
 
             IsBusy?.Invoke(this, false);
             return Task.FromResult(false); ;
@@ -4409,7 +4385,7 @@ public partial class MpcService : IMpcService
             Debug.WriteLine("Error@ParseListAlbumGroupAlbumArtist: " + e);
 
             //Application.Current?.Dispatcher.Invoke(() => { (Application.Current as App)?.AppendErrorLog("Exception@MPC@ParseListAlbumGroupAlbumArtist", e.Message); });
-            Dispatcher.UIThread.Post(() =>{ App.AppendErrorLog("Exception@MPC@ParseListAlbumGroupAlbumArtist", e.Message); });
+            Dispatcher.UIThread.Post(() => { App.AppendErrorLog("Exception@MPC@ParseListAlbumGroupAlbumArtist", e.Message); });
 
             IsBusy?.Invoke(this, false);
             return Task.FromResult(false); ;
@@ -4619,7 +4595,7 @@ public partial class MpcService : IMpcService
                         if (songValues.ContainsKey("file")) // && SongValues.ContainsKey("duration")
                         {
                             SongInfo? sng = FillSongInfo(songValues, i);
-                            
+
                             songValues.Clear();
 
                             if (sng is not null)
@@ -4798,7 +4774,7 @@ public partial class MpcService : IMpcService
     {
         // This needs to be first.
         ConnectionState = ConnectionStatus.Disconnecting;
-        
+
         MpdStop = true;
 
         _cts?.Cancel();

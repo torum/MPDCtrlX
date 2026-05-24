@@ -17,9 +17,11 @@
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
 
-	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	  
   </PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<PublishAot>True</PublishAot>

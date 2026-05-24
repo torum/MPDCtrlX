@@ -120,7 +120,7 @@ internal sealed partial class ArtistPage : UserControl
 
     private void FilterArtistPopup_Opened(object? sender, System.EventArgs e)
     {
-        Dispatcher.UIThread.Post(async() =>
+        Dispatcher.UIThread.Post(async () =>
         {
             await Task.Yield(); // Ensure the UI has processed the opened event
             if (FilterArtistPopup.Focusable)
@@ -132,6 +132,6 @@ internal sealed partial class ArtistPage : UserControl
             {
                 this.FilterArtistQueryTextBox.Focus();
             }
-        },DispatcherPriority.Render);
+        }, DispatcherPriority.Render);
     }
 }

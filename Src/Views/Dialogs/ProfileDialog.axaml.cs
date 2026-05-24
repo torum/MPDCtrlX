@@ -28,7 +28,7 @@ internal sealed partial class ProfileDialog : UserControl
         //this.IsRememberCheckBox.IsChecked = true;
     }
 
-    public Profile? GetProfile() 
+    public Profile? GetProfile()
     {
         if (_pro is null)
         {
@@ -81,7 +81,7 @@ internal sealed partial class ProfileDialog : UserControl
             {
                 _pro.Port = int.Parse(this.PortTextBox.Text);
             }
-            catch 
+            catch
             {
                 _pro.Port = (int)6600;
             }

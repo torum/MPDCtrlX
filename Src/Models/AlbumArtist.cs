@@ -40,7 +40,7 @@ public class Album : ObservableObject
     } = [];
 }
 
-public class AlbumEx :Album
+public class AlbumEx : Album
 {
     public string AlbumArtist { get; set; } = string.Empty;
 
@@ -48,8 +48,9 @@ public class AlbumEx :Album
 
     public string? AlbumImagePath { get; set; } = null;
 
-    public Bitmap? AlbumImage { 
-        get; 
+    public Bitmap? AlbumImage
+    {
+        get;
         set
         {
             if (field == value)

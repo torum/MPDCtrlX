@@ -284,7 +284,7 @@ internal sealed partial class QueuePage : UserControl
         {
             return;
         }
-        
+
         if (DataContext is not MainViewModel vm)
         {
             return;

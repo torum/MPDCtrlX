@@ -392,7 +392,7 @@ public class MpcBinaryService : IMpcBinaryService
         catch (System.IO.IOException e)
         {
             // IOException : Unable to write data to the transport connection
-            
+
             Debug.WriteLine("Exception@MpdBinarySendBinaryCommand: " + cmd.Trim() + " WriteAsync " + e.Message);
 
             ret.IsTimeOut = true; // re-try.
@@ -401,7 +401,7 @@ public class MpcBinaryService : IMpcBinaryService
             ret.ErrorMessage = e.Message;
 
             return ret;
-            
+
         }
         catch (Exception e)
         {

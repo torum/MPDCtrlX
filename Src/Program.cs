@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Logging;
-using System;
 
 namespace MPDCtrlX
 {
