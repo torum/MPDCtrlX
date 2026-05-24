@@ -2,7 +2,7 @@
 
 <img width="48" src="https://github.com/torum/MPDCtrlX/blob/main/Src/Assets/MPDCtrlX.png">
 
-MPDCtrlX is a cross-platform desktop GUI client app for [MPD (Music player daemon)](http://www.musicpd.org/) based on [Avalonia UI](https://avaloniaui.net/), a port of WPF-based Windows client [MPDCtrl](https://github.com/torum/MPDCtrl).  
+MPDCtrlX is a cross-platform desktop GUI client app for [MPD (Music player daemon)](http://www.musicpd.org/) based on [Avalonia UI](https://avaloniaui.net/). This is a port of [MPDCtrl](https://github.com/torum/MPDCtrl) based on ~~WPF~~(now ported to WinUI3).  
 
 ## Download  
 For Windows and Linux, download executables or installer directly from the [releases page](https://github.com/torum/MPDCtrlX/releases).
