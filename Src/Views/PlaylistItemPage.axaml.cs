@@ -1,14 +1,8 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using FluentAvalonia.UI.Controls;
-using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
@@ -440,7 +434,7 @@ internal sealed partial class PlaylistItemPage : UserControl
             }
             else
             {
-                if (vm.RenamePlaylistCanExecute())
+                if (vm.PlaylistRenamePlaylistCommand.CanExecute(playlist))
                     vm.PlaylistRenamePlaylist_Execute(playlist, plname.Trim());
             }
 
@@ -471,19 +465,12 @@ internal sealed partial class PlaylistItemPage : UserControl
     {
         if (this.FilterPlaylistSongListBox.SelectedItem is AlbumArtist artist)
         {
-            if (this.PlaylistSongListBox is ListBox lb)
-            {
-                //lb.ScrollIntoView(artist.Index);
-                //lb.SelectedIndex = artist.Index;
-                //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
-                //lb.SelectedItem = artist;
-                var vm = App.GetService<MainViewModel>();
-                if (vm is not null)
-                {
-                    vm.PlaylistSongFilterSelect(artist);
-                }
-
-            }
+            //lb.ScrollIntoView(artist.Index);
+            //lb.SelectedIndex = artist.Index;
+            //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
+            //lb.SelectedItem = artist;
+            var vm = App.GetService<MainViewModel>();
+            vm?.PlaylistSongFilterSelectCommand.Execute(artist);
         }
     }
     private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)

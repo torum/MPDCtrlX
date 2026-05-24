@@ -1,9 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
-using System.Collections.Generic;
-using System.Linq;
-
 
 namespace MPDCtrlX.Common;
 

@@ -1,11 +1,8 @@
 ﻿using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.Views.Dialogs;
-using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Services;
 

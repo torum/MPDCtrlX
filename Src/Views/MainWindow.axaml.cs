@@ -2,30 +2,14 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Styling;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
-using FluentAvalonia.UI.Navigation;
-using FluentAvalonia.UI.Windowing;
-using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views;
-using SkiaSharp;
-using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MPDCtrlX.Views;
 
@@ -170,13 +154,13 @@ internal sealed partial class MainWindow : Window//AppWindow//
             return;
         }
 
-        VolumeSlider.IsEnabled = vm.SetVolumeCanExecute();
-        SeekSlider.IsEnabled = vm.SetSeekCanExecute();
+        VolumeSlider.IsEnabled = vm.SetVolumeCommand.CanExecute(null);
+        SeekSlider.IsEnabled = vm.SetSeekCommand.CanExecute(null);
 
-        RepeatButton.IsEnabled = vm.SetRpeatCanExecute();
-        SingleButton.IsEnabled = vm.SetSingleCanExecute();
-        RandomButton.IsEnabled = vm.SetRandomCanExecute();
-        ConsumeButton.IsEnabled = vm.SetConsumeCanExecute();
+        RepeatButton.IsEnabled = vm.SetRpeatCommand.CanExecute(null);
+        SingleButton.IsEnabled = vm.SetSingleCommand.CanExecute(null);
+        RandomButton.IsEnabled = vm.SetRandomCommand.CanExecute(null);
+        ConsumeButton.IsEnabled = vm.SetConsumeCommand.CanExecute(null);
     }
 
     private void NavigationView_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -452,7 +436,7 @@ internal sealed partial class MainWindow : Window//AppWindow//
             {
                 return;
             }
-            vm.Escape();
+            vm.EscapeCommand.Execute(null);
         }
         else if (e.Key == Avalonia.Input.Key.Space)
         {
@@ -527,7 +511,7 @@ internal sealed partial class MainWindow : Window//AppWindow//
             }
 
             Debug.WriteLine("OnPreviewKeyUp: Space key pressed. Toggling play/pause.");
-            await vm.Play();
+            await vm.PlayCommand.ExecuteAsync(null);
 
             // TODO:
             //e.Handled = true;

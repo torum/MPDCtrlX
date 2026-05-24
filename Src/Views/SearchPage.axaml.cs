@@ -1,17 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using FluentAvalonia.UI.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
 
 namespace MPDCtrlX.Views;
 

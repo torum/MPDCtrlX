@@ -1,22 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Input.Platform;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using FluentAvalonia.UI.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 

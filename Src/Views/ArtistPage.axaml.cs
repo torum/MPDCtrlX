@@ -1,13 +1,8 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
@@ -105,19 +100,13 @@ internal sealed partial class ArtistPage : UserControl
     {
         if (this.FilterArtistListBox.SelectedItem is AlbumArtist artist)
         {
-            if (this.ArtistListBox is ListBox lb)
-            {
-                //lb.ScrollIntoView(artist.Index);
-                //lb.SelectedIndex = artist.Index;
-                //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
-                //lb.SelectedItem = artist;
-                var vm = App.GetService<MainViewModel>();
-                if (vm is not null)
-                {
-                    vm.ArtistFilterSelect(artist);
-                }
+            //lb.ScrollIntoView(artist.Index);
+            //lb.SelectedIndex = artist.Index;
+            //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
+            //lb.SelectedItem = artist;
+            var vm = App.GetService<MainViewModel>();
+            vm?.ArtistFilterSelectCommand.Execute(artist);
 
-            }
         }
     }
 

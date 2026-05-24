@@ -1,18 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using FluentAvalonia.Core;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
@@ -104,12 +96,12 @@ internal sealed partial class AlbumPage : UserControl
 
             if ((scrollViewer != null) && (wrapPanel != null))
             {
-                UpdateVisibleItems(AlbumsListBox, scrollViewer, wrapPanel);
+                UpdateVisibleItems(scrollViewer, wrapPanel);
             }
         }, DispatcherPriority.Render);
     }
 
-    private static void UpdateVisibleItems(ListBox listBox, ScrollViewer scrollViewer, Avalonia.Controls.Primitives.UniformGrid uniformGridPanel)
+    private static void UpdateVisibleItems(ScrollViewer scrollViewer, Avalonia.Controls.Primitives.UniformGrid uniformGridPanel)
     {
         //var _scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
         if (scrollViewer == null) return;
@@ -187,61 +179,37 @@ internal sealed partial class AlbumPage : UserControl
 
         if (e.NewSize.Width < 340)
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = 1;
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 340 = {ugrid.Columns}");
-            }
+            ugrid?.Columns = 1;
             //
             this.HeaderGridSpacer.Width = 48;
         }
         else if (e.NewSize.Width < 740)
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 740 = {ugrid.Columns}");
-            }
+            ugrid?.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
             //
             this.HeaderGridSpacer.Width = 48;
         }
         else if (e.NewSize.Width < 1008)
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1008 = {ugrid.Columns}");
-            }
+            ugrid?.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
             //
             this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 1320)
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 1320 = {ugrid.Columns}");
-            }
+            ugrid?.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
             //
             this.HeaderGridSpacer.Width = 24;
         }
         else if (e.NewSize.Width < 2000)
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)}  < 2000 = {ugrid.Columns}");
-            }
+            ugrid?.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
             //
             this.HeaderGridSpacer.Width = 24;
         }
         else
         {
-            if (ugrid is not null)
-            {
-                ugrid.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
-                //Debug.WriteLine($"{Math.Round(e.NewSize.Width)} else  = {ugrid.Columns}");
-            }
+            ugrid?.Columns = Convert.ToInt32(Math.Round(e.NewSize.Width / 280));
             //
             this.HeaderGridSpacer.Width = 24;
         }
@@ -271,13 +239,10 @@ internal sealed partial class AlbumPage : UserControl
     {
         if (this.FilterAlbumListBox.SelectedItem is AlbumEx album)
         {
-            if (this.AlbumsListBox is ListBox lb)
+            if (this.AlbumsListBox is not null)
             {
                 var vm = App.GetService<MainViewModel>();
-                if (vm is not null)
-                {
-                    vm.AlbumFilterSelect(album);
-                }
+                vm?.AlbumFilterSelectCommand.Execute(album);
             }
         }
     }

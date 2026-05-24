@@ -3,18 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using FluentAvalonia.UI.Controls;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using MPDCtrlX.Views.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 
@@ -216,9 +206,9 @@ internal sealed partial class QueuePage : UserControl
 
             if (DataContext is not MainViewModel vm) return;
 
-            if (!vm.PlayCanExecute()) return;
+            if (!vm.PlayCommand.CanExecute(null)) return;
 
-            _ = vm.QueueListviewEnterKey();
+            vm.QueueListviewEnterKeyCommand.Execute(null);
         }
     }
 

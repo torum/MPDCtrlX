@@ -1,8 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using MPDCtrlX.Models;
-using System.Diagnostics;
 
 namespace MPDCtrlX.Views.Dialogs;
 

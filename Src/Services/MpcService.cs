@@ -1,17 +1,11 @@
 using Avalonia.Threading;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Path = System.IO.Path;
 
 namespace MPDCtrlX.Services;

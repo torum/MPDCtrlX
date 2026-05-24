@@ -1,11 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using MPDCtrlX.ViewModels;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace MPDCtrlX.Views;
 

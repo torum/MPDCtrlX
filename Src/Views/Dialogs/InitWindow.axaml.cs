@@ -1,9 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Threading;
-using System.Threading.Tasks;
-using System;
 using FluentAvalonia.UI.Windowing;
 
 namespace MPDCtrlX.Views.Dialogs;

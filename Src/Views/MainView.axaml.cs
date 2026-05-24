@@ -1,12 +1,6 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Threading;
-using Microsoft.Extensions.DependencyInjection;
-using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
-using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MPDCtrlX.Views;
 

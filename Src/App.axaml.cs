@@ -10,12 +10,8 @@ using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
-using System;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using static System.Environment;
 
 namespace MPDCtrlX
 {
@@ -51,11 +47,12 @@ namespace MPDCtrlX
                 _envCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envCacheFolder, AppDeveloper)), AppName);
                 AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
 
-                if (Directory.Exists(oldCachePath) && (!Directory.Exists(AlbumCoverCacheFolder)))
+                if (System.IO.Directory.Exists(oldCachePath) && (!System.IO.Directory.Exists(AlbumCoverCacheFolder)))
                 {
                     try
                     {
-                        Directory.Move(oldCachePath, AlbumCoverCacheFolder);
+                        System.IO.Directory.CreateDirectory(AlbumCoverCacheFolder);
+                        System.IO.Directory.Move(oldCachePath, AlbumCoverCacheFolder);
                     }
                     catch (Exception ex)
                     {
@@ -71,6 +68,20 @@ namespace MPDCtrlX
                 _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
                 _envCacheAppFolder = System.IO.Path.Combine(System.IO.Path.Combine(_envCacheFolder, AppDeveloper), AppName);
                 AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
+            }
+
+            try
+            {
+                if (!System.IO.Directory.Exists(App.AlbumCoverCacheFolder))
+                {
+                    System.IO.Directory.CreateDirectory(App.AlbumCoverCacheFolder);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                AppendErrorLog("Failed to create AlbumCoverCache folder on startup.", ex.ToString());
+                SaveErrorLog();
             }
 
             AppHost = Microsoft.Extensions.Hosting.Host
