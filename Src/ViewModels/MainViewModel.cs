@@ -3092,6 +3092,21 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     } = true;
 
+    public bool IsForceSetVolumeExplicitly
+    {
+        get; set
+        {
+            if (field == value)
+                return;
+
+            field = value;
+
+            _mpc.MpdForceSetVolume = field;
+
+            OnPropertyChanged();
+        }
+    } = true;
+
     #endregion
 
     #region == Profile settings ==
@@ -4158,6 +4173,20 @@ internal sealed partial class MainViewModel : ObservableObject
                             else
                             {
                                 IsDownloadAlbumArtEmbeddedUsingReadPicture = false;
+                            }
+                        }
+
+                        hoge = opts.Attribute("ForceSetVolumeExplicitly");
+                        if (hoge is not null)
+                        {
+                            if (hoge.Value == "True")
+                            {
+                                IsForceSetVolumeExplicitly = true;
+
+                            }
+                            else
+                            {
+                                IsForceSetVolumeExplicitly = false;
                             }
                         }
                     }
@@ -5509,6 +5538,11 @@ internal sealed partial class MainViewModel : ObservableObject
         //
         attrs = doc.CreateAttribute("DownloadAlbumArtEmbeddedUsingReadPicture");
         attrs.Value = IsDownloadAlbumArtEmbeddedUsingReadPicture ? "True" : "False";
+        opts.SetAttributeNode(attrs);
+
+        //
+        attrs = doc.CreateAttribute("ForceSetVolumeExplicitly");
+        attrs.Value = IsForceSetVolumeExplicitly ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         /// 

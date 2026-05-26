@@ -176,7 +176,6 @@
 					<!-- Option -->
 					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_Opts_Options}" Description="{x:Static prop:Resources.Settings_Opts_Options_Description}">
 
-
 						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AutoScrollToNowPlaying}" IsChecked="{Binding IsAutoScrollToNowPlaying}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
@@ -189,6 +188,9 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AlbumSortWithoutTheAndAPrefix}" IsChecked="{Binding IsAlbumSortWithoutThePrefix}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
 						
+						<ui:FASettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_ForceSetVolumeExplicitly}" IsChecked="{Binding IsForceSetVolumeExplicitly}" Margin="0"></CheckBox>
+						</ui:FASettingsExpanderItem>
 
 					</ui:FASettingsExpander>
 

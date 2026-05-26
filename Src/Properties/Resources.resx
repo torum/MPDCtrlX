@@ -740,4 +740,7 @@ SOFTWARE.</value>
   <data name="Dialog_Title_Add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="Settings_Opts_ForceSetVolumeExplicitly" xml:space="preserve">
+    <value>Always remember and set the volume explicitly</value>
+  </data>
 </root>
