@@ -6007,16 +6007,19 @@ internal sealed partial class MainViewModel : ObservableObject
 
                 if (_mpc.MpdStatus.MpdVolumeIsReturned)
                 {
-                    //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
-
-                    double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
-                    if (_volume != tmpVol)
+                    // Only update volume when Playing or Paused. (Because of MPD's strange behavior where it returns volume 100 when stopped)
+                    if (_mpc.MpdStatus.MpdState != Status.MpdPlayState.Stop)
                     {
-                        // "quietly" update.
-                        _volume = tmpVol;
-                        OnPropertyChanged(nameof(Volume));
+                        //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
 
-                    }
+                        double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
+                        if (_volume != tmpVol)
+                        {
+                            // "quietly" update.
+                            _volume = tmpVol;
+                            OnPropertyChanged(nameof(Volume));
+                        }
+                    } 
                 }
 
                 _random = _mpc.MpdStatus.MpdRandom;
