@@ -3105,7 +3105,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
             OnPropertyChanged();
         }
-    } = true;
+    } = false;
 
     #endregion
 
