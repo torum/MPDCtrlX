@@ -1049,10 +1049,7 @@ internal sealed partial class MainViewModel : ObservableObject
             {
                 IsNotConnectingNorConnected = true;
             }
-            if (field)
-            {
-                IsConnectButtonEnabled = true;
-            }
+            IsConnectButtonEnabled = field;
         }
     }
 
@@ -1069,10 +1066,7 @@ internal sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
             OnPropertyChanged(nameof(IsProfileSwitchOK));
-            if (field)
-            {
-                IsConnectButtonEnabled = false;
-            }
+            IsConnectButtonEnabled = !field;
         }
     }
 
@@ -1087,10 +1081,7 @@ internal sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged();
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
-            if (field)
-            {
-                IsConnectButtonEnabled = true;
-            }
+            IsConnectButtonEnabled = field;
         }
     } = true;
 
@@ -5724,6 +5715,23 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else
             {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    // TODO::
+                    ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
+                    //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
+
+                    InfoBarErrTitle = "Error";
+                    InfoBarErrMessage = "Could not retrive IP Address from the hostname.";
+                    IsShowErrWindow = true;
+                });
+                return;
+            }
+        }
+        catch (Exception)
+        {
+            Dispatcher.UIThread.Post(() => 
+            {
                 // TODO::
                 ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
                 //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
@@ -5731,19 +5739,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 InfoBarErrTitle = "Error";
                 InfoBarErrMessage = "Could not retrive IP Address from the hostname.";
                 IsShowErrWindow = true;
-
-                return;
-            }
-        }
-        catch (Exception)
-        {
-            // TODO::
-            ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
-            //StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
-
-            InfoBarErrTitle = "Error";
-            InfoBarErrMessage = "Could not retrive IP Address from the hostname.";
-            IsShowErrWindow = true;
+            });
 
             return;
         }
