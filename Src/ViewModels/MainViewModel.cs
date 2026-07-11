@@ -7653,7 +7653,7 @@ internal sealed partial class MainViewModel : ObservableObject
                             album.AlbumImage = r.AlbumCover.AlbumImageSource;
                             //});
                             Directory.CreateDirectory(strDirPath);
-                            album.AlbumImage?.Save(filePath, 100);
+                            album.AlbumImage?.Save(filePath, PngBitmapEncoderOptions.Default);
 
                             //Debug.WriteLine($"GetAlbumPictures: Successfully retrieved album art for {albumsong.File}");
                             //Debug.WriteLine($"GetAlbumPictures: Successfully retrieved album art for {album.Name} by {album.AlbumArtist}");
@@ -7755,7 +7755,7 @@ internal sealed partial class MainViewModel : ObservableObject
             try
             {
                 Directory.CreateDirectory(strDirPath);
-                album?.AlbumImageSource?.Save(filePath, 100);
+                album?.AlbumImageSource?.Save(filePath, PngBitmapEncoderOptions.Default);
                 //Debug.WriteLine($"SaveAlbumCoverImage: saved album art {strArtist}, {strAlbum}");
             }
             catch (Exception e)
