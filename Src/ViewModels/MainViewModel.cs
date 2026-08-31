@@ -6860,6 +6860,8 @@ internal sealed partial class MainViewModel : ObservableObject
             QueueListviewLeftDoubleClickCommand.NotifyCanExecuteChanged();
             QueueListviewDeleteSelectedWithoutPromptCommand.NotifyCanExecuteChanged();
 
+            SearchSongsSortByCommand.NotifyCanExecuteChanged();
+
             // TODO: more.
 
             UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
@@ -9073,6 +9075,88 @@ internal sealed partial class MainViewModel : ObservableObject
                 _ = AddTo(result.PlaylistName, uriList);
             }
         }
+    }
+
+    private static ObservableCollection<SongInfo> SongsSortBy(ObservableCollection<SongInfo> target, string key)
+    {
+        ObservableCollection<SongInfo> sorted = [];
+
+        if (target is null)
+        {
+            return sorted;
+        }
+
+        if (target.Count == 0)
+        {
+            return sorted;
+        }
+
+        if (string.IsNullOrEmpty(key))
+        {
+            return sorted;
+        }
+
+        var ci = CultureInfo.CurrentCulture;
+        var comp = StringComparer.Create(ci, true);
+
+        switch (key)
+        {
+            case "title":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.Title, comp));
+                break;
+            case "time":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.TimeSort));
+                break;
+            case "artist":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.Artist, comp));
+                break;
+            case "album":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.Album, comp));
+                break;
+            case "disc":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.DiscSort));
+                break;
+            case "track":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.TrackSort));
+                break;
+            case "genre":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.Genre, comp));
+                break;
+            case "lastmodified":
+                sorted = new ObservableCollection<SongInfo>(target.OrderBy(x => x.LastModified));
+                break;
+            case "reverse":
+                sorted = new ObservableCollection<SongInfo>(target.Reverse<SongInfo>());
+                break;
+            default:
+                return sorted;
+        }
+
+        return sorted;
+    }
+
+    [RelayCommand]
+    private void SearchSongsSortBy(object obj)
+    {
+        if (obj is null)
+        {
+            return;
+        }
+        if (obj is not string key)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        if (SearchResult is null) return;
+
+        if (SearchResult.Count <= 1) return;
+
+        SearchResult = SongsSortBy(SearchResult, key);
     }
 
     #endregion

@@ -61,6 +61,29 @@
 					</SplitButton.Flyout>
 				</SplitButton>
 
+				<!-- Sort button -->
+				<Button x:Name="SortButton" ToolTip.Tip="{x:Static prop:Resources.PageMenu_Sort}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="34">
+					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+						<PathIcon Background="Transparent" Width="NaN" Height="NaN"
+							Data="M4.85355 2.14645C4.65829 1.95118 4.34171 1.95118 4.14645 2.14645L1.14645 5.14645C0.951184 5.34171 0.951184 5.65829 1.14645 5.85355C1.34171 6.04882 1.65829 6.04882 1.85355 5.85355L4 3.70711V13.5C4 13.7761 4.22386 14 4.5 14C4.77614 14 5 13.7761 5 13.5V3.70711L7.14645 5.85355C7.34171 6.04882 7.65829 6.04882 7.85355 5.85355C8.04882 5.65829 8.04882 5.34171 7.85355 5.14645L4.85355 2.14645ZM11.1525 13.8595C11.3463 14.0468 11.6537 14.0468 11.8475 13.8595L14.8475 10.9594C15.0461 10.7675 15.0514 10.4509 14.8595 10.2524C14.6676 10.0538 14.351 10.0485 14.1525 10.2404L12 12.3212L12 2.5001C12 2.22395 11.7761 2.0001 11.5 2.0001C11.2239 2.0001 11 2.22395 11 2.5001L11 12.3212L8.84752 10.2404C8.64898 10.0485 8.33244 10.0538 8.14051 10.2524C7.94858 10.4509 7.95394 10.7675 8.15248 10.9594L11.1525 13.8595Z">
+						</PathIcon>
+					</Viewbox>
+					<Button.Flyout>
+						<MenuFlyout Placement="Bottom">
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Title}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="title"/>
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Time}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="time" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Artist}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="artist" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Album}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="album" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Disc}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="disc" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Track}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="track" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Genre}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="genre" />
+							<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_LastModified}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="lastmodified" />
+							<Separator/>
+							<MenuItem Header="{x:Static prop:Resources.PageMenu_ReverseSort}" Command="{Binding SearchSongsSortByCommand}" CommandParameter="{Binding $self.Tag}" Tag="reverse" />
+						</MenuFlyout>
+					</Button.Flyout>
+				</Button>
+
 				<!-- More options button -->
 				<Button Margin="0,0,0,0" Width="34" Height="34" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip.Tip="{x:Static prop:Resources.PageMenu_More}">
 					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Bottom">
@@ -70,58 +93,6 @@
 					</Viewbox>
 					<Button.Flyout>
 						<MenuFlyout>
-							<!-- Header visibility -->
-							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_ColumnVisibility}" IsVisible="False">
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Title}" IsChecked="True" IsEnabled="False">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Time}" IsChecked="{Binding IsSearchColumnHeaderTimeVisible}" Command="{Binding SearchColumnHeaderTimeShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Artist}" IsChecked="{Binding IsSearchColumnHeaderArtistVisible}" Command="{Binding SearchColumnHeaderArtistShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Album}" IsChecked="{Binding IsSearchColumnHeaderAlbumVisible}" Command="{Binding SearchColumnHeaderAlbumShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Disc}" IsChecked="{Binding IsSearchColumnHeaderDiscVisible}" Command="{Binding SearchColumnHeaderDiscShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Track}" IsChecked="{Binding IsSearchColumnHeaderTrackVisible}" Command="{Binding SearchColumnHeaderTrackShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_Genre}" IsChecked="{Binding IsSearchColumnHeaderGenreVisible}" Command="{Binding SearchColumnHeaderGenreShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-								<MenuItem Header="{x:Static prop:Resources.ListviewColumnHeader_LastModified}" IsChecked="{Binding IsSearchColumnHeaderLastModifiedVisible}" Command="{Binding SearchColumnHeaderLastModifiedShowHideCommand}">
-									<MenuItem.Icon>
-										<Path Data="M13.8639 3.65511C14.0533 3.85606 14.0439 4.17251 13.8429 4.36191L5.91309 11.8358C5.67573 12.0595 5.30311 12.0526 5.07417 11.8203L2.39384 9.09995C2.20003 8.90325 2.20237 8.58667 2.39907 8.39286C2.59578 8.19905 2.91235 8.2014 3.10616 8.3981L5.51192 10.8398L13.1571 3.63419C13.358 3.44479 13.6745 3.45416 13.8639 3.65511Z"
-											IsVisible="{Binding $parent[MenuItem].IsChecked}" Fill="{DynamicResource ComboBoxDropDownGlyphForeground}"/>
-									</MenuItem.Icon>
-								</MenuItem>
-							</MenuItem>
-							<Separator IsVisible="False"/>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_AddToPlaylist}" Command="{Binding SearchPageSongsAddToPlaylistCommand}" CommandParameter="{Binding SearchResult}"/>
 						</MenuFlyout>
 					</Button.Flyout>

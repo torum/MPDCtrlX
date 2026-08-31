@@ -17,9 +17,9 @@ namespace MPDCtrlX
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .WithInterFont()
-                .With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
-                .With(new Win32PlatformOptions { OverlayPopups = true })
-                .With(new X11PlatformOptions { OverlayPopups = true })
+                //.With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
+                //.With(new Win32PlatformOptions { OverlayPopups = true })
+                //.With(new X11PlatformOptions { OverlayPopups = true })
                 .LogToTrace(LogEventLevel.Error);
     }
 }
