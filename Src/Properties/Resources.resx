@@ -743,4 +743,7 @@ SOFTWARE.</value>
   <data name="Settings_Opts_ForceSetVolumeExplicitly" xml:space="preserve">
     <value>Always remember and set the volume explicitly</value>
   </data>
+  <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
+    <value>Reflesh</value>
+  </data>
 </root>

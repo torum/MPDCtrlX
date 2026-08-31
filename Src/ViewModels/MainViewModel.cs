@@ -6862,6 +6862,8 @@ internal sealed partial class MainViewModel : ObservableObject
 
             SearchSongsSortByCommand.NotifyCanExecuteChanged();
 
+            FilesRefreshCommand.NotifyCanExecuteChanged();
+
             // TODO: more.
 
             UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
@@ -9396,6 +9398,36 @@ internal sealed partial class MainViewModel : ObservableObject
 
         IsFilesFindVisible = true;
 
+    }
+
+    [RelayCommand(CanExecute = nameof(FilesRefreshCanExecute))]
+    private void FilesRefresh()
+    {
+        if (IsBusy) return;
+        if (IsWorking) return;
+
+        if (SelectedNodeMenu is null) return;
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            if (SelectedNodeMenu is NodeMenuFiles fmn)
+            {
+                IsWorking = true;
+
+                fmn.IsAcquired = false;
+                MusicDirectories.Clear();
+                MusicEntries.Clear();
+                GetFiles(fmn);
+
+                IsWorking = false;
+            }
+        });
+    }
+
+    private bool FilesRefreshCanExecute()
+    {
+        if (!_mpc.Commands.Contains("listall")) { return false; }
+        return true;
     }
 
     #endregion

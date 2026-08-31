@@ -85,6 +85,7 @@
 					<Button.Flyout>
 						<MenuFlyout>
 							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_AddToPlaylist}" Command="{Binding FilesPageFilesAddToPlaylistCommand}" CommandParameter="{Binding MusicEntriesFiltered}"/>
+							<MenuItem Header="{x:Static prop:Resources.FlyoutMenu_FilesRefresh}" Command="{Binding FilesRefreshCommand}"/>
 						</MenuFlyout>
 					</Button.Flyout>
 				</Button>

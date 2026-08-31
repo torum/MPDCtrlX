@@ -736,4 +736,7 @@ SOFTWARE.</value>
   <data name="Settings_Opts_ForceSetVolumeExplicitly" xml:space="preserve">
     <value>常に音量を記憶して明示的に設定する</value>
   </data>
+  <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
+    <value>最新の状態に更新</value>
+  </data>
 </root>
