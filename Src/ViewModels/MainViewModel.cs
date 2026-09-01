@@ -9192,6 +9192,34 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
+
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
+    private async Task FilesListviewAddSelectedToQueueAfter(object obj)
+    {
+        if (obj is null) return;
+
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        if (items.Count > 1)
+        {
+            var collection = items.Cast<NodeFile>();
+
+            List<string> uriList = [];
+
+            foreach (var item in collection)
+            {
+                uriList.Add((item as NodeFile).OriginalFileUri);
+            }
+
+            await _mpc.MpdAddAfter(uriList);
+        }
+        else
+        {
+            if ((items.Count == 1) && (items[0] is NodeFile nf))
+                await _mpc.MpdAddAfter(nf.OriginalFileUri);
+        }
+    }
+
     // Save to
     [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     private async Task FilesListviewSaveSelectedTo(object obj)
@@ -10044,6 +10072,35 @@ internal sealed partial class MainViewModel : ObservableObject
                 }
             case 1 when (items[0] is SongInfo si):
                 await _mpc.MpdAdd(si.File);
+                break;
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(AddToQueueCanExecute))]
+    private async Task SongsListviewAddSelectedToQueueAfter(object obj)
+    {
+        if (obj is null) return;
+
+        System.Collections.IList items = (System.Collections.IList)obj;
+
+        switch (items.Count)
+        {
+            case > 1:
+                {
+                    var collection = items.Cast<SongInfo>();
+
+                    List<string> uriList = [];
+
+                    foreach (var item in collection)
+                    {
+                        uriList.Add((item as SongInfo).File);
+                    }
+
+                    await _mpc.MpdAddAfter(uriList);
+                    break;
+                }
+            case 1 when (items[0] is SongInfo si):
+                await _mpc.MpdAddAfter(si.File);
                 break;
         }
     }

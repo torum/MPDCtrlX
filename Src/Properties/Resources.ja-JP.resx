@@ -259,7 +259,7 @@ SOFTWARE.</value>
     <value>The MIT License</value>
   </data>
   <data name="LocalfileItemContextMenu_AddToQueue" xml:space="preserve">
-    <value>キューに追加する (Enter)</value>
+    <value>再生キューに追加する (Enter)</value>
   </data>
   <data name="FilesListviewColumnHeader_FileName" xml:space="preserve">
     <value>ファイル名</value>
@@ -325,10 +325,10 @@ SOFTWARE.</value>
     <value>ボリューム</value>
   </data>
   <data name="PlaylistItemContextMenu_ClearAndLoad" xml:space="preserve">
-    <value>キューをクリアして追加</value>
+    <value>再生キューをクリアして追加</value>
   </data>
   <data name="PlaylistItemContextMenu_Load" xml:space="preserve">
-    <value>キューに追加 (Enter)</value>
+    <value>再生キューに追加 (Enter)</value>
   </data>
   <data name="PlaylistItemMenu_Remove" xml:space="preserve">
     <value>プレイリストを削除</value>
@@ -494,7 +494,7 @@ SOFTWARE.</value>
     <value>パス</value>
   </data>
   <data name="SongsItemContextMenu_Add" xml:space="preserve">
-    <value>キューに追加する</value>
+    <value>再生キューに追加する</value>
   </data>
   <data name="StatusBarMsg_MPDVersionIsOld" xml:space="preserve">
     <value>MPD プロトコルのバージョン（{0}）が古いため、 幾つかの機能は正しく動作しない可能性があります。</value>
@@ -554,7 +554,7 @@ SOFTWARE.</value>
     <value>プレイリストに追加</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueue" xml:space="preserve">
-    <value>キューに追加</value>
+    <value>再生キューに追加（最後に）</value>
   </data>
   <data name="FlyoutMenu_GoToArtistPage" xml:space="preserve">
     <value>アーティストページを表示</value>
@@ -578,7 +578,7 @@ SOFTWARE.</value>
     <value>すべて再生</value>
   </data>
   <data name="PageMenu_QueueAll" xml:space="preserve">
-    <value>すべてキューへ登録</value>
+    <value>すべて再生キューへ登録</value>
   </data>
   <data name="PageMenu_Filter" xml:space="preserve">
     <value>絞り込み (Ctrl+F)</value>
@@ -738,5 +738,8 @@ SOFTWARE.</value>
   </data>
   <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
     <value>最新の状態に更新</value>
+  </data>
+  <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
+    <value>再生キューに追加（次に）</value>
   </data>
 </root>

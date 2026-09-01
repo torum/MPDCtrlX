@@ -781,11 +781,20 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Add to queue に類似しているローカライズされた文字列を検索します。
+        ///   Add to queue (last) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ListviewItemContextMenu_AddToQueue {
             get {
                 return ResourceManager.GetString("ListviewItemContextMenu_AddToQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add to queue (next) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ListviewItemContextMenu_AddToQueueAfter {
+            get {
+                return ResourceManager.GetString("ListviewItemContextMenu_AddToQueueAfter", resourceCulture);
             }
         }
         

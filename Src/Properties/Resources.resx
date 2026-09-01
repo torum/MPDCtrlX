@@ -559,7 +559,7 @@ SOFTWARE.</value>
     <value>Add to playlist</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueue" xml:space="preserve">
-    <value>Add to queue</value>
+    <value>Add to queue (last)</value>
   </data>
   <data name="FlyoutMenu_GoToArtistPage" xml:space="preserve">
     <value>Go to artist page</value>
@@ -745,5 +745,8 @@ SOFTWARE.</value>
   </data>
   <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
     <value>Reflesh</value>
+  </data>
+  <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
+    <value>Add to queue (next)</value>
   </data>
 </root>
