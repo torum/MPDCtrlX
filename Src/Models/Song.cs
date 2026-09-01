@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Globalization;
 
 namespace MPDCtrlX.Models;
 
@@ -64,8 +65,9 @@ public class SongInfo : SongFile
                 if (!string.IsNullOrEmpty(Time))
                 {
                     int sec, min, hour, s;
-
-                    double dtime = double.Parse(Time);
+                    //CultureInfo enCulture = new("en-US");
+                    var enCulture = CultureInfo.GetCultureInfo("en-US");
+                    double dtime = double.Parse(Time, enCulture);
                     sec = Convert.ToInt32(dtime);
 
                     //sec = Int32.Parse(_time);
@@ -114,7 +116,9 @@ public class SongInfo : SongFile
             var dtime = double.NaN;
             try
             {
-                dtime = double.Parse(Time);
+                //CultureInfo enCulture = new("en-US");
+                var enCulture = CultureInfo.GetCultureInfo("en-US");
+                dtime = double.Parse(Time, enCulture);
             }
             catch { }
             return dtime;

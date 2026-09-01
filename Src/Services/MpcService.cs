@@ -3,6 +3,7 @@ using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -3595,6 +3596,10 @@ public partial class MpcService : IMpcService
                 }
             }
 
+            // Fix the issue #43
+            //CultureInfo enCulture = new("en-US");
+            var enCulture = CultureInfo.GetCultureInfo("en-US");
+
             // Song time. deprecated. 
             if (mpdStatusValues.ContainsKey("time"))
             {
@@ -3602,8 +3607,8 @@ public partial class MpcService : IMpcService
                 {
                     if (mpdStatusValues["time"].Split(':').Length > 1)
                     {
-                        MpdStatus.MpdSongTime = Double.Parse(mpdStatusValues["time"].Split(':')[1].Trim());
-                        MpdStatus.MpdSongElapsed = Double.Parse(mpdStatusValues["time"].Split(':')[0].Trim());
+                        MpdStatus.MpdSongTime = Double.Parse(mpdStatusValues["time"].Split(':')[1].Trim(), enCulture);
+                        MpdStatus.MpdSongElapsed = Double.Parse(mpdStatusValues["time"].Split(':')[0].Trim(), enCulture);
                     }
                 }
                 catch (FormatException e)
@@ -3617,7 +3622,7 @@ public partial class MpcService : IMpcService
             {
                 try
                 {
-                    MpdStatus.MpdSongElapsed = Double.Parse(value1);
+                    MpdStatus.MpdSongElapsed = Double.Parse(value1, enCulture);
                 }
                 catch { }
             }
@@ -3627,7 +3632,7 @@ public partial class MpcService : IMpcService
             {
                 try
                 {
-                    MpdStatus.MpdSongTime = Double.Parse(value2);
+                    MpdStatus.MpdSongTime = Double.Parse(value2, enCulture);
                 }
                 catch { }
             }
