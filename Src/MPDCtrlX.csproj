@@ -12,8 +12,8 @@
 	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 	  <AssemblyName>MPDCtrlX</AssemblyName>
 
-	  <VersionPrefix>1.1.0.0</VersionPrefix>
-	  <FileVersion>1.1.0.0</FileVersion>
+	  <VersionPrefix>1.1.1.0</VersionPrefix>
+	  <FileVersion>1.1.1.0</FileVersion>
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
 
@@ -91,9 +91,9 @@
 	  <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
 	  <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.3.3" />
-	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.5" />
-	  <PackageReference Include="FluentAvaloniaUI" Version="3.0.2" />
+	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
+	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.7" />
+	  <PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
 	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
 	  <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.11" />
