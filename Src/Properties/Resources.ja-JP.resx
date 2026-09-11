@@ -554,7 +554,7 @@ SOFTWARE.</value>
     <value>プレイリストに追加</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueue" xml:space="preserve">
-    <value>再生キューに追加（最後に）</value>
+    <value>再生キューに追加</value>
   </data>
   <data name="FlyoutMenu_GoToArtistPage" xml:space="preserve">
     <value>アーティストページを表示</value>
@@ -740,6 +740,6 @@ SOFTWARE.</value>
     <value>最新の状態に更新</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
-    <value>再生キューに追加（次に）</value>
+    <value>次に再生</value>
   </data>
 </root>

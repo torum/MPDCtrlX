@@ -281,11 +281,6 @@
 									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
 									</TextBlock>
 								</HyperlinkButton>
-								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/microsoft.extensions.dependencyinjection">
-									<TextBlock>
-									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
-									</TextBlock>
-								</HyperlinkButton>
 								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/system.security.cryptography.protecteddata/">
 									<TextBlock>
 									<Bold>System.Security.Cryptography.ProtectedData</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>

@@ -1169,9 +1169,9 @@ public class MpcBinaryService : IMpcBinaryService
             _binaryConnection.Client?.Shutdown(SocketShutdown.Both);
             _binaryConnection.Close();
         }
-        catch (Exception ex)
+        catch //(Exception ex)
         {
-            Debug.WriteLine($"Exception @MpdBinaryConnectionDisconnect {ex}");
+            //Debug.WriteLine($"Exception @MpdBinaryConnectionDisconnect {ex}");
         }
     }
 }

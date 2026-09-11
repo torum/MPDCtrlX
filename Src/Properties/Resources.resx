@@ -559,7 +559,7 @@ SOFTWARE.</value>
     <value>Add to playlist</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueue" xml:space="preserve">
-    <value>Add to queue (last)</value>
+    <value>Add to queue</value>
   </data>
   <data name="FlyoutMenu_GoToArtistPage" xml:space="preserve">
     <value>Go to artist page</value>
@@ -690,7 +690,7 @@ SOFTWARE.</value>
     <value>Preference</value>
   </data>
   <data name="ListviewItemContextMenu_CopyFilePath" xml:space="preserve">
-    <value>Copy File Path</value>
+    <value>Copy file path</value>
   </data>
   <data name="Settings_Third_party_Libraries" xml:space="preserve">
     <value>Third-party Libraries</value>
@@ -747,6 +747,6 @@ SOFTWARE.</value>
     <value>Reflesh</value>
   </data>
   <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
-    <value>Add to queue (next)</value>
+    <value>Play next</value>
   </data>
 </root>

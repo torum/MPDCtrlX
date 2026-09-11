@@ -781,7 +781,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Add to queue (last) に類似しているローカライズされた文字列を検索します。
+        ///   Add to queue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ListviewItemContextMenu_AddToQueue {
             get {
@@ -790,7 +790,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Add to queue (next) に類似しているローカライズされた文字列を検索します。
+        ///   Play next に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ListviewItemContextMenu_AddToQueueAfter {
             get {
@@ -799,7 +799,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Copy File Path に類似しているローカライズされた文字列を検索します。
+        ///   Copy file path に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ListviewItemContextMenu_CopyFilePath {
             get {
