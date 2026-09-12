@@ -12,8 +12,8 @@
 	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
 	  <AssemblyName>MPDCtrlX</AssemblyName>
 
-	  <VersionPrefix>1.1.1.0</VersionPrefix>
-	  <FileVersion>1.1.1.0</FileVersion>
+	  <VersionPrefix>1.1.2.0</VersionPrefix>
+	  <FileVersion>1.1.2.0</FileVersion>
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
 
