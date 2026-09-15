@@ -20,10 +20,9 @@ internal sealed partial class MainWindow : Window//AppWindow//
     public int WinRestoreTop { get; private set; } = 100;
     public int WinRestoreLeft { get; private set; } = 100;
 
-#pragma warning disable CS8618 
     // Optional parameterless constructor for XAML Previewer
     public MainWindow() { InitializeComponent(); }
-#pragma warning restore CS8618
+
     public MainWindow(MainViewModel vm)
     {
         //var vm = App.GetService<MainViewModel>();

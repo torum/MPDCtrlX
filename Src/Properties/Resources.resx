@@ -386,7 +386,7 @@ SOFTWARE.</value>
     <value>Clear</value>
   </data>
   <data name="ListviewItemContextMenu_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Remove from queue</value>
   </data>
   <data name="FlyoutMenu_AddToPlaylist" xml:space="preserve">
     <value>Add to playlist</value>

@@ -383,7 +383,7 @@ SOFTWARE.</value>
     <value>クリア</value>
   </data>
   <data name="ListviewItemContextMenu_Remove" xml:space="preserve">
-    <value>削除</value>
+    <value>キューから削除</value>
   </data>
   <data name="FlyoutMenu_AddToPlaylist" xml:space="preserve">
     <value>プレイリストに保存</value>
