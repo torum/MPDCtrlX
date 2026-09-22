@@ -27,14 +27,11 @@ public class NodeFile : Node
             if (FileUri is not null)
             {
                 string path = FileUri.LocalPath;
-                string filename = System.IO.Path.GetFileName(path);//System.IO.Path.GetFileName(uri.LocalPath);
-                path = path.Replace(filename, "");
-
-                return path;
+                return System.IO.Path.GetDirectoryName(path) ?? string.Empty;
             }
             else
             {
-                return "";
+                return string.Empty;
             }
         }
     }
