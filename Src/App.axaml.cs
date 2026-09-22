@@ -17,22 +17,22 @@ namespace MPDCtrlX
 {
     public class App : Application
     {
-        public static readonly string AppName = "MPDCtrlX";
-        private static readonly string AppDeveloper = "torum";
+        public const string AppName = "MPDCtrlX";
+        private const string AppDeveloper = "torum";
 
         // Config file path.(/home/<User>/.config/)
-        private static readonly string EnvDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(EnvDataFolder, AppDeveloper)), AppName);
+        private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, AppDeveloper)), AppName);
         public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
 
         // Data folder.(/home/<User>/.local/share/)
-        private static readonly string EnvAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local.
-        private static readonly string EnvAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(EnvAppLocalFolder, AppDeveloper)), AppName);
+        private static readonly string _envAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local.
+        private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, AppDeveloper)), AppName);
 
         // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
         private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
-        public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(EnvAppLocalAppFolder, "AlbumCoverCache");
+        public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
 
         public IHost AppHost { get; }
 
@@ -150,8 +150,8 @@ namespace MPDCtrlX
         }
 
         // Log file.
-        private static readonly StringBuilder Errortxt = new();
-        private static readonly string LogFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
+        private static readonly StringBuilder _errortxt = new();
+        private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
 
         private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
         {
@@ -170,17 +170,17 @@ namespace MPDCtrlX
             var dt = DateTime.Now;
             var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
 
-            Errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
+            _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
         }
 
         public static void SaveErrorLog()
         {
-            if (string.IsNullOrEmpty(LogFilePath))
+            if (string.IsNullOrEmpty(_logFilePath))
                 return;
 
-            var s = Errortxt.ToString();
+            var s = _errortxt.ToString();
             if (!string.IsNullOrEmpty(s))
-                File.WriteAllText(LogFilePath, s);
+                File.WriteAllText(_logFilePath, s);
         }
     }
 }

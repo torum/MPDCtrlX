@@ -3474,7 +3474,7 @@ public partial class MpcService : IMpcService
             Dispatcher.UIThread.Post(() => { App.AppendErrorLog("Exception@MPC@ParseOutputs", e.Message); });
 
             //IsBusy?.Invoke(this, false);
-            return Task.FromResult(false); ;
+            return Task.FromResult(false);
         }
         finally
         {
@@ -4379,7 +4379,7 @@ public partial class MpcService : IMpcService
             Dispatcher.UIThread.Post(() => { App.AppendErrorLog("Exception@MPC@ParseListAll", e.Message); });
 
             IsBusy?.Invoke(this, false);
-            return Task.FromResult(false); ;
+            return Task.FromResult(false);
         }
         finally
         {
@@ -4521,7 +4521,7 @@ public partial class MpcService : IMpcService
             Dispatcher.UIThread.Post(() => { App.AppendErrorLog("Exception@MPC@ParseListAlbumGroupAlbumArtist", e.Message); });
 
             IsBusy?.Invoke(this, false);
-            return Task.FromResult(false); ;
+            return Task.FromResult(false);
         }
         finally
         {

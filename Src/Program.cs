@@ -155,11 +155,10 @@ internal sealed class Program
                                             {
                                                 mainWnd.WindowState = WindowState.Normal;
                                             }
-                                            desktop.MainWindow?.Show();
-                                            desktop.MainWindow?.Activate();
+                                            mainWnd.Show();
+                                            mainWnd.Activate();
                                         }
                                     }
-
                                 });
                             }
                         }

@@ -1065,7 +1065,7 @@ internal sealed partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(IsNotConnecting));
             OnPropertyChanged(nameof(ShortStatusWIthMpdVersion));
 
-            OnPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsProfileSwitchOk));
             IsConnectButtonEnabled = !field;
         }
     }
@@ -1242,7 +1242,7 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
 
             Dispatcher.UIThread.Post(() => { OnPropertyChanged(); });
-            OnPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsProfileSwitchOk));
             //Application.Current.Dispatcher.Invoke(() => CommandManager.InvalidateRequerySuggested());
             //Dispatcher.UIThread.Post(async () => { CommandManager.InvalidateRequerySuggested()});
         }
@@ -1264,7 +1264,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 WorkingStateChanged?.Invoke(this, value);
             }, DispatcherPriority.Input);
 
-            OnPropertyChanged(nameof(IsProfileSwitchOK));
+            OnPropertyChanged(nameof(IsProfileSwitchOk));
         }
     }
 
@@ -1887,7 +1887,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuSearch)
             {
-                Dispatcher.UIThread.Post(async () =>
+                _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
                     await Task.Yield();
@@ -1904,7 +1904,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuArtist)
             {
-                Dispatcher.UIThread.Post(async () =>
+                _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
                     await Task.Yield();
@@ -1920,7 +1920,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuAlbum nmb)
             {
-                Dispatcher.UIThread.Post(async () =>
+                _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
                     await Task.Yield();
@@ -1934,7 +1934,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuFiles nml)
             {
-                Dispatcher.UIThread.Post(async () =>
+                _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
                     await Task.Yield();
@@ -1958,7 +1958,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
-                Dispatcher.UIThread.Post(async () =>
+                _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     //CurrentPage = null; // Just for the animation of page transition...
 
@@ -2394,7 +2394,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 await Task.Yield();
             }, _cts.Token);
             */
-            Dispatcher.UIThread.Post(async () =>  // Test
+            _ = Dispatcher.UIThread.InvokeAsync(async () =>  // Test
             {
                 IsWorking = true;
                 await Task.Yield();
@@ -3154,7 +3154,7 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     } = true;
 
-    public bool IsProfileSwitchOK
+    public bool IsProfileSwitchOk
     {
         get
         {
@@ -3649,7 +3649,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else
             {
-                return IsNotConnectingNorConnected ? "Not connected" : "Not connected";
+                return "Not connected";//return IsNotConnectingNorConnected ? "Not connected" : "Not connected";
             }
         }
     }
@@ -5858,13 +5858,13 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    private void UpdateStatus()
+    private async void UpdateStatus()
     {
         // "UIThread.CheckAccess() = FALSE"
 
         UpdateButtonStatus();
 
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             UpdateProgress?.Invoke(this, "[UI] Status updating...");
 
@@ -6156,9 +6156,9 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void UpdateCurrentQueue()
+    private async void UpdateCurrentQueue()
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             /*
             if (IsSwitchingProfile)
@@ -6662,9 +6662,9 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void UpdateAlbumsAndArtists()
+    private async void UpdateAlbumsAndArtists()
     {
-        Dispatcher.UIThread.Post(() =>
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             // Sort
             var ci = CultureInfo.CurrentCulture;
@@ -6720,9 +6720,9 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void UpdatePlaylists()
+    private async void UpdatePlaylists()
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             /*
             if (IsSwitchingProfile)
@@ -6832,9 +6832,9 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void UpdateCommandStatus()
+    private async void UpdateCommandStatus()
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             PlayCommand.NotifyCanExecuteChanged();
             PlayNextCommand.NotifyCanExecuteChanged();
@@ -6870,10 +6870,10 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private Task UpdateLibraryMusicAsync()
+    private async Task UpdateLibraryMusicAsync()
     {
         // Music files
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             UpdateProgress?.Invoke(this, "[UI] Library songs loading...");
 
@@ -6957,13 +6957,13 @@ internal sealed partial class MainViewModel : ObservableObject
             await Task.Yield();
         });
 
-        return Task.CompletedTask;
+        return;
     }
 
-    private Task UpdateLibraryDirectoriesAsync()
+    private async Task UpdateLibraryDirectoriesAsync()
     {
         // Directories
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             UpdateProgress?.Invoke(this, "[UI] Library directories loading...");
 
@@ -7034,12 +7034,12 @@ internal sealed partial class MainViewModel : ObservableObject
             }
         });
 
-        return Task.CompletedTask;
+        return;
     }
 
-    private void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
+    private async void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (playlistNode is null)
                 return;
@@ -7073,9 +7073,9 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void GoToJustPlaylistPage(NodeMenuPlaylistItem playlist)
+    private async void GoToJustPlaylistPage(NodeMenuPlaylistItem playlist)
     {
-        Dispatcher.UIThread.Post(() =>
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             foreach (var hoge in MainMenuItems)
             {
@@ -7095,7 +7095,7 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private void GetFiles(NodeMenuFiles filestNode)
+    private async void GetFiles(NodeMenuFiles filestNode)
     {
         if (filestNode is null)
             return;
@@ -7114,7 +7114,7 @@ internal sealed partial class MainViewModel : ObservableObject
         filestNode.IsAcquired = true;
 
         // TODO:
-        _ = Task.Run(async () =>
+        await Task.Run(async () =>
         {
             await Task.Delay(10);
             //await Task.Yield();
@@ -7155,7 +7155,7 @@ internal sealed partial class MainViewModel : ObservableObject
         }, _cts.Token);
     }
 
-    private void GetAlbumSongs(AlbumEx album)
+    private async void GetAlbumSongs(AlbumEx album)
     {
         if (album is null)
         {
@@ -7163,7 +7163,7 @@ internal sealed partial class MainViewModel : ObservableObject
             return;
         }
 
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             //Debug.WriteLine("GetAlbumSongs: Invoked with Album name: " + album.Name);
 
@@ -9429,14 +9429,14 @@ internal sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(FilesRefreshCanExecute))]
-    private void FilesRefresh()
+    private async Task FilesRefresh()
     {
         if (IsBusy) return;
         if (IsWorking) return;
 
         if (SelectedNodeMenu is null) return;
 
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (SelectedNodeMenu is NodeMenuFiles fmn)
             {
@@ -9861,7 +9861,7 @@ internal sealed partial class MainViewModel : ObservableObject
             return;
         }
 
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             // Move selection before deleting
             _mainMenuItems.PlaylistsDirectory.Selected = true;
@@ -11483,9 +11483,9 @@ internal sealed partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ShowSearch()
+    private async Task ShowSearch()
     {
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
             await Task.Yield();
@@ -11590,10 +11590,10 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    private void GoToAlbumPage(AlbumEx album)
+    private async void GoToAlbumPage(AlbumEx album)
     {
         if (album is null) return;
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
             await Task.Yield();
@@ -11655,10 +11655,10 @@ internal sealed partial class MainViewModel : ObservableObject
         GoToArtistPage(item);
     }
 
-    private void GoToArtistPage(AlbumArtist artist)
+    private async void GoToArtistPage(AlbumArtist artist)
     {
         if (artist is null) return;
-        Dispatcher.UIThread.Post(async () =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
             await Task.Yield();
