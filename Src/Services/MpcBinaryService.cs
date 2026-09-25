@@ -13,6 +13,7 @@ public class MpcBinaryService : IMpcBinaryService
 {
     private CancellationTokenSource? _cts;
 
+    private readonly object _connectionLock = new();
     private static TcpClient _binaryConnection = new();
     private StreamReader? _binaryReader;
     private StreamWriter? _binaryWriter;
@@ -60,7 +61,16 @@ public class MpcBinaryService : IMpcBinaryService
     {
         ConnectionResult result = new();
 
-        _binaryConnection = new TcpClient();
+        //_binaryConnection = new TcpClient();
+        lock (_connectionLock)
+        {
+            DisposeConnection(
+                ref _binaryConnection,
+                ref _binaryReader,
+                ref _binaryWriter);
+
+            _binaryConnection = new TcpClient();
+        }
 
         _host = host;
         _port = port;
@@ -1163,7 +1173,7 @@ public class MpcBinaryService : IMpcBinaryService
     public void MpdBinaryConnectionDisconnect()
     {
         _cts?.Cancel();
-
+        /*
         try
         {
             _binaryConnection.Client?.Shutdown(SocketShutdown.Both);
@@ -1173,5 +1183,37 @@ public class MpcBinaryService : IMpcBinaryService
         {
             //Debug.WriteLine($"Exception @MpdBinaryConnectionDisconnect {ex}");
         }
+        */
+        lock (_connectionLock)
+        {
+            DisposeConnection(
+                ref _binaryConnection,
+                ref _binaryReader,
+                ref _binaryWriter);
+
+        }
+
+        _cts?.Dispose();
+        _cts = null;
+    }
+
+    private static void DisposeConnection(ref TcpClient connection, ref StreamReader? reader, ref StreamWriter? writer)
+    {
+        try
+        {
+            connection.Client?.Shutdown(SocketShutdown.Both);
+        }
+        catch
+        {
+            // The connection may already be closed.
+        }
+
+        writer?.Dispose();
+        reader?.Dispose();
+        connection.Dispose();
+
+        writer = null;
+        reader = null;
+        connection = new TcpClient();
     }
 }
