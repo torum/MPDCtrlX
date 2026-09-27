@@ -34,6 +34,125 @@ namespace MPDCtrlX.ViewModels;
 
 internal sealed partial class MainViewModel : ObservableObject
 {
+    private readonly CancellationTokenSource _cts = new();
+    private readonly InitWindow _initWin;
+    private readonly IDialogService _dialog;
+    private readonly IMpcService _mpc;
+
+    #region == Events ==
+
+    public delegate void DebugWindowShowHideEventHandler();
+    public event DebugWindowShowHideEventHandler? DebugWindowShowHide;
+    public event EventHandler<string>? DebugCommandOutput;
+    public event EventHandler<string>? DebugIdleOutput;
+    public delegate void DebugCommandClearEventHandler();
+    public event DebugCommandClearEventHandler? DebugCommandClear;
+    public delegate void DebugIdleClearEventHandler();
+    public event DebugIdleClearEventHandler? DebugIdleClear;
+    // AckWindow
+    //public event EventHandler<string>? AckWindowOutput;
+    // ErrWindow
+    //public event EventHandler<string>? ErrWindowOutput;
+    public delegate void AckWindowClearEventHandler();
+    public event AckWindowClearEventHandler? AckWindowClear;
+    // Queue listview ScrollIntoView
+    public event EventHandler<int>? ScrollIntoView;
+    // Queue listview ScrollIntoView and select (for filter and first time loading the queue)
+    public event EventHandler<int>? ScrollIntoViewAndSelect;
+    public event EventHandler<string>? UpdateProgress;
+    public event EventHandler<string>? CurrentSongChanged;
+    public event EventHandler? QueueHeaderVisibilityChanged;
+    public event EventHandler? SearchHeaderVisibilityChanged;
+    public event EventHandler? PlaylistHeaderVisibilityChanged;
+    public event EventHandler? FilesHeaderVisibilityChanged;
+    public event EventHandler<string>? PlaylistRenameToDialogShow;
+    public event EventHandler? GoToSettingsPage;
+    public event EventHandler? AlbumsCollectionHasBeenReset;
+    public event EventHandler? UserCanExecuteChanged;
+    public event EventHandler<bool>? WorkingStateChanged;
+
+    #endregion
+
+    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService)
+    {
+        _mpc = mpcService;
+        _initWin = initWin;
+        _dialog = dialogService;
+
+        #region == Subscribe to events ==
+
+        _mpc.IsBusy += OnMpcIsBusy;
+        _mpc.MpdIdleConnected += OnMpdIdleConnected;
+        _mpc.DebugCommandOutput += OnDebugCommandOutput;
+        _mpc.DebugIdleOutput += OnDebugIdleOutput;
+        _mpc.ConnectionStatusChanged += OnConnectionStatusChanged;
+        _mpc.ConnectionError += OnConnectionError;
+        _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
+        _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
+        _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
+        _mpc.MpdOutputChanged += OnMpdOutputChanged;
+        _mpc.MpdAckError += OnMpdAckError;
+        _mpc.MpdFatalError += OnMpdFatalError;
+        _mpc.MpdAlbumArtChanged += OnAlbumArtChanged;
+
+        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
+
+        // [Background][UI] etc
+        _mpc.MpcProgress += OnMpcProgress;
+        this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
+
+        #endregion
+
+        #region == Init Song's time elapsed timer. ==  
+
+        // Init Song's time elapsed timer.
+        _elapsedTimer = new System.Timers.Timer(1000); // adjust this when _elapsedTimeMultiplier value is not 1.
+        _elapsedTimer.Elapsed += ElapsedTimer;
+
+        #endregion
+
+        #region == Load settings ==
+
+        if (!System.IO.Directory.Exists(App.AppDataFolder))
+        {
+            System.IO.Directory.CreateDirectory(App.AppDataFolder);
+        }
+
+        LoadSettings();
+
+        #endregion
+
+        #region == Themes ==
+
+        // Sets default if not set in "load settings".
+        if (_currentTheme is null)
+        {
+            CurrentTheme = Themes[0]; // needs this.
+            _currentTheme = Themes[0]; // just because VS IDE complains to me to set.
+        }
+
+        // On linux there seems to be a bug where user prefered color is not picked up.
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            FluentAvaloniaTheme? faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
+            //_faTheme!.PreferSystemTheme = true;
+            faTheme!.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
+        }
+
+        #endregion
+
+#if DEBUG
+        IsSaveLog = true;
+        IsEnableDebugWindow = true;
+
+#else
+        IsSaveLog = false;
+        IsEnableDebugWindow = false;
+#endif
+    }
+
+    #region == Properties ==
+
     public string AppVersion
     {
         get
@@ -3820,129 +3939,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
     #endregion
 
-    #region == Events ==
-
-    public delegate void DebugWindowShowHideEventHandler();
-    public event DebugWindowShowHideEventHandler? DebugWindowShowHide;
-    public event EventHandler<string>? DebugCommandOutput;
-    public event EventHandler<string>? DebugIdleOutput;
-    public delegate void DebugCommandClearEventHandler();
-    public event DebugCommandClearEventHandler? DebugCommandClear;
-    public delegate void DebugIdleClearEventHandler();
-    public event DebugIdleClearEventHandler? DebugIdleClear;
-    // AckWindow
-    //public event EventHandler<string>? AckWindowOutput;
-    // ErrWindow
-    //public event EventHandler<string>? ErrWindowOutput;
-    public delegate void AckWindowClearEventHandler();
-    public event AckWindowClearEventHandler? AckWindowClear;
-    // Queue listview ScrollIntoView
-    public event EventHandler<int>? ScrollIntoView;
-    // Queue listview ScrollIntoView and select (for filter and first time loading the queue)
-    public event EventHandler<int>? ScrollIntoViewAndSelect;
-    public event EventHandler<string>? UpdateProgress;
-    public event EventHandler<string>? CurrentSongChanged;
-    public event EventHandler? QueueHeaderVisibilityChanged;
-    public event EventHandler? SearchHeaderVisibilityChanged;
-    public event EventHandler? PlaylistHeaderVisibilityChanged;
-    public event EventHandler? FilesHeaderVisibilityChanged;
-    public event EventHandler<string>? PlaylistRenameToDialogShow;
-    public event EventHandler? GoToSettingsPage;
-    public event EventHandler? AlbumsCollectionHasBeenReset;
-    public event EventHandler? UserCanExecuteChanged;
-    public event EventHandler<bool>? WorkingStateChanged;
-
     #endregion
-
-    #region == Services == 
-
-    private readonly IMpcService _mpc;
-
-    #endregion
-
-    private readonly InitWindow _initWin;
-    private readonly IDialogService _dialog;
-
-    private readonly CancellationTokenSource _cts = new();
-
-    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService)
-    {
-        // MPD Service dependency injection.
-        _mpc = mpcService;
-        _initWin = initWin;
-        _dialog = dialogService;
-
-        #region == Subscribe to events ==
-
-        _mpc.IsBusy += OnMpcIsBusy;
-        _mpc.MpdIdleConnected += OnMpdIdleConnected;
-        _mpc.DebugCommandOutput += OnDebugCommandOutput;
-        _mpc.DebugIdleOutput += OnDebugIdleOutput;
-        _mpc.ConnectionStatusChanged += OnConnectionStatusChanged;
-        _mpc.ConnectionError += OnConnectionError;
-        _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
-        _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
-        _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
-        _mpc.MpdOutputChanged += OnMpdOutputChanged;
-        _mpc.MpdAckError += OnMpdAckError;
-        _mpc.MpdFatalError += OnMpdFatalError;
-        _mpc.MpdAlbumArtChanged += OnAlbumArtChanged;
-
-        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
-
-        // [Background][UI] etc
-        _mpc.MpcProgress += OnMpcProgress;
-        this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
-
-        #endregion
-
-        #region == Init Song's time elapsed timer. ==  
-
-        // Init Song's time elapsed timer.
-        _elapsedTimer = new System.Timers.Timer(1000); // adjust this when _elapsedTimeMultiplier value is not 1.
-        _elapsedTimer.Elapsed += ElapsedTimer;
-
-        #endregion
-
-        #region == Load settings ==
-
-        if (!System.IO.Directory.Exists(App.AppDataFolder))
-        {
-            System.IO.Directory.CreateDirectory(App.AppDataFolder);
-        }
-
-        LoadSettings();
-
-        #endregion
-
-        #region == Themes ==
-
-        // Sets default if not set in "load settings".
-        if (_currentTheme is null)
-        {
-            CurrentTheme = Themes[0]; // needs this.
-            _currentTheme = Themes[0]; // just because VS IDE complains to me to set.
-        }
-
-        // On linux there seems to be a bug where user prefered color is not picked up.
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            FluentAvaloniaTheme? faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
-            //_faTheme!.PreferSystemTheme = true;
-            faTheme!.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
-        }
-
-        #endregion
-
-#if DEBUG
-        IsSaveLog = true;
-        IsEnableDebugWindow = true;
-
-#else
-        IsSaveLog = false;
-        IsEnableDebugWindow = false;
-#endif
-    }
 
     #region == Startup and Shutdown ==
 
