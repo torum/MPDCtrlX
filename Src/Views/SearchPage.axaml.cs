@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using MPDCtrlX.ViewModels;
 
@@ -15,15 +16,29 @@ internal sealed partial class SearchPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+    }
 
-        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
-        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
-
-        this.DetachedFromVisualTree += (s, e) =>
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (this.DataContext is not MainViewModel vm)
         {
-            vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
-            vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
-        };
+            return;
+        }
+        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
+        vm.SearchHeaderVisibilityChanged += this.OnSearchHeaderVisibilityChanged;
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            base.OnDetachedFromVisualTree(e);
+            return;
+        }
+        vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
+        vm.SearchHeaderVisibilityChanged -= this.OnSearchHeaderVisibilityChanged;
+        base.OnDetachedFromVisualTree(e);
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

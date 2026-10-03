@@ -21,16 +21,34 @@ internal sealed partial class QueuePage : UserControl
 
         InitializeComponent();
 
-        vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
-        vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-        vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
+    }
 
-        this.DetachedFromVisualTree += (s, e) =>
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (this.DataContext is not MainViewModel vm)
         {
-            vm.ScrollIntoView -= (sender, arg) => { this.OnScrollIntoView(arg); };
-            vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
-            vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
-        };
+            return;
+        }
+        //vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
+        vm.ScrollIntoView += OnScrollIntoView;
+        //vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+        vm.ScrollIntoViewAndSelect += OnScrollIntoViewAndSelect;
+        vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            base.OnDetachedFromVisualTree(e);
+            return;
+        }
+        vm.ScrollIntoView -= OnScrollIntoView;
+        //vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
+        vm.ScrollIntoViewAndSelect -= OnScrollIntoViewAndSelect;
+        vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
+        base.OnDetachedFromVisualTree(e);
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -155,7 +173,7 @@ internal sealed partial class QueuePage : UserControl
         }
     }
 
-    private async void OnScrollIntoView(int ind)
+    private async void OnScrollIntoView(object? sender, int ind)
     {
         await Task.Yield();
         await Task.Delay(100); // Wait for UI to update
@@ -169,7 +187,7 @@ internal sealed partial class QueuePage : UserControl
         });
     }
 
-    private async void OnScrollIntoViewAndSelect(int ind)
+    private async void OnScrollIntoViewAndSelect(object? sender, int ind)
     {
         await Task.Yield();
         await Task.Delay(100); // Need to wait for UI to update

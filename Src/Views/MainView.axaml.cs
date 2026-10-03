@@ -14,6 +14,7 @@ internal sealed partial class MainView : UserControl
         DataContext = vm;
 
         InitializeComponent();
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             //this.PageGrid.Margin = new Avalonia.Thickness(0, 32, 0, 0);

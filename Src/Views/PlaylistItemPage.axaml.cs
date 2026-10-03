@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
@@ -18,17 +19,31 @@ internal sealed partial class PlaylistItemPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+    }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
         vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
         vm.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
         vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
+    }
 
-        this.DetachedFromVisualTree += (s, e) =>
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
         {
-            vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
-            vm.PlaylistRenameToDialogShow -= this.OnPlaylistRenameToDialogShowAsync;
-            vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
-        };
+            base.OnDetachedFromVisualTree(e);
+            return;
+        }
+        vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
+        vm.PlaylistRenameToDialogShow -= this.OnPlaylistRenameToDialogShowAsync;
+        vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
+        base.OnDetachedFromVisualTree(e);
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

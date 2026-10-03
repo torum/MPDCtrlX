@@ -22,7 +22,27 @@ internal sealed partial class AlbumPage : UserControl
 
         InitializeComponent();
 
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
         vm.AlbumsCollectionHasBeenReset += this.OnAlbumsCollectionHasBeenReset;
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            base.OnDetachedFromVisualTree(e);
+            return;
+        }
+        vm.AlbumsCollectionHasBeenReset += this.OnAlbumsCollectionHasBeenReset;
+        base.OnDetachedFromVisualTree(e);
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

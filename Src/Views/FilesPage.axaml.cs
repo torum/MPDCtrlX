@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -19,13 +20,27 @@ internal sealed partial class FilesPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+    }
 
-        vm.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
-
-        this.DetachedFromVisualTree += (s, e) =>
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (this.DataContext is not MainViewModel vm)
         {
-            vm.FilesHeaderVisibilityChanged -= this.OnFilesHeaderVisibilityChanged;
-        };
+            return;
+        }
+        vm.FilesHeaderVisibilityChanged += this.OnFilesHeaderVisibilityChanged;
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            base.OnDetachedFromVisualTree(e);
+            return;
+        }
+        vm.FilesHeaderVisibilityChanged -= this.OnFilesHeaderVisibilityChanged;
+        base.OnDetachedFromVisualTree(e);
     }
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
