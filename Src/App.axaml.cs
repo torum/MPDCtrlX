@@ -5,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
@@ -12,6 +13,7 @@ using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
 using System.Runtime.InteropServices;
 using System.Text;
+using Tmds.DBus.Protocol;
 
 namespace MPDCtrlX
 {
@@ -33,8 +35,7 @@ namespace MPDCtrlX
         private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
         public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
-
-        public IHost AppHost { get; }
+        private Task? _appHostStartTask;
 
         public App()
         {
@@ -87,6 +88,17 @@ namespace MPDCtrlX
             AppHost = Microsoft.Extensions.Hosting.Host
                     .CreateDefaultBuilder()
                     .UseContentRoot(AppContext.BaseDirectory)
+                    .ConfigureLogging((context, logging) =>
+                    {
+#if DEBUG
+                        logging.AddFilter("Microsoft.Extensions.Hosting", LogLevel.Debug);
+                        logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Information);
+#else
+                        // Strips log destinations and shuts down the framework engines for production
+                        logging.ClearProviders(); 
+                        logging.AddFilter(null, LogLevel.None); 
+#endif
+                    })
                     .ConfigureServices((context, services) =>
                     {
                         services.AddSingleton<MainWindow>();
@@ -95,6 +107,11 @@ namespace MPDCtrlX
                         services.AddSingleton<IMpcService, MpcService>();
                         services.AddTransient<IMpcBinaryService, MpcBinaryService>();
                         services.AddSingleton<IDialogService, DialogService>();
+
+                        services.AddSingleton<MprisPlayerController>();
+                        services.AddSingleton<MprisPathMethodHandler>();
+                        services.AddSingleton<IPathMethodHandler>(provider => provider.GetRequiredService<MprisPathMethodHandler>());
+                        services.AddHostedService<MprisDbusHostedService>();
 
                         services.AddSingleton<QueuePage>();
                         services.AddSingleton<SearchPage>();
@@ -107,6 +124,8 @@ namespace MPDCtrlX
                     })
                     .Build();
         }
+
+        public IHost AppHost { get; }
 
         public static T GetService<T>() where T : class
         {
@@ -143,10 +162,44 @@ namespace MPDCtrlX
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
                 desktop.MainWindow = App.GetService<MainWindow>();
-                //desktop.MainWindow.Show();
+                desktop.MainWindow.Show();
+
+                desktop.Exit += OnDesktopExit;
+                //AppHost.StartAsync().GetAwaiter().GetResult();
+                _appHostStartTask = StartAppHostAsync();
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private async Task StartAppHostAsync()
+        {
+            try
+            {
+                await AppHost.StartAsync();
+            }
+            catch (Exception ex)
+            {
+                AppendErrorLog("AppHost.StartAsync", ex.ToString());
+                SaveErrorLog();
+            }
+        }
+
+        private async void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+        {
+            try
+            {
+                if (_appHostStartTask is not null)
+                {
+                    await _appHostStartTask;
+                }
+
+                await AppHost.StopAsync();
+            }
+            finally
+            {
+                AppHost.Dispose();
+            }
         }
 
         // Log file.

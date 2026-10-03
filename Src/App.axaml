@@ -3,7 +3,7 @@
              x:Class="MPDCtrlX.App"
 			 RequestedThemeVariant="Dark"
 			 xmlns:sty="using:FluentAvalonia.Styling"
-			 xmlns:conv="using:MPDCtrlX.Converters">
+			 xmlns:common="using:MPDCtrlX.Common">
 	<Application.Styles>
 		<sty:FluentAvaloniaTheme PreferUserAccentColor="True" UseSystemFontOnWindows="True" />
 		<StyleInclude Source="avares://MPDCtrlX/Styles/Styles.axaml" />
@@ -11,7 +11,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 
-			<conv:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+			<common:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
 
 		</ResourceDictionary>
 	</Application.Resources>

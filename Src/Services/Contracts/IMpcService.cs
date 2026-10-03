@@ -39,6 +39,7 @@ public interface IMpcService
     event MpcService.MpdCurrentQueueChangedEvent MpdCurrentQueueChanged;
     event MpcService.IsMpdIdleConnectedEvent MpdIdleConnected;
     event MpcService.MpdPlayerStatusChangedEvent MpdPlayerStatusChanged;
+    event MpcService.MpdCurrentSongChangedEvent MpdCurrentSongChanged;
     event MpcService.MpdPlaylistsChangedEvent MpdPlaylistsChanged;
     event MpcService.MpdOutputChangedEvent MpdOutputChanged;
 

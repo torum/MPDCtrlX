@@ -2,7 +2,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Media;
 using System.Globalization;
 
-namespace MPDCtrlX.Converters;
+namespace MPDCtrlX.Common;
 
 /*
 public static class TreeViewItemExtensions

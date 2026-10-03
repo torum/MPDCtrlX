@@ -105,8 +105,12 @@
 				</DataTemplate>
 			</ui:FANavigationView.Resources>
 
-			<!-- We don't use Navigation frame and Navigate method in Avalonia UI because Avalonia UI does not have a cache mechanism in page navigation... resulting in multiple creation of page instance. -->
-			<!-- Use ContentControl in MainView instead.  -->
+			<!-- For now we use TransitioningContentControl in MainView instead.  -->
+			<!-- 
+			Because Avalonia does not have a native Page control, the creator of FluentAvalonia designed the Frame control to accept any standard Avalonia Control (like a UserControl) as a valid target for navigation. Instead of forcing you to inherit from a specialized Page class, FluentAvalonia injects WinUI's page-level properties directly into standard controls using Attached Properties.
+			The Location in Documentation: While it doesn't have its own dedicated page in the side navigation, the cache settings are documented directly inside the Frame documentation page (which you can access via the FluentAvalonia Frame Control Docs link in that directory).
+			By utilizing attached properties, you can convert any standard Avalonia control into a cacheable page inside the FAFrame without breaking Avalonia's core control hierarchy.
+			-->
 			<ui:FAFrame/>
 			
 		</ui:FANavigationView>

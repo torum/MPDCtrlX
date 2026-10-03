@@ -1,17 +1,20 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
+using Avalonia.Logging;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentAvalonia.Styling;
+using Microsoft.Extensions.Logging;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
+using MPDCtrlX.Common;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -38,6 +41,7 @@ internal sealed partial class MainViewModel : ObservableObject
     private readonly InitWindow _initWin;
     private readonly IDialogService _dialog;
     private readonly IMpcService _mpc;
+    private readonly ILogger<MainViewModel> _logger;
 
     #region == Events ==
 
@@ -73,11 +77,12 @@ internal sealed partial class MainViewModel : ObservableObject
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService)
+    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, ILogger<MainViewModel> logger)
     {
         _mpc = mpcService;
         _initWin = initWin;
         _dialog = dialogService;
+        _logger = logger;
 
         #region == Subscribe to events ==
 
@@ -89,6 +94,7 @@ internal sealed partial class MainViewModel : ObservableObject
         _mpc.ConnectionError += OnConnectionError;
         _mpc.MpdPlayerStatusChanged += OnMpdPlayerStatusChanged;
         _mpc.MpdCurrentQueueChanged += OnMpdCurrentQueueChanged;
+        _mpc.MpdCurrentSongChanged += OnMpdCurrentSongChanged;
         _mpc.MpdPlaylistsChanged += OnMpdPlaylistsChanged;
         _mpc.MpdOutputChanged += OnMpdOutputChanged;
         _mpc.MpdAckError += OnMpdAckError;
@@ -7520,7 +7526,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 }
                 else
                 {
-                    strArtist = SanitizeFilename(strArtist);
+                    strArtist = PathSanitizer.SanitizeFilename(strArtist);
                 }
 
                 var strAlbum = album.Name.Trim();
@@ -7530,7 +7536,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 }
                 else
                 {
-                    strAlbum = SanitizeFilename(strAlbum);
+                    strAlbum = PathSanitizer.SanitizeFilename(strAlbum);
                 }
 
                 string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
@@ -7739,7 +7745,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     strArtist = "Unknown Artist";
                 }
             }
-            strArtist = SanitizeFilename(strArtist);
+            strArtist = PathSanitizer.SanitizeFilename(strArtist);
 
             var strAlbum = current?.Album ?? string.Empty;
             if (string.IsNullOrEmpty(strAlbum))
@@ -7748,7 +7754,7 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             else
             {
-                strAlbum = SanitizeFilename(strAlbum);
+                strAlbum = PathSanitizer.SanitizeFilename(strAlbum);
             }
 
             string strDirPath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist);
@@ -7766,37 +7772,7 @@ internal sealed partial class MainViewModel : ObservableObject
         });
     }
 
-    private static string SanitizeFilename(string name)
-    {
-        // 1. Get the list of invalid characters for the current system
-        // and add additional common invalid path characters.
-        char[] invalidChars = Path.GetInvalidFileNameChars();
 
-        // 2. Create a regex pattern to match invalid characters.
-        // We escape the characters to ensure they are interpreted literally.
-        string invalidCharsPattern = "[" + Regex.Escape(new string(invalidChars)) + "]";
-
-        // 3. Replace all invalid characters with the replacement character.
-        string sanitizedName = Regex.Replace(name, invalidCharsPattern, "_");
-
-        // 4. Handle reserved Windows filenames (e.g., CON, PRN, NUL).
-        string[] reservedNames = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"];
-        if (Array.Exists(reservedNames, s => s.Equals(sanitizedName, StringComparison.OrdinalIgnoreCase)))
-        {
-            sanitizedName = $"_{sanitizedName}_";
-        }
-
-        // 5. Trim trailing periods and spaces, which are invalid on Windows.
-        sanitizedName = sanitizedName.TrimEnd('.', ' ');
-
-        // 6. Ensure the filename isn't empty after sanitizing.
-        if (string.IsNullOrWhiteSpace(sanitizedName))
-        {
-            return "Untitled";
-        }
-
-        return sanitizedName;
-    }
 
     private static int CompareVersionString(string a, string b)
     {
@@ -7894,17 +7870,25 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    #endregion
+
+
     #region == MPD event callback == 
 
     private async void OnMpdIdleConnected(MpcService sender)
     {
-        Debug.WriteLine("OK MPD " + _mpc.MpdVerText + " @OnMpdConnected");
+
 
         // Connected from InitWindow, so save and clean up. 
         Dispatcher.UIThread.Post(() =>
         {
             MpdVersion = _mpc.MpdVerText;
 
+            //Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("OK MPD {MPDVer} @OnMpdIdleConnected.", MpdVersion);
+            }
             //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
 
             MpdStatusButton = _pathMpdOkButton;
@@ -7979,6 +7963,11 @@ internal sealed partial class MainViewModel : ObservableObject
     private void OnMpdCurrentQueueChanged(MpcService sender)
     {
         UpdateCurrentQueue();
+    }
+
+    private void OnMpdCurrentSongChanged(MpcService sender)
+    {
+        // 
     }
 
     private void OnMpdPlaylistsChanged(MpcService sender)
@@ -8285,7 +8274,6 @@ internal sealed partial class MainViewModel : ObservableObject
 
     #endregion
 
-    #endregion
 
     #region == Timers ==
 
