@@ -2,7 +2,9 @@
 
 <img width="48" src="https://github.com/torum/MPDCtrlX/blob/main/Src/Assets/MPDCtrlX.png">
 
-MPDCtrlX is a cross-platform version of [MPDCtrl](https://github.com/torum/MPDCtrl), a desktop GUI client for [MPD (Music Player Daemon)](http://www.musicpd.org/). Built using [Avalonia UI](https://avaloniaui.net/), this application is a direct port of the original MPDCtrl (which has since migrated from WPF to WinUI 3). While cross-platform, MPDCtrlX is specifically optimized for Linux desktop users, offering platform-specific features like native MPRIS (Media Player Remote Interfacing Specification) integration over D-Bus.
+MPDCtrlX is a cross-platform version of [MPDCtrl](https://github.com/torum/MPDCtrl), a desktop GUI client for [MPD (Music Player Daemon)](http://www.musicpd.org/). 
+
+Built using [Avalonia UI](https://avaloniaui.net/), this application is a direct port of the original MPDCtrl (which has since migrated from WPF to WinUI 3). While cross-platform, MPDCtrlX is specifically optimized for Linux desktop users, offering platform-specific features like native MPRIS (Media Player Remote Interfacing Specification) integration over D-Bus.
 
 ## Download  
 For Linux and Windows, you can download the executables or installation packages directly from the [releases page](https://github.com/torum/MPDCtrlX/releases). These binaries are compiled natively utilizing Native AOT compilation for faster performance and memory efficiency.
