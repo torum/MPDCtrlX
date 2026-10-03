@@ -162,6 +162,7 @@ namespace MPDCtrlX
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
                 desktop.MainWindow = App.GetService<MainWindow>();
+                desktop.MainWindow.ShowActivated = true;
                 desktop.MainWindow.Show();
 
                 desktop.Exit += OnDesktopExit;
