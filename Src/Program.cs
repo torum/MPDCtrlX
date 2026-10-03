@@ -20,9 +20,7 @@ internal sealed class Program
         return Path.Combine(tempPath, PipeName);
     }
 
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
+    // Initialization code. Don't use any Avalonia, third-party APIs or any SynchronizationContext-reliant code before AppMain is called: things aren't initialized yet and stuff might break.
     [STAThread]
     //public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     public static void Main(string[] args)
@@ -109,6 +107,7 @@ internal sealed class Program
                 {
                     // Log the error.
                     Debug.WriteLine($"Error deleting named pipe: {ex.Message}");
+                    _ = ex;// For native code analysis to avoid warning about unused variable.
                 }
             }
         }
@@ -145,7 +144,7 @@ internal sealed class Program
                             {
                                 Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                                 {
-                                    // Your app logic to show/focus the window goes here.
+                                    // Show/focus the window.
                                     if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                                     {
                                         var mainWnd = desktop.MainWindow;
@@ -177,7 +176,7 @@ internal sealed class Program
 #if DEBUG
                     Debug.WriteLine($"Exception @StartPipeServer while: {ex}");
 #else
-                //
+                    _ = ex; // For native code analysis to avoid warning about unused variable.
 #endif
 
                     // Just break out the loop in case of exception.
@@ -224,6 +223,7 @@ internal sealed class Program
         {
             // Handle other potential pipe communication errors.
             Debug.WriteLine($"Could not connect to existing instance: {ex.Message}");
+            _ = ex; // For native code analysis to avoid warning about unused variable.
             return false;
         }
     }

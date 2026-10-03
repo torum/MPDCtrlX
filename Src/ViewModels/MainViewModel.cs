@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input.Platform;
 using Avalonia.Logging;
 using Avalonia.Media.Imaging;
@@ -9,12 +10,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentAvalonia.Styling;
 using Microsoft.Extensions.Logging;
+using MPDCtrlX.Common;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
-using MPDCtrlX.Common;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -105,7 +106,8 @@ internal sealed partial class MainViewModel : ObservableObject
 
         // [Background][UI] etc
         _mpc.MpcProgress += OnMpcProgress;
-        this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
+        //this.UpdateProgress += (sender, arg) => { this.OnUpdateProgress(arg); };
+        this.UpdateProgress += OnUpdateProgress;
 
         #endregion
 
@@ -2750,8 +2752,8 @@ internal sealed partial class MainViewModel : ObservableObject
             }
             catch (Exception ex)
             {
-                _ = ex;
                 Debug.WriteLine($"Exception @VisibleViewportItemsAlbumEx {ex}");
+                _ = ex;// For native code analysis to avoid warning about unused variable.
             }
         }
     }
@@ -5371,8 +5373,8 @@ internal sealed partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _ = ex;
             Debug.WriteLine($"Exception @OnWindowLoaded {ex}");
+            _ = ex;// For native code analysis to avoid warning about unused variable.
         }
 
     }
@@ -5664,7 +5666,8 @@ internal sealed partial class MainViewModel : ObservableObject
 
         // [Background][UI] etc
         _mpc.MpcProgress -= OnMpcProgress;
-        this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
+        //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
+        this.UpdateProgress -= OnUpdateProgress;
 
         #endregion
 
@@ -5756,8 +5759,8 @@ internal sealed partial class MainViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _ = ex;
             Debug.WriteLine($"Exception @StartAsync {ex}");
+            _ = ex;// For native code analysis to avoid warning about unused variable.
         }
     }
 
@@ -7872,7 +7875,6 @@ internal sealed partial class MainViewModel : ObservableObject
 
     #endregion
 
-
     #region == MPD event callback == 
 
     private async void OnMpdIdleConnected(MpcService sender)
@@ -8259,7 +8261,7 @@ internal sealed partial class MainViewModel : ObservableObject
         StatusBarMessage = msg;
     }
 
-    private void OnUpdateProgress(string msg)
+    private void OnUpdateProgress(object? sender, string msg)
     {
         Dispatcher.UIThread.Post(() =>
         {
@@ -8273,7 +8275,6 @@ internal sealed partial class MainViewModel : ObservableObject
     }
 
     #endregion
-
 
     #region == Timers ==
 

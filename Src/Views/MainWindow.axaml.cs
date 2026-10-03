@@ -13,19 +13,21 @@ using System.Runtime.InteropServices;
 
 namespace MPDCtrlX.Views;
 
-internal sealed partial class MainWindow : Window//AppWindow//
+internal sealed partial class MainWindow : Window
 {
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
     public int WinRestoreTop { get; private set; } = 100;
     public int WinRestoreLeft { get; private set; } = 100;
 
+    public event EventHandler<string>? DebugCommandHandler;// = (sender, arg) => this.OnDebugCommandOutput(arg);
+    public event EventHandler<string>? DebugIdleHandler;// = (sender, arg) => this.OnDebugIdleOutput(arg);
+
     // Optional parameterless constructor for XAML Previewer
     public MainWindow() { InitializeComponent(); }
 
     public MainWindow(MainViewModel vm)
     {
-        //var vm = App.GetService<MainViewModel>();
         this.DataContext = vm;
 
         if (vm.WindowState == WindowState.Maximized)
@@ -54,83 +56,61 @@ internal sealed partial class MainWindow : Window//AppWindow//
 
         InitializeComponent();
 
-        this.NavigateViewControl.Content = App.GetService<MainView>();
         //this.ContentFrame.Navigate(typeof(MainView));
+        this.NavigateViewControl.Content = App.GetService<MainView>();
 
         //this.Icon = new WindowIcon(new Bitmap())
+        Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
+        ImageAppIcon.Source = bitmap;
+
+        this.AddHandler(InputElement.KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
+        this.AddHandler(InputElement.KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
+    }
+
+    protected override void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
 
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
         this.Closed += vm.OnWindowClosed;
         this.SizeChanged += this.Window_SizeChanged;
 
-        vm.DebugWindowShowHide += () => OnDebugWindowShowHide();
-        vm.DebugCommandOutput += (sender, arg) => { this.OnDebugCommandOutput(arg); };
-        vm.DebugIdleOutput += (sender, arg) => { this.OnDebugIdleOutput(arg); };
+        vm.DebugWindowShowHide += OnDebugWindowShowHide;
+        DebugCommandHandler = (sender, arg) => this.OnDebugCommandOutput(arg);
+        vm.DebugCommandOutput += DebugCommandHandler;
+        DebugIdleHandler = (sender, arg) => this.OnDebugIdleOutput(arg);
+        vm.DebugIdleOutput += DebugIdleHandler;
         vm.GoToSettingsPage += OnGoToSettingsPage;
         vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
         vm.WorkingStateChanged += OnWorkingStateChanged;
+    }
 
-        this.DetachedFromVisualTree += (s, e) =>
+    protected override void OnClosed(EventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
         {
-            this.Loaded -= vm.OnWindowLoaded;
-            this.Closing -= vm.OnWindowClosing;
-
-            vm.DebugWindowShowHide -= () => OnDebugWindowShowHide();
-            vm.DebugCommandOutput -= (sender, arg) => { this.OnDebugCommandOutput(arg); };
-            vm.DebugIdleOutput -= (sender, arg) => { this.OnDebugIdleOutput(arg); };
-            vm.GoToSettingsPage -= OnGoToSettingsPage;
-        };
-
-        Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
-        ImageAppIcon.Source = bitmap;
-
-        /*
-        var os = Environment.OSVersion;
-        Debug.WriteLine("Current OS Information:");
-        Debug.WriteLine("Platform: {0:G}", os.Platform);
-        Debug.WriteLine("Version String: {0}", os.VersionString);
-        Debug.WriteLine("Version Information:");
-        Debug.WriteLine("   Major: {0}", os.Version.Major);
-        Debug.WriteLine("   Minor: {0}", os.Version.Minor);
-        Debug.WriteLine("Service Pack: '{0}'", os.ServicePack);
-        */
-
-        //if (os.Platform.ToString().StartsWith("Win"))
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            //this.ExtendClientAreaToDecorationsHint = true;
-
-            //TitleBar.ExtendsContentIntoTitleBar = true;
-            //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
-
-            //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
-            //TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
-            //Background = Brushes.Transparent;
-
-            // Only on Windows
-            //ExtendClientAreaToDecorationsHint = true;
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            //TitleBar.ExtendsContentIntoTitleBar = true;
-            //TitleBar.TitleBarHitTestType = TitleBarHitTestType.Complex;
-
-            //TransparencyLevelHint = [WindowTransparencyLevel.None];
-            //TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
-            //Background = Brushes.Transparent;
-            //Background = this.FindResource("ThemeBackgroundBrush") as IBrush;
-
-            // Not currently supported on Linux due to X11.
-            //ExtendClientAreaToDecorationsHint = false;
-        }
-        else
-        {
-            //
+            return;
         }
 
-        this.AddHandler(InputElement.KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
-        this.AddHandler(InputElement.KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
+        this.Loaded -= vm.OnWindowLoaded;
+        this.Closing -= vm.OnWindowClosing;
+        this.Closed -= vm.OnWindowClosed;
+        this.SizeChanged -= this.Window_SizeChanged;
+
+        vm.DebugWindowShowHide -= OnDebugWindowShowHide;
+        vm.DebugCommandOutput -= DebugCommandHandler;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
+        vm.DebugIdleOutput -= DebugIdleHandler;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
+        vm.GoToSettingsPage -= OnGoToSettingsPage;
+        vm.UserCanExecuteChanged -= OnUserCanExecuteChanged;
+        vm.WorkingStateChanged -= OnWorkingStateChanged;
+
+        base.OnClosed(e);
     }
 
     private void OnWorkingStateChanged(object? sender, bool e)
@@ -173,12 +153,6 @@ internal sealed partial class MainWindow : Window//AppWindow//
         {
             return;
         }
-        /*
-        if (this.NavigationFrame.Navigate(typeof(QueuePage), null, new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromBottom }))//, args.RecommendedNavigationTransitionInfo //new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft }
-        {
-            //_currentPage = typeof(QueuePage);
-        }
-        */
 
         if (this.DataContext is not MainViewModel vm)
         {
@@ -187,25 +161,6 @@ internal sealed partial class MainWindow : Window//AppWindow//
 
         vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
         vm.SelectedNodeMenu?.Selected = true;
-
-        /*
-         * Debug.WriteLine(this.navigateView.MenuItems.Count.ToString());
-        var hoge = this.navigateView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault();
-        //var hoge = this.navigateView.MenuItems.FirstOrDefault();
-        //if (hoge != null)
-        if (hoge is NavigationViewItem nvi)
-        {
-            nvi.IsSelected = true;
-
-            Debug.WriteLine(nvi.Name + " hoge");
-            //
-            //_navigationViewSelectedItem = hoge;
-        }
-        else
-        {
-            Debug.WriteLine("not item " + hoge?.ToString());
-        }
-        */
 
         if (vm.IsNavigationViewMenuOpen)
         {
@@ -285,31 +240,26 @@ internal sealed partial class MainWindow : Window//AppWindow//
     {
         if (this.Width < 340)
         {
-            //
             PlaybackOptions.IsVisible = false;
             this.NavigateViewControl.OpenPaneLength = 280;
         }
         else if (this.Width < 740)
         {
-            //
             PlaybackOptions.IsVisible = false;
             this.NavigateViewControl.OpenPaneLength = 280;
         }
         else if (this.Width < 1008)
         {
-            //
             PlaybackOptions.IsVisible = true;
             this.NavigateViewControl.OpenPaneLength = 280;
         }
         else if (this.Width < 1800)
         {
-            //
             PlaybackOptions.IsVisible = true;
             this.NavigateViewControl.OpenPaneLength = 280;
         }
         else
         {
-            //
             PlaybackOptions.IsVisible = true;
             this.NavigateViewControl.OpenPaneLength = 320;
         }
@@ -450,26 +400,6 @@ internal sealed partial class MainWindow : Window//AppWindow//
                 e.Handled = true;
                 return;
             }
-            /*
-            var focusedControl = this.FocusManager?.GetFocusedElement();
-            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox
-                || focusedControl is Avalonia.Controls.Button || focusedControl is Avalonia.Controls.ToggleSplitButton || focusedControl is Avalonia.Controls.CheckBox)
-            {
-                Debug.WriteLine($"Focused control: {focusedControl?.GetType().Name}. Space key pressed, but focus is on a control that should handle it. Ignoring for play/pause.");
-
-                return;
-            }
-
-            if (this.DataContext is not MainViewModel vm)
-            {
-                Debug.WriteLine("DataContext is not MainViewModel. Cannot toggle play/pause.");
-                return;
-            }
-
-            Debug.WriteLine("Space key pressed. Toggling play/pause.");
-
-            await vm.Play();
-            */
 
             // TODO:
             //e.Handled = true;
@@ -539,7 +469,6 @@ internal sealed partial class MainWindow : Window//AppWindow//
 
     public static partial class NativeMethods
     {
-
         private const int WM_SYSCOMMAND = 0x0112;
         private const int SC_KEYMENU = 0xF100;
 
