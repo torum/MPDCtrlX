@@ -20,7 +20,7 @@ public interface IMpcService
     string MpdHost { get; }
     string MpdPassword { get; }
     int MpdPort { get; }
-    Status MpdStatus { get; }
+    MpdStatus MpdStatus { get; }
     bool MpdStop { get; set; }
     bool MpdForceSetVolume { get; set; }
     string MpdVerText { get; }

@@ -36,7 +36,7 @@ using Path = System.IO.Path;
 
 namespace MPDCtrlX.ViewModels;
 
-internal sealed partial class MainViewModel : ObservableObject
+internal sealed partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
     private readonly InitWindow _initWin;
@@ -1731,7 +1731,7 @@ internal sealed partial class MainViewModel : ObservableObject
             _repeat = value;
             OnPropertyChanged();
 
-            if (_mpc.MpdStatus.MpdRepeat != value)
+            if (_mpc.MpdStatus.IsRepeat != value)
             {
                 _ = SetRpeat();
             }
@@ -1747,7 +1747,7 @@ internal sealed partial class MainViewModel : ObservableObject
             _random = value;
             OnPropertyChanged();
 
-            if (_mpc.MpdStatus.MpdRandom != value)
+            if (_mpc.MpdStatus.IsRandom != value)
             {
                 _ = SetRandom();
             }
@@ -1763,7 +1763,7 @@ internal sealed partial class MainViewModel : ObservableObject
             _consume = value;
             OnPropertyChanged();
 
-            if (_mpc.MpdStatus.MpdConsume != value)
+            if (_mpc.MpdStatus.IsConsume != value)
             {
                 _ = SetConsume();
             }
@@ -1779,7 +1779,7 @@ internal sealed partial class MainViewModel : ObservableObject
             _single = value;
             OnPropertyChanged();
 
-            if (_mpc.MpdStatus.MpdSingle != value)
+            if (_mpc.MpdStatus.IsSingle != value)
             {
                 _ = SetSingle();
             }
@@ -1902,7 +1902,7 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
-    private System.Timers.Timer? _elapsedDelayTimer = null;
+    private System.Timers.Timer? _elapsedDelayTimer;
     private void DoChangeElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
         if (_elapsed < Time)
@@ -1940,6 +1940,7 @@ internal sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    // TODO: Currently always null as default. Find some default image instead.
     private readonly Bitmap? _albumArtBitmapSourceDefault = null;
 
     public Bitmap? AlbumArtBitmapSource
@@ -2272,7 +2273,9 @@ internal sealed partial class MainViewModel : ObservableObject
     {
         get
         {
+#pragma warning disable CA1305 // Specify IFormatProvider
             field = string.Format(MPDCtrlX.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
+#pragma warning restore CA1305 // Specify IFormatProvider
             return field;
         }
     } = string.Empty;
@@ -2663,7 +2666,7 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
             OnPropertyChanged();
         }
-    } = false;
+    }
 
     public AlbumEx? SelectedAlbum
     {
@@ -3141,7 +3144,7 @@ internal sealed partial class MainViewModel : ObservableObject
             field = value;
             OnPropertyChanged();
         }
-    } = false;
+    }
 
     public bool IsArtistSortWithoutThePrefix
     {
@@ -3223,7 +3226,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
             OnPropertyChanged();
         }
-    } = false;
+    }
 
     #endregion
 
@@ -5879,7 +5882,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
             if (CurrentSong is not null)
             {
-                if (CurrentSong.Id != _mpc.MpdStatus.MpdSongID)
+                if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
                 {
                     isSongChanged = true;
 
@@ -5906,7 +5909,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 if (isSongChanged || isCurrentSongWasNull)
                 {
                     // Sets Current Song
-                    var item = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
+                    var item = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                     if (item is not null)
                     {
                         //Debug.WriteLine("Currentsong is set. @UpdateStatus()");
@@ -5986,19 +5989,19 @@ internal sealed partial class MainViewModel : ObservableObject
             try
             {
                 //Play button
-                switch (_mpc.MpdStatus.MpdState)
+                switch (_mpc.MpdStatus.CurrentPlayState)
                 {
-                    case Status.MpdPlayState.Play:
+                    case MpdPlayState.Play:
                         {
                             PlayButton = _pathPauseButton;
                             break;
                         }
-                    case Status.MpdPlayState.Pause:
+                    case MpdPlayState.Pause:
                         {
                             PlayButton = _pathPlayButton;
                             break;
                         }
-                    case Status.MpdPlayState.Stop:
+                    case MpdPlayState.Stop:
                         {
                             PlayButton = _pathPlayButton;
                             break;
@@ -6007,14 +6010,14 @@ internal sealed partial class MainViewModel : ObservableObject
                         //_pathStopButton
                 }
 
-                if (_mpc.MpdStatus.MpdVolumeIsReturned)
+                if (_mpc.MpdStatus.IsVolumeReturned)
                 {
                     // Only update volume when Playing or Paused. (Because of MPD's strange behavior where it returns volume 100 when stopped)
-                    if (_mpc.MpdStatus.MpdState != Status.MpdPlayState.Stop)
+                    if (_mpc.MpdStatus.CurrentPlayState != MpdPlayState.Stop)
                     {
                         //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
 
-                        double tmpVol = Convert.ToDouble(_mpc.MpdStatus.MpdVolume);
+                        double tmpVol = Convert.ToDouble(_mpc.MpdStatus.CurrentVolume);
                         if (_volume != tmpVol)
                         {
                             // "quietly" update.
@@ -6024,25 +6027,25 @@ internal sealed partial class MainViewModel : ObservableObject
                     } 
                 }
 
-                _random = _mpc.MpdStatus.MpdRandom;
+                _random = _mpc.MpdStatus.IsRandom;
                 OnPropertyChanged(nameof(Random));
 
-                _repeat = _mpc.MpdStatus.MpdRepeat;
+                _repeat = _mpc.MpdStatus.IsRepeat;
                 OnPropertyChanged(nameof(Repeat));
 
-                _consume = _mpc.MpdStatus.MpdConsume;
+                _consume = _mpc.MpdStatus.IsConsume;
                 OnPropertyChanged(nameof(Consume));
 
-                _single = _mpc.MpdStatus.MpdSingle;
+                _single = _mpc.MpdStatus.IsSingle;
                 OnPropertyChanged(nameof(Single));
 
                 //start elapsed timer.
-                if (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play)
+                if (_mpc.MpdStatus.CurrentPlayState == MpdPlayState.Play)
                 {
                     // no need to care about "double" updates for time.
-                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
+                    Time = Convert.ToInt32(_mpc.MpdStatus.CurrentSongTime);
                     Time *= _elapsedTimeMultiplier;
-                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed);
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.CurrentSongElapsed);
                     _elapsed *= _elapsedTimeMultiplier;
                     if (!_elapsedTimer.Enabled)
                         _elapsedTimer.Start();
@@ -6051,9 +6054,9 @@ internal sealed partial class MainViewModel : ObservableObject
                 {
                     _elapsedTimer.Stop();
                     // no need to care about "double" updates for time.
-                    Time = Convert.ToInt32(_mpc.MpdStatus.MpdSongTime);
+                    Time = Convert.ToInt32(_mpc.MpdStatus.CurrentSongTime);
                     Time *= _elapsedTimeMultiplier;
-                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.MpdSongElapsed);
+                    _elapsed = Convert.ToInt32(_mpc.MpdStatus.CurrentSongElapsed);
                     _elapsed *= _elapsedTimeMultiplier;
                     OnPropertyChanged(nameof(Elapsed));
                     OnPropertyChanged(nameof(ElapsedFormatted));
@@ -6078,7 +6081,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
             if (CurrentSong != null)
             {
-                if (CurrentSong.Id != _mpc.MpdStatus.MpdSongID)
+                if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
                 {
                     isSongChanged = true;
 
@@ -6104,7 +6107,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
             if (_mpc.MpdCurrentSong != null)
             {
-                if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.MpdSongID)
+                if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.CurrentSongID)
                 {
                     //CurrentSong = _mpc.MpdCurrentSong; // needed this..
                     //CurrentSong.IsPlaying = true; // don't because the object is not from queue. It's gonna be duplicated IsPlaying.
@@ -6152,7 +6155,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 }
                 else
                 {
-                    Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.MpdSongID. @UpdateCurrentSong()");
+                    Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.CurrentSongID. @UpdateCurrentSong()");
                 }
             }
             else
@@ -6197,7 +6200,7 @@ internal sealed partial class MainViewModel : ObservableObject
                         UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
 
                         // Set Current and NowPlaying.
-                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
+                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                         if (curitem is not null)
                         {
                             if (CurrentSong is not null)
@@ -6371,7 +6374,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
 
                     // Set Current and NowPlaying.
-                    var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
+                    var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                     if (curitem is not null)
                     {
                         bool asdf = false;
@@ -6474,7 +6477,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
                     if (CurrentSong is not null)
                     {
-                        if (CurrentSong.Id != _mpc.MpdStatus.MpdSongID)
+                        if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
                         {
                             isNeedToFindCurrentSong = true;
 
@@ -6485,12 +6488,12 @@ internal sealed partial class MainViewModel : ObservableObject
                             if (_mpc.MpdCurrentSong is not null)
                             {
                                 // This means CurrentSong is already aquired by "currentsong" command.
-                                if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.MpdSongID)
+                                if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.CurrentSongID)
                                 {
                                     // Set Current(again) and NowPlaying.
 
                                     // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
-                                    var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
+                                    var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                                     if (curitem is not null)
                                     {
                                         CurrentSong = curitem;
@@ -6536,7 +6539,7 @@ internal sealed partial class MainViewModel : ObservableObject
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.MpdSongID. @UpdateCurrentQueue()");
+                                    Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.CurrentSongID. @UpdateCurrentQueue()");
                                     isNeedToFindCurrentSong = true;
                                 }
                             }
@@ -6556,7 +6559,7 @@ internal sealed partial class MainViewModel : ObservableObject
                     if (isNeedToFindCurrentSong)
                     {
                         // Set Current and NowPlaying.
-                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.MpdSongID);
+                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                         if (curitem is not null)
                         {
                             //Debug.WriteLine($"Currentsong is set. {curitem.Title}. @UpdateCurrentQueue()");
@@ -7192,10 +7195,10 @@ internal sealed partial class MainViewModel : ObservableObject
 
                         foreach (var song in r.SearchResult)
                         {
-                            if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.CurrentCulture)))
+                            if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.Ordinal)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.Ordinal)))
                             {
                                 //if (song.Album.Trim() == album.Name.Trim())
-                                if (song.Album.Equals(album.Name))
+                                if (song.Album.Equals(album.Name, StringComparison.Ordinal))
                                 {
                                     //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
                                     album.Songs.Add(song);
@@ -7373,7 +7376,7 @@ internal sealed partial class MainViewModel : ObservableObject
 
                 foreach (var song in r.SearchResult)
                 {
-                    if (song.Album.Equals(slbm.Name, StringComparison.CurrentCulture))
+                    if (song.Album.Equals(slbm.Name, StringComparison.Ordinal))
                     {
                         slbm.Songs.Add(song);
 
@@ -7642,7 +7645,7 @@ internal sealed partial class MainViewModel : ObservableObject
                             aat = albumsong.Artist.Trim();
                         }
                         //if (aat == album.AlbumArtist)
-                        if (string.Equals(aat, album.AlbumArtist, StringComparison.CurrentCulture))
+                        if (string.Equals(aat, album.AlbumArtist, StringComparison.Ordinal))
                         {
                             //Debug.WriteLine($"GetAlbumPictures: Album:{album.Name}, Song {albumsong.File}");
                             //Debug.WriteLine($"GetAlbumPictures: Processing song {albumsong.File} from album {album.Name}");
@@ -7948,9 +7951,9 @@ internal sealed partial class MainViewModel : ObservableObject
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
     {
-        if (_mpc.MpdStatus.MpdError != "")
+        if (_mpc.MpdStatus.CurrentError != "")
         {
-            MpdStatusMessage = MpdVersion + ": " + MPDCtrlX.Properties.Resources.MPD_StatusError + " - " + _mpc.MpdStatus.MpdError;
+            MpdStatusMessage = MpdVersion + ": " + MPDCtrlX.Properties.Resources.MPD_StatusError + " - " + _mpc.MpdStatus.CurrentError;
             MpdStatusButton = _pathMpdAckErrorButton;
         }
         else
@@ -8281,7 +8284,7 @@ internal sealed partial class MainViewModel : ObservableObject
     private readonly System.Timers.Timer _elapsedTimer;
     private void ElapsedTimer(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        if ((_elapsed < Time) && (_mpc.MpdStatus.MpdState == Status.MpdPlayState.Play))
+        if ((_elapsed < Time) && (_mpc.MpdStatus.CurrentPlayState == MpdPlayState.Play))
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -8310,21 +8313,21 @@ internal sealed partial class MainViewModel : ObservableObject
 
         if (Queue.Count < 1) { return; }
 
-        switch (_mpc.MpdStatus.MpdState)
+        switch (_mpc.MpdStatus.CurrentPlayState)
         {
-            case Status.MpdPlayState.Play:
+            case MpdPlayState.Play:
                 {
                     //State>>Play: So, send Pause command
                     await _mpc.MpdPlaybackPause();
                     break;
                 }
-            case Status.MpdPlayState.Pause:
+            case MpdPlayState.Pause:
                 {
                     //State>>Pause: So, send Resume command
                     await _mpc.MpdPlaybackResume(Convert.ToInt32(_volume));
                     break;
                 }
-            case Status.MpdPlayState.Stop:
+            case MpdPlayState.Stop:
                 {
                     //State>>Stop: So, send Play command
                     await _mpc.MpdPlaybackPlay(Convert.ToInt32(_volume));
@@ -8487,7 +8490,7 @@ internal sealed partial class MainViewModel : ObservableObject
     {
         if (IsBusy) return;
         double elapsed = _elapsed / _elapsedTimeMultiplier;
-        await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.MpdSongID, elapsed);
+        await _mpc.MpdPlaybackSeek(_mpc.MpdStatus.CurrentSongID, elapsed);
     }
     private bool SetSeekCanExecute()
     {
@@ -9800,7 +9803,7 @@ internal sealed partial class MainViewModel : ObservableObject
                 foreach (var fuga in hoge.Children)
                 {
                     if (fuga is not NodeMenuPlaylistItem) continue;
-                    if (!string.Equals(playlist, fuga.Name)) continue;
+                    if (!string.Equals(playlist, fuga.Name, StringComparison.Ordinal)) continue;
                     //Debug.WriteLine($"{playlist} is now selected....");
 
                     // Needed this. Otherwise, Playlist name wouldn't update. 
@@ -9826,7 +9829,7 @@ internal sealed partial class MainViewModel : ObservableObject
         if (Playlists.Count <= 0) return match;
         foreach (var hoge in Playlists)
         {
-            if (!string.Equals(playlistName, hoge.Name, StringComparison.CurrentCultureIgnoreCase)) continue;
+            if (!string.Equals(playlistName, hoge.Name, StringComparison.OrdinalIgnoreCase)) continue;
             match = true;
             break;
         }
@@ -11762,4 +11765,9 @@ internal sealed partial class MainViewModel : ObservableObject
 
 
     #endregion
+
+    public void Dispose()
+    {
+        _cts?.Dispose();
+    }
 }

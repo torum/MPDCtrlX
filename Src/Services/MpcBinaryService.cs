@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace MPDCtrlX.Services;
 
-public class MpcBinaryService : IMpcBinaryService
+public class MpcBinaryService : IMpcBinaryService, IDisposable
 {
     private CancellationTokenSource? _cts;
 
@@ -1215,5 +1215,12 @@ public class MpcBinaryService : IMpcBinaryService
         writer = null;
         reader = null;
         connection = new TcpClient();
+    }
+
+    public void Dispose()
+    {
+        _cts?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

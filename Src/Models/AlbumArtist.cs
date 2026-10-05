@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace MPDCtrlX.Models;
-
+/*
 public class Album : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
@@ -23,7 +23,7 @@ public class Album : ObservableObject
         }
     } = string.Empty;
 
-    public bool IsSongsAcquired { get; set; } = false;
+    public bool IsSongsAcquired { get; set; }
 
     public ObservableCollection<SongInfo> Songs
     {
@@ -46,7 +46,7 @@ public class AlbumEx : Album
 
     public string AlbumArtistSort { get; set; } = string.Empty;
 
-    public string? AlbumImagePath { get; set; } = null;
+    public string? AlbumImagePath { get; set; }
 
     public Bitmap? AlbumImage
     {
@@ -60,12 +60,12 @@ public class AlbumEx : Album
             field = value;
             OnPropertyChanged();
         }
-    } = null;
+    }
 
-    public bool IsImageAcquired { get; set; } = false;
-    public bool IsImageLoading { get; set; } = false;
+    public bool IsImageAcquired { get; set; }
+    public bool IsImageLoading { get; set; }
 }
-
+*/
 public class AlbumArtist : ObservableObject
 {
     public string Name { get; set; } = string.Empty;

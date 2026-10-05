@@ -11,14 +11,14 @@ internal sealed class MprisPlayerController(IMpcService mpcService)
 {
     private readonly IMpcService _mpc = mpcService;
 
-    public string PlaybackStatus => _mpc.MpdStatus.MpdState switch
+    public string PlaybackStatus => _mpc.MpdStatus.CurrentPlayState switch
     {
-        Status.MpdPlayState.Play => "Playing",
-        Status.MpdPlayState.Pause => "Paused",
+        MpdPlayState.Play => "Playing",
+        MpdPlayState.Pause => "Paused",
         _ => "Stopped"
     };
 
-    public double Volume => Math.Clamp(_mpc.MpdStatus.MpdVolume / 100.0, 0.0, 1.0);
+    public double Volume => Math.Clamp(_mpc.MpdStatus.CurrentVolume / 100.0, 0.0, 1.0);
 
     public bool CanControlVolume => _mpc.Commands.Contains("setvol", StringComparer.OrdinalIgnoreCase);
 
@@ -26,23 +26,23 @@ internal sealed class MprisPlayerController(IMpcService mpcService)
 
     public bool CanGoPrevious => _mpc.Commands.Contains("previous", StringComparer.OrdinalIgnoreCase);
 
-    public bool CanSeek => _mpc.Commands.Contains("seekid", StringComparer.OrdinalIgnoreCase) && !string.IsNullOrEmpty(_mpc.MpdStatus.MpdSongID);
+    public bool CanSeek => _mpc.Commands.Contains("seekid", StringComparer.OrdinalIgnoreCase) && !string.IsNullOrEmpty(_mpc.MpdStatus.CurrentSongID);
 
-    public Task<CommandResult> PlayAsync() => _mpc.MpdPlaybackResume(_mpc.MpdStatus.MpdVolume);
+    public Task<CommandResult> PlayAsync() => _mpc.MpdPlaybackResume(_mpc.MpdStatus.CurrentVolume);
 
-    public Task<CommandResult> PauseAsync() => _mpc.MpdStatus.MpdState == Status.MpdPlayState.Play
+    public Task<CommandResult> PauseAsync() => _mpc.MpdStatus.CurrentPlayState == MpdPlayState.Play
             ? _mpc.MpdPlaybackPause()
             : Task.FromResult(new CommandResult());
 
-    public Task<CommandResult> PlayPauseAsync() => _mpc.MpdStatus.MpdState == Status.MpdPlayState.Play
+    public Task<CommandResult> PlayPauseAsync() => _mpc.MpdStatus.CurrentPlayState == MpdPlayState.Play
             ? _mpc.MpdPlaybackPause()
-            : _mpc.MpdPlaybackResume(_mpc.MpdStatus.MpdVolume);
+            : _mpc.MpdPlaybackResume(_mpc.MpdStatus.CurrentVolume);
 
     public Task<CommandResult> StopAsync() => _mpc.MpdPlaybackStop();
 
-    public Task<CommandResult> NextAsync() => _mpc.MpdPlaybackNext(_mpc.MpdStatus.MpdVolume);
+    public Task<CommandResult> NextAsync() => _mpc.MpdPlaybackNext(_mpc.MpdStatus.CurrentVolume);
 
-    public Task<CommandResult> PreviousAsync() => _mpc.MpdPlaybackPrev(_mpc.MpdStatus.MpdVolume);
+    public Task<CommandResult> PreviousAsync() => _mpc.MpdPlaybackPrev(_mpc.MpdStatus.CurrentVolume);
 
     public Task<CommandResult> SetVolumeAsync(double mprisVolume)
     {
@@ -65,13 +65,13 @@ internal sealed class MprisPlayerController(IMpcService mpcService)
     /// <summary>Applies an MPRIS Seek offset, in microseconds.</summary>
     public Task<CommandResult> SeekAsync(long offsetMicroseconds)
     {
-        var songId = _mpc.MpdStatus.MpdSongID;
+        var songId = _mpc.MpdStatus.CurrentSongID;
         if (!CanSeek || string.IsNullOrEmpty(songId))
         {
             return Task.FromResult(new CommandResult());
         }
 
-        var targetSeconds = Math.Clamp(_mpc.MpdStatus.MpdSongElapsed + offsetMicroseconds / 1_000_000.0, 0.0, _mpc.MpdStatus.MpdSongTime);
+        var targetSeconds = Math.Clamp(_mpc.MpdStatus.CurrentSongElapsed + offsetMicroseconds / 1_000_000.0, 0.0, _mpc.MpdStatus.CurrentSongTime);
 
         return _mpc.MpdPlaybackSeek(songId, targetSeconds);
     }
@@ -79,20 +79,20 @@ internal sealed class MprisPlayerController(IMpcService mpcService)
     /// <summary>Applies an MPRIS SetPosition value, in microseconds.</summary>
     public Task<CommandResult> SetPositionAsync(long positionMicroseconds)
     {
-        var songId = _mpc.MpdStatus.MpdSongID;
+        var songId = _mpc.MpdStatus.CurrentSongID;
         if (!CanSeek || string.IsNullOrEmpty(songId))
         {
             return Task.FromResult(new CommandResult());
         }
 
-        var targetSeconds = Math.Clamp(positionMicroseconds / 1_000_000.0, 0.0, _mpc.MpdStatus.MpdSongTime);
+        var targetSeconds = Math.Clamp(positionMicroseconds / 1_000_000.0, 0.0, _mpc.MpdStatus.CurrentSongTime);
 
         return _mpc.MpdPlaybackSeek(songId, targetSeconds);
     }
 
-    public bool Shuffle => _mpc.MpdStatus.MpdRandom;
+    public bool Shuffle => _mpc.MpdStatus.IsRandom;
 
-    public string LoopStatus => !_mpc.MpdStatus.MpdRepeat ? "None" : _mpc.MpdStatus.MpdSingle ? "Track" : "Playlist";
+    public string LoopStatus => !_mpc.MpdStatus.IsRepeat ? "None" : _mpc.MpdStatus.IsSingle ? "Track" : "Playlist";
 
     public Task<CommandResult> SetShuffleAsync(bool value) => _mpc.MpdSetRandom(value);
 

@@ -16,6 +16,10 @@
 	  <FileVersion>1.1.4.0</FileVersion>
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
+	  
+	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	  
+	  <AnalysisLevel>latest</AnalysisLevel>
 
   </PropertyGroup>
 	

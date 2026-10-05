@@ -149,7 +149,7 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
 
             try
             {
-                var songId = _mpcService.MpdStatus.MpdSongID;
+                var songId = _mpcService.MpdStatus.CurrentSongID;
                 if (!string.IsNullOrEmpty(songId) && _mpcService.MpdCurrentSong?.Id != songId)
                 {
                     var result = await _mpcService.MpdQueryCurrentSong();

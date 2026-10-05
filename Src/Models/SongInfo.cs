@@ -1,20 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace MPDCtrlX.Models;
 
 /// <summary>
-/// Generic song file class. (for listall)
-/// </summary>
-public class SongFile : ObservableObject
-{
-    public string File { get; set; } = string.Empty;
-}
-
-/// <summary>
 /// SongInfo class. Extends SongFile. (for playlist or search result)
 /// </summary>
-
 public class SongInfo : SongFile
 {
     public string Title { get; set; } = string.Empty;
@@ -214,54 +204,3 @@ public class SongInfo : SongFile
     public int IndexPlusOne => Index + 1;
 }
 
-/// <summary>
-/// Song class with some extra info. Extends SongInfo. (for queue)
-/// </summary>
-public class SongInfoEx : SongInfo
-{
-    // Queue specific
-
-    public string Id { get; set; } = string.Empty;
-
-    public string Pos
-    {
-        get;
-        set
-        {
-            if (field == value)
-                return;
-
-            field = value;
-
-            OnPropertyChanged();
-        }
-    } = string.Empty;
-
-    public bool IsPlaying
-    {
-        get;
-        set
-        {
-            if (field == value)
-                return;
-
-            field = value;
-
-            OnPropertyChanged();
-        }
-    }
-
-    public bool IsAlbumCoverNeedsUpdate
-    {
-        get;
-        set
-        {
-            if (field == value)
-                return;
-
-            field = value;
-
-            OnPropertyChanged();
-        }
-    } = true;
-}

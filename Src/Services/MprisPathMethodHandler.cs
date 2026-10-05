@@ -266,7 +266,7 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
         var targetSeconds = Math.Clamp(
     position / 1_000_000.0,
     0.0,
-    mpc.MpdStatus.MpdSongTime);
+    mpc.MpdStatus.CurrentSongTime);
 
         return ReplySeekCommand(
             context,
@@ -376,15 +376,15 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
         return new Dictionary<string, VariantValue>
         {
             ["PlaybackStatus"] = VariantValue.String(player.PlaybackStatus),
-            //["LoopStatus"] = VariantValue.String(mpc.MpdStatus.MpdRepeat ? "Playlist" : "None"),
+            //["LoopStatus"] = VariantValue.String(mpc.MpdStatus.IsRepeat ? "Playlist" : "None"),
             ["LoopStatus"] = VariantValue.String(player.LoopStatus),
             ["Rate"] = VariantValue.Double(1.0),
-            //["Shuffle"] = VariantValue.Bool(mpc.MpdStatus.MpdRandom),
+            //["Shuffle"] = VariantValue.Bool(mpc.MpdStatus.IsRandom),
             ["Shuffle"] = VariantValue.Bool(player.Shuffle),
             ["Metadata"] = BuildMetadata(),
             ["Volume"] = VariantValue.Double(player.Volume),
             ["Position"] = VariantValue.Int64(
-                (long)(mpc.MpdStatus.MpdSongElapsed * 1_000_000)),
+                (long)(mpc.MpdStatus.CurrentSongElapsed * 1_000_000)),
             ["CanGoNext"] = VariantValue.Bool(player.CanGoNext),
             ["CanGoPrevious"] = VariantValue.Bool(player.CanGoPrevious),
             ["CanPlay"] = VariantValue.Bool(true),
@@ -407,7 +407,7 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
         {
             ["mpris:trackid"] = VariantValue.ObjectPath(new ObjectPath(GetTrackId())),
             ["mpris:length"] = VariantValue.Int64(
-                (long)(mpc.MpdStatus.MpdSongTime * 1_000_000))
+                (long)(mpc.MpdStatus.CurrentSongTime * 1_000_000))
         };
 
         if (song is not null)
@@ -477,9 +477,9 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
     {
         var offset = reader.ReadInt64();
         var targetSeconds = Math.Clamp(
-            mpc.MpdStatus.MpdSongElapsed + offset / 1_000_000.0,
+            mpc.MpdStatus.CurrentSongElapsed + offset / 1_000_000.0,
             0.0,
-            mpc.MpdStatus.MpdSongTime);
+            mpc.MpdStatus.CurrentSongTime);
 
         return ReplySeekCommand(
             context,

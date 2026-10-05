@@ -10,7 +10,9 @@ public class NodeMenu : NodeTree
     }
 }
 
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 public class NodeMenuQueue : NodeMenu
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 {
     public NodeMenuQueue(string name) : base(name)
     {
@@ -82,7 +84,7 @@ public class NodeMenuPlaylists : NodeMenu
 
 public class NodeMenuPlaylistItem : NodeMenu
 {
-    public ObservableCollection<SongInfo> PlaylistSongs = [];
+    public ObservableCollection<SongInfo> PlaylistSongs { get; set; } = [];
 
     public bool IsUpdateRequied { get; set; }
 
