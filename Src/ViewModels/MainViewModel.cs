@@ -2379,7 +2379,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             path = path.Replace(("/" + filename), "");
 
-            if (path.StartsWith(_selectedNodeDirectory.DireUri.LocalPath))
+            if (path.StartsWith(_selectedNodeDirectory.DireUri.LocalPath, StringComparison.Ordinal))
             {
                 if (FilterMusicEntriesQuery != "")
                 {
@@ -2435,7 +2435,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-            field = string.Format(MPDCtrlX.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
             return field;
         }
     } = string.Empty;
@@ -2480,7 +2480,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-            field = string.Format(MPDCtrlX.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
             return field;
         }
     } = string.Empty;
@@ -2729,7 +2729,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-            field = string.Format(MPDCtrlX.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
             return field;
         }
     } = "";
@@ -2914,7 +2914,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-            field = string.Format(MPDCtrlX.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
             return field;
         }
     } = "";
@@ -2985,7 +2985,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-            field = string.Format(MPDCtrlX.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
             return field;
         }
 
@@ -3252,7 +3252,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             OnPropertyChanged(nameof(Volume));
 
             Host = field.Host;
-            Port = field.Port.ToString();
+            Port = field.Port.ToString(CultureInfo.InvariantCulture);
             _password = field.Password;
             OnPropertyChanged(nameof(Password));
         }
@@ -3352,7 +3352,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private int _port = 6600;
     public string Port
     {
-        get => _port.ToString();
+        get => _port.ToString(CultureInfo.InvariantCulture);
         set
         {
             //ClearError(nameof(Port));
@@ -4003,7 +4003,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                             if (!string.IsNullOrEmpty(hoge.Value))
                             {
                                 //w.Height = double.Parse(hoge.Value);
-                                WindowHeight = double.Parse(hoge.Value);
+                                WindowHeight = double.Parse(hoge.Value, CultureInfo.InvariantCulture);
                             }
                         }
 
@@ -4013,7 +4013,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                             if (!string.IsNullOrEmpty(hoge.Value))
                             {
                                 //w.Width = double.Parse(hoge.Value);
-                                WindowWidth = double.Parse(hoge.Value);
+                                WindowWidth = double.Parse(hoge.Value, CultureInfo.InvariantCulture);
                             }
                         }
 
@@ -4222,7 +4222,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                 {
                                     try
                                     {
-                                        pro.Port = Int32.Parse(s);
+                                        pro.Port = Int32.Parse(s, CultureInfo.InvariantCulture);
                                     }
                                     catch
                                     {
@@ -4254,7 +4254,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                 {
                                     try
                                     {
-                                        pro.Volume = double.Parse(s);
+                                        pro.Volume = double.Parse(s, CultureInfo.InvariantCulture);
                                     }
                                     catch
                                     {
@@ -4297,7 +4297,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                 {
                                     try
                                     {
-                                        MainLeftPainWidth = Double.Parse(s);
+                                        MainLeftPainWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                     }
                                     catch
                                     {
@@ -4360,7 +4360,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderPositionWidth = Double.Parse(s);
+                                                QueueColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4390,7 +4390,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderNowPlayingWidth = Double.Parse(s);
+                                                QueueColumnHeaderNowPlayingWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4409,7 +4409,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderTitleWidth = Double.Parse(s);
+                                                QueueColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                                 if (QueueColumnHeaderTitleWidth < 120)
                                                     QueueColumnHeaderTitleWidth = 160;
                                             }
@@ -4441,7 +4441,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderTimeWidth = Double.Parse(s);
+                                                QueueColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4471,7 +4471,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderArtistWidth = Double.Parse(s);
+                                                QueueColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4501,7 +4501,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderAlbumWidth = Double.Parse(s);
+                                                QueueColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4531,7 +4531,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderDiscWidth = Double.Parse(s);
+                                                QueueColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4561,7 +4561,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderTrackWidth = Double.Parse(s);
+                                                QueueColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4591,7 +4591,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderGenreWidth = Double.Parse(s);
+                                                QueueColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4621,7 +4621,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                QueueColumnHeaderLastModifiedWidth = Double.Parse(s);
+                                                QueueColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4646,7 +4646,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                FilesColumnHeaderTitleWidth = Double.Parse(s);
+                                                FilesColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4665,7 +4665,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                FilesColumnHeaderFilePathWidth = Double.Parse(s);
+                                                FilesColumnHeaderFilePathWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4707,7 +4707,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderPositionWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4758,7 +4758,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderTitleWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                                 if (PlaylistColumnHeaderTitleWidth < 120)
                                                     PlaylistColumnHeaderTitleWidth = 160;
                                             }
@@ -4791,7 +4791,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderTimeWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4822,7 +4822,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderArtistWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4853,7 +4853,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderAlbumWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4884,7 +4884,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderDiscWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4915,7 +4915,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderTrackWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4946,7 +4946,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderGenreWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -4977,7 +4977,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                PlaylistColumnHeaderLastModifiedWidth = Double.Parse(s);
+                                                PlaylistColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5019,7 +5019,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderPositionWidth = Double.Parse(s);
+                                                SearchColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5070,7 +5070,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderTitleWidth = Double.Parse(s);
+                                                SearchColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                                 if (SearchColumnHeaderTitleWidth < 120)
                                                     SearchColumnHeaderTitleWidth = 160;
                                             }
@@ -5103,7 +5103,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderTimeWidth = Double.Parse(s);
+                                                SearchColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5134,7 +5134,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderArtistWidth = Double.Parse(s);
+                                                SearchColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5165,7 +5165,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderAlbumWidth = Double.Parse(s);
+                                                SearchColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5196,7 +5196,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderDiscWidth = Double.Parse(s);
+                                                SearchColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5227,7 +5227,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderTrackWidth = Double.Parse(s);
+                                                SearchColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5258,7 +5258,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderGenreWidth = Double.Parse(s);
+                                                SearchColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5289,7 +5289,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                                         {
                                             try
                                             {
-                                                SearchColumnHeaderLastModifiedWidth = Double.Parse(s);
+                                                SearchColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
                                             }
                                             catch
                                             {
@@ -5416,27 +5416,27 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             //Window w = (sender as Window);
             // Main Window attributes
             attrs = doc.CreateAttribute("height");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Height.ToString() : w.WinRestoreHeight.ToString();
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Height.ToString(CultureInfo.InvariantCulture) : w.WinRestoreHeight.ToString(CultureInfo.InvariantCulture);
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("width");
             if (w.WindowState == WindowState.Normal)
             {
-                attrs.Value = w.Width.ToString();
+                attrs.Value = w.Width.ToString(CultureInfo.InvariantCulture);
                 windowWidth = w.Width;
             }
             else
             {
-                attrs.Value = w.WinRestoreWidth.ToString();
+                attrs.Value = w.WinRestoreWidth.ToString(CultureInfo.InvariantCulture);
             }
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("top");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.Y.ToString() : w.WinRestoreTop.ToString();
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.Y.ToString(CultureInfo.InvariantCulture) : w.WinRestoreTop.ToString(CultureInfo.InvariantCulture);
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("left");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.X.ToString() : w.WinRestoreLeft.ToString();
+            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.X.ToString(CultureInfo.InvariantCulture) : w.WinRestoreLeft.ToString(CultureInfo.InvariantCulture);
             mainWindow.SetAttributeNode(attrs);
 
             attrs = doc.CreateAttribute("state");
@@ -5465,11 +5465,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             var lAttrs = doc.CreateAttribute("Width");
             if (IsFullyLoaded) // instead of IsFullyRendered
             {
-                lAttrs.Value = windowWidth > (MainLeftPainActualWidth - 24) ? MainLeftPainActualWidth.ToString() : "241";
+                lAttrs.Value = windowWidth > (MainLeftPainActualWidth - 24) ? MainLeftPainActualWidth.ToString(CultureInfo.InvariantCulture) : "241";
             }
             else
             {
-                lAttrs.Value = MainLeftPainWidth.ToString();
+                lAttrs.Value = MainLeftPainWidth.ToString(CultureInfo.InvariantCulture);
             }
             leftpain.SetAttributeNode(lAttrs);
 
@@ -5572,7 +5572,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             xProfile.SetAttributeNode(xAttrs);
 
             xAttrs = doc.CreateAttribute("Port");
-            xAttrs.Value = p.Port.ToString();
+            xAttrs.Value = p.Port.ToString(CultureInfo.InvariantCulture);
             xProfile.SetAttributeNode(xAttrs);
 
             xAttrs = doc.CreateAttribute("Password");
@@ -5587,7 +5587,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
 
             xAttrs = doc.CreateAttribute("Volume");
-            xAttrs.Value = p == CurrentProfile ? _volume.ToString() : p.Volume.ToString();
+            xAttrs.Value = p == CurrentProfile ? _volume.ToString(CultureInfo.InvariantCulture) : p.Volume.ToString(CultureInfo.InvariantCulture);
             xProfile.SetAttributeNode(xAttrs);
 
             xProfiles.AppendChild(xProfile);
@@ -5861,7 +5861,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 {
                     MpdStatusButton = _pathMpdAckErrorButton;
                     //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
-                    MpdStatusMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+                    MpdStatusMessage = string.Format(CultureInfo.CurrentCulture,MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
                 });
             }
         }
@@ -7702,7 +7702,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                             Directory.CreateDirectory(strDirPath);
                             DateTimeOffset dto = new(DateTime.UtcNow);
                             // Get the unix timestamp in seconds
-                            var unixTime = dto.ToUnixTimeSeconds().ToString();
+                            var unixTime = dto.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture);
 
                             await using StreamWriter file = new(fileTempPath);
                             await file.WriteLineAsync(unixTime);
@@ -7818,31 +7818,31 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (size < 1024)
         {
-            return size.ToString("F0") + " bytes";
+            return size.ToString("F0", CultureInfo.InvariantCulture) + " bytes";
         }
         else if ((size >> 10) < 1024)
         {
-            return (size / 1024F).ToString("F1") + " KB";
+            return (size / 1024F).ToString("F1", CultureInfo.InvariantCulture) + " KB";
         }
         else if ((size >> 20) < 1024)
         {
-            return ((size >> 10) / 1024F).ToString("F1") + " MB";
+            return ((size >> 10) / 1024F).ToString("F1", CultureInfo.InvariantCulture) + " MB";
         }
         else if ((size >> 30) < 1024)
         {
-            return ((size >> 20) / 1024F).ToString("F1") + " GB";
+            return ((size >> 20) / 1024F).ToString("F1", CultureInfo.InvariantCulture) + " GB";
         }
         else if ((size >> 40) < 1024)
         {
-            return ((size >> 30) / 1024F).ToString("F1") + " TB";
+            return ((size >> 30) / 1024F).ToString("F1", CultureInfo.InvariantCulture) + " TB";
         }
         else if ((size >> 50) < 1024)
         {
-            return ((size >> 40) / 1024F).ToString("F1") + " PB";
+            return ((size >> 40) / 1024F).ToString("F1", CultureInfo.InvariantCulture) + " PB";
         }
         else
         {
-            return ((size >> 50) / 1024F).ToString("F0") + " EB";
+            return ((size >> 50) / 1024F).ToString("F0", CultureInfo.InvariantCulture) + " EB";
         }
     }
 
@@ -8740,13 +8740,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            int i = Int32.Parse(song.Pos);
+            int i = Int32.Parse(song.Pos, CultureInfo.InvariantCulture);
 
             if (i == 0) return;
 
             i -= 1;
 
-            idToNewPos.Add(song.Id, i.ToString());
+            idToNewPos.Add(song.Id, i.ToString(CultureInfo.InvariantCulture));
         }
         catch
         {
@@ -8776,13 +8776,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            var i = Int32.Parse(song.Pos);
+            var i = Int32.Parse(song.Pos, CultureInfo.InvariantCulture);
 
             if (i >= Queue.Count - 1) return;
 
             i += 1;
 
-            idToNewPos.Add(song.Id, i.ToString());
+            idToNewPos.Add(song.Id, i.ToString(CultureInfo.InvariantCulture));
         }
         catch
         {
@@ -8806,7 +8806,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         int i = 0;
         foreach (var item in sorted)
         {
-            idToNewPos.Add(item.Id, i.ToString());
+            idToNewPos.Add(item.Id, i.ToString(CultureInfo.InvariantCulture));
             i++;
         }
 
@@ -8864,7 +8864,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         int i = 0;
         foreach (var item in sorted)
         {
-            idToNewPos.Add(item.Id, i.ToString());
+            idToNewPos.Add(item.Id, i.ToString(CultureInfo.InvariantCulture));
             i++;
         }
 
@@ -10757,7 +10757,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 // Create new profile
                 Profile prof = new()
                 {
-                    Name = _host + ":" + _port.ToString(),
+                    Name = _host + ":" + _port.ToString(CultureInfo.InvariantCulture),
                     Host = _host,
                     //HostIpAddress = _hostIpAddress,
                     Port = _port,
@@ -11769,5 +11769,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         _cts?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

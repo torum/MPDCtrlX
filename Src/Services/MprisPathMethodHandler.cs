@@ -10,7 +10,7 @@ using Path = System.IO.Path;
 
 namespace MPDCtrlX.Services;
 
-internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcService mpc) : IPathMethodHandler
+internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcService mpc) : IPathMethodHandler, IDisposable
 {
     private const string RootInterface = "org.mpris.MediaPlayer2";
     private const string PlayerInterface = "org.mpris.MediaPlayer2.Player";
@@ -589,6 +589,10 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
             // Signal failures should not disrupt playback.
         }
     }
+    public void Dispose()
+    {
+        _albumArtLock?.Dispose();
 
-
+        GC.SuppressFinalize(this);
+    }
 }

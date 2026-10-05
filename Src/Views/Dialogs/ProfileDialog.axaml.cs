@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using MPDCtrlX.Models;
+using System.Globalization;
 
 namespace MPDCtrlX.Views.Dialogs;
 
@@ -22,7 +23,7 @@ internal sealed partial class ProfileDialog : UserControl
         _pro = pro;
 
         this.HostTextBox.Text = pro.Host;
-        this.PortTextBox.Text = pro.Port.ToString();
+        this.PortTextBox.Text = pro.Port.ToString(CultureInfo.InvariantCulture);
         this.PasswordBox.Text = pro.Password;
         this.IsDefaultCheckBox.IsChecked = pro.IsDefault;
         //this.IsRememberCheckBox.IsChecked = true;
@@ -79,7 +80,7 @@ internal sealed partial class ProfileDialog : UserControl
         {
             try
             {
-                _pro.Port = int.Parse(this.PortTextBox.Text);
+                _pro.Port = int.Parse(this.PortTextBox.Text, CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -91,7 +92,7 @@ internal sealed partial class ProfileDialog : UserControl
 
         _pro.IsDefault = this.IsDefaultCheckBox.IsChecked ?? false;
 
-        _pro.Name = _pro.Host + ":" + _pro.Port.ToString();
+        _pro.Name = _pro.Host + ":" + _pro.Port.ToString(CultureInfo.InvariantCulture);
 
         return _pro;
     }
@@ -112,7 +113,7 @@ internal sealed partial class ProfileDialog : UserControl
         {
             try
             {
-                pro.Port = int.Parse(this.PortTextBox.Text);
+                pro.Port = int.Parse(this.PortTextBox.Text, CultureInfo.InvariantCulture);
             }
             catch
             {
@@ -124,7 +125,7 @@ internal sealed partial class ProfileDialog : UserControl
 
         pro.IsDefault = this.IsDefaultCheckBox.IsChecked ?? false;
 
-        pro.Name = pro.Host + ":" + pro.Port.ToString();
+        pro.Name = pro.Host + ":" + pro.Port.ToString(CultureInfo.InvariantCulture);
 
         return pro;
     }

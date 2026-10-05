@@ -6,7 +6,7 @@ using Tmds.DBus.Protocol;
 
 namespace MPDCtrlX.Services;
 
-internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> methodHandlers, ILogger<MprisDbusHostedService> logger, IMpcService mpcService) : IHostedService
+internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> methodHandlers, ILogger<MprisDbusHostedService> logger, IMpcService mpcService) : IHostedService, IDisposable
 {
     private const string BusName = "org.mpris.MediaPlayer2.mpdcctrlx";
     private readonly IEnumerable<IPathMethodHandler> _methodHandlers = methodHandlers;
@@ -174,6 +174,13 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         {
             _logger.LogWarning(ex, "Failed to refresh MPRIS track state.");
         }
+    }
+
+    public void Dispose()
+    {
+        _refreshLock?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
 }

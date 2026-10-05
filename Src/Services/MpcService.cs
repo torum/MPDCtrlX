@@ -222,7 +222,7 @@ public partial class MpcService : IMpcService, IDisposable
             // TODO: Always false according to nullable types.
             if (_idleConnection.Client is null)
             {
-                Debug.WriteLine("_idleConnection.Client is null. " + host + " " + port.ToString());
+                Debug.WriteLine("_idleConnection.Client is null. " + host + " " + port.ToString(CultureInfo.InvariantCulture));
 
                 result.ErrorMessage = "_idleConnection.Client is null";
 
@@ -256,7 +256,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 if (response is not null)
                 {
-                    if (response.StartsWith("OK MPD "))
+                    if (response.StartsWith("OK MPD ", StringComparison.InvariantCulture))
                     {
                         MpdVerText = response.Replace("OK MPD ", string.Empty).Trim();
 
@@ -379,7 +379,7 @@ public partial class MpcService : IMpcService, IDisposable
             ret.IsSuccess = false;
             ret.ErrorMessage = "TcpClient.Client is null";
 
-            DebugIdleOutput?.Invoke(this, string.Format("################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "TcpClient.Client is null", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
+            DebugIdleOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "TcpClient.Client is null", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
 
             return ret;
         }
@@ -391,7 +391,7 @@ public partial class MpcService : IMpcService, IDisposable
             ret.IsSuccess = false;
             ret.ErrorMessage = "_idleWriter or _idleReader is null";
 
-            DebugIdleOutput?.Invoke(this, string.Format("################ Error :@{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "_idleWriter or _idleReader is null", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
+            DebugIdleOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "################ Error :@{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "_idleWriter or _idleReader is null", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
 
             return ret;
         }
@@ -403,13 +403,13 @@ public partial class MpcService : IMpcService, IDisposable
             ret.IsSuccess = false;
             ret.ErrorMessage = "NOT IsMpdIdleConnected";
 
-            DebugIdleOutput?.Invoke(this, string.Format("################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "!CommandConnection.Client.Connected", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
+            DebugIdleOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "################ Error: @{0}, Reason: {1}, Data: {2}, {3} Exception: {4} {5}", "MpdIdleSendCommand", "!CommandConnection.Client.Connected", cmd.Trim(), Environment.NewLine, "", Environment.NewLine + Environment.NewLine));
 
             return ret;
         }
 
         var cmdDummy = cmd;
-        if (cmd.StartsWith("password "))
+        if (cmd.StartsWith("password ", StringComparison.InvariantCultureIgnoreCase))
             cmdDummy = "password ****";
 
         DebugIdleOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
@@ -496,7 +496,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 if (line is not null)
                 {
-                    if (line.StartsWith("ACK"))
+                    if (line.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("ACK line @MpdIdleSendCommand: " + cmd.Trim() + " and " + line);
 
@@ -509,7 +509,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("error"))
+                    else if (line.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("Error line @MpdIdleSendCommand: " + cmd.Trim() + " and " + line);
 
@@ -520,7 +520,7 @@ public partial class MpcService : IMpcService, IDisposable
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
                     }
-                    else if (line.StartsWith("OK"))
+                    else if (line.StartsWith("OK", StringComparison.InvariantCulture))
                     {
                         ret.IsSuccess = true;
 
@@ -529,7 +529,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("changed: "))
+                    else if (line.StartsWith("changed: ", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
@@ -855,7 +855,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 if (line is not null)
                 {
-                    if (line.StartsWith("ACK"))
+                    if (line.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("ACK: " + line);
 
@@ -867,7 +867,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("error"))
+                    else if (line.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("error line @MpdIdle(): " + cmd.Trim() + " and " + line);
 
@@ -877,14 +877,14 @@ public partial class MpcService : IMpcService, IDisposable
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
                     }
-                    else if (line.StartsWith("OK"))
+                    else if (line.StartsWith("OK", StringComparison.InvariantCulture))
                     {
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
 
                         break;
                     }
-                    else if (line.StartsWith("changed: "))
+                    else if (line.StartsWith("changed: ", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
@@ -1059,32 +1059,32 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (var line in subSystems)
             {
-                if (line.ToLower() == "changed: playlist")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: playlist")
                 {
                     // playlist: the queue (i.e.the current playlist) has been modified
                     isCurrentQueue = true;
                 }
-                if (line.ToLower() == "changed: player")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: player")
                 {
                     // player: the player has been started, stopped or seeked
                     isPlayer = true;
                 }
-                if (line.ToLower() == "changed: options")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: options")
                 {
                     // options: options like repeat, random, crossfade, replay gain
                     isPlayer = true;
                 }
-                if (line.ToLower() == "changed: mixer")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: mixer")
                 {
                     // mixer: the volume has been changed
                     isPlayer = true;
                 }
-                if (line.ToLower() == "changed: output")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: output")
                 {
                     // output: Audio output has been added, removed or modified(e.g.renamed, enabled or disabled)
                     isOutput = true;
                 }
-                if (line.ToLower() == "changed: stored_playlist")
+                if (line.ToLower(CultureInfo.InvariantCulture) == "changed: stored_playlist")
                 {
                     // stored_playlist: a stored playlist has been modified, renamed, created or deleted
                     isStoredPlaylist = true;
@@ -1208,7 +1208,7 @@ public partial class MpcService : IMpcService, IDisposable
             // TODO: Always false
             if (_commandConnection.Client is null)
             {
-                Debug.WriteLine("_commandConnection.Client is null. " + host + " " + port.ToString());
+                Debug.WriteLine("_commandConnection.Client is null. " + host + " " + port.ToString(CultureInfo.InvariantCulture));
 
                 result.ErrorMessage = "_commandConnection.Client is null";
 
@@ -1242,7 +1242,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 if (response is not null)
                 {
-                    if (response.StartsWith("OK MPD "))
+                    if (response.StartsWith("OK MPD ", StringComparison.InvariantCulture))
                     {
                         MpdVerText = response.Replace("OK MPD ", string.Empty).Trim();
 
@@ -1530,7 +1530,7 @@ public partial class MpcService : IMpcService, IDisposable
             */
 
             string cmdDummy = cmd;
-            if (cmd.StartsWith("password "))
+            if (cmd.StartsWith("password ", StringComparison.InvariantCultureIgnoreCase))
                 cmdDummy = "password ****";
             DebugCommandOutput?.Invoke(this, ">>>>" + cmdDummy.Trim() + "\n" + "\n");
             //cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
@@ -1561,7 +1561,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 IsMpdCommandConnected = false;
 
-                DebugCommandOutput?.Invoke(this, string.Format("Reconnecting... " + Environment.NewLine + Environment.NewLine));
+                DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting... " + Environment.NewLine + Environment.NewLine));
                 Debug.WriteLine("Connection Timeout. Reconnecting...  @IOExceptionOfWriteAsync");
 
                 try
@@ -1583,7 +1583,7 @@ public partial class MpcService : IMpcService, IDisposable
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount++);
                         //if (d.IsSuccess)
                         //{
-                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
+                        DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Success. @IOExceptionOfWriteAsync" + Environment.NewLine + Environment.NewLine));
                         Debug.WriteLine("Reconnecting Success.  @IOExceptionOfWriteAsync");
 
                         ConnectionState = ConnectionStatus.Connected;
@@ -1602,7 +1602,7 @@ public partial class MpcService : IMpcService, IDisposable
                 {
                     Debug.WriteLine("Reconnecting Failed.  @IOExceptionOfWriteAsync");
 
-                    DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
+                    DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
 
@@ -1674,7 +1674,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 if (line is not null)
                 {
-                    if (line.StartsWith("ACK"))
+                    if (line.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("ACK line @MpdCommandSendCommand: " + cmd.Trim() + " and " + line);
 
@@ -1687,7 +1687,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("error"))
+                    else if (line.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("Error line @MpdCommandSendCommand: " + cmd.Trim() + " and " + line);
 
@@ -1698,7 +1698,7 @@ public partial class MpcService : IMpcService, IDisposable
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
                     }
-                    else if (line.StartsWith("OK"))
+                    else if (line.StartsWith("OK", StringComparison.InvariantCulture))
                     {
                         ret.IsSuccess = true;
 
@@ -1707,7 +1707,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("changed: "))
+                    else if (line.StartsWith("changed: ", StringComparison.InvariantCultureIgnoreCase))
                     {
                         // noidleでついてくるかもしれないchanged. idleConnectionで見ているからここでは無視したいが・・・。
 
@@ -1751,7 +1751,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 IsMpdCommandConnected = false;
 
-                DebugCommandOutput?.Invoke(this, string.Format("Connection Timeout(NullReturn). Reconnecting... " + Environment.NewLine + Environment.NewLine));
+                DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Connection Timeout(NullReturn). Reconnecting... " + Environment.NewLine + Environment.NewLine));
 
                 try
                 {
@@ -1772,8 +1772,8 @@ public partial class MpcService : IMpcService, IDisposable
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount);
                         //if (d.IsSuccess)
                         //{
-                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @isNullReturn" + Environment.NewLine + Environment.NewLine));
-                        Debug.WriteLine(string.Format("Reconnecting Success. @isNullReturn, RetryCount=" + reTryCount.ToString() + Environment.NewLine));
+                        DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Success. @isNullReturn" + Environment.NewLine + Environment.NewLine));
+                        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reconnecting Success. @isNullReturn, RetryCount=" + reTryCount.ToString(CultureInfo.InvariantCulture) + Environment.NewLine));
 
                         ConnectionState = ConnectionStatus.Connected;
 
@@ -1792,7 +1792,7 @@ public partial class MpcService : IMpcService, IDisposable
                     // 
                     Debug.WriteLine("@MpdCommandSendCommand Reconnecting Failed");
 
-                    DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
+                    DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
 
@@ -1893,7 +1893,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                 IsMpdCommandConnected = false;
 
-                DebugCommandOutput?.Invoke(this, string.Format("Connection Timeout. Reconnecting... " + Environment.NewLine + Environment.NewLine));
+                DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Connection Timeout. Reconnecting... " + Environment.NewLine + Environment.NewLine));
                 Debug.WriteLine("Connection Timeout. Reconnecting...  @IOExceptionOfReadLineAsync");
 
                 try
@@ -1915,7 +1915,7 @@ public partial class MpcService : IMpcService, IDisposable
                         //d = await MpdCommandSendCommand("idle player", isAutoIdling, reTryCount);
                         //if (d.IsSuccess)
                         //{
-                        DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Success. @IOExceptionOfReadLineAsync" + Environment.NewLine + Environment.NewLine));
+                        DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Success. @IOExceptionOfReadLineAsync" + Environment.NewLine + Environment.NewLine));
                         Debug.WriteLine("Reconnecting Success. @IOExceptionOfReadLineAsync");
 
                         ConnectionState = ConnectionStatus.Connected;
@@ -1933,7 +1933,7 @@ public partial class MpcService : IMpcService, IDisposable
                 {
                     // Unable to read data from the transport connection: 既に接続済みのソケットに対して接続を要求しました。.
 
-                    DebugCommandOutput?.Invoke(this, string.Format("Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
+                    DebugCommandOutput?.Invoke(this, string.Format(CultureInfo.InvariantCulture, "Reconnecting Failed. " + Environment.NewLine + Environment.NewLine));
 
                     ConnectionState = ConnectionStatus.SeeConnectionErrorEvent;
 
@@ -2381,7 +2381,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 string cmdList = "command_list_begin" + "\n";
                 cmdList = cmdList + cmd + "\n";
-                cmdList = cmdList + "setvol " + volume.ToString() + "\n";
+                cmdList = cmdList + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
                 cmdList = cmdList + "command_list_end" + "\n";
 
                 CommandResult result = await MpdCommandSendCommand(cmdList);
@@ -2433,7 +2433,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 string cmd = "command_list_begin" + "\n";
                 cmd += "pause 0\n";
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
                 cmd = cmd + "command_list_end" + "\n";
 
                 CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2485,7 +2485,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 string cmd = "command_list_begin" + "\n";
                 cmd += "next\n";
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
                 cmd = cmd + "command_list_end" + "\n";
 
                 CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2530,7 +2530,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 string cmd = "command_list_begin" + "\n";
                 cmd += "previous\n";
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
                 cmd = cmd + "command_list_end" + "\n";
 
                 CommandResult result = await MpdCommandSendCommand(cmd);
@@ -2563,7 +2563,7 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdSetVolume(int v)
     {
-        CommandResult result = await MpdCommandSendCommand("setvol " + v.ToString());
+        CommandResult result = await MpdCommandSendCommand("setvol " + v.ToString(CultureInfo.InvariantCulture));
 
         return result;
     }
@@ -2579,7 +2579,7 @@ public partial class MpcService : IMpcService, IDisposable
             return f;
         }
 
-        CommandResult result = await MpdCommandSendCommand("seekid " + songId + " " + seekTime.ToString());
+        CommandResult result = await MpdCommandSendCommand("seekid " + songId + " " + seekTime.ToString(CultureInfo.InvariantCulture));
 
         return result;
     }
@@ -2937,7 +2937,7 @@ public partial class MpcService : IMpcService, IDisposable
             cmd = cmd + "play" + "\n";
             if (!MpdStatus.IsVolumeSet || MpdForceSetVolume)
             {
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
             }
             //cmd = cmd + "currentsong" + "\n";
             cmd = cmd + "command_list_end" + "\n";
@@ -3014,7 +3014,7 @@ public partial class MpcService : IMpcService, IDisposable
             cmd = cmd + "play" + "\n";
             if (!MpdStatus.IsVolumeSet || MpdForceSetVolume)
             {
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
             }
             cmd = cmd + "currentsong" + "\n";
             cmd = cmd + "command_list_end" + "\n";
@@ -3091,7 +3091,7 @@ public partial class MpcService : IMpcService, IDisposable
             cmd = cmd + "play" + "\n";
             if (!MpdStatus.IsVolumeSet || MpdForceSetVolume)
             {
-                cmd = cmd + "setvol " + volume.ToString() + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
             }
             cmd = cmd + "currentsong" + "\n";
             cmd = cmd + "command_list_end" + "\n";
@@ -3262,7 +3262,7 @@ public partial class MpcService : IMpcService, IDisposable
         playlistName = Regex.Escape(playlistName);
 
         //playlistdelete {NAME} {SONGPOS}
-        string cmd = "playlistdelete \"" + playlistName + "\"" + " " + pos.ToString();
+        string cmd = "playlistdelete \"" + playlistName + "\"" + " " + pos.ToString(CultureInfo.InvariantCulture);
 
         CommandResult result = await MpdCommandSendCommand(cmd);
 
@@ -3376,7 +3376,7 @@ public partial class MpcService : IMpcService, IDisposable
 
         foreach (string value in resultLines)
         {
-            if (value.StartsWith("command: "))
+            if (value.StartsWith("command: ", StringComparison.InvariantCultureIgnoreCase))
             {
                 Commands.Add(value.Replace("command: ", "").Trim());
             }
@@ -3447,7 +3447,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (string value in resultLines)
             {
-                if (value.StartsWith("outputid:"))
+                if (value.StartsWith("outputid:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (output is not null)
                     {
@@ -3465,15 +3465,15 @@ public partial class MpcService : IMpcService, IDisposable
                     i++;
                     MpcProgress?.Invoke(this, $"[Background] Parsing AudioOutpus ({i})...");
                 }
-                else if (value.StartsWith("outputname:"))
+                else if (value.StartsWith("outputname:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     output?.Name = value.Replace("outputname: ", "").Trim();
                 }
-                else if (value.StartsWith("outputenabled:"))
+                else if (value.StartsWith("outputenabled:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     output?.Enabled = value.Replace("outputenabled: ", "").Trim();
                 }
-                else if (value.StartsWith("OK"))
+                else if (value.StartsWith("OK", StringComparison.InvariantCulture))
                 {
                     if (output is not null)
                     {
@@ -3593,7 +3593,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 if (!string.IsNullOrEmpty(valueVolume))
                 {
-                    MpdStatus.CurrentVolume = Int32.Parse(valueVolume);
+                    MpdStatus.CurrentVolume = Int32.Parse(valueVolume, CultureInfo.InvariantCulture);
 
                     MpdStatus.IsVolumeReturned = true;
                 }
@@ -3641,7 +3641,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 try
                 {
-                    if (Int32.Parse(mpdStatusValues["random"]) > 0)
+                    if (Int32.Parse(mpdStatusValues["random"], CultureInfo.InvariantCulture) > 0)
                     {
                         MpdStatus.IsRandom = true;
                     }
@@ -3662,7 +3662,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 try
                 {
-                    if (Int32.Parse(mpdStatusValues["consume"]) > 0)
+                    if (Int32.Parse(mpdStatusValues["consume"], CultureInfo.InvariantCulture) > 0)
                     {
                         MpdStatus.IsConsume = true;
                     }
@@ -3683,7 +3683,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 try
                 {
-                    if (Int32.Parse(mpdStatusValues["single"]) > 0)
+                    if (Int32.Parse(mpdStatusValues["single"], CultureInfo.InvariantCulture) > 0)
                     {
                         MpdStatus.IsSingle = true;
                     }
@@ -3701,7 +3701,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             // Fix the issue #43
             //CultureInfo enCulture = new("en-US");
-            var enCulture = CultureInfo.GetCultureInfo("en-US");
+            //var enCulture = CultureInfo.GetCultureInfo("en-US");
 
             // Song time. deprecated. 
             if (mpdStatusValues.ContainsKey("time"))
@@ -3710,8 +3710,8 @@ public partial class MpcService : IMpcService, IDisposable
                 {
                     if (mpdStatusValues["time"].Split(':').Length > 1)
                     {
-                        MpdStatus.CurrentSongTime = Double.Parse(mpdStatusValues["time"].Split(':')[1].Trim(), enCulture);
-                        MpdStatus.CurrentSongElapsed = Double.Parse(mpdStatusValues["time"].Split(':')[0].Trim(), enCulture);
+                        MpdStatus.CurrentSongTime = Double.Parse(mpdStatusValues["time"].Split(':')[1].Trim(), CultureInfo.InvariantCulture);
+                        MpdStatus.CurrentSongElapsed = Double.Parse(mpdStatusValues["time"].Split(':')[0].Trim(), CultureInfo.InvariantCulture);
                     }
                 }
                 catch (FormatException e)
@@ -3725,7 +3725,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 try
                 {
-                    MpdStatus.CurrentSongElapsed = Double.Parse(value1, enCulture);
+                    MpdStatus.CurrentSongElapsed = Double.Parse(value1, CultureInfo.InvariantCulture);
                 }
                 catch { }
             }
@@ -3735,7 +3735,7 @@ public partial class MpcService : IMpcService, IDisposable
             {
                 try
                 {
-                    MpdStatus.CurrentSongTime = Double.Parse(value2, enCulture);
+                    MpdStatus.CurrentSongTime = Double.Parse(value2, CultureInfo.InvariantCulture);
                 }
                 catch { }
             }
@@ -4249,7 +4249,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (string value in resultLines)
             {
-                if (value.StartsWith("playlist:"))
+                if (value.StartsWith("playlist:", StringComparison.InvariantCultureIgnoreCase))
                 {
 
                     pl = new Playlist
@@ -4259,11 +4259,11 @@ public partial class MpcService : IMpcService, IDisposable
 
                     tmpPlaylists.Add(pl);
                 }
-                else if (value.StartsWith("Last-Modified: "))
+                else if (value.StartsWith("Last-Modified: ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     pl?.LastModified = value.Replace("Last-Modified: ", "");
                 }
-                else if (value.StartsWith("OK"))
+                else if (value.StartsWith("OK", StringComparison.InvariantCulture))
                 {
                     // Ignoring.
                 }
@@ -4360,7 +4360,7 @@ public partial class MpcService : IMpcService, IDisposable
             foreach (string value in resultLines)
             {
                 //Debug.WriteLine("LocalDirectories: " + value);
-                if (value.StartsWith("directory:"))
+                if (value.StartsWith("directory:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     /*
                     Dispatcher.UIThread.Post(() =>
@@ -4372,7 +4372,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                     MpcProgress?.Invoke(this, $"[Background] Parsing files and directories ({i})...");
                 }
-                else if (value.StartsWith("file:"))
+                else if (value.StartsWith("file:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     song = new SongFile
                     {
@@ -4390,7 +4390,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                     MpcProgress?.Invoke(this, $"[Background] Parsing files and directories ({i})...");
                 }
-                else if ((value.StartsWith("OK")))
+                else if ((value.StartsWith("OK", StringComparison.InvariantCulture)))
                 {
                     // Ignoring.
                 }
@@ -4465,7 +4465,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (string value in resultLines)
             {
-                if (value.StartsWith("AlbumArtist:"))
+                if (value.StartsWith("AlbumArtist:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (arts is not null)
                     {
@@ -4484,7 +4484,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                     MpcProgress?.Invoke(this, $"[Background] Parsing AlbumArtists ({i})...");
                 }
-                else if (value.StartsWith("Album:"))
+                else if (value.StartsWith("Album:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var albx = new AlbumEx
                     {
@@ -4524,7 +4524,7 @@ public partial class MpcService : IMpcService, IDisposable
 
                     MpcProgress?.Invoke(this, $"[Background] Parsing albumartists and albums ({i})...");
                 }
-                else if ((value.StartsWith("OK")))
+                else if ((value.StartsWith("OK", StringComparison.InvariantCulture)))
                 {
                     if (arts is not null)
                     {

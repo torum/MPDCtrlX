@@ -3,6 +3,7 @@ using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
 using SkiaSharp;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -82,7 +83,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             // TODO: always false
             if (_binaryConnection.Client is null)
             {
-                Debug.WriteLine("_binaryConnection.Client is null. " + host + " " + port.ToString());
+                Debug.WriteLine("_binaryConnection.Client is null. " + host + " " + port.ToString(CultureInfo.InvariantCulture));
 
                 result.ErrorMessage = "_binaryConnection.Client is null";
 
@@ -104,7 +105,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                 string? response = await _binaryReader.ReadLineAsync();
                 if (response is not null)
                 {
-                    if (response.StartsWith("OK MPD "))
+                    if (response.StartsWith("OK MPD ", StringComparison.InvariantCulture))
                     {
                         MpdVersion = response.Replace("OK MPD ", string.Empty).Trim();
 
@@ -232,7 +233,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
                 if (line is not null)
                 {
-                    if (line.StartsWith("ACK"))
+                    if (line.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("ACK line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
 
@@ -245,7 +246,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("OK"))
+                    else if (line.StartsWith("OK", StringComparison.InvariantCulture))
                     {
                         ret.IsSuccess = true;
 
@@ -254,7 +255,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
                         break;
                     }
-                    else if (line.StartsWith("error"))
+                    else if (line.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                     {
                         Debug.WriteLine("error line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
 
@@ -265,7 +266,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
                     }
-                    else if (line.StartsWith("changed: "))
+                    else if (line.StartsWith("changed: ", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (!string.IsNullOrEmpty(line))
                             stringBuilder.Append(line + "\n");
@@ -389,7 +390,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
         try
         {
             string cmdDummy = cmd;
-            if (cmd.StartsWith("password "))
+            if (cmd.StartsWith("password ", StringComparison.InvariantCultureIgnoreCase))
                 cmdDummy = "password ****";
 
             cmdDummy = cmdDummy.Trim().Replace("\n", "\n" + ">>>>");
@@ -487,7 +488,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                     {
                         if (line is not null)
                         {
-                            if (line.StartsWith("ACK"))
+                            if (line.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 Debug.WriteLine("ack line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
 
@@ -502,7 +503,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
                                 break;
                             }
-                            else if (line.StartsWith("error"))
+                            else if (line.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 Debug.WriteLine("error line @MpdBinarySendCommand: " + cmd.Trim() + " and " + line);
 
@@ -513,12 +514,12 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                                 if (!string.IsNullOrEmpty(line))
                                     stringBuilder.Append(line + "\n");
                             }
-                            else if (line.StartsWith("changed: "))
+                            else if (line.StartsWith("changed: ", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!string.IsNullOrEmpty(line))
                                     stringBuilder.Append(line + "\n");
                             }
-                            else if (line.StartsWith("size: "))
+                            else if (line.StartsWith("size: ", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!string.IsNullOrEmpty(line))
                                     stringBuilder.Append(line + "\n");
@@ -533,7 +534,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                                     }
                                 }
                             }
-                            else if (line.StartsWith("type: "))
+                            else if (line.StartsWith("type: ", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 if (!string.IsNullOrEmpty(line))
                                     stringBuilder.Append(line + "\n");
@@ -545,7 +546,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                                     ret.Type = s[1].Trim();
                                 }
                             }
-                            else if (line.StartsWith("binary: "))
+                            else if (line.StartsWith("binary: ", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 isBinaryFound = true;
 
@@ -681,7 +682,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
         if (data.Length > 20000000) //2000000000
         {
-            Debug.WriteLine("**ParseAlbumImageData: binary file size too big: " + data.Length.ToString());
+            Debug.WriteLine("**ParseAlbumImageData: binary file size too big: " + data.Length.ToString(CultureInfo.InvariantCulture));
             r.IsSuccess = false;
             r.ErrorMessage = "ParseAlbumImageData: binary file size too big: \" + data.Length.ToString()";
             albumCover.IsDownloading = false;
@@ -721,7 +722,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             bool found = false;
             foreach (var val in values)
             {
-                if (val.StartsWith("size: "))
+                if (val.StartsWith("size: ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     found = true;
 
@@ -739,7 +740,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                         }
                     }
                 }
-                else if (val.StartsWith("type: "))
+                else if (val.StartsWith("type: ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     gabStart = gabStart + val.Length + 1;
 #pragma warning disable IDE0305
@@ -751,7 +752,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                     }
 
                 }
-                else if (val.StartsWith("binary: "))
+                else if (val.StartsWith("binary: ", StringComparison.InvariantCultureIgnoreCase))
                 {
                     gabStart = gabStart + val.Length + 1;
 #pragma warning disable IDE0305
@@ -778,7 +779,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                         gabStart = gabStart + val.Length + 1;
                     }
                 }
-                else if (val.StartsWith("ACK"))
+                else if (val.StartsWith("ACK", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // ACK shouldn't be here.
 
@@ -791,7 +792,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                         gabStart = gabStart + val.Length + 1;
                     }
                 }
-                else if (val.StartsWith("changed:"))
+                else if (val.StartsWith("changed:", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (found)
                     {
@@ -812,10 +813,10 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
             if (binSize > 20000000)
             {
-                Debug.WriteLine("binary file too big: " + binSize.ToString() + " " + albumCover.SongFilePath);
+                Debug.WriteLine("binary file too big: " + binSize.ToString(CultureInfo.InvariantCulture) + " " + albumCover.SongFilePath);
 
                 r.IsSuccess = false;
-                r.ErrorMessage = "ParseAlbumImageData: binary file too big: " + binSize.ToString() + " " + albumCover.SongFilePath;
+                r.ErrorMessage = "ParseAlbumImageData: binary file too big: " + binSize.ToString(CultureInfo.InvariantCulture) + " " + albumCover.SongFilePath;
                 albumCover.IsDownloading = false;
 
                 return r;
@@ -823,7 +824,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
             if ((binSize == 0))
             {
-                Debug.WriteLine("binary file size is Zero: " + binSize.ToString() + ", " + binResSize.ToString() + ", " + data.Length.ToString());
+                Debug.WriteLine("binary file size is Zero: " + binSize.ToString(CultureInfo.InvariantCulture) + ", " + binResSize.ToString(CultureInfo.InvariantCulture) + ", " + data.Length.ToString(CultureInfo.InvariantCulture));
 
                 r.IsSuccess = false;
                 r.ErrorMessage = "ParseAlbumImageData: binary file size is Zero.";
@@ -834,7 +835,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
             if (binResSize != ((data.Length - gabStart) - gabEnd))
             {
-                Debug.WriteLine("binary file size mismatch: " + binSize.ToString() + ", [" + binResSize.ToString() + ", " + (data.Length - gabStart - gabEnd) + "], " + data.Length.ToString());
+                Debug.WriteLine("binary file size mismatch: " + binSize.ToString(CultureInfo.InvariantCulture) + ", [" + binResSize.ToString(CultureInfo.InvariantCulture) + ", " + (data.Length - gabStart - gabEnd) + "], " + data.Length.ToString(CultureInfo.InvariantCulture));
                 r.IsSuccess = false;
                 r.ErrorMessage = "ParseAlbumImageData: binary file size mismatch.";
                 albumCover.IsDownloading = false;
@@ -1090,10 +1091,10 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
         uri = Regex.Escape(uri);
 
-        string cmd = "albumart \"" + uri + "\" " + offset.ToString() + "\n";
+        string cmd = "albumart \"" + uri + "\" " + offset.ToString(CultureInfo.InvariantCulture) + "\n";
         if (isUsingReadpicture && (!string.IsNullOrEmpty(MpdVersion)))
             if (CompareVersionString(MpdVersion, "0.22.0") >= 0)
-                cmd = "readpicture \"" + uri + "\" " + offset.ToString() + "\n";
+                cmd = "readpicture \"" + uri + "\" " + offset.ToString(CultureInfo.InvariantCulture) + "\n";
 
         return await MpdBinarySendBinaryCommand(cmd, albumCover);
     }

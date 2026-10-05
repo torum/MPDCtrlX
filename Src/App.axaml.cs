@@ -11,6 +11,7 @@ using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
 using MPDCtrlX.Views.Dialogs;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using Tmds.DBus.Protocol;
@@ -222,7 +223,7 @@ namespace MPDCtrlX
         public static void AppendErrorLog(string errorTxt, string kindTxt)
         {
             var dt = DateTime.Now;
-            var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss");
+            var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
 
             _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
         }
