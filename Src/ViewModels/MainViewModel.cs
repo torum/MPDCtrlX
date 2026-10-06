@@ -1,8 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Input.Platform;
-using Avalonia.Logging;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -26,10 +24,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Path = System.IO.Path;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0028
@@ -1941,7 +1937,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     // TODO: Currently always null as default. Find some default image instead.
-    private readonly Bitmap? _albumArtBitmapSourceDefault = null;
+    #pragma warning disable CS0649
+    private readonly Bitmap? _albumArtBitmapSourceDefault = default!;
+    #pragma warning restore CS0649
 
     public Bitmap? AlbumArtBitmapSource
     {
@@ -2273,9 +2271,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
-#pragma warning disable CA1305 // Specify IFormatProvider
-            field = string.Format(MPDCtrlX.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
-#pragma warning restore CA1305 // Specify IFormatProvider
+#pragma warning disable CA1863 // Use 'CompositeFormat'
+            field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.QueuePage_SubTitle_SongCount, Queue.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
     } = string.Empty;
@@ -2435,7 +2433,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.FilesPage_SubTitle_FileCount, MusicEntries.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
     } = string.Empty;
@@ -2480,7 +2480,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.ArtistPage_SubTitle_ArtistCount, Artists.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
     } = string.Empty;
@@ -2729,7 +2731,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.AlbumPage_SubTitle_AlbumCount, Albums.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
     } = "";
@@ -2914,7 +2918,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.SearchPage_SubTitle_ResultCount, SearchResult?.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
     } = "";
@@ -2985,7 +2991,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         get
         {
+#pragma warning disable CA1863 // Use 'CompositeFormat'
             field = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.PlaylistPage_SubTitle_SongCount, PlaylistSongs.Count);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
             return field;
         }
 
@@ -5861,7 +5869,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 {
                     MpdStatusButton = _pathMpdAckErrorButton;
                     //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+#pragma warning disable CA1863 // Use 'CompositeFormat'
                     MpdStatusMessage = string.Format(CultureInfo.CurrentCulture,MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+#pragma warning restore CA1863 // Use 'CompositeFormat'
                 });
             }
         }
@@ -7892,7 +7902,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             //Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
             if (_logger.IsEnabled(LogLevel.Information))
             {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogInformation("OK MPD {MPDVer} @OnMpdIdleConnected.", MpdVersion);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
             }
             //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
 

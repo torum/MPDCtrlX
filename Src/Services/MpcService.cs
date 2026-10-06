@@ -2584,9 +2584,9 @@ public partial class MpcService : IMpcService, IDisposable
         return result;
     }
 
-    public async Task<CommandResult> MpdSetRepeat(bool on)
+    public async Task<CommandResult> MpdSetRepeat(bool IsOn)
     {
-        if (MpdStatus.IsRepeat == on)
+        if (MpdStatus.IsRepeat == IsOn)
         {
             CommandResult f = new()
             {
@@ -2596,7 +2596,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
 
         string cmd;
-        if (on)
+        if (IsOn)
         {
             cmd = "repeat 1";
         }
@@ -2610,9 +2610,9 @@ public partial class MpcService : IMpcService, IDisposable
         return result;
     }
 
-    public async Task<CommandResult> MpdSetRandom(bool on)
+    public async Task<CommandResult> MpdSetRandom(bool IsOn)
     {
-        if (MpdStatus.IsRandom == on)
+        if (MpdStatus.IsRandom == IsOn)
         {
             CommandResult f = new()
             {
@@ -2622,7 +2622,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
 
         string cmd;
-        if (on)
+        if (IsOn)
         {
             cmd = "random 1";
         }
@@ -2636,9 +2636,9 @@ public partial class MpcService : IMpcService, IDisposable
         return result;
     }
 
-    public async Task<CommandResult> MpdSetConsume(bool on)
+    public async Task<CommandResult> MpdSetConsume(bool IsOn)
     {
-        if (MpdStatus.IsConsume == on)
+        if (MpdStatus.IsConsume == IsOn)
         {
             CommandResult f = new()
             {
@@ -2648,7 +2648,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
 
         string cmd;
-        if (on)
+        if (IsOn)
         {
             cmd = "consume 1";
         }
@@ -2662,9 +2662,9 @@ public partial class MpcService : IMpcService, IDisposable
         return result;
     }
 
-    public async Task<CommandResult> MpdSetSingle(bool on)
+    public async Task<CommandResult> MpdSetSingle(bool IsOn)
     {
-        if (MpdStatus.IsSingle == on)
+        if (MpdStatus.IsSingle == IsOn)
         {
             CommandResult f = new()
             {
@@ -2674,7 +2674,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
 
         string cmd;
-        if (on)
+        if (IsOn)
         {
             cmd = "single 1";
         }

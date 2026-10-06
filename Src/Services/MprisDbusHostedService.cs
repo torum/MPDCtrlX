@@ -26,7 +26,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         var handlers = _methodHandlers.ToArray();
         if (handlers.Length == 0)
         {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
             _logger.LogWarning("No MPRIS D-Bus method handlers are registered.");
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
             return;
         }
 
@@ -38,7 +40,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
             var sessionAddress = DBusAddress.Session;
             if (string.IsNullOrWhiteSpace(sessionAddress))
             {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogWarning("No D-Bus session bus address is available.");
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                 return;
             }
 
@@ -51,7 +55,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
 
             if (!await connection.TryRequestNameAsync(BusName, RequestNameOptions.None))
             {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogWarning("Could not acquire MPRIS bus name {BusName}.", BusName);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                 connection.Dispose();
                 return;
             }
@@ -71,13 +77,17 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
             _connection = connection;
             if (_logger.IsEnabled(LogLevel.Information))
             {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogInformation("Registered MPRIS service as {BusName}.", BusName);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
             }
         }
         catch (Exception ex)
         {
             connection?.Dispose();
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
             _logger.LogWarning(ex, "Could not start the MPRIS D-Bus service.");
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
         }
     }
 
@@ -111,7 +121,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         {
             if (_logger.IsEnabled(LogLevel.Debug))
             {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogDebug(ex, "Error releasing MPRIS bus name {BusName}.", BusName);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
             }
         }
         finally
@@ -155,7 +167,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
                     var result = await _mpcService.MpdQueryCurrentSong();
                     if (!result.IsSuccess)
                     {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
                         _logger.LogWarning("Could not query the current MPD song: {Error}", result.ErrorMessage);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                     }
                 }
 
@@ -172,7 +186,9 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         }
         catch (Exception ex)
         {
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
             _logger.LogWarning(ex, "Failed to refresh MPRIS track state.");
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
         }
     }
 

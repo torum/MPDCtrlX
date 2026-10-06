@@ -17,9 +17,10 @@
 	  
 	  <IsAotCompatible>true</IsAotCompatible>
 	  
+	  <!-- Code quality -->
+	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	  <AnalysisLevel>latest-recommended</AnalysisLevel>
 	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-	  
-	  <AnalysisLevel>latest</AnalysisLevel>
 
   </PropertyGroup>
 	
@@ -74,6 +75,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<AvaloniaNameGeneratorAttachDevTools>False</AvaloniaNameGeneratorAttachDevTools>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<NeutralLanguage>en-US</NeutralLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>

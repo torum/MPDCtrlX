@@ -2,7 +2,9 @@
 
 namespace MPDCtrlX.Models;
 
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
 public sealed class AlbumEx : Album
+#pragma warning restore CA1711 // Identifiers should not have incorrect suffix
 {
     public string AlbumArtist { get; set; } = string.Empty;
 
