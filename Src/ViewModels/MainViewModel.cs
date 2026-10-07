@@ -5656,48 +5656,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     // Closing
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
-        #region == Subscribe to events ==
-
-        // Unsubscribe events to avoid callbacks after shutdown
-        _mpc.IsBusy -= OnMpcIsBusy;
-        _mpc.MpdIdleConnected -= OnMpdIdleConnected;
-        _mpc.DebugCommandOutput -= OnDebugCommandOutput;
-        _mpc.DebugIdleOutput -= OnDebugIdleOutput;
-        _mpc.ConnectionStatusChanged -= OnConnectionStatusChanged;
-        _mpc.ConnectionError -= OnConnectionError;
-        _mpc.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
-        _mpc.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
-        _mpc.MpdPlaylistsChanged -= OnMpdPlaylistsChanged;
-        _mpc.MpdOutputChanged -= OnMpdOutputChanged;
-        _mpc.MpdAckError -= OnMpdAckError;
-        _mpc.MpdFatalError -= OnMpdFatalError;
-        _mpc.MpdAlbumArtChanged -= OnAlbumArtChanged;
-
-        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
-
-        // [Background][UI] etc
-        _mpc.MpcProgress -= OnMpcProgress;
-        //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
-        this.UpdateProgress -= OnUpdateProgress;
-
-        #endregion
-
-        try
-        {
-            if (IsConnected)
-            {
-                _mpc.MpdStop = true;
-
-                _mpc.MpdDisconnect(false);
-            }
-
-            _cts.Cancel();
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
-        }
-
         if (sender is Window w)
         {
             SaveSettings(w);
@@ -5706,7 +5664,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public void OnWindowClosed(object? sender, EventArgs e)
     {
-        _cts?.Dispose();
+        //
     }
 
     #endregion
@@ -11780,7 +11738,49 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
-        _cts?.Dispose();
+        #region == UnSubscribe to events ==
+
+        // Unsubscribe events to avoid callbacks after shutdown
+        _mpc.IsBusy -= OnMpcIsBusy;
+        _mpc.MpdIdleConnected -= OnMpdIdleConnected;
+        _mpc.DebugCommandOutput -= OnDebugCommandOutput;
+        _mpc.DebugIdleOutput -= OnDebugIdleOutput;
+        _mpc.ConnectionStatusChanged -= OnConnectionStatusChanged;
+        _mpc.ConnectionError -= OnConnectionError;
+        _mpc.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
+        _mpc.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
+        _mpc.MpdPlaylistsChanged -= OnMpdPlaylistsChanged;
+        _mpc.MpdOutputChanged -= OnMpdOutputChanged;
+        _mpc.MpdAckError -= OnMpdAckError;
+        _mpc.MpdFatalError -= OnMpdFatalError;
+        _mpc.MpdAlbumArtChanged -= OnAlbumArtChanged;
+
+        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
+
+        // [Background][UI] etc
+        _mpc.MpcProgress -= OnMpcProgress;
+        //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
+        this.UpdateProgress -= OnUpdateProgress;
+
+        #endregion
+
+        try
+        {
+            if (IsConnected)
+            {
+                _mpc.MpdStop = true;
+
+                _mpc.MpdDisconnect(false);
+            }
+
+            _cts.Cancel();
+
+            _cts?.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+        }
 
         GC.SuppressFinalize(this);
     }
