@@ -208,11 +208,10 @@ namespace MPDCtrlX
 
         private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            // 
             e.Handled = true;
 
             // Log the exception for debugging
-            //Console.WriteLine($"An unhandled exception occurred: {e.Exception}");
+            System.Diagnostics.Debug.WriteLine($"An unhandled exception occurred: {e.Exception}");
             AppendErrorLog("DispatcherUnhandledException", e.Exception.ToString());
 
             SaveErrorLog();

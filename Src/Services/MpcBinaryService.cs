@@ -73,8 +73,10 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                     ref _binaryWriter);
             }
         }
-
-        _binaryConnection = new TcpClient();
+        else
+        {
+            _binaryConnection = new TcpClient();
+        }
 
         _host = host;
         _port = port;
