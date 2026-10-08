@@ -162,13 +162,11 @@ namespace MPDCtrlX
 
                 Dispatcher.UIThread.UnhandledException += OnUnhandledException;
 
+                _appHostStartTask = StartAppHostAsync();
                 desktop.MainWindow = App.GetService<MainWindow>();
+                desktop.Exit += OnDesktopExit;
                 desktop.MainWindow.ShowActivated = true;
                 desktop.MainWindow.Show();
-
-                desktop.Exit += OnDesktopExit;
-                //AppHost.StartAsync().GetAwaiter().GetResult();
-                _appHostStartTask = StartAppHostAsync();
             }
 
             base.OnFrameworkInitializationCompleted();

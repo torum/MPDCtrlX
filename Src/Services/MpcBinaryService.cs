@@ -14,7 +14,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 {
     private CancellationTokenSource? _cts;
 
-    private readonly object _connectionLock = new();
+    private readonly Lock _connectionLock = new();
     private static TcpClient _binaryConnection = new();
     private StreamReader? _binaryReader;
     private StreamWriter? _binaryWriter;
@@ -62,16 +62,19 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
     {
         ConnectionResult result = new();
 
-        //_binaryConnection = new TcpClient();
-        lock (_connectionLock)
+        // TODO: Currently there is no way to re-connect to the same TcpClient instance, so we need to create a new one.
+        if (_binaryConnection.Client?.Connected == true) 
         {
-            DisposeConnection(
-                ref _binaryConnection,
-                ref _binaryReader,
-                ref _binaryWriter);
-
-            _binaryConnection = new TcpClient();
+            lock (_connectionLock)
+            {
+                DisposeConnection(
+                    ref _binaryConnection,
+                    ref _binaryReader,
+                    ref _binaryWriter);
+            }
         }
+
+        _binaryConnection = new TcpClient();
 
         _host = host;
         _port = port;
@@ -229,6 +232,11 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
             while (true)
             {
+                if (_cts is null)
+                    break;
+                if (_cts.Token.IsCancellationRequested)
+                    break;
+
                 string? line = await _binaryReader.ReadLineAsync(_cts.Token);
 
                 if (line is not null)
@@ -449,6 +457,11 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
                 using (MemoryStream ms = new())
                 {
+                    if (_cts is null)
+                        break;
+                    if (_cts.Token.IsCancellationRequested)
+                        break;
+
                     while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer, _cts.Token)) > 0)
                     {
                         if (_cts.Token.IsCancellationRequested)
@@ -674,11 +687,25 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
         }
     }
 
-    private static CommandBinaryResult ParseAlbumImageData(byte[] data, AlbumImage albumCover)
+    private CommandBinaryResult ParseAlbumImageData(byte[] data, AlbumImage albumCover)
     {
         CommandBinaryResult r = new();
 
         //if (MpdStop) return r;
+
+        if (_cts is null)
+        {
+            r.IsSuccess = false;
+            albumCover.IsDownloading = false;
+            return r;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested returning @ParseAlbumImageData");
+            albumCover.IsDownloading = false;
+            return r;
+        }
 
         if (data.Length > 20000000) //2000000000
         {
@@ -876,6 +903,27 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
     public async Task<CommandImageResult> MpdQueryAlbumArt(string uri, bool isUsingReadpicture)
     {
+        if (_cts is null)
+        {
+            CommandImageResult f = new()
+            {
+                ErrorMessage = "(_cts is null)",
+                IsSuccess = false
+            };
+            return f;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested returning @MpdQueryAlbumArt (Binary)");
+            CommandImageResult f = new()
+            {
+                ErrorMessage = "(IsCancellationRequested)",
+                IsSuccess = false
+            };
+            return f;
+        }
+
         if (string.IsNullOrEmpty(uri))
         {
             CommandImageResult f = new()
@@ -885,7 +933,6 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             };
             return f;
         }
-
         /*
         if (_albumCover.IsDownloading)
         {
@@ -1057,6 +1104,27 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
     private async Task<CommandBinaryResult> MpdReQueryAlbumArt(string uri, int offset, bool isUsingReadpicture, AlbumImage albumCover)
     {
+        if (_cts is null)
+        {
+            CommandBinaryResult f = new()
+            {
+                ErrorMessage = "(_cts is null)",
+                IsSuccess = false
+            };
+            return f;
+        }
+
+        if (_cts.Token.IsCancellationRequested)
+        {
+            Debug.WriteLine("IsCancellationRequested returning @MpdReQueryAlbumArt (Binary)");
+            CommandBinaryResult f = new()
+            {
+                ErrorMessage = "(IsCancellationRequested)",
+                IsSuccess = false
+            };
+            return f;
+        }
+
         if (string.IsNullOrEmpty(uri))
         {
             CommandBinaryResult f = new()
@@ -1191,7 +1259,6 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                 ref _binaryConnection,
                 ref _binaryReader,
                 ref _binaryWriter);
-
         }
 
         _cts?.Dispose();
