@@ -1,31 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-	  <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-	  <PlatformTarget>AnyCPU</PlatformTarget>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  
-	  <ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
-	  <AssemblyName>MPDCtrlX</AssemblyName>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<IsAotCompatible>true</IsAotCompatible>
 
-	  <VersionPrefix>1.1.4.0</VersionPrefix>
-	  <FileVersion>1.1.4.0</FileVersion>
-	  
-	  <IsAotCompatible>true</IsAotCompatible>
-	  
-	  <!-- Code quality -->
-	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-	  <AnalysisLevel>latest-recommended</AnalysisLevel>
-	  <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>
+		<AssemblyName>MPDCtrlX</AssemblyName>
 
-  </PropertyGroup>
+		<VersionPrefix>1.1.4.0</VersionPrefix>
+		<FileVersion>1.1.4.0</FileVersion>
+	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-	  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<!-- Code quality -->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -60,6 +56,7 @@
 		<IsAotCompatible>True</IsAotCompatible>
 		<Optimize>True</Optimize>
 	</PropertyGroup>
+	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>portable</DebugType>
 		<IsTrimmable>True</IsTrimmable>
@@ -79,11 +76,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <AvaloniaXaml Remove="deb-staging\**" />
-	  <Compile Remove="deb-staging\**" />
-	  <EmbeddedResource Remove="deb-staging\**" />
-	  <None Remove="deb-staging\**" />
-	  
+		<AvaloniaXaml Remove="deb-staging\**" />
+		<Compile Remove="deb-staging\**" />
+		<EmbeddedResource Remove="deb-staging\**" />
+		<None Remove="deb-staging\**" />
 		<None Remove="deb-packaging.txt" />
 	</ItemGroup>
 
@@ -93,46 +89,48 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Avalonia" Version="12.1.3" />
-	  <PackageReference Include="Avalonia.Desktop" Version="12.1.3" />
-	  <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3" />
-	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-	  <PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
-	  <PackageReference Include="SkiaSharp" Version="4.153.1" />
+		<PackageReference Include="Avalonia" Version="12.1.4" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
+		<PackageReference Include="SkiaSharp" Version="4.153.1" />
 		<!-- SkiaSharp.NativeAssets.Linux must match with SkiaSharp package ver -->
-	  <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.153.1" />
-	  <PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="4.153.1" />
-	  <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="4.153.1" />
-	  <PackageReference Include="Tmds.DBus.Protocol" Version="0.95.1" />
-	  <PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.7" />
-	  <PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
-	  <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
-	  <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.12" />
-  </ItemGroup>
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.153.1" />
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="4.153.1" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="4.153.1" />
+		<PackageReference Include="Tmds.DBus.Protocol" Version="0.95.1" />
+		<PackageReference Include="Xaml.Behaviors.Interactions" Version="12.0.7" />
+		<PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+		<PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.12" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="MPDCtrlX.ico">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 		<EmbeddedResource Include="Assets\MPDCtrlX.ico" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\MPDCtrlX-24.png">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</AvaloniaResource>
 		<AvaloniaResource Update="Assets\MPDCtrlX-24.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</AvaloniaResource>
 	</ItemGroup>
+	
 	<ItemGroup>
-	  <Compile Update="Properties\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Dialogs\Keybindings.axaml.cs">
-	    <DependentUpon>Keybindings.axaml</DependentUpon>
-	  </Compile>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Dialogs\Keybindings.axaml.cs">
+			<DependentUpon>Keybindings.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -141,7 +139,6 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
-
 
 </Project>
 
