@@ -5686,7 +5686,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            await StartCoreAsync(host, port);
+            await StartCoreAsync(host, port, _cts.Token);
         }
         finally
         {
@@ -5694,8 +5694,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async Task StartCoreAsync(string host, int port)
+    private async Task StartCoreAsync(string host, int port, CancellationToken cancellationToken)
     {
+        /*
         HostIpAddress = null;
         try
         {
@@ -5703,13 +5704,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             if (addresses.Length > 0)
             {
                 HostIpAddress = addresses[0];
-                /*
-                Debug.WriteLine($"IP addresses for {host}: {HostIpAddress}");
-                foreach (var ip in addresses)
-                {
-                    Debug.WriteLine(ip);
-                }
-                */
+                
+                //Debug.WriteLine($"IP addresses for {host}: {HostIpAddress}");
+                //foreach (var ip in addresses)
+               // {
+                //    Debug.WriteLine(ip);
+               // }
+                
             }
             else
             {
@@ -5741,7 +5742,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             return;
         }
-
+        */
         try
         {
             if (_mpc.IsMpdIdleConnected || _mpc.IsMpdCommandConnected || _mpc.ConnectionState == ConnectionStatus.Connecting)
@@ -5751,9 +5752,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
 
             // Start MPD connection.
-            await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port);
-            // let's not await for faster start up.
-            //_ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+            //await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port);
+            await _mpc.MpdIdleConnect(host, port, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        when (cancellationToken.IsCancellationRequested)
+        {
+            // Expected when the window is closing.
         }
         catch (Exception ex)
         {
@@ -10549,7 +10554,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        await StartCoreAsync(_host, _port);
+        await StartCoreAsync(_host, _port, _cts.Token);
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -10636,7 +10641,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
         }
         */
-
+        /*
         HostIpAddress = null;
         try
         {
@@ -10666,6 +10671,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
             return;
         }
+        */
 
         if (_port == 0)
         {
@@ -10740,12 +10746,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         IsConnecting = true;
 
-        if (HostIpAddress is null) return;
-        //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
-
+        //if (HostIpAddress is null) return;
         // Start MPD connection.
-        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        ConnectionResult r = await _mpc.MpdIdleConnect(Host, _port);
 
         if (r.IsSuccess)
         {
@@ -10907,9 +10911,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
 
         Host = prof.Host;
-
+        /*
         HostIpAddress = null;
-
+        
         try
         {
             var addresses = await Dns.GetHostAddressesAsync(Host, AddressFamily.InterNetwork);
@@ -10937,15 +10941,17 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             return;
         }
+        */
 
         _port = prof.Port;
         Password = prof.Password;
 
         IsConnecting = true;
 
-        if (HostIpAddress is null) return;
+        //if (HostIpAddress is null) return;
         //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
+        ConnectionResult r = await _mpc.MpdIdleConnect(Host, _port);
 
         if (r.IsSuccess)
         {
@@ -10962,7 +10968,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task TryConnect()
     {
         Debug.WriteLine("_host: " + _host);
-        await StartCoreAsync(_host, _port);
+        await StartCoreAsync(_host, _port, _cts.Token);
     }
 
     #endregion
@@ -11795,14 +11801,14 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
+            _cts.Cancel();
+
             if (IsConnected)
             {
                 _mpc.MpdStop = true;
 
                 _mpc.MpdDisconnect(false);
             }
-
-            _cts.Cancel();
 
             _cts?.Dispose();
         }

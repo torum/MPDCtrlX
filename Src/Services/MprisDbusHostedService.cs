@@ -104,7 +104,7 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         //_mpcService.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
         //_mpcService.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
         //_mpcService.MpdIdleConnected -= OnMpdIdleConnected;
-        _mpcService.MpdCurrentSongChanged += OnMpdCurrentSongChanged;
+        _mpcService.MpdCurrentSongChanged -= OnMpdCurrentSongChanged;
 
         foreach (var handler in _activeHandlers.OfType<MprisPathMethodHandler>())
         {
