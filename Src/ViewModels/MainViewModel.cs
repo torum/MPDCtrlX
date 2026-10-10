@@ -155,6 +155,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 #endif
     }
 
+    //public Task InitializeAsync() => _initializationTask ??= StartAsync();
+
     #region == Properties ==
 
     public string AppVersion
@@ -5380,7 +5382,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             // start the connection
             //await Task.Run(async () => await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
             // let's not await for faster start up.
-            _ = Task.Run(() => StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
+            await StartAsync(CurrentProfile.Host, CurrentProfile.Port);
         }
         catch (Exception ex)
         {
@@ -5671,7 +5673,25 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Methods ==
 
+    private readonly SemaphoreSlim _startGate = new(1, 1);
+
     private async Task StartAsync(string host, int port)
+    {
+        // Ignore a duplicate attempt while one is already running.
+        if (!await _startGate.WaitAsync(0))// _cts.Token))
+            return;
+
+        try
+        {
+            await StartCoreAsync(host, port);
+        }
+        finally
+        {
+            _startGate.Release();
+        }
+    }
+
+    private async Task StartCoreAsync(string host, int port)
     {
         HostIpAddress = null;
         try
@@ -5721,8 +5741,14 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
+            if (_mpc.IsMpdIdleConnected || _mpc.IsMpdCommandConnected || _mpc.ConnectionState == MpcService.ConnectionStatus.Connecting)
+            {
+                _mpc.MpdDisconnect(isReconnect: true);
+                _mpc.MpdStop = false;
+            }
+
             // Start MPD connection.
-            await Task.Run(async () => await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
+            await _mpc.MpdIdleConnect(HostIpAddress.ToString(), port);
             // let's not await for faster start up.
             //_ = Task.Run(() => _mpc.MpdIdleConnect(HostIpAddress.ToString(), port), _cts.Token);
         }
@@ -5733,7 +5759,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async Task LoadInitialData()
+    private async Task LoadInitialDataAsync()
     {
         // "UIThread.CheckAccess() = FALSE"
 
@@ -7915,8 +7941,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
 
         // 
-        await Task.Run(LoadInitialData, _cts.Token);
-        //_ = Task.Run(LoadInitialData, _cts.Token);
+        //await Task.Run(LoadInitialData, _cts.Token);
+        await LoadInitialDataAsync();
     }
 
     private void OnMpdPlayerStatusChanged(MpcService sender)
@@ -10520,7 +10546,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         //IsAlbumArtVisible = false;
         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
 
-        await Task.Run(async () => await StartAsync(_host, _port), _cts.Token);
+        await StartCoreAsync(_host, _port);
         /*
         ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
 
@@ -10933,7 +10959,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task TryConnect()
     {
         Debug.WriteLine("_host: " + _host);
-        await Task.Run(async () => await StartAsync(_host, _port), _cts.Token);
+        await StartCoreAsync(_host, _port);
     }
 
     #endregion
