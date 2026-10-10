@@ -6,7 +6,7 @@ namespace MPDCtrlX.Services.Contracts;
 public interface IMpcService
 {
     //AlbumImage AlbumCover { get; }
-    MpcService.ConnectionStatus ConnectionState { get; }
+    ConnectionStatus ConnectionState { get; }
     ObservableCollection<SongInfoEx> CurrentQueue { get; }
     bool IsMpdCommandConnected { get; set; }
     bool IsMpdIdleConnected { get; set; }
@@ -27,21 +27,21 @@ public interface IMpcService
     ObservableCollection<Playlist> Playlists { get; }
     //ObservableCollection<SongInfo> SearchResult { get; }
 
-    event MpcService.ConnectionErrorEvent ConnectionError;
-    event MpcService.ConnectionStatusChangedEvent ConnectionStatusChanged;
-    event MpcService.DebugCommandOutputEvent DebugCommandOutput;
-    event MpcService.DebugIdleOutputEvent DebugIdleOutput;
-    event MpcService.IsBusyEvent IsBusy;
-    event MpcService.MpcProgressEvent MpcProgress;
-    event MpcService.MpdAckErrorEvent MpdAckError;
-    event MpcService.MpdFatalErrorEvent MpdFatalError;
-    event MpcService.MpdAlbumArtChangedEvent MpdAlbumArtChanged;
-    event MpcService.MpdCurrentQueueChangedEvent MpdCurrentQueueChanged;
-    event MpcService.IsMpdIdleConnectedEvent MpdIdleConnected;
-    event MpcService.MpdPlayerStatusChangedEvent MpdPlayerStatusChanged;
-    event MpcService.MpdCurrentSongChangedEvent MpdCurrentSongChanged;
-    event MpcService.MpdPlaylistsChangedEvent MpdPlaylistsChanged;
-    event MpcService.MpdOutputChangedEvent MpdOutputChanged;
+    event ConnectionErrorEvent ConnectionError;
+    event ConnectionStatusChangedEvent ConnectionStatusChanged;
+    event DebugCommandOutputEvent DebugCommandOutput;
+    event DebugIdleOutputEvent DebugIdleOutput;
+    event IsBusyEvent IsBusy;
+    event MpcProgressEvent MpcProgress;
+    event MpdAckErrorEvent MpdAckError;
+    event MpdFatalErrorEvent MpdFatalError;
+    event MpdAlbumArtChangedEvent MpdAlbumArtChanged;
+    event MpdCurrentQueueChangedEvent MpdCurrentQueueChanged;
+    event IsMpdIdleConnectedEvent MpdIdleConnected;
+    event MpdPlayerStatusChangedEvent MpdPlayerStatusChanged;
+    event MpdCurrentSongChangedEvent MpdCurrentSongChanged;
+    event MpdPlaylistsChangedEvent MpdPlaylistsChanged;
+    event MpdOutputChangedEvent MpdOutputChanged;
 
     Task<CommandResult> MpdAdd(List<string> uris);
     Task<CommandResult> MpdAddAfter(List<string> uris);

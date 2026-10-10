@@ -67,7 +67,7 @@ public partial class MpcService : IMpcService, IDisposable
     private static TcpClient _idleConnection = new();
     private static StreamReader? _idleReader;
     private static StreamWriter? _idleWriter;
-
+    /*
     public enum ConnectionStatus
     {
         NeverConnected,
@@ -83,6 +83,7 @@ public partial class MpcService : IMpcService, IDisposable
         Disconnected,
         SeeConnectionErrorEvent
     }
+    */
 
     public ConnectionStatus ConnectionState
     {
@@ -109,6 +110,22 @@ public partial class MpcService : IMpcService, IDisposable
 
     #region == Events == 
 
+    public event IsBusyEvent? IsBusy;
+    public event DebugCommandOutputEvent? DebugCommandOutput;
+    public event DebugIdleOutputEvent? DebugIdleOutput;
+    public event ConnectionStatusChangedEvent? ConnectionStatusChanged;
+    public event ConnectionErrorEvent? ConnectionError;
+    public event IsMpdIdleConnectedEvent? MpdIdleConnected;
+    public event MpdAckErrorEvent? MpdAckError;
+    public event MpdFatalErrorEvent? MpdFatalError;
+    public event MpdPlayerStatusChangedEvent? MpdPlayerStatusChanged;
+    public event MpdCurrentQueueChangedEvent? MpdCurrentQueueChanged;
+    public event MpdCurrentSongChangedEvent? MpdCurrentSongChanged;
+    public event MpdPlaylistsChangedEvent? MpdPlaylistsChanged;
+    public event MpdOutputChangedEvent? MpdOutputChanged;
+    public event MpdAlbumArtChangedEvent? MpdAlbumArtChanged;
+    public event MpcProgressEvent? MpcProgress;
+    /*
     public delegate void IsBusyEvent(MpcService sender, bool on);
     public event IsBusyEvent? IsBusy;
 
@@ -155,6 +172,7 @@ public partial class MpcService : IMpcService, IDisposable
 
     public delegate void MpcProgressEvent(MpcService sender, string msg);
     public event MpcProgressEvent? MpcProgress;
+    */
 
     #endregion
 

@@ -5632,7 +5632,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 Directory.CreateDirectory(App.AppDataFolder);
             }
 
-            doc.Save(App.AppConfigFilePath);
+            //doc.Save(App.AppConfigFilePath);
+            var temporaryPath = App.AppConfigFilePath + ".tmp";
+            doc.Save(temporaryPath);
+            File.Move(temporaryPath, App.AppConfigFilePath, overwrite: true);
         }
         //catch (System.IO.FileNotFoundException) { }
         catch (Exception ex)
@@ -5741,7 +5744,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            if (_mpc.IsMpdIdleConnected || _mpc.IsMpdCommandConnected || _mpc.ConnectionState == MpcService.ConnectionStatus.Connecting)
+            if (_mpc.IsMpdIdleConnected || _mpc.IsMpdCommandConnected || _mpc.ConnectionState == ConnectionStatus.Connecting)
             {
                 _mpc.MpdDisconnect(isReconnect: true);
                 _mpc.MpdStop = false;
@@ -7874,7 +7877,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == MPD event callback == 
 
-    private async void OnMpdIdleConnected(MpcService sender)
+    private async void OnMpdIdleConnected(IMpcService sender)
     {
 
 
@@ -7945,7 +7948,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         await LoadInitialDataAsync();
     }
 
-    private void OnMpdPlayerStatusChanged(MpcService sender)
+    private void OnMpdPlayerStatusChanged(IMpcService sender)
     {
         if (_mpc.MpdStatus.CurrentError != "")
         {
@@ -7961,33 +7964,33 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         UpdateStatus();
     }
 
-    private void OnMpdCurrentQueueChanged(MpcService sender)
+    private void OnMpdCurrentQueueChanged(IMpcService sender)
     {
         UpdateCurrentQueue();
     }
 
-    private void OnMpdCurrentSongChanged(MpcService sender)
+    private void OnMpdCurrentSongChanged(IMpcService sender)
     {
         // 
     }
 
-    private void OnMpdPlaylistsChanged(MpcService sender)
+    private void OnMpdPlaylistsChanged(IMpcService sender)
     {
         UpdatePlaylists();
     }
 
-    private void OnAlbumArtChanged(MpcService sender)
+    private void OnAlbumArtChanged(IMpcService sender)
     {
         //
     }
 
-    private void OnMpdOutputChanged(MpcService sender)
+    private void OnMpdOutputChanged(IMpcService sender)
     {
         //Debug.WriteLine("OnMpdOutputChanged");
         UpdateAudioOutputs();
     }
 
-    private void OnDebugCommandOutput(MpcService sender, string data)
+    private void OnDebugCommandOutput(IMpcService sender, string data)
     {
         if (IsShowDebugWindow)
         {
@@ -7998,7 +8001,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private void OnDebugIdleOutput(MpcService sender, string data)
+    private void OnDebugIdleOutput(IMpcService sender, string data)
     {
         if (IsShowDebugWindow)
         {
@@ -8009,7 +8012,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private void OnConnectionError(MpcService sender, string msg)
+    private void OnConnectionError(IMpcService sender, string msg)
     {
         if (string.IsNullOrEmpty(msg))
             return;
@@ -8028,10 +8031,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         IsShowErrWindow = true;
     }
 
-    private void OnConnectionStatusChanged(MpcService sender, MpcService.ConnectionStatus status)
+    private void OnConnectionStatusChanged(IMpcService sender, ConnectionStatus status)
     {
 
-        if (status == MpcService.ConnectionStatus.NeverConnected)
+        if (status == ConnectionStatus.NeverConnected)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8041,7 +8044,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             ConnectionStatusMessage = MPDCtrlX.Properties.Resources.ConnectionStatus_NeverConnected;
             StatusButton = _pathDisconnectedButton;
         }
-        else if (status == MpcService.ConnectionStatus.Connected)
+        else if (status == ConnectionStatus.Connected)
         {
             IsConnected = true;
             IsConnecting = false;
@@ -8051,7 +8054,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             ConnectionStatusMessage = MPDCtrlX.Properties.Resources.ConnectionStatus_Connected;
             StatusButton = _pathConnectedButton;
         }
-        else if (status == MpcService.ConnectionStatus.Connecting)
+        else if (status == ConnectionStatus.Connecting)
         {
             IsConnected = false;
             IsConnecting = true;
@@ -8063,7 +8066,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.ConnectFailTimeout)
+        else if (status == ConnectionStatus.ConnectFailTimeout)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8076,7 +8079,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.SeeConnectionErrorEvent)
+        else if (status == ConnectionStatus.SeeConnectionErrorEvent)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8088,7 +8091,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             Debug.WriteLine("ConnectionStatus_SeeConnectionErrorEvent");
             StatusButton = _pathErrorInfoButton;
         }
-        else if (status == MpcService.ConnectionStatus.Disconnected)
+        else if (status == ConnectionStatus.Disconnected)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8101,7 +8104,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.DisconnectedByHost)
+        else if (status == ConnectionStatus.DisconnectedByHost)
         {
             // TODO: not really usued now...
 
@@ -8116,7 +8119,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.Disconnecting)
+        else if (status == ConnectionStatus.Disconnecting)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8129,7 +8132,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             StatusBarMessage = ConnectionStatusMessage;
             //Debug.WriteLine("ConnectionStatus_Disconnecting");
         }
-        else if (status == MpcService.ConnectionStatus.DisconnectedByUser)
+        else if (status == ConnectionStatus.DisconnectedByUser)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8142,7 +8145,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.SendFailNotConnected)
+        else if (status == ConnectionStatus.SendFailNotConnected)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8155,7 +8158,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             StatusBarMessage = ConnectionStatusMessage;
         }
-        else if (status == MpcService.ConnectionStatus.SendFailTimeout)
+        else if (status == ConnectionStatus.SendFailTimeout)
         {
             IsConnected = false;
             IsConnecting = false;
@@ -8170,7 +8173,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void OnMpdAckError(MpcService sender, string ackMsg, string origin)
+    private async void OnMpdAckError(IMpcService sender, string ackMsg, string origin)
     {
         if (string.IsNullOrEmpty(ackMsg))
             return;
@@ -8213,7 +8216,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void OnMpdFatalError(MpcService sender, string errMsg, string origin)
+    private async void OnMpdFatalError(IMpcService sender, string errMsg, string origin)
     {
         if (string.IsNullOrEmpty(errMsg))
             return;
@@ -8255,7 +8258,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private void OnMpcProgress(MpcService sender, string msg)
+    private void OnMpcProgress(IMpcService sender, string msg)
     {
         StatusBarMessage = msg;
     }
@@ -8268,7 +8271,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
-    private void OnMpcIsBusy(MpcService sender, bool on)
+    private void OnMpcIsBusy(IMpcService sender, bool on)
     {
         //this.IsBusy = on;
     }

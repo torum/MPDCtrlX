@@ -136,7 +136,7 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
 
     //private void OnMpdCurrentQueueChanged(MpcService sender) => _ = RefreshMprisStateAsync();
 
-    private void OnMpdCurrentSongChanged(MpcService sender) => _ = RefreshMprisStateAsync();
+    private void OnMpdCurrentSongChanged(IMpcService sender) => _ = RefreshMprisStateAsync();
 
     //private void OnMpdIdleConnected(MpcService sender) => _ = RefreshMprisStateAsync(refreshStatus: true);
 
