@@ -47,13 +47,16 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
             }
 
             connection = new DBusConnection(sessionAddress);
-            await connection.ConnectAsync();
+            //await connection.ConnectAsync();
+            using var connectCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            connectCts.CancelAfter(TimeSpan.FromSeconds(5));
+            await connection.ConnectAsync().AsTask().WaitAsync(connectCts.Token);
 
             // Add handlers before requesting the well-known name so calls can be
             // dispatched as soon as the name becomes visible on the session bus.
             connection.AddMethodHandlers(handlers);
 
-            if (!await connection.TryRequestNameAsync(BusName, RequestNameOptions.None))
+            if (!await connection.TryRequestNameAsync(BusName, RequestNameOptions.None).WaitAsync(connectCts.Token))
             {
 #pragma warning disable CA1848 // Use the LoggerMessage delegates
                 _logger.LogWarning("Could not acquire MPRIS bus name {BusName}.", BusName);

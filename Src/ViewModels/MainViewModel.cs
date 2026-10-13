@@ -112,6 +112,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         // Init Song's time elapsed timer.
         _elapsedTimer = new System.Timers.Timer(1000); // adjust this when _elapsedTimeMultiplier value is not 1.
         _elapsedTimer.Elapsed += ElapsedTimer;
+        _volumeDelayTimer.Elapsed += DoChangeVolume;
 
         #endregion
 
@@ -1695,10 +1696,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             // If we have a timer and we are in this event handler, a user is still interact with the slider
             // we stop the timer
-            _volumeDelayTimer?.Stop();
+            //_volumeDelayTimer?.Stop();
 
-            //System.Diagnostics.Debug.WriteLine("Volume value is still changing. Skipping.");
-
+            // Debounce: restart the single timer. If a second passes without
+            // another change, the user has stopped interacting with the slider.
+            _volumeDelayTimer.Stop();
+            _volumeDelayTimer.Start();
+            /*
             // we always create a new instance of DispatcherTimer
             _volumeDelayTimer = new System.Timers.Timer
             {
@@ -1711,13 +1715,33 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             _volumeDelayTimer.Elapsed += new System.Timers.ElapsedEventHandler(DoChangeVolume);
 
             _volumeDelayTimer.Start();
+            */
         }
     }
 
-    private System.Timers.Timer? _volumeDelayTimer;
+    //private System.Timers.Timer? _volumeDelayTimer;
+    private readonly System.Timers.Timer _volumeDelayTimer = CreateVolumeTimer();
+    private static System.Timers.Timer CreateVolumeTimer() => new() { AutoReset = false, Interval = 1000 };
+
     private async void DoChangeVolume(object? sender, System.Timers.ElapsedEventArgs e)
     {
-        await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
+        //await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
+        try
+        {
+            await _mpc.MpdSetVolume(Convert.ToInt32(_volume));
+        }
+        catch (OperationCanceledException)
+        {
+            // Disconnected or shutting down.
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @DoChangeVolume {ex}");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @DoChangeVolume", ex.ToString()));
+            }
+        }
     }
 
     private bool _repeat;
@@ -2072,7 +2096,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
                     if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
                     {
-                        GetFiles(nml);
+                        //GetFiles(nml);
+                        _ = GetFilesAsync(nml).SafeAsync(nameof(GetFilesAsync));
                     }
 
                     await Task.Yield();
@@ -2098,7 +2123,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
                     if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
                     {
-                        GetPlaylistSongs(nmpli);
+                        //GetPlaylistSongsAsync(nmpli);
+                        _ = GetPlaylistSongsAsync(nmpli).SafeAsync(nameof(GetPlaylistSongsAsync));
                     }
                 });
             }
@@ -5356,29 +5382,30 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public async void OnWindowLoaded(object? sender, EventArgs e)
     {
-        if (CurrentProfile is null)
-        {
-            //ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting; // no need. 
-            StatusButton = _pathNewConnectionButton;
-
-            // Show connection setting
-            //IsConnectionSettingShow = true;
-
-            //var InitWin = new InitWindow();// use DI.
-            _initWin.DataContext = this;
-            await _initWin.ShowDialog(owner: App.GetService<MainWindow>());
-
-            return;
-        }
-
-        //IsConnectionSettingShow = false;
-
-        // set this "quietly"
-        _volume = CurrentProfile.Volume;
-        OnPropertyChanged(nameof(Volume));
-
         try
         {
+            if (CurrentProfile is null)
+            {
+                //ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting; // no need. 
+                StatusButton = _pathNewConnectionButton;
+
+                // Show connection setting
+                //IsConnectionSettingShow = true;
+
+                //var InitWin = new InitWindow();// use DI.
+                _initWin.DataContext = this;
+                await _initWin.ShowDialog(owner: App.GetService<MainWindow>());
+
+                return;
+            }
+
+            //IsConnectionSettingShow = false;
+
+            // set this "quietly"
+            _volume = CurrentProfile.Volume;
+            OnPropertyChanged(nameof(Volume));
+
+
             // start the connection
             //await Task.Run(async () => await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
             // let's not await for faster start up.
@@ -5388,6 +5415,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         {
             Debug.WriteLine($"Exception @OnWindowLoaded {ex}");
             _ = ex;// For native code analysis to avoid warning about unused variable.
+
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @OnWindowLoaded", ex.ToString()));
+            }
         }
 
     }
@@ -5775,106 +5807,116 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         // "UIThread.CheckAccess() = FALSE"
 
         IsBusy = true;
-
-        await Task.Delay(5);
-
-        // TODO: try-catch for each command to avoid one command failure stops the rest of the commands.
-
-        CommandResult result = await _mpc.MpdIdleSendPassword(_password);
-
-        if (result.IsSuccess)
+        try
         {
-            bool r = await _mpc.MpdCommandConnectionStart(_mpc.MpdHost, _mpc.MpdPort, _mpc.MpdPassword);
+            await Task.Delay(5);
 
-            if (r)
+            // TODO: try-catch for each command to avoid one command failure stops the rest of the commands.
+
+            CommandResult result = await _mpc.MpdIdleSendPassword(_password);
+
+            if (result.IsSuccess)
             {
-                // Testing:
-                //await _mpc.MpdIdleQueryProtocol();
+                bool r = await _mpc.MpdCommandConnectionStart(_mpc.MpdHost, _mpc.MpdPort, _mpc.MpdPassword);
 
-                if (IsUpdateOnStartup)
+                if (r)
                 {
-                    if (_mpc.Commands.Contains("update"))
+                    // Testing:
+                    //await _mpc.MpdIdleQueryProtocol();
+
+                    if (IsUpdateOnStartup)
                     {
-                        await _mpc.MpdSendUpdate();
+                        if (_mpc.Commands.Contains("update"))
+                        {
+                            await _mpc.MpdSendUpdate();
+                        }
                     }
+
+                    result = await _mpc.MpdIdleQueryStatus();
+
+                    if (result.IsSuccess)
+                    {
+                        await Task.Delay(5);
+                        //UpdateStatus();
+                        _ = UpdateStatusAsync().SafeAsync(nameof(UpdateStatusAsync));
+
+                        await Task.Delay(50);
+                        await _mpc.MpdIdleQueryCurrentSong();
+
+                        await Task.Delay(50);
+                        UpdateCurrentSong();
+
+                        await Task.Delay(50);
+                        UpdateCommandStatus();
+
+                        await Task.Delay(50);
+                        await _mpc.MpdIdleQueryPlaylists();
+
+                        await Task.Delay(50);
+                        //UpdatePlaylists();
+                        _ = UpdatePlaylistsAsync().SafeAsync(nameof(UpdatePlaylistsAsync));// fire and forget or not. awaiting here is cheap in this case.
+
+                        await Task.Delay(50);
+                        await _mpc.MpdIdleQueryCurrentQueue();
+
+                        await Task.Delay(50);
+                        //await UpdateCurrentQueueAsync();
+                        _ = UpdateCurrentQueueAsync().SafeAsync(nameof(UpdateCurrentQueueAsync));// fire and forget
+
+                        await Task.Delay(50);
+                        await _mpc.MpdIdleQueryOutputs();
+                        UpdateAudioOutputs();
+
+                        await Task.Delay(300);
+                        await _mpc.MpdIdleQueryListAlbumArtists();
+
+                        await Task.Delay(50);
+                        //UpdateAlbumsAndArtists();
+                        _ = UpdateAlbumsAndArtistsAsync().SafeAsync(nameof(UpdateAlbumsAndArtistsAsync)); // fire and forget or not. awaiting here is cheap in this case.
+
+                        await Task.Delay(50);
+
+                        // This no longer needed since it is aquired as needed basis.
+                        //await _mpc.MpdIdleQueryListAll();
+                        //await Task.Delay(5);
+                        //UpdateLibrary();
+
+                        //UpdateProgress?.Invoke(this, "");
+
+                        // Idle start.
+                        _mpc.MpdIdleStart();
+                    }
+
                 }
-
-                result = await _mpc.MpdIdleQueryStatus();
-
-                if (result.IsSuccess)
-                {
-                    await Task.Delay(5);
-                    UpdateStatus();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryCurrentSong();
-
-                    await Task.Delay(50);
-                    UpdateCurrentSong();
-
-                    await Task.Delay(50);
-                    UpdateCommandStatus();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryPlaylists();
-
-                    await Task.Delay(50);
-                    UpdatePlaylists();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryCurrentQueue();
-
-                    await Task.Delay(50);
-                    UpdateCurrentQueue();
-
-                    await Task.Delay(50);
-                    await _mpc.MpdIdleQueryOutputs();
-                    UpdateAudioOutputs();
-
-                    await Task.Delay(300);
-                    await _mpc.MpdIdleQueryListAlbumArtists();
-
-                    await Task.Delay(50);
-                    UpdateAlbumsAndArtists();
-
-                    await Task.Delay(50);
-
-                    // This no longer needed since it is aquired as needed basis.
-                    //await _mpc.MpdIdleQueryListAll();
-                    //await Task.Delay(5);
-                    //UpdateLibrary();
-
-                    //UpdateProgress?.Invoke(this, "");
-
-                    // Idle start.
-                    _mpc.MpdIdleStart();
-                }
-
             }
-        }
 
-        IsBusy = false;
+            IsBusy = false;
 
-        await Task.Delay(500);
+            await Task.Delay(500);
 
-        // MPD protocol ver check.
-        if (_mpc.MpdVerText != "")
-        {
-            if (CompareVersionString(_mpc.MpdVerText, "0.20.0") == -1)
+            // MPD protocol ver check.
+            if (_mpc.MpdVerText != "")
             {
-                Dispatcher.UIThread.Post(() =>
+                if (CompareVersionString(_mpc.MpdVerText, "0.20.0") == -1)
                 {
-                    MpdStatusButton = _pathMpdAckErrorButton;
-                    //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        MpdStatusButton = _pathMpdAckErrorButton;
+                        //StatusBarMessage = string.Format(MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
 #pragma warning disable CA1863 // Use 'CompositeFormat'
-                    MpdStatusMessage = string.Format(CultureInfo.CurrentCulture,MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
+                        MpdStatusMessage = string.Format(CultureInfo.CurrentCulture, MPDCtrlX.Properties.Resources.StatusBarMsg_MPDVersionIsOld, _mpc.MpdVerText);
 #pragma warning restore CA1863 // Use 'CompositeFormat'
-                });
+                    });
+                }
             }
         }
-    }
+        finally
+        {
+            IsBusy = false;
+        }
+}
 
-    private async void UpdateStatus()
+    private async Task UpdateStatusAsync()
     {
         // "UIThread.CheckAccess() = FALSE"
 
@@ -5884,108 +5926,114 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         {
             UpdateProgress?.Invoke(this, "[UI] Status updating...");
 
-            bool isSongChanged = false;
-            bool isCurrentSongWasNull = false;
-
-            if (CurrentSong is not null)
+            try
             {
-                if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
+                bool isSongChanged = false;
+                bool isCurrentSongWasNull = false;
+
+                if (CurrentSong is not null)
                 {
-                    isSongChanged = true;
+                    if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
+                    {
+                        isSongChanged = true;
 
-                    // Clear IsPlaying icon
-                    CurrentSong.IsPlaying = false;
+                        // Clear IsPlaying icon
+                        CurrentSong.IsPlaying = false;
 
-                    //
+                        //
+                        _mpc.MpdCurrentSong?.IsPlaying = false;
+                        AlbumCover = null;
+                        //IsAlbumArtVisible = false;
+                        AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
+                    }
+                }
+                else
+                {
+                    // just in case
                     _mpc.MpdCurrentSong?.IsPlaying = false;
+
+                    isCurrentSongWasNull = true;
+                }
+
+                if (Queue.Count > 0)
+                {
+                    if (isSongChanged || isCurrentSongWasNull)
+                    {
+                        // Sets Current Song
+                        var item = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
+                        if (item is not null)
+                        {
+                            //Debug.WriteLine("Currentsong is set. @UpdateStatus()");
+                            CurrentSong = item;
+                            CurrentSong.IsPlaying = true;
+                            CurrentSong.IsAlbumCoverNeedsUpdate = true;
+
+                            //CurrentSong.IsSelected = true;
+
+                            if (IsAutoScrollToNowPlaying)
+                            {
+                                ScrollIntoView?.Invoke(this, CurrentSong.Index);
+                            }
+
+                            //IsAlbumArtVisible = false;
+                            AlbumCover = null;
+                            AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
+
+                            // AlbumArt
+                            if (!string.IsNullOrEmpty(CurrentSong.File))
+                            {
+                                if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
+                                {
+                                    //Debug.WriteLine("getting album cover. @UpdateStatus()");
+                                    var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
+
+                                    if ((res != null) && (CurrentSong is not null))
+                                    {
+                                        if (res.IsSuccess && (res.AlbumCover?.SongFilePath != null) && (CurrentSong.File != null))
+                                        {
+                                            if (res.AlbumCover?.SongFilePath == CurrentSong.File)
+                                            {
+                                                if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
+                                                {
+                                                    AlbumCover = res.AlbumCover;
+                                                    AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                                    //IsAlbumArtVisible = true;
+                                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //Debug.WriteLine("item is null. @UpdateStatus()");
+                            // TODO:
+                            CurrentSong = null;
+                            AlbumCover = null;
+                            //IsAlbumArtVisible = false;
+                            AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
+                        }
+                    }
+                }
+                else
+                {
+                    //Debug.WriteLine("Queue.Count == 0. @UpdateStatus()");
+                    // TODO:
+                    //CurrentSong = null;
                     AlbumCover = null;
                     //IsAlbumArtVisible = false;
                     AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
                 }
             }
-            else
+            finally
             {
-                // just in case
-                _mpc.MpdCurrentSong?.IsPlaying = false;
-
-                isCurrentSongWasNull = true;
+                UpdateProgress?.Invoke(this, "");
             }
 
-            if (Queue.Count > 0)
-            {
-                if (isSongChanged || isCurrentSongWasNull)
-                {
-                    // Sets Current Song
-                    var item = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
-                    if (item is not null)
-                    {
-                        //Debug.WriteLine("Currentsong is set. @UpdateStatus()");
-                        CurrentSong = item;
-                        CurrentSong.IsPlaying = true;
-                        CurrentSong.IsAlbumCoverNeedsUpdate = true;
-
-                        //CurrentSong.IsSelected = true;
-
-                        if (IsAutoScrollToNowPlaying)
-                        {
-                            ScrollIntoView?.Invoke(this, CurrentSong.Index);
-                        }
-
-                        //IsAlbumArtVisible = false;
-                        AlbumCover = null;
-                        AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-
-                        // AlbumArt
-                        if (!string.IsNullOrEmpty(CurrentSong.File))
-                        {
-                            if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
-                            {
-                                //Debug.WriteLine("getting album cover. @UpdateStatus()");
-                                var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-
-                                if ((res != null) && (CurrentSong is not null))
-                                {
-                                    if (res.IsSuccess && (res.AlbumCover?.SongFilePath != null) && (CurrentSong.File != null))
-                                    {
-                                        if (res.AlbumCover?.SongFilePath == CurrentSong.File)
-                                        {
-                                            if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading))
-                                            {
-                                                AlbumCover = res.AlbumCover;
-                                                AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
-                                                //IsAlbumArtVisible = true;
-                                                SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
-                                                CurrentSong.IsAlbumCoverNeedsUpdate = false;
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("item is null. @UpdateStatus()");
-                        // TODO:
-                        CurrentSong = null;
-                        AlbumCover = null;
-                        //IsAlbumArtVisible = false;
-                        AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-                    }
-                }
-            }
-            else
-            {
-                //Debug.WriteLine("Queue.Count == 0. @UpdateStatus()");
-                // TODO:
-                //CurrentSong = null;
-                AlbumCover = null;
-                //IsAlbumArtVisible = false;
-                AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-            }
-
-            UpdateProgress?.Invoke(this, "");
         });
     }
 
@@ -6172,7 +6220,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
-    private async void UpdateCurrentQueue()
+    private async Task UpdateCurrentQueueAsync()
     {
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
@@ -6454,7 +6502,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     UpdateProgress?.Invoke(this, "");
                 }
 
-                IsWorking = false;
                 await Task.Yield();
                 await Task.Delay(1);
             }
@@ -6631,11 +6678,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("Exception@UpdateCurrentQueue: " + e.Message);
+                    Debug.WriteLine("Exception@UpdateCurrentQueue: " + e.ToString());
                     //StatusBarMessage = "Exception@UpdateCurrentQueue: " + e.Message;
                     IsWorking = false;
-
-                    App.AppendErrorLog("Exception@UpdateCurrentQueue", e.Message);
+                    App.AppendErrorLog("Exception@UpdateCurrentQueue", e.ToString());
 
                     return;
                 }
@@ -6678,41 +6724,49 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
-    private async void UpdateAlbumsAndArtists()
+    private async Task UpdateAlbumsAndArtistsAsync()
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            // Sort
-            var ci = CultureInfo.CurrentCulture;
-            var comp = StringComparer.Create(ci, true);
-
             UpdateProgress?.Invoke(this, "[UI] Updating the AlbumArtists...");
             //Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists);// COPY. 
 
-            // Sort with AlbumArtist for Artist view.
-            if (IsArtistSortWithoutThePrefix)
+            try
             {
-                Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.NameSort, comp));// COPY. // Sort without prefix like "The".
+
+                // Sort
+                var ci = CultureInfo.CurrentCulture;
+                var comp = StringComparer.Create(ci, true);
+
+                // Sort with AlbumArtist for Artist view.
+                if (IsArtistSortWithoutThePrefix)
+                {
+                    Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.NameSort, comp));// COPY. // Sort without prefix like "The".
+                }
+                else
+                {
+                    Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
+                }
+
+                UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
+                //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
+
+                // Sort with AlbumArtist for Album view.(TODO: Save preference. AlbumArtist/Album name)
+                if (IsArtistSortWithoutThePrefix)
+                {
+                    Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort without prefix like "The" or "A".
+                }
+                else
+                {
+                    Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
+                }
+
             }
-            else
+            finally
             {
-                Artists = new ObservableCollection<AlbumArtist>(_mpc.AlbumArtists.OrderBy(x => x.Name, comp));// COPY. // Sort 
+                UpdateProgress?.Invoke(this, "");
             }
 
-            UpdateProgress?.Invoke(this, "[UI] Updating the Albums...");
-            //Albums = new ObservableCollection<AlbumEx>(_mpc.Albums); // COPY.
-
-            // Sort with AlbumArtist for Album view.(TODO: Save preference. AlbumArtist/Album name)
-            if (IsArtistSortWithoutThePrefix)
-            {
-                Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtistSort, comp)); // COPY. // Sort without prefix like "The" or "A".
-            }
-            else
-            {
-                Albums = new ObservableCollection<AlbumEx>(_mpc.Albums.OrderBy(x => x.AlbumArtist, comp)); // COPY. // Sort 
-            }
-
-            UpdateProgress?.Invoke(this, "");
             /* 
              * little bit too much to check all albums every time app starts.
             // Get album pictures.
@@ -6736,7 +6790,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
-    private async void UpdatePlaylists()
+    private async Task UpdatePlaylistsAsync()
     {
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
@@ -6752,137 +6806,155 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             //IsBusy = true;
             IsWorking = true;
 
-            if (Playlists.Count == 0)
+            try
             {
-                // this is the initial load, so use this flag to sort it later.
-                isListChanged = true;
-            }
-
-            UpdateProgress?.Invoke(this, "[UI] Playlists loading...");
-            Playlists = new ObservableCollection<Playlist>(_mpc.Playlists);
-            UpdateProgress?.Invoke(this, "");
-
-            NodeMenuPlaylists playlistDir = _mainMenuItems.PlaylistsDirectory;
-
-            if (playlistDir is not null)
-            {
-                foreach (var hoge in Playlists)
+                if (Playlists.Count == 0)
                 {
-                    var fuga = playlistDir.Children.FirstOrDefault(i => i.Name == hoge.Name);
-                    if (fuga is null)
-                    {
-                        NodeMenuPlaylistItem playlistNode = new(hoge.Name)
-                        {
-                            IsUpdateRequied = true
-                        };
-                        playlistDir.Children.Add(playlistNode);
-                        isListChanged = true;
-                    }
-                }
-
-                List<NodeTree> tobedeleted = [];
-                foreach (var hoge in playlistDir.Children)
-                {
-                    var fuga = Playlists.FirstOrDefault(i => i.Name == hoge.Name);
-                    if (fuga is null)
-                    {
-                        tobedeleted.Add(hoge);
-                        isListChanged = true;
-                    }
-                    else
-                    {
-                        if (hoge is NodeMenuPlaylistItem nmpi)
-                        {
-                            nmpi.IsUpdateRequied = true;
-                        }
-                    }
-                }
-
-                foreach (var hoge in tobedeleted)
-                {
-                    playlistDir.Children.Remove(hoge);
+                    // this is the initial load, so use this flag to sort it later.
                     isListChanged = true;
                 }
 
-                // Sort > this was causing NavigationViewItem selection to reset..so >> only isChanged then sort it.
-                if (isListChanged && playlistDir.Children.Count > 1)
-                {
-                    CultureInfo ci = CultureInfo.CurrentCulture;
-                    StringComparer comp = StringComparer.Create(ci, true);
-                    // 
-                    playlistDir.Children = new ObservableCollection<NodeTree>(playlistDir.Children.OrderBy(x => x.Name, comp));  //<<This freaking resets selection of NavigationViewItem!
-                }
+                UpdateProgress?.Invoke(this, "[UI] Playlists loading...");
+                Playlists = new ObservableCollection<Playlist>(_mpc.Playlists);
+                UpdateProgress?.Invoke(this, "");
 
-                // Update playlist if selected
-                if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
+                NodeMenuPlaylists playlistDir = _mainMenuItems.PlaylistsDirectory;
+
+                if (playlistDir is not null)
                 {
-                    if (nmpli.IsUpdateRequied && nmpli.Selected)
+                    foreach (var hoge in Playlists)
                     {
-                        GetPlaylistSongs(nmpli);
-
-                        if (isListChanged)
+                        var fuga = playlistDir.Children.FirstOrDefault(i => i.Name == hoge.Name);
+                        if (fuga is null)
                         {
-                            // TODO: need to check if this is needed.
-                            GoToJustPlaylistPage(nmpli);
+                            NodeMenuPlaylistItem playlistNode = new(hoge.Name)
+                            {
+                                IsUpdateRequied = true
+                            };
+                            playlistDir.Children.Add(playlistNode);
+                            isListChanged = true;
                         }
+                    }
+
+                    List<NodeTree> tobedeleted = [];
+                    foreach (var hoge in playlistDir.Children)
+                    {
+                        var fuga = Playlists.FirstOrDefault(i => i.Name == hoge.Name);
+                        if (fuga is null)
+                        {
+                            tobedeleted.Add(hoge);
+                            isListChanged = true;
+                        }
+                        else
+                        {
+                            if (hoge is NodeMenuPlaylistItem nmpi)
+                            {
+                                nmpi.IsUpdateRequied = true;
+                            }
+                        }
+                    }
+
+                    foreach (var hoge in tobedeleted)
+                    {
+                        playlistDir.Children.Remove(hoge);
+                        isListChanged = true;
+                    }
+
+                    // Sort > this was causing NavigationViewItem selection to reset..so >> only isChanged then sort it.
+                    if (isListChanged && playlistDir.Children.Count > 1)
+                    {
+                        CultureInfo ci = CultureInfo.CurrentCulture;
+                        StringComparer comp = StringComparer.Create(ci, true);
+                        // 
+                        playlistDir.Children = new ObservableCollection<NodeTree>(playlistDir.Children.OrderBy(x => x.Name, comp));  //<<This freaking resets selection of NavigationViewItem!
+                    }
+
+                    // Update playlist if selected
+                    if (SelectedNodeMenu is NodeMenuPlaylistItem nmpli)
+                    {
+                        if (nmpli.IsUpdateRequied && nmpli.Selected)
+                        {
+                            //GetPlaylistSongsAsync(nmpli);
+                            _ = GetPlaylistSongsAsync(nmpli).SafeAsync(nameof(GetPlaylistSongsAsync));
+
+                            if (isListChanged)
+                            {
+                                // TODO: need to check if this is needed.
+                                //GoToJustPlaylistPage(nmpli);
+                                _ = GoToJustPlaylistPageAsync(nmpli).SafeAsync(nameof(GoToJustPlaylistPageAsync));
+                            }
+                        }
+                    }
+
+                    if (_isNavigationViewMenuOpen)
+                    {
+                        playlistDir.Expanded = true;
                     }
                 }
 
-                if (_isNavigationViewMenuOpen)
+                //IsBusy = false;
+                IsWorking = false;
+
+                // apply open/close after this menu is loaded.
+                OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
+
+                if (!string.IsNullOrEmpty(RenamedSelectPendingPlaylistName))
                 {
-                    playlistDir.Expanded = true;
+                    GoToRenamedPlaylistPage(RenamedSelectPendingPlaylistName);
+                    RenamedSelectPendingPlaylistName = string.Empty;
                 }
             }
-
-            //IsBusy = false;
-            IsWorking = false;
-
-            // apply open/close after this menu is loaded.
-            OnPropertyChanged(nameof(IsNavigationViewMenuOpen));
-
-            if (!string.IsNullOrEmpty(RenamedSelectPendingPlaylistName))
+            finally
             {
-                GoToRenamedPlaylistPage(RenamedSelectPendingPlaylistName);
-                RenamedSelectPendingPlaylistName = string.Empty;
+                IsWorking = false;                  // Safe to repeat; covers the failure path.
+                UpdateProgress?.Invoke(this, "");
             }
         });
     }
 
-    private async void UpdateCommandStatus()
+    private void UpdateCommandStatus()
     {
-        await Dispatcher.UIThread.InvokeAsync(async () =>
+        Dispatcher.UIThread.Post(() =>
         {
-            PlayCommand.NotifyCanExecuteChanged();
-            PlayNextCommand.NotifyCanExecuteChanged();
-            PlayPrevCommand.NotifyCanExecuteChanged();
-            ChangeSongCommand.NotifyCanExecuteChanged();
-            PlayPauseCommand.NotifyCanExecuteChanged();
-            PlayStopCommand.NotifyCanExecuteChanged();
-            SetRandomCommand.NotifyCanExecuteChanged();
-            SetRpeatCommand.NotifyCanExecuteChanged();
-            SetConsumeCommand.NotifyCanExecuteChanged();
-            SetSingleCommand.NotifyCanExecuteChanged();
-            SetVolumeCommand.NotifyCanExecuteChanged();
-            SetSeekCommand.NotifyCanExecuteChanged();
-            VolumeMuteCommand.NotifyCanExecuteChanged();
-            VolumeDownCommand.NotifyCanExecuteChanged();
-            VolumeUpCommand.NotifyCanExecuteChanged();
+            try
+            {
+                PlayCommand.NotifyCanExecuteChanged();
+                PlayNextCommand.NotifyCanExecuteChanged();
+                PlayPrevCommand.NotifyCanExecuteChanged();
+                ChangeSongCommand.NotifyCanExecuteChanged();
+                PlayPauseCommand.NotifyCanExecuteChanged();
+                PlayStopCommand.NotifyCanExecuteChanged();
+                SetRandomCommand.NotifyCanExecuteChanged();
+                SetRpeatCommand.NotifyCanExecuteChanged();
+                SetConsumeCommand.NotifyCanExecuteChanged();
+                SetSingleCommand.NotifyCanExecuteChanged();
+                SetVolumeCommand.NotifyCanExecuteChanged();
+                SetSeekCommand.NotifyCanExecuteChanged();
+                VolumeMuteCommand.NotifyCanExecuteChanged();
+                VolumeDownCommand.NotifyCanExecuteChanged();
+                VolumeUpCommand.NotifyCanExecuteChanged();
 
-            QueueSaveToCommand.NotifyCanExecuteChanged();
-            QueueListviewSaveSelectedToCommand.NotifyCanExecuteChanged();
-            QueueClearWithoutPromptCommand.NotifyCanExecuteChanged();
-            QueueListviewSortByCommand.NotifyCanExecuteChanged();
-            QueueListviewSortReverseCommand.NotifyCanExecuteChanged();
-            QueueListviewLeftDoubleClickCommand.NotifyCanExecuteChanged();
-            QueueListviewDeleteSelectedWithoutPromptCommand.NotifyCanExecuteChanged();
+                QueueSaveToCommand.NotifyCanExecuteChanged();
+                QueueListviewSaveSelectedToCommand.NotifyCanExecuteChanged();
+                QueueClearWithoutPromptCommand.NotifyCanExecuteChanged();
+                QueueListviewSortByCommand.NotifyCanExecuteChanged();
+                QueueListviewSortReverseCommand.NotifyCanExecuteChanged();
+                QueueListviewLeftDoubleClickCommand.NotifyCanExecuteChanged();
+                QueueListviewDeleteSelectedWithoutPromptCommand.NotifyCanExecuteChanged();
 
-            SearchSongsSortByCommand.NotifyCanExecuteChanged();
+                SearchSongsSortByCommand.NotifyCanExecuteChanged();
 
-            FilesRefreshCommand.NotifyCanExecuteChanged();
+                FilesRefreshCommand.NotifyCanExecuteChanged();
 
-            // TODO: more.
+                // TODO: more.
 
-            UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
+                UserCanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception@UpdateCommandStatus: {ex}");
+                App.AppendErrorLog("Exception@UpdateCommandStatus", ex.ToString());
+            }
         });
     }
 
@@ -7053,7 +7125,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         return;
     }
 
-    private async void GetPlaylistSongs(NodeMenuPlaylistItem playlistNode)
+    private async Task GetPlaylistSongsAsync(NodeMenuPlaylistItem playlistNode)
     {
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
@@ -7062,34 +7134,40 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             IsWorking = true;
 
-            if (playlistNode.PlaylistSongs.Count > 0)
+            try
             {
-                playlistNode.PlaylistSongs.Clear();
-            }
-
-            CommandPlaylistResult result = await _mpc.MpdQueryPlaylistSongs(playlistNode.Name);
-            if (result.IsSuccess)
-            {
-                if (result.PlaylistSongs is not null)
+                if (playlistNode.PlaylistSongs.Count > 0)
                 {
-                    playlistNode.PlaylistSongs = new ObservableCollection<SongInfo>(result.PlaylistSongs);//result.PlaylistSongs
+                    playlistNode.PlaylistSongs.Clear();
+                }
 
-                    if (SelectedNodeMenu == playlistNode)
+                CommandPlaylistResult result = await _mpc.MpdQueryPlaylistSongs(playlistNode.Name);
+                if (result.IsSuccess)
+                {
+                    if (result.PlaylistSongs is not null)
                     {
-                        UpdateProgress?.Invoke(this, "[UI] Playlist loading...");
-                        PlaylistSongs = playlistNode.PlaylistSongs; // just use this.
-                        UpdateProgress?.Invoke(this, "");
-                    }
+                        playlistNode.PlaylistSongs = new ObservableCollection<SongInfo>(result.PlaylistSongs);//result.PlaylistSongs
 
-                    playlistNode.IsUpdateRequied = false;
+                        if (SelectedNodeMenu == playlistNode)
+                        {
+                            UpdateProgress?.Invoke(this, "[UI] Playlist loading...");
+                            PlaylistSongs = playlistNode.PlaylistSongs; // just use this.
+                            UpdateProgress?.Invoke(this, "");
+                        }
+
+                        playlistNode.IsUpdateRequied = false;
+                    }
                 }
             }
+            finally
+            {
+                IsWorking = false;
+            }
 
-            IsWorking = false;
         });
     }
 
-    private async void GoToJustPlaylistPage(NodeMenuPlaylistItem playlist)
+    private async Task GoToJustPlaylistPageAsync(NodeMenuPlaylistItem playlist)
     {
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -7111,7 +7189,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
-    private async void GetFiles(NodeMenuFiles filestNode)
+    private async Task GetFilesAsync(NodeMenuFiles filestNode)
     {
         if (filestNode is null)
             return;
@@ -7128,50 +7206,57 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             MusicDirectories.Clear();
 
         filestNode.IsAcquired = true;
+        bool succeeded = false;
 
-        // TODO:
-        await Task.Run(async () =>
+        try
         {
-            await Task.Delay(10);
-            //await Task.Yield();
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            await Task.Run(async () =>
             {
-                IsWorking = true;
-            });
-            await Task.Yield();
+                await Task.Delay(10);
+                //await Task.Yield();
 
-            CommandResult result = await _mpc.MpdQueryListAll().ConfigureAwait(false);
-            if (result.IsSuccess)
-            {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    filestNode.IsAcquired = true;
+                    IsWorking = true;
                 });
+                await Task.Yield();
 
-                //await UpdateLibraryMusicAsync().ConfigureAwait(false);
-                //await UpdateLibraryDirectoriesAsync().ConfigureAwait(false);
-                var dirTask = UpdateLibraryDirectoriesAsync();
-                var fileTask = UpdateLibraryMusicAsync();
-                await Task.WhenAll(dirTask, fileTask);
-            }
-            else
-            {
+                CommandResult result = await _mpc.MpdQueryListAll().ConfigureAwait(false);
+                if (result.IsSuccess)
+                {
+                    //await UpdateLibraryMusicAsync().ConfigureAwait(false);
+                    //await UpdateLibraryDirectoriesAsync().ConfigureAwait(false);
+                    var dirTask = UpdateLibraryDirectoriesAsync();
+                    var fileTask = UpdateLibraryMusicAsync();
+                    await Task.WhenAll(dirTask, fileTask);
+                    succeeded = true;
+                }
+                else
+                {
+                    Debug.WriteLine("fail to get MpdQueryListAll: " + result.ErrorMessage);
+                }
+
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    filestNode.IsAcquired = false;
+                    IsWorking = false;
                 });
-                Debug.WriteLine("fail to get MpdQueryListAll: " + result.ErrorMessage);
-            }
-
+            }, _cts.Token);
+        }
+        finally
+        {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
+                filestNode.IsAcquired = succeeded;
                 IsWorking = false;
             });
-        }, _cts.Token);
+        }
+
     }
 
-    private async void GetAlbumSongs(AlbumEx album)
+    // Albums whose songs are currently being fetched (touched on the UI thread only).
+    private readonly HashSet<AlbumEx> _albumsLoadingSongs = [];
+
+    private async Task GetAlbumSongsAsync(AlbumEx album)
     {
         if (album is null)
         {
@@ -7183,86 +7268,23 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         {
             //Debug.WriteLine("GetAlbumSongs: Invoked with Album name: " + album.Name);
 
-            if (!album.IsSongsAcquired)
+            try
             {
-                //album.IsSongsAcquired = true;
-
-                if (!string.IsNullOrEmpty(album.AlbumArtist.Trim()))
+                // Ignore a second request for the same album while the first is still running.
+                if (!_albumsLoadingSongs.Add(album))
                 {
-                    //Debug.WriteLine($"GetAlbumSongs: Album artist is not empty, searching by album artist. ({album.AlbumArtist})");
-                    var r = await SearchArtistSongsAsync(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
-
-                    if (r.IsSuccess)
-                    {
-                        if (r.SearchResult is null)
-                        {
-                            Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
-                            return;
-                        }
-
-                        foreach (var song in r.SearchResult)
-                        {
-                            if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.Ordinal)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.Ordinal)))
-                            {
-                                //if (song.Album.Trim() == album.Name.Trim())
-                                if (song.Album.Equals(album.Name, StringComparison.Ordinal))
-                                {
-                                    //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
-                                    album.Songs.Add(song);
-
-                                    if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
-                                    {
-                                        album.ReleaseYear = song.Date;
-                                    }
-                                }
-                            }
-                        }
-                        album.IsSongsAcquired = true;
-
-                        SelectedAlbum = album;
-                        await Task.Yield();
-                        IsAlbumContentPanelVisible = true;
-
-                        /*
-                        Dispatcher.UIThread.Post(() =>
-                        {
-                            if (r.SearchResult is null)
-                            {
-                                Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
-                                return;
-                            }
-
-                            foreach (var song in r.SearchResult)
-                            {
-                                if ((song.AlbumArtist == album.AlbumArtist) || (song.Artist == album.AlbumArtist))
-                                {
-                                    if (song.Album.Trim() == album.Name.Trim())
-                                    {
-                                        album.Songs.Add(song);
-                                    }
-                                }
-                            }
-                            album.IsSongsAcquired = true;
-
-                            //InvokedAlbum = album;
-                            SelectedAlbum = album;
-                            IsAlbumContentPanelVisible = true;
-                        });
-                        */
-                    }
-                    else
-                    {
-                        Debug.WriteLine("GetAlbumSongs: SearchArtistSongs returned false, returning.");
-                        return;
-                    }
+                    return;
                 }
-                else
-                {
-                    Debug.WriteLine($"GetAlbumSongs: No album artist, trying to search by album name. ({album.Name})");
 
-                    if (!string.IsNullOrEmpty(album.Name.Trim()))
+                if (!album.IsSongsAcquired)
+                {
+                    //album.IsSongsAcquired = true;
+
+                    if (!string.IsNullOrEmpty(album.AlbumArtist.Trim()))
                     {
-                        var r = await SearchAlbumSongsAsync(album.Name); // no trim() here.
+                        //Debug.WriteLine($"GetAlbumSongs: Album artist is not empty, searching by album artist. ({album.AlbumArtist})");
+                        var r = await SearchArtistSongsAsync(album.AlbumArtist);//.ConfigureAwait(ConfigureAwaitOptions.None);// no trim() here.
+
                         if (r.IsSuccess)
                         {
                             if (r.SearchResult is null)
@@ -7273,23 +7295,51 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
                             foreach (var song in r.SearchResult)
                             {
-                                album.Songs.Add(song);
-
-                                if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                if ((song.AlbumArtist.Equals(album.AlbumArtist, StringComparison.Ordinal)) || (song.Artist.Equals(album.AlbumArtist, StringComparison.Ordinal)))
                                 {
-                                    album.ReleaseYear = song.Date;
+                                    //if (song.Album.Trim() == album.Name.Trim())
+                                    if (song.Album.Equals(album.Name, StringComparison.Ordinal))
+                                    {
+                                        //Debug.WriteLine($"{song.Album}=={album.Name}?...{song.Title}");
+                                        album.Songs.Add(song);
+
+                                        if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                        {
+                                            album.ReleaseYear = song.Date;
+                                        }
+                                    }
                                 }
                             }
                             album.IsSongsAcquired = true;
 
-                            //InvokedAlbum = album;
                             SelectedAlbum = album;
                             await Task.Yield();
                             IsAlbumContentPanelVisible = true;
+
                             /*
                             Dispatcher.UIThread.Post(() =>
                             {
+                                if (r.SearchResult is null)
+                                {
+                                    Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
+                                    return;
+                                }
 
+                                foreach (var song in r.SearchResult)
+                                {
+                                    if ((song.AlbumArtist == album.AlbumArtist) || (song.Artist == album.AlbumArtist))
+                                    {
+                                        if (song.Album.Trim() == album.Name.Trim())
+                                        {
+                                            album.Songs.Add(song);
+                                        }
+                                    }
+                                }
+                                album.IsSongsAcquired = true;
+
+                                //InvokedAlbum = album;
+                                SelectedAlbum = album;
+                                IsAlbumContentPanelVisible = true;
                             });
                             */
                         }
@@ -7301,20 +7351,70 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     }
                     else
                     {
-                        Debug.WriteLine("GetAlbumSongs: No album name, no artist name.");
-                        // This should not happen.
+                        Debug.WriteLine($"GetAlbumSongs: No album artist, trying to search by album name. ({album.Name})");
+
+                        if (!string.IsNullOrEmpty(album.Name.Trim()))
+                        {
+                            var r = await SearchAlbumSongsAsync(album.Name); // no trim() here.
+                            if (r.IsSuccess)
+                            {
+                                if (r.SearchResult is null)
+                                {
+                                    Debug.WriteLine("GetAlbumSongs: SearchResult is null, returning.");
+                                    return;
+                                }
+
+                                foreach (var song in r.SearchResult)
+                                {
+                                    album.Songs.Add(song);
+
+                                    if ((!string.IsNullOrEmpty(song.Date)) && (!string.IsNullOrEmpty(song.Album)))
+                                    {
+                                        album.ReleaseYear = song.Date;
+                                    }
+                                }
+                                album.IsSongsAcquired = true;
+
+                                //InvokedAlbum = album;
+                                SelectedAlbum = album;
+                                await Task.Yield();
+                                IsAlbumContentPanelVisible = true;
+                                /*
+                                Dispatcher.UIThread.Post(() =>
+                                {
+
+                                });
+                                */
+                            }
+                            else
+                            {
+                                Debug.WriteLine("GetAlbumSongs: SearchArtistSongs returned false, returning.");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("GetAlbumSongs: No album name, no artist name.");
+                            // This should not happen.
+                        }
                     }
                 }
+                else
+                {
+                    //InvokedAlbum = album;
+                    SelectedAlbum = album;
+                    await Task.Delay(50);
+                    IsAlbumContentPanelVisible = true;
+                }
             }
-            else
+            finally
             {
-                //InvokedAlbum = album;
-                SelectedAlbum = album;
-                await Task.Delay(50);
-                IsAlbumContentPanelVisible = true;
+                _albumsLoadingSongs.Remove(album);
+                UpdateProgress?.Invoke(this, "");
             }
 
-            UpdateProgress?.Invoke(this, "");
+
+
         });
     }
 
@@ -7889,73 +7989,87 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private async void OnMpdIdleConnected(IMpcService sender)
     {
-        // TODO: check if Dispatcher.UIThread.Post below needed to be awaited.
-
-        // Connected from InitWindow, so save and clean up. 
-        Dispatcher.UIThread.Post(() =>
+        try
         {
-            MpdVersion = _mpc.MpdVerText;
-
-            //Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
-            if (_logger.IsEnabled(LogLevel.Information))
+            // Connected from InitWindow, so save and clean up. 
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-#pragma warning disable CA1848 // Use the LoggerMessage delegates
-                _logger.LogInformation("OK MPD {MPDVer} @OnMpdIdleConnected.", MpdVersion);
-#pragma warning restore CA1848 // Use the LoggerMessage delegates
-            }
-            //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
+                MpdVersion = _mpc.MpdVerText;
 
-            MpdStatusButton = _pathMpdOkButton;
-
-            IsConnected = true;
-
-            // Not good.
-            //IsShowAckWindow = false;
-            //IsShowErrWindow = false;
-
-            if (_initWin is not null)
-            {
-                if (_initWin.IsActive || _initWin.IsVisible)
+                //Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
+                if (_logger.IsEnabled(LogLevel.Information))
                 {
-                    if (IsRememberAsProfile)
-                    {
-                        // TODO:
-                        if (string.IsNullOrEmpty(_host))
-                        {
-                            _host = "localhost";
-                        }
-
-                        var prof = new Profile
-                        {
-                            Name = _host,
-                            Host = _host,
-                            Port = _port,
-                            Password = _password,
-                            IsDefault = true,
-                            Volume = _volume
-                        };
-
-                        if (!string.IsNullOrEmpty(prof.Host.Trim()))
-                        {
-                            prof.IsDefault = true;
-                            CurrentProfile = prof;
-                            Profiles.Add(prof);
-
-                            //OnPropertyChanged(nameof(IsCurrentProfileSet));
-                        }
-                        else
-                        {
-                            Debug.WriteLine("Host info is empty. @OnMpdIdleConnected");
-                        }
-                    }
-                    _initWin.Close();
+#pragma warning disable CA1848 // Use the LoggerMessage delegates
+                    _logger.LogInformation("OK MPD {MPDVer} @OnMpdIdleConnected.", MpdVersion);
+#pragma warning restore CA1848 // Use the LoggerMessage delegates
                 }
-            }
-        });
+                //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
 
-        // 
-        //await Task.Run(LoadInitialData, _cts.Token);
-        await LoadInitialDataAsync();
+                MpdStatusButton = _pathMpdOkButton;
+
+                IsConnected = true;
+
+                // Not good.
+                //IsShowAckWindow = false;
+                //IsShowErrWindow = false;
+
+                if (_initWin is not null)
+                {
+                    if (_initWin.IsActive || _initWin.IsVisible)
+                    {
+                        if (IsRememberAsProfile)
+                        {
+                            // TODO:
+                            if (string.IsNullOrEmpty(_host))
+                            {
+                                _host = "localhost";
+                            }
+
+                            var prof = new Profile
+                            {
+                                Name = _host,
+                                Host = _host,
+                                Port = _port,
+                                Password = _password,
+                                IsDefault = true,
+                                Volume = _volume
+                            };
+
+                            if (!string.IsNullOrEmpty(prof.Host.Trim()))
+                            {
+                                prof.IsDefault = true;
+                                CurrentProfile = prof;
+                                Profiles.Add(prof);
+
+                                //OnPropertyChanged(nameof(IsCurrentProfileSet));
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Host info is empty. @OnMpdIdleConnected");
+                            }
+                        }
+                        _initWin.Close();
+                    }
+                }
+            });
+
+            // 
+            //await Task.Run(LoadInitialData, _cts.Token);
+            await LoadInitialDataAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            // Disconnected or shutting down while loading initial data.
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @OnMpdIdleConnected {ex}");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @OnMpdIdleConnected", ex.ToString()));
+            }
+        }
+
     }
 
     private void OnMpdPlayerStatusChanged(IMpcService sender)
@@ -7971,12 +8085,14 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             MpdStatusButton = _pathMpdOkButton;
         }
 
-        UpdateStatus();
+        //UpdateStatus();
+        _ = UpdateStatusAsync().SafeAsync(nameof(UpdateStatusAsync));
     }
 
     private void OnMpdCurrentQueueChanged(IMpcService sender)
     {
-        UpdateCurrentQueue();
+        //UpdateCurrentQueue();
+        _ = UpdateCurrentQueueAsync().SafeAsync(nameof(UpdateCurrentQueueAsync));
     }
 
     private void OnMpdCurrentSongChanged(IMpcService sender)
@@ -7986,7 +8102,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private void OnMpdPlaylistsChanged(IMpcService sender)
     {
-        UpdatePlaylists();
+        //UpdatePlaylists();
+        _ = UpdatePlaylistsAsync().SafeAsync(nameof(UpdatePlaylistsAsync));
     }
 
     private void OnAlbumArtChanged(IMpcService sender)
@@ -8563,6 +8680,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Queue ==
 
+    /*
     // called from code behind.
     private async void QueueSaveAsDialog_Execute(string playlistName)
     {
@@ -8573,7 +8691,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         await _mpc.MpdSave(playlistName);
     }
-
+    */
     // Save to
     [RelayCommand(CanExecute = nameof(PlaylistAddCanExecute))]
     private async Task QueueSaveTo()
@@ -8589,7 +8707,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
 
 #pragma warning disable IDE0305
-        _ = AddTo(result.PlaylistName, Queue.Select(s => s.File).ToList());
+        await AddTo(result.PlaylistName, Queue.Select(s => s.File).ToList());
 #pragma warning restore IDE0305
 
         //QueueSaveToDialogShow?.Invoke(this, EventArgs.Empty);
@@ -8645,7 +8763,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _ = AddTo(result.PlaylistName, selectedList);
+        await AddTo(result.PlaylistName, selectedList);
     }
 
     // Enter or double click from code behind via command.
@@ -9043,7 +9161,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 return;
             }
 
-            _ = AddTo(result.PlaylistName, uriList);
+            await AddTo(result.PlaylistName, uriList);
         }
     }
 
@@ -9072,7 +9190,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     return;
                 }
 
-                _ = AddTo(result.PlaylistName, uriList);
+                await AddTo(result.PlaylistName, uriList);
             }
         }
     }
@@ -9249,7 +9367,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _ = AddTo(result.PlaylistName, uriList);
+        await AddTo(result.PlaylistName, uriList);
     }
 
     [RelayCommand]
@@ -9370,7 +9488,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     return;
                 }
 
-                _ = AddTo(result.PlaylistName, uriList);
+                await AddTo(result.PlaylistName, uriList);
             }
         }
     }
@@ -9443,7 +9561,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 fmn.IsAcquired = false;
                 MusicDirectories.Clear();
                 MusicEntries.Clear();
-                GetFiles(fmn);
+                //GetFiles(fmn);
+                _ = GetFilesAsync(fmn).SafeAsync(nameof(GetFilesAsync));
 
                 IsWorking = false;
             }
@@ -9481,7 +9600,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
 
-        GetAlbumSongs(album);
+        //GetAlbumSongs(album);
+        _ = GetAlbumSongsAsync(album).SafeAsync(nameof(GetAlbumSongsAsync));
     }
 
     [RelayCommand]
@@ -9546,7 +9666,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void SelectedAlbumGoToArtistPage(AlbumEx album)
+    private async Task SelectedAlbumGoToArtistPage(AlbumEx album)
     {
         if (album is null)
         {
@@ -9565,7 +9685,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         // Close pane.
         IsAlbumContentPanelVisible = false;
 
-        GoToArtistPage(item);
+        await GoToArtistPageAsync(item);
     }
 
     [RelayCommand]
@@ -9784,7 +9904,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     // TODO: Called directrly from codebehind.
     // Rename playlist. 
-    public async void PlaylistRenamePlaylist_Execute(string oldPlaylistName, string newPlaylistName)
+    public async Task PlaylistRenamePlaylistAsync(string oldPlaylistName, string newPlaylistName)
     {
         var ret = await _mpc.MpdRenamePlaylist(oldPlaylistName, newPlaylistName);
 
@@ -9795,6 +9915,10 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             // This is not going to work because renamed listviewitem is not yet created.
             //GoToRenamedPlaylistPage(newPlaylistName);
+        }
+        else
+        {
+            Debug.WriteLine($"PlaylistRenamePlaylistAsync failed: {ret.ErrorMessage}");
         }
     }
 
@@ -10836,139 +10960,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         //IsSwitchingProfile = false;
     }
 
-    private async void ChangeConnection(Profile prof)
-    {
-        if (IsConnecting) return;
-        if (IsBusy) return;
-        if (IsWorking) return;
-
-        IsBusy = true;
-        //IsSwitchingProfile = true;
-
-        if (IsConnected)
-        {
-            _mpc.MpdStop = true;
-            _mpc.MpdDisconnect(true);
-            _mpc.MpdStop = false;
-        }
-
-        // Save volume.
-        CurrentProfile?.Volume = Volume;
-
-        // Clear current...
-        CurrentSong?.IsPlaying = false;
-        CurrentSong = null;
-        if (CurrentSong is not null)
-        {
-            SelectedQueueSong = null;
-        }
-
-
-        Dispatcher.UIThread.Post(() =>
-        {
-            SelectedNodeMenu = null;
-
-            SelectedQueueSong = null;
-            CurrentSong = null;
-
-            _mpc.MpdStatus.Reset();
-
-            Queue.Clear();
-            _mpc.CurrentQueue.Clear();
-
-            _mainMenuItems.PlaylistsDirectory?.Children.Clear();
-
-            Playlists.Clear();
-            _mpc.Playlists.Clear();
-            //SelectedPlaylist = null;
-
-            SelectedPlaylistSong = null;
-
-            _mainMenuItems.FilesDirectory?.IsAcquired = false;
-
-            MusicEntries.Clear();
-
-            // TODO: not good when directory is being built.
-            //MusicDirectories.Clear(); // Don't
-            //_mpc.LocalDirectories.Clear();// Don't
-            //_mpc.LocalFiles.Clear();// Don't
-            //SelectedNodeDirectory.Children.Clear();// Don't
-            _musicDirectories.IsCanceled = true;
-            if (_musicDirectories.Children.Count > 0)
-                _musicDirectories.Children[0].Children.Clear();
-            //MusicDirectories.Clear();
-
-            FilterMusicEntriesQuery = "";
-
-            SearchResult?.Clear();
-            SearchQuery = "";
-
-            IsAlbumArtVisible = false;
-            AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-
-            HostIpAddress = null;
-
-            // TODO: more?
-        });
-
-        _volume = prof.Volume;
-        OnPropertyChanged(nameof(Volume));
-
-
-        Host = prof.Host;
-        /*
-        HostIpAddress = null;
-        
-        try
-        {
-            var addresses = await Dns.GetHostAddressesAsync(Host, AddressFamily.InterNetwork);
-            if (addresses.Length > 0)
-            {
-                HostIpAddress = addresses[0];
-            }
-            else
-            {
-                //SetError(nameof(Host), "Error: Could not retrive IP Address from the hostname."); //TODO: translate.
-
-                // TODO:::::::
-                ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
-                StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
-                return;
-            }
-        }
-        catch (Exception)
-        {
-            //SetError(nameof(Host), "Error: Could not retrive IP Address from the hostname. (SocketException)"); //TODO: translate.
-
-            // TODO:::::::
-            ConnectionStatusMessage = "Error: Could not retrive IP Address from the hostname.";
-            StatusBarMessage = "Error: Could not retrive IP Address from the hostname.";
-
-            return;
-        }
-        */
-
-        _port = prof.Port;
-        Password = prof.Password;
-
-        IsConnecting = true;
-
-        //if (HostIpAddress is null) return;
-        //ConnectionResult r = await _mpc.MpdIdleConnect(_host, _port);
-        //ConnectionResult r = await _mpc.MpdIdleConnect(HostIpAddress.ToString(), _port);
-        ConnectionResult r = await _mpc.MpdIdleConnect(Host, _port);
-
-        if (r.IsSuccess)
-        {
-            CurrentProfile = prof;
-
-            SelectedNodeMenu = MainMenuItems[0];
-        }
-
-        //IsSwitchingProfile = false;
-        IsBusy = false;
-    }
-
     [RelayCommand]
     private async Task TryConnect()
     {
@@ -11540,10 +11531,26 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         IsAlbumArtPanelIsOpen = false;
     }
 
+    private AlbumEx? FindAlbumForSong(SongInfo song)
+    {
+        if (string.IsNullOrEmpty(song.Album.Trim())) return null;
+
+        var items = Albums.Where(i => i.Name == song.Album);
+        var artist = string.IsNullOrEmpty(song.AlbumArtist.Trim()) ? song.Artist : song.AlbumArtist;
+
+        return string.IsNullOrEmpty(artist.Trim())
+            ? items.FirstOrDefault()
+            : items.FirstOrDefault(i => i.AlbumArtist == artist);
+    }
+
     // Jump menu from CurrentSong
     [RelayCommand]
-    private void JumpToAlbumPage()
+    private async Task JumpToAlbumPage()
     {
+        if (CurrentSong is null) return;
+        var album = FindAlbumForSong(CurrentSong);
+        if (album is not null) await GoToAlbumPageAsync(album);
+        /*
         if (CurrentSong is null)
         {
             return;
@@ -11569,47 +11576,49 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             if (hoge is not null)
             {
                 //GoToAlbumsPageAndScrollTo?.Invoke(this, Albums.IndexOf(SelectedAlbum));
-                GoToAlbumPage(hoge);
+                await GoToAlbumPageAsync(hoge);
             }
         }
         else
         {
-            foreach (var item in items)
+            var item = items.FirstOrDefault(i => i.AlbumArtist == asdf);
+            if (item is not null)
             {
-                if (item.AlbumArtist != asdf) continue;
-
-                //SelectedAlbum = item;
-                if (item is not null)
-                {
-                    //GoToAlbumsPageAndScrollTo?.Invoke(this, Albums.IndexOf(SelectedAlbum));
-                    GoToAlbumPage(item);
-                }
-                break;
+                await GoToAlbumPageAsync(item);
             }
         }
+        */
     }
 
-    private async void GoToAlbumPage(AlbumEx album)
+    private async Task GoToAlbumPageAsync(AlbumEx album)
     {
         if (album is null) return;
+
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
-            await Task.Yield();
-            await Task.Delay(100);
-            // Not good
-            //SelectedAlbum = null;
-            //CurrentPage = App.GetService<AlbumPage>(); // not good
-            //await Task.Yield();
-            //await Task.Delay(100);
-            SelectedAlbum = album;
-            await Task.Yield();
-            await Task.Delay(100);
-            IsNavigationViewMenuOpen = true; // Need this somehow.
-            await Task.Yield();
-            await Task.Delay(100);
-            _mainMenuItems.AlbumsDirectory.Selected = true;
-            IsWorking = false;
+            try
+            {
+                await Task.Yield();
+                await Task.Delay(100);
+                // Not good
+                //SelectedAlbum = null;
+                //CurrentPage = App.GetService<AlbumPage>(); // not good
+                //await Task.Yield();
+                //await Task.Delay(100);
+                SelectedAlbum = album;
+                await Task.Yield();
+                await Task.Delay(100);
+                IsNavigationViewMenuOpen = true; // Need this somehow.
+                await Task.Yield();
+                await Task.Delay(100);
+                _mainMenuItems.AlbumsDirectory.Selected = true;
+                
+            }
+            finally
+            {
+                IsWorking = false;
+            }
         });
 
         //GoToSelectedPage?.Invoke(this, _mainMenuItems.AlbumsDirectory);
@@ -11630,7 +11639,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void JumpToArtistPage()
+    private async Task JumpToArtistPage()
     {
         if (CurrentSong is null)
         {
@@ -11651,29 +11660,35 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        GoToArtistPage(item);
+        await GoToArtistPageAsync(item);
     }
 
-    private async void GoToArtistPage(AlbumArtist artist)
+    private async Task GoToArtistPageAsync(AlbumArtist artist)
     {
         if (artist is null) return;
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
-            await Task.Yield();
-            await Task.Delay(100);
-            SelectedAlbumArtist = null; //Test.
-            CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
-            await Task.Yield();
-            await Task.Delay(100);
-            SelectedAlbumArtist = artist;
-            await Task.Yield();
-            await Task.Delay(100);
-            IsNavigationViewMenuOpen = true; // Need this somehow.
-            await Task.Yield();
-            await Task.Delay(100);
-            _mainMenuItems.ArtistsDirectory.Selected = true;
-            IsWorking = false;
+            try
+            {
+                await Task.Yield();
+                await Task.Delay(100);
+                SelectedAlbumArtist = null; //Test.
+                CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
+                await Task.Yield();
+                await Task.Delay(100);
+                SelectedAlbumArtist = artist;
+                await Task.Yield();
+                await Task.Delay(100);
+                IsNavigationViewMenuOpen = true; // Need this somehow.
+                await Task.Yield();
+                await Task.Delay(100);
+                _mainMenuItems.ArtistsDirectory.Selected = true;
+            }
+            finally
+            {
+                IsWorking = false;
+            }
         });
 
         /*
@@ -11693,8 +11708,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void ListviewGoToAlbumPage(SongInfo song)
+    private async Task ListviewGoToAlbumPage(SongInfo song)
     {
+        var album = FindAlbumForSong(song);
+        if (album is not null) await GoToAlbumPageAsync(album);
+        /*
         if (song is null)
         {
             return;
@@ -11721,7 +11739,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             //SelectedAlbum = hoge;
             if (hoge is not null)
             {
-                GoToAlbumPage(hoge);
+                await GoToAlbumPageAsync(hoge);
             }
         }
         else
@@ -11733,15 +11751,16 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 //SelectedAlbum = item;
                 if (item is not null)
                 {
-                    GoToAlbumPage(item);
+                    await GoToAlbumPageAsync(item);
                 }
                 break;
             }
         }
+        */
     }
 
     [RelayCommand]
-    private void ListviewGoToArtistPage(SongInfo song)
+    private async Task ListviewGoToArtistPage(SongInfo song)
     {
         if (song is null)
         {
@@ -11762,7 +11781,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         var item = Artists.FirstOrDefault(i => i.Name == asdf);
         if (item is null) return;
 
-        GoToArtistPage(item);
+        await GoToArtistPageAsync(item);
     }
 
     [RelayCommand]
@@ -11802,6 +11821,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
         this.UpdateProgress -= OnUpdateProgress;
 
+        _elapsedTimer.Elapsed -= ElapsedTimer;
+        _volumeDelayTimer.Elapsed -= DoChangeVolume;
         #endregion
 
         try

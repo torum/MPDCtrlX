@@ -210,7 +210,13 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<ConnectionResult> MpdIdleConnect(string host, int port, CancellationToken cancellationToken = default)
     {
-        _cts?.Dispose();
+        //_cts?.Dispose();
+        if (_cts is { } old)
+        {
+            try { old.Cancel(); } catch (ObjectDisposedException) { }
+            old.Dispose();
+        }
+
         //_cts = new CancellationTokenSource();
         _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         var token = _cts.Token;
@@ -5097,27 +5103,46 @@ public partial class MpcService : IMpcService, IDisposable
 
         MpdStop = true;
 
-        _cts?.Cancel();
-
-        IsBusy?.Invoke(this, true);
-
-        ConnectionState = ConnectionStatus.Disconnecting;
-
-        lock (_connectionLock)
+        try
         {
-            DisposeConnection(
-                ref _commandConnection,
-                ref _commandReader,
-                ref _commandWriter);
+            IsBusy?.Invoke(this, true);
 
-            DisposeConnection(
-                ref _idleConnection,
-                ref _idleReader,
-                ref _idleWriter);
+            _cts?.Cancel();
+
+            ConnectionState = ConnectionStatus.Disconnecting;
+
+            lock (_connectionLock)
+            {
+                DisposeConnection(
+                    ref _commandConnection,
+                    ref _commandReader,
+                    ref _commandWriter);
+
+                DisposeConnection(
+                    ref _idleConnection,
+                    ref _idleReader,
+                    ref _idleWriter);
+            }
+
+
+            _binaryDownloader.MpdBinaryConnectionDisconnect();
+
+        }
+        finally
+        {
+            IsBusy?.Invoke(this, false);
+            ConnectionState = ConnectionStatus.DisconnectedByUser;
+
+            if (!isReconnect)
+            {
+                _cts?.Dispose();
+                _cts = null;
+            }
         }
 
-        IsBusy?.Invoke(this, false);
-        ConnectionState = ConnectionStatus.DisconnectedByUser;
+
+
+
 
         /*
         try
@@ -5160,16 +5185,6 @@ public partial class MpcService : IMpcService, IDisposable
         */
 
 
-        _binaryDownloader.MpdBinaryConnectionDisconnect();
-
-        ConnectionState = ConnectionStatus.DisconnectedByUser;
-        IsBusy?.Invoke(this, false);
-
-        if (!isReconnect)
-        {
-            _cts?.Dispose();
-            _cts = null;
-        }
     }
 
     private static void DisposeConnection(ref TcpClient connection, ref StreamReader? reader, ref StreamWriter? writer)
@@ -5183,9 +5198,11 @@ public partial class MpcService : IMpcService, IDisposable
             // The connection may already be closed.
         }
 
-        writer?.Dispose();
-        reader?.Dispose();
-        connection.Dispose();
+        // Dispose can flush and throw on a broken socket. Teardown must never throw,
+        // and a failure in one step must not skip the others.
+        try { writer?.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
+        try { reader?.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
+        try { connection.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
 
         writer = null;
         reader = null;
@@ -5195,6 +5212,7 @@ public partial class MpcService : IMpcService, IDisposable
     public void Dispose()
     {
         _cts?.Dispose();
+        _cts = null;
         Debug.WriteLine("MpcService disposed.");
 
         GC.SuppressFinalize(this);

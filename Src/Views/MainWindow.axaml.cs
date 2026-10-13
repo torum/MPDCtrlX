@@ -71,6 +71,8 @@ internal sealed partial class MainWindow : Window
     {
         base.OnOpened(e);
 
+        this.SizeChanged += this.Window_SizeChanged;
+
         if (this.DataContext is not MainViewModel vm)
         {
             return;
@@ -79,7 +81,6 @@ internal sealed partial class MainWindow : Window
         this.Loaded += vm.OnWindowLoaded;
         this.Closing += vm.OnWindowClosing;
         this.Closed += vm.OnWindowClosed;
-        this.SizeChanged += this.Window_SizeChanged;
 
         vm.DebugWindowShowHide += OnDebugWindowShowHide;
         DebugCommandHandler = (sender, arg) => this.OnDebugCommandOutput(arg);
@@ -93,6 +94,10 @@ internal sealed partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        base.OnClosed(e);
+
+        this.SizeChanged -= this.Window_SizeChanged;
+
         if (this.DataContext is not MainViewModel vm)
         {
             return;
@@ -101,7 +106,6 @@ internal sealed partial class MainWindow : Window
         this.Loaded -= vm.OnWindowLoaded;
         this.Closing -= vm.OnWindowClosing;
         this.Closed -= vm.OnWindowClosed;
-        this.SizeChanged -= this.Window_SizeChanged;
 
         vm.DebugWindowShowHide -= OnDebugWindowShowHide;
         vm.DebugCommandOutput -= DebugCommandHandler;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
@@ -110,7 +114,6 @@ internal sealed partial class MainWindow : Window
         vm.UserCanExecuteChanged -= OnUserCanExecuteChanged;
         vm.WorkingStateChanged -= OnWorkingStateChanged;
 
-        base.OnClosed(e);
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
@@ -120,7 +123,6 @@ internal sealed partial class MainWindow : Window
         // Second pass, triggered by Shutdown(). Let the window close.
         if (app.IsShuttingDown)
         {
-            base.OnClosing(e);
             return;
         }
 
@@ -136,7 +138,18 @@ internal sealed partial class MainWindow : Window
         // Hide immediately so the user doesn't think the app froze.
         this.Hide();
 
-        await app.ShutdownAsync();
+        try
+        {
+            await app.ShutdownAsync();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @OnClosing {ex}");
+            try { App.AppendErrorLog("Exception @MainWindow.OnClosing", ex.ToString()); } catch { /* never throw from here */ }
+
+            // The window is hidden and the close is cancelled, so without this the process would linger.
+            Environment.Exit(1);
+        }
     }
 
     private void OnWorkingStateChanged(object? sender, bool e)
@@ -233,6 +246,24 @@ internal sealed partial class MainWindow : Window
         }
     }
 
+    // The cache size is informational only. A failure must not block navigation to Settings.
+    private static async Task RefreshCacheFolderSizeSafeAsync(MainViewModel vm)
+    {
+        try
+        {
+            await vm.GetCacheFolderSizeAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore.
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @GetCacheFolderSizeAsync {ex}");
+            App.AppendErrorLog("Exception @MainWindow GetCacheFolderSizeAsync", ex.ToString());
+        }
+    }
+
     private async void NavigationView_ItemInvoked(object? sender, FluentAvalonia.UI.Controls.FANavigationViewItemInvokedEventArgs e)
     {
         if (sender is not FluentAvalonia.UI.Controls.FANavigationView nv)
@@ -248,7 +279,8 @@ internal sealed partial class MainWindow : Window
         // Not really "invoked" now that we use clicking on the settings icon....
         if (e.IsSettingsInvoked == true)
         {
-            await vm.GetCacheFolderSizeAsync();
+            //await vm.GetCacheFolderSizeAsync();
+            await RefreshCacheFolderSizeSafeAsync(vm);
 
             nv.Content = App.GetService<SettingsPage>();
 
@@ -300,7 +332,7 @@ internal sealed partial class MainWindow : Window
         {
             WinRestoreHeight = (int)this.Height;
             WinRestoreWidth = (int)this.Width;
-            WinRestoreTop = (int)this.Position.X;
+            WinRestoreTop = (int)this.Position.Y;
             WinRestoreLeft = (int)this.Position.X;
         }
     }
@@ -355,7 +387,8 @@ internal sealed partial class MainWindow : Window
             return;
         }
 
-        await vm.GetCacheFolderSizeAsync();
+        //await vm.GetCacheFolderSizeAsync();
+        await RefreshCacheFolderSizeSafeAsync(vm);
 
         vm.SelectedNodeMenu = null;
         this.NavigateViewControl.SelectedItem = null;
@@ -403,7 +436,7 @@ internal sealed partial class MainWindow : Window
         e.Handled = true;
     }
 
-    private async void OnPreviewKeyDown(object? sender, KeyEventArgs e)
+    private void OnPreviewKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Avalonia.Input.Key.Escape)
         {
@@ -466,7 +499,19 @@ internal sealed partial class MainWindow : Window
             }
 
             Debug.WriteLine("OnPreviewKeyUp: Space key pressed. Toggling play/pause.");
-            await vm.PlayCommand.ExecuteAsync(null);
+            try
+            {
+                await vm.PlayCommand.ExecuteAsync(null);
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore.
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @OnPreviewKeyUp {ex}");
+                App.AppendErrorLog("Exception @MainWindow.OnPreviewKeyUp", ex.ToString());
+            }
 
             // TODO:
             //e.Handled = true;
@@ -478,18 +523,25 @@ internal sealed partial class MainWindow : Window
         // Delays focus until all current layout/focus cycles are finished
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Delay(500);
-            if (PlaybackPlay.Focusable)
+            try
             {
-                PlaybackPlay.Focus();
+                await Task.Delay(500);
+
+                if (PlaybackPlay.Focusable)
+                {
+                    PlaybackPlay.Focus();
+                }
+                else
+                {
+                    Debug.WriteLine("PlaybackPlay button is not focusable. Cannot set initial focus.");
+                }
+
+                this.FocusManager?.Focus(PlaybackPlay, NavigationMethod.Unspecified);
             }
-            else
+            catch (Exception ex)
             {
-                Debug.WriteLine("PlaybackPlay button is not focusable. Cannot set initial focus.");
+                Debug.WriteLine($"Exception @PlaybackPlay_Loaded {ex}");
             }
-
-            this.FocusManager?.Focus(PlaybackPlay, NavigationMethod.Unspecified);
-
         }, DispatcherPriority.Background);
     }
 

@@ -43,6 +43,7 @@ internal sealed class Program
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
+            /*
             var pipePath = GetPipePath();
             if (File.Exists(pipePath))
             {
@@ -57,6 +58,29 @@ internal sealed class Program
 
                 // Exit the new process gracefully.
                 Environment.Exit(0);
+            }
+            */
+
+            var pipePath = GetPipePath();
+            if (File.Exists(pipePath))
+            {
+                // Check that the first instance is actually alive by connecting to it.
+                if (HandleExistingInstance(args))
+                {
+                    // The running instance was notified. Nothing more to do.
+                    return;
+                }
+
+                // Stale pipe file (previous instance crashed). Remove it and start normally.
+                try
+                {
+                    File.Delete(pipePath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Could not delete stale pipe file: {ex.Message}");
+                    _ = ex; // For native code analysis to avoid warning about unused variable.
+                }
             }
         }
 
@@ -118,9 +142,17 @@ internal sealed class Program
         var pipePath = GetPipePath();
 
         // Ensure the previous pipe is deleted in case of a crash.
-        if (File.Exists(pipePath))
+        try
         {
-            File.Delete(pipePath);
+            if (File.Exists(pipePath))
+            {
+                File.Delete(pipePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Could not delete previous pipe file: {ex.Message}");
+            _ = ex;
         }
 
         Task.Run(() =>

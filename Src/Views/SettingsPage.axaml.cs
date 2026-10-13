@@ -65,28 +65,37 @@ internal sealed partial class SettingsPage : UserControl
 
     private async void HyperlinkButton_AlbumCacheFolderPath_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var dir = App.AlbumCoverCacheFolder;
-
-        var mainWin = App.GetService<MainWindow>();
-        var launcher = TopLevel.GetTopLevel(mainWin)?.Launcher;
-        if (launcher is null)
+        try
         {
-            return;
+            var dir = App.AlbumCoverCacheFolder;
+
+            var mainWin = App.GetService<MainWindow>();
+            var launcher = TopLevel.GetTopLevel(mainWin)?.Launcher;
+            if (launcher is null)
+            {
+                return;
+            }
+
+            // Open in default app.
+            //await launcher.LaunchFileInfoAsync(new FileInfo(_currentFile));
+
+
+            // The user may have deleted the folder since startup.
+            Directory.CreateDirectory(dir);
+
+            // Open in explorer/file manager.
+            if (!await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(dir)))
+            {
+                // TODO: show error message.
+
+                // This fails in a Debug session when the app is attached from VSCode from Snap packages on Linux.
+                System.Diagnostics.Debug.WriteLine($"Failed to open folder: {dir}");
+            }
         }
-
-        // Open in default app.
-        //await launcher.LaunchFileInfoAsync(new FileInfo(_currentFile));
-
-        // Open in explorer/file manager.
-        if (await launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(dir)))
+        catch (Exception ex)
         {
-            // ok
-        }
-        else
-        {
-            // TODO: show error message.
-
-            // This failes in Debug session when the app is attached VSCode from Snap packages on Linux. 
+            System.Diagnostics.Debug.WriteLine($"Exception @HyperlinkButton_AlbumCacheFolderPath_Click {ex}");
+            App.AppendErrorLog("Exception @SettingsPage.OpenAlbumCacheFolder", ex.ToString());
         }
 
     }

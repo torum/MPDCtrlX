@@ -175,44 +175,47 @@ internal sealed partial class QueuePage : UserControl
 
     private async void OnScrollIntoView(object? sender, int ind)
     {
-        await Task.Yield();
-        await Task.Delay(100); // Wait for UI to update
-        Dispatcher.UIThread.Post(() =>
+        try
         {
-            if (this.QueueListBox is ListBox lb)
+            await Task.Yield();
+            await Task.Delay(100); // Wait for UI to update
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                // TODO: This does not work when Queue page is not IsAttachedToVisualTree()...
-                lb.ScrollIntoView(ind);
-            }
-        });
+                if (this.QueueListBox is ListBox lb)
+                {
+                    // TODO: This does not work when Queue page is not IsAttachedToVisualTree()...
+                    lb.ScrollIntoView(ind);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            // Scrolling is cosmetic. Never let it crash the app.
+            System.Diagnostics.Debug.WriteLine($"Exception @OnScrollIntoView {ex}");
+        }
     }
 
     private async void OnScrollIntoViewAndSelect(object? sender, int ind)
     {
-        await Task.Yield();
-        await Task.Delay(100); // Need to wait for UI to update
-        Dispatcher.UIThread.Post(() =>
+        try
         {
-            if (this.QueueListBox is ListBox lb)
+            await Task.Delay(100); // Need to wait for UI to update
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                lb.ScrollIntoView(ind);
-
-                lb.SelectedIndex = ind;
-
-                // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
-                /*
-                if (DataContext is not MainViewModel vm)
+                if (this.QueueListBox is ListBox lb)
                 {
-                    return;
+                    lb.ScrollIntoView(ind);
+                    //Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex.
+                    lb.SelectedIndex = ind;
                 }
-
-                var test = vm?.Queue.FirstOrDefault(x => x.Index == ind);
-                test?.IsSelected = true;
-                */
-
-                //lb.AutoScrollToSelectedItem = true;
-            }
-        });
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Exception @OnScrollIntoViewAndSelect {ex}");
+        }
     }
 
     // Double click to play
@@ -247,14 +250,18 @@ internal sealed partial class QueuePage : UserControl
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Yield(); // Ensure the UI has processed the opened event
-
-            if (FilterQueueQueryTextBox.IsVisible)
+            try
             {
-                if (FilterQueueQueryTextBox.Focusable)
+                await Task.Yield(); // Ensure the UI has processed the opened event
+
+                if (FilterQueueQueryTextBox.IsVisible && FilterQueueQueryTextBox.Focusable)
                 {
                     this.FilterQueueQueryTextBox.Focus();
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception @OnQueueFindTextBoxSetFocus {ex}");
             }
         }, DispatcherPriority.Render);
 

@@ -19,7 +19,7 @@ using Tmds.DBus.Protocol;
 
 namespace MPDCtrlX
 {
-    public class App : Application
+    public class App : Application, IDisposable
     {
         public const string AppName = "MPDCtrlX";
         private const string AppDeveloper = "torum";
@@ -38,7 +38,7 @@ namespace MPDCtrlX
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
         public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
         private Task? _appHostStartTask;
-
+        private readonly CancellationTokenSource _appHostStartCts = new();
         public App()
         {
             // Platform specific Cache folder path
@@ -46,7 +46,11 @@ namespace MPDCtrlX
             {
                 var oldCachePath = AlbumCoverCacheFolder;
                 // /home/<User>/.cache/
-                _envCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
+                var xdgCache = Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
+                _envCacheFolder = !string.IsNullOrEmpty(xdgCache)
+                    ? xdgCache
+                    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
+                //_envCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
                 _envCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envCacheFolder, AppDeveloper)), AppName);
                 AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
 
@@ -54,13 +58,13 @@ namespace MPDCtrlX
                 {
                     try
                     {
-                        System.IO.Directory.CreateDirectory(AlbumCoverCacheFolder);
+                        // Directory.Move requires the parent of the destination to exist, but the destination itself must not.
+                        System.IO.Directory.CreateDirectory(_envCacheAppFolder);
                         System.IO.Directory.Move(oldCachePath, AlbumCoverCacheFolder);
                     }
                     catch (Exception ex)
                     {
-                        // Log the exception for debugging
-                        AppendErrorLog("Failed to clear AlbumCoverCache folder on startup.", ex.ToString());
+                        AppendErrorLog("Failed to move AlbumCoverCache folder on startup.", ex.ToString());
                         SaveErrorLog();
                     }
                 }
@@ -161,7 +165,8 @@ namespace MPDCtrlX
                     }
                 }
 
-                Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+                //Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+                RegisterGlobalExceptionHandlers();
 
                 _appHostStartTask = StartAppHostAsync();
                 desktop.MainWindow = App.GetService<MainWindow>();
@@ -195,7 +200,12 @@ namespace MPDCtrlX
         {
             try
             {
-                await AppHost.StartAsync();
+                await AppHost.StartAsync(_appHostStartCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Start was cancelled because the app is shutting down.
+                System.Diagnostics.Debug.WriteLine("AppHost.StartAsync cancelled.");
             }
             catch (Exception ex)
             {
@@ -209,7 +219,7 @@ namespace MPDCtrlX
         private bool _hostDisposed;
 
         // Fallback: Shutdown() from code, OS logout, SIGTERM, etc.
-        private async void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+        private void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
         {
             /*
             try
@@ -296,7 +306,7 @@ namespace MPDCtrlX
             {
                 return;
             }
-
+            /*
             try
             {
                 if (_appHostStartTask is not null)
@@ -318,39 +328,135 @@ namespace MPDCtrlX
                 AppHost.Dispose();
                 System.Diagnostics.Debug.WriteLine("AppHost disposed.");
             }
+            */
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+                // 1. Abort a start that is still in progress (e.g. a hung D-Bus connect).
+                await _appHostStartCts.CancelAsync().ConfigureAwait(false);
+
+                // 2. Wait for the start task, but never longer than the timeout.
+                if (_appHostStartTask is not null)
+                {
+                    try
+                    {
+                        await _appHostStartTask.WaitAsync(cts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        AppendErrorLog("StopAndDisposeHostAsync", "AppHost start did not finish within the timeout.");
+                        SaveErrorLog();
+                    }
+                }
+
+                // 3. Stop the host, bounded by the same timeout.
+                await AppHost.StopAsync(cts.Token).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                AppendErrorLog("AppHost.StopAsync", ex.ToString());
+                SaveErrorLog();
+            }
+            finally
+            {
+                _hostDisposed = true;
+                _appHostStartCts.Dispose();
+                AppHost.Dispose();
+                System.Diagnostics.Debug.WriteLine("AppHost disposed.");
+            }
         }
 
         // Log file.
         private static readonly StringBuilder _errortxt = new();
+        private static readonly Lock _logLock = new();
+
         private static readonly string _logFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + System.IO.Path.DirectorySeparatorChar + AppName + "_errors.txt";
+
+        private void RegisterGlobalExceptionHandlers()
+        {
+            // UI thread.
+            Dispatcher.UIThread.UnhandledException += OnUnhandledException;
+
+            // Any thread, process is about to terminate.
+            AppDomain.CurrentDomain.UnhandledException += OnDomainUnhandledException;
+
+            // Faulted tasks nobody awaited.
+            TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+        }
 
         private void OnUnhandledException(object? sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            e.Handled = true;
+            // Cancellation is normal (e.g. shutdown), not an error.
+            if (e.Exception is OperationCanceledException)
+            {
+                e.Handled = true;
+                return;
+            }
 
-            // Log the exception for debugging
             System.Diagnostics.Debug.WriteLine($"An unhandled exception occurred: {e.Exception}");
             AppendErrorLog("DispatcherUnhandledException", e.Exception.ToString());
-
             SaveErrorLog();
+
+            // Keep the app alive for recoverable errors, but never for out-of-memory.
+            e.Handled = e.Exception is not OutOfMemoryException;
         }
 
-        public static void AppendErrorLog(string errorTxt, string kindTxt)
+        private static void OnDomainUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var dt = DateTime.Now;
-            var nowString = dt.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
+            AppendErrorLog("AppDomain.UnhandledException", e.ExceptionObject?.ToString() ?? "(null)");
+            SaveErrorLog(); // Last chance: the process terminates after this.
+        }
 
-            _errortxt.AppendLine(nowString + " - " + kindTxt + " - " + errorTxt);
+        public static void AppendErrorLog(string source, string details)
+        {
+            var nowString = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+            lock (_logLock)
+            {
+                _errortxt.AppendLine(nowString + " - " + source + " - " + details);
+            }
+        }
+
+        private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+        {
+            if (e.Exception.InnerExceptions.All(ex => ex is OperationCanceledException))
+            {
+                e.SetObserved();
+                return;
+            }
+
+            AppendErrorLog("TaskScheduler.UnobservedTaskException", e.Exception.ToString());
+            SaveErrorLog();
+            e.SetObserved();
         }
 
         public static void SaveErrorLog()
         {
-            if (string.IsNullOrEmpty(_logFilePath))
-                return;
+            try
+            {
+                lock (_logLock)
+                {
+                    if (_errortxt.Length == 0)
+                    {
+                        return;
+                    }
 
-            var s = _errortxt.ToString();
-            if (!string.IsNullOrEmpty(s))
-                File.WriteAllText(_logFilePath, s);
+                    Directory.CreateDirectory(AppDataFolder);
+                    File.WriteAllText(_logFilePath, _errortxt.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                // Logging must never take the app down.
+                System.Diagnostics.Debug.WriteLine($"Could not save error log: {ex.Message}");
+            }
+        }
+
+        public void Dispose()
+        {
+            _appHostStartCts?.Dispose(); // Safe to call more than once.
+            GC.SuppressFinalize(this);  // Satisfies CA1816.
         }
     }
 }

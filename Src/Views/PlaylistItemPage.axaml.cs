@@ -30,7 +30,6 @@ internal sealed partial class PlaylistItemPage : UserControl
         }
         vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
         vm.PlaylistRenameToDialogShow += this.OnPlaylistRenameToDialogShowAsync;
-        vm.PlaylistHeaderVisibilityChanged += this.OnPlaylistHeaderVisibilityChanged;
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -42,7 +41,6 @@ internal sealed partial class PlaylistItemPage : UserControl
         }
         vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
         vm.PlaylistRenameToDialogShow -= this.OnPlaylistRenameToDialogShowAsync;
-        vm.PlaylistHeaderVisibilityChanged -= this.OnPlaylistHeaderVisibilityChanged;
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -404,88 +402,109 @@ internal sealed partial class PlaylistItemPage : UserControl
 
     private async void OnPlaylistRenameToDialogShowAsync(object? sender, string playlist)
     {
-        if (DataContext is not MainViewModel vm)
+        try
         {
-            return;
-        }
-
-        var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
-        {
-            Title = MPDCtrlX.Properties.Resources.Dialog_Title_NewPlaylistName,
-            IsPrimaryButtonEnabled = true,
-            PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
-            DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
-            IsSecondaryButtonEnabled = false,
-            CloseButtonText = MPDCtrlX.Properties.Resources.Dialog_CancelClose,
-            Content = new Views.Dialogs.RenameNewPlaylistDialog()
-            {
-                //DataContext = new DialogViewModel()
-            }
-        };
-
-        var result = await dialog.ShowAsync();
-
-        if (result == FluentAvalonia.UI.Controls.FAContentDialogResult.Primary && dialog.Content is Views.Dialogs.RenameNewPlaylistDialog dlg)
-        {
-            var plname = dlg.TextBoxPlaylistName.Text;
-
-            if (string.IsNullOrWhiteSpace(plname))
+            if (DataContext is not MainViewModel vm)
             {
                 return;
             }
 
-            if (vm.CheckIfPlaylistExists(plname.Trim()))
+            var dialog = new FluentAvalonia.UI.Controls.FAContentDialog
             {
-                var resultHint = new FluentAvalonia.UI.Controls.FAContentDialog()
+                Title = MPDCtrlX.Properties.Resources.Dialog_Title_NewPlaylistName,
+                IsPrimaryButtonEnabled = true,
+                PrimaryButtonText = MPDCtrlX.Properties.Resources.Dialog_Ok,
+                DefaultButton = FluentAvalonia.UI.Controls.FAContentDialogButton.Primary,
+                IsSecondaryButtonEnabled = false,
+                CloseButtonText = MPDCtrlX.Properties.Resources.Dialog_CancelClose,
+                Content = new Views.Dialogs.RenameNewPlaylistDialog()
                 {
-                    Content = MPDCtrlX.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
-                    Title = plname,
-                    PrimaryButtonText = "OK"
-                };
+                    //DataContext = new DialogViewModel()
+                }
+            };
 
-                _ = resultHint.ShowAsync();
+            var result = await dialog.ShowAsync();
 
-                return;
-            }
-            else
+            if (result == FluentAvalonia.UI.Controls.FAContentDialogResult.Primary && dialog.Content is Views.Dialogs.RenameNewPlaylistDialog dlg)
             {
-                if (vm.PlaylistRenamePlaylistCommand.CanExecute(playlist))
-                    vm.PlaylistRenamePlaylist_Execute(playlist, plname.Trim());
-            }
+                var plname = dlg.TextBoxPlaylistName.Text;
 
+                if (string.IsNullOrWhiteSpace(plname))
+                {
+                    return;
+                }
+
+                if (vm.CheckIfPlaylistExists(plname.Trim()))
+                {
+                    var resultHint = new FluentAvalonia.UI.Controls.FAContentDialog()
+                    {
+                        Content = MPDCtrlX.Properties.Resources.Dialog_PlaylistNameAlreadyExists,//$"Playlist \"{plname}\" already exists.", //
+                        Title = plname,
+                        PrimaryButtonText = "OK"
+                    };
+
+                    await resultHint.ShowAsync();
+
+                    return;
+                }
+                else
+                {
+                    //if (vm.PlaylistRenamePlaylistCommand.CanExecute(playlist))
+                    //    vm.PlaylistRenamePlaylist_Execute(playlist, plname.Trim());
+                    if (vm.PlaylistRenamePlaylistCommand.CanExecute(playlist))
+                    {
+                        await vm.PlaylistRenamePlaylistAsync(playlist, plname.Trim());
+                    }
+                }
+
+            }
         }
+        catch (OperationCanceledException)
+        {
+            // Ignore.
+        }
+        catch (Exception ex)
+        {
+            App.AppendErrorLog(nameof(OnPlaylistRenameToDialogShowAsync), ex.ToString());
+            App.SaveErrorLog();
+        }
+
+
     }
 
     private void TglButtonPlaylistSongFilter_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Yield(); // Ensure the UI has processed the opened event
-
-            if (this.TglButtonPlaylistSongFilter is ToggleButton tb)
+            try
             {
-                if (tb.IsChecked == true)
+                await Task.Yield(); // Ensure the UI has processed the opened event
+
+                if (this.TglButtonPlaylistSongFilter is ToggleButton tb
+                    && tb.IsChecked == true
+                    && FilterPlaylistSongQueryTextBox.Focusable)
                 {
-                    if (FilterPlaylistSongQueryTextBox.Focusable)
-                    {
-                        this.FilterPlaylistSongQueryTextBox.Focus();
-                    }
+                    this.FilterPlaylistSongQueryTextBox.Focus();
                 }
             }
-
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception @TglButtonPlaylistSongFilter_Click {ex}");
+            }
         }, DispatcherPriority.Render);
     }
 
     private void FilterPlaylistSongListBox_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
-        if (this.FilterPlaylistSongListBox.SelectedItem is AlbumArtist artist)
+        if (this.FilterPlaylistSongListBox.SelectedItem is SongInfo song)
         {
+            System.Diagnostics.Debug.WriteLine($"FilterPlaylistSongListBox_DoubleTapped: {song.Title}");
             //lb.ScrollIntoView(artist.Index);
             //lb.SelectedIndex = artist.Index;
             //song.IsSelected = true; // This is not working because Avalonia's ListBox doesn't clear selection outside of viewort. So we need to set SelectedIndex instead.
             //lb.SelectedItem = artist;
             var vm = App.GetService<MainViewModel>();
-            vm?.PlaylistSongFilterSelectCommand.Execute(artist);
+            vm?.PlaylistSongFilterSelectCommand.Execute(song);
         }
     }
     private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
@@ -500,15 +519,23 @@ internal sealed partial class PlaylistItemPage : UserControl
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Yield(); // Ensure the UI has processed the opened event
-            if (FilterPlaylistSongPopup.Focusable)
+            try
             {
-                FilterPlaylistSongPopup.Focus();
-            }
+                await Task.Yield(); // Ensure the UI has processed the opened event
 
-            if (FilterPlaylistSongQueryTextBox.Focusable)
+                if (FilterPlaylistSongPopup.Focusable)
+                {
+                    FilterPlaylistSongPopup.Focus();
+                }
+
+                if (FilterPlaylistSongQueryTextBox.Focusable)
+                {
+                    this.FilterPlaylistSongQueryTextBox.Focus();
+                }
+            }
+            catch (Exception ex)
             {
-                this.FilterPlaylistSongQueryTextBox.Focus();
+                System.Diagnostics.Debug.WriteLine($"Exception @FilterPlaylistSongPopup_Opened {ex}");
             }
         }, DispatcherPriority.Render);
     }

@@ -25,15 +25,20 @@ internal sealed partial class ArtistPage : UserControl
             return;
         }
 
-        //this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
-        ////DetailsPaneScrollViewer.ChangeView(0,0,1);
-
-        await Task.Yield();
-        await Task.Delay(100); // Wait for UI to update
-        Dispatcher.UIThread.Post(() =>
+        try
         {
-            this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
-        });
+            await Task.Delay(100); // Wait for UI to update
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                this.SelectedArtistAlbumsScrollViewer.ScrollToHome();
+            });
+        }
+        catch (Exception ex)
+        {
+            // Scrolling is cosmetic. Never let it crash the app.
+            System.Diagnostics.Debug.WriteLine($"Exception @ArtistPage.ListBox_SelectionChanged {ex}");
+        }
     }
 
     private void PageGrid_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
@@ -79,19 +84,21 @@ internal sealed partial class ArtistPage : UserControl
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Yield(); // Ensure the UI has processed the opened event
-
-            if (this.TglButtonArtistFilter is ToggleButton tb)
+            try
             {
-                if (tb.IsChecked == true)
+                await Task.Yield(); // Ensure the UI has processed the opened event
+
+                if (this.TglButtonArtistFilter is ToggleButton tb
+                    && tb.IsChecked == true
+                    && FilterArtistQueryTextBox.Focusable)
                 {
-                    if (FilterArtistQueryTextBox.Focusable)
-                    {
-                        this.FilterArtistQueryTextBox.Focus();
-                    }
+                    this.FilterArtistQueryTextBox.Focus();
                 }
             }
-
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception @TglButtonArtistFilter_Click {ex}");
+            }
         }, DispatcherPriority.Render);
     }
 
@@ -122,15 +129,23 @@ internal sealed partial class ArtistPage : UserControl
     {
         Dispatcher.UIThread.Post(async () =>
         {
-            await Task.Yield(); // Ensure the UI has processed the opened event
-            if (FilterArtistPopup.Focusable)
+            try
             {
-                FilterArtistPopup.Focus();
-            }
+                await Task.Yield(); // Ensure the UI has processed the opened event
 
-            if (FilterArtistQueryTextBox.Focusable)
+                if (FilterArtistPopup.Focusable)
+                {
+                    FilterArtistPopup.Focus();
+                }
+
+                if (FilterArtistQueryTextBox.Focusable)
+                {
+                    this.FilterArtistQueryTextBox.Focus();
+                }
+            }
+            catch (Exception ex)
             {
-                this.FilterArtistQueryTextBox.Focus();
+                System.Diagnostics.Debug.WriteLine($"Exception @FilterArtistPopup_Opened {ex}");
             }
         }, DispatcherPriority.Render);
     }
