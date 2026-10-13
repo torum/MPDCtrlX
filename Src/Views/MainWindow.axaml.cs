@@ -113,6 +113,32 @@ internal sealed partial class MainWindow : Window
         base.OnClosed(e);
     }
 
+    protected override async void OnClosing(WindowClosingEventArgs e)
+    {
+        var app = (App)Application.Current!;
+
+        // Second pass, triggered by Shutdown(). Let the window close.
+        if (app.IsShuttingDown)
+        {
+            base.OnClosing(e);
+            return;
+        }
+
+        // Raises the Closing event first (vm.OnWindowClosing saves window settings).
+        base.OnClosing(e);
+        if (e.Cancel)
+        {
+            return; // Something else cancelled the close.
+        }
+
+        e.Cancel = true; // Keep the process alive while the host stops.
+
+        // Hide immediately so the user doesn't think the app froze.
+        this.Hide();
+
+        await app.ShutdownAsync();
+    }
+
     private void OnWorkingStateChanged(object? sender, bool e)
     {
         if (e)

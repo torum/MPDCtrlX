@@ -165,7 +165,7 @@ namespace MPDCtrlX
 
                 _appHostStartTask = StartAppHostAsync();
                 desktop.MainWindow = App.GetService<MainWindow>();
-                desktop.MainWindow.Closing += OnMainWindowClosing;
+                //desktop.MainWindow.Closing += OnMainWindowClosing;
                 desktop.Exit += OnDesktopExit; // Fallback for shutdowns that bypass window closing.
                 /*
                 desktop.MainWindow.Closed += async (sender, e) =>
@@ -205,6 +205,7 @@ namespace MPDCtrlX
         }
 
         private bool _isShuttingDown;
+        public bool IsShuttingDown => _isShuttingDown;
         private bool _hostDisposed;
 
         // Fallback: Shutdown() from code, OS logout, SIGTERM, etc.
@@ -238,18 +239,46 @@ namespace MPDCtrlX
                 SaveErrorLog();
             }
         }
-
+        /*
         private async void OnMainWindowClosing(object? sender, WindowClosingEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("OnMainWindowClosing @App");
             if (_isShuttingDown)
+            {
                 return; // Second pass, triggered by Shutdown(). Let the window close.
+            }
 
             _isShuttingDown = true;
             e.Cancel = true; // Keep the process alive while the host stops.
 
             // Hide immediately so the user doesn't think the app froze.
             if (sender is Window window)
+            {
                 window.Hide();
+            }
+
+            try
+            {
+                await StopAndDisposeHostAsync();
+            }
+            finally
+            {
+                (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
+            }
+        }
+        */
+        /// <summary>
+        /// Stops and disposes the host, then shuts down the application.
+        /// Called from MainWindow.OnClosing.
+        /// </summary>
+        public async Task ShutdownAsync()
+        {
+            if (_isShuttingDown)
+            {
+                return;
+            }
+
+            _isShuttingDown = true;
 
             try
             {
@@ -264,12 +293,16 @@ namespace MPDCtrlX
         private async Task StopAndDisposeHostAsync()
         {
             if (_hostDisposed)
+            {
                 return;
+            }
 
             try
             {
                 if (_appHostStartTask is not null)
+                {
                     await _appHostStartTask.ConfigureAwait(false);
+                }
 
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 await AppHost.StopAsync(cts.Token).ConfigureAwait(false);

@@ -5663,9 +5663,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (sender is Window w)
         {
+            Debug.WriteLine("OnWindowClosing");
             SaveSettings(w);
         }
     }
+
+
 
     public void OnWindowClosed(object? sender, EventArgs e)
     {
