@@ -5775,6 +5775,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         await Task.Delay(5);
 
+        // TODO: try-catch for each command to avoid one command failure stops the rest of the commands.
+
         CommandResult result = await _mpc.MpdIdleSendPassword(_password);
 
         if (result.IsSuccess)
@@ -7884,7 +7886,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     private async void OnMpdIdleConnected(IMpcService sender)
     {
-
+        // TODO: check if Dispatcher.UIThread.Post below needed to be awaited.
 
         // Connected from InitWindow, so save and clean up. 
         Dispatcher.UIThread.Post(() =>
@@ -11801,20 +11803,28 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         try
         {
-            _cts.Cancel();
-
-            if (IsConnected)
+            try
             {
-                _mpc.MpdStop = true;
-
-                _mpc.MpdDisconnect(false);
+                _cts?.Cancel();
             }
-
-            _cts?.Dispose();
+            finally
+            {
+                if (IsConnected)
+                {
+                    // TODO: This (Dispose()) maybe too late to cancel the tasks. Need to cancel them before Dispose() is called such as Window.Closed.
+                    _mpc.MpdStop = true;
+                    _mpc.MpdDisconnect(false);
+                }
+            }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+        }
+        finally
+        {
+            _cts?.Dispose();
+            Debug.WriteLine("MainViewModel disposed.");
         }
 
         GC.SuppressFinalize(this);

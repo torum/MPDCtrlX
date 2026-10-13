@@ -2,6 +2,7 @@ using Avalonia.Media.Imaging;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
 using SkiaSharp;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.Sockets;
@@ -216,6 +217,14 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             //IsBusy?.Invoke(this, false);
             return ret;
         }
+        catch (System.OperationCanceledException e)
+        {
+            // no problem
+            Debug.WriteLine("[OperationCanceledException] ({0}):\n{1}", "WriteAsync @MpdBinarySendCommand(): ", e.Message); ret.IsSuccess = false;
+            ret.ErrorMessage = e.Message;
+            //IsBusy?.Invoke(this, false);
+            return ret;
+        }
         catch (Exception e)
         {
             Debug.WriteLine("Exception@MpdBinarySendCommand: " + cmd.Trim() + " WriteAsync " + e.Message);
@@ -242,10 +251,11 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             {
                 if (_cts is null)
                     break;
-                if (_cts.Token.IsCancellationRequested)
+                var token = _cts.Token;
+                if (token.IsCancellationRequested)
                     break;
 
-                string? line = await _binaryReader.ReadLineAsync(_cts.Token);
+                string? line = await _binaryReader.ReadLineAsync(token);
 
                 if (line is not null)
                 {
@@ -343,6 +353,14 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             //IsBusy?.Invoke(this, false);
             return ret;
         }
+        catch (System.OperationCanceledException e)
+        {
+            // no problem
+            Debug.WriteLine("[OperationCanceledException] ({0}):\n{1}", "ReadLineAsync @MpdBinarySendCommand(): ", e.Message); ret.IsSuccess = false;
+            ret.ErrorMessage = e.Message;
+            //IsBusy?.Invoke(this, false);
+            return ret;
+        }
         catch (Exception e)
         {
             Debug.WriteLine("Exception@MpdBinarySendCommand: " + cmd.Trim() + " ReadLineAsync ---- " + e.Message);
@@ -430,6 +448,14 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             return ret;
 
         }
+        catch (System.OperationCanceledException e)
+        {
+            // no problem
+            Debug.WriteLine("[OperationCanceledException] ({0}):\n{1}", "WriteAsync @MpdBinarySendBinaryCommand(): ", e.Message); ret.IsSuccess = false;
+            ret.ErrorMessage = e.Message;
+            //IsBusy?.Invoke(this, false);
+            return ret;
+        }
         catch (Exception e)
         {
             Debug.WriteLine("Exception@MpdBinarySendBinaryCommand: " + cmd.Trim() + " WriteAsync " + e.Message);
@@ -467,12 +493,13 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
                 {
                     if (_cts is null)
                         break;
-                    if (_cts.Token.IsCancellationRequested)
+                    var token = _cts.Token;
+                    if (token.IsCancellationRequested)
                         break;
 
-                    while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer, _cts.Token)) > 0)
+                    while ((readSize = await _binaryReader.BaseStream.ReadAsync(buffer, token)) > 0)
                     {
-                        if (_cts.Token.IsCancellationRequested)
+                        if (token.IsCancellationRequested)
                         {
                             Debug.WriteLine("IsCancellationRequested in while loop @MpdBinarySendBinaryCommand");
                             return ret;
@@ -682,6 +709,14 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
             ret.IsSuccess = false;
             ret.ErrorMessage = e.Message;
 
+            return ret;
+        }
+        catch (System.OperationCanceledException e)
+        {
+            // no problem
+            Debug.WriteLine("[OperationCanceledException] ({0}):\n{1}", "ReadAsync @MpdBinarySendBinaryCommand(): ", e.Message); ret.IsSuccess = false;
+            ret.ErrorMessage = e.Message;
+            //IsBusy?.Invoke(this, false);
             return ret;
         }
         catch (Exception e)
@@ -1296,6 +1331,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
     public void Dispose()
     {
         _cts?.Dispose();
+        Debug.WriteLine("MpcBinaryService disposed.");
 
         GC.SuppressFinalize(this);
     }
