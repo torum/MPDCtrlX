@@ -6262,242 +6262,328 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         });
     }
 
+    private readonly SemaphoreSlim _queueUpdateGate = new(1, 1);
+    private int _queueUpdatePending;
+
     private async Task UpdateCurrentQueueAsync()
     {
-        await Dispatcher.UIThread.InvokeAsync(async () =>
+        if (_cts.IsCancellationRequested)
+            return;
+
+        // Coalesce: if a run is queued or in progress, mark that another is needed.
+        if (Interlocked.Exchange(ref _queueUpdatePending, 1) == 1)
+            return;
+
+        Dispatcher.UIThread.Post(() =>
         {
-            /*
-            if (IsSwitchingProfile)
+            _ = UpdateCurrentQueueCoreAsync().SafeAsync(nameof(UpdateCurrentQueueCoreAsync), false);
+        });
+    }
+
+    private async Task UpdateCurrentQueueCoreAsync()
+    {
+        await _queueUpdateGate.WaitAsync(_cts.Token);
+        try
+        {
+            // Loop while new events arrived during the run.
+            while (Interlocked.Exchange(ref _queueUpdatePending, 0) == 1)
+            {
+                // Snapshot on the UI thread. Prefer a lock or an immutable copy from the service
+                // if the idle thread can mutate _mpc.CurrentQueue at any time.
+                var snapshot = _mpc.CurrentQueue.ToList();
+                await ApplyQueueSnapshotAsync(snapshot);
+            }
+        }
+        finally
+        {
+            _queueUpdateGate.Release();
+        }
+    }
+
+    private async Task ApplyQueueSnapshotAsync(List<SongInfoEx> snapshot)
+    {
+        IsQueueFindVisible = false;
+        IsWorking = true;
+        //UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
+
+        try
+        {
+            if (snapshot.Count == 0)
+            {
+                Queue.Clear();
+                CurrentSong = null;
+                AlbumCover = null;
+                AlbumArtBitmapSource = null;
                 return;
-            */
-            IsQueueFindVisible = false;
+            }
 
             if (Queue.Count > 0)
             {
+                #region == Update Queue ==
+
                 UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
-                await Task.Delay(20);
 
-                /*
-                if (IsSwitchingProfile)
-                    return;
-                */
-                IsWorking = true;
+                // O(n) lookups instead of O(n²).
+                var newById = snapshot.ToDictionary(s => s.Id);        // use GroupBy if Ids can repeat
+                var existingById = Queue.ToDictionary(s => s.Id);
 
-                try
+                // Removals.
+                for (int i = Queue.Count - 1; i >= 0; i--)
                 {
-                    // The simplest way, but all the selections and listview position will be cleared. Kind of annoying when moving items.
-                    #region == simple & fast == 
-                    /*
-                    UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
+                    if (!newById.ContainsKey(Queue[i].Id))
+                        Queue.RemoveAt(i);
+                }
 
-                    Dispatcher.UIThread.Post(() =>
+                // Updates and additions, yielding every N items instead of every item.
+                var count = 0;
+                foreach (var sng in snapshot)
+                {
+                    if (existingById.TryGetValue(sng.Id, out var existing))
                     {
-                        Queue = new ObservableCollection<SongInfoEx>(_mpc.CurrentQueue);
+                        existing.IsPlaying = false;
+                        existing.Pos = sng.Pos;
+                        existing.LastModified = sng.LastModified;
+                        existing.Title = sng.Title;
+                        existing.Artist = sng.Artist;
+                        existing.Album = sng.Album;
+                        existing.AlbumArtist = sng.AlbumArtist;
+                        existing.Composer = sng.Composer;
+                        existing.Date = sng.Date;
+                        existing.Duration = sng.Duration;
+                        existing.File = sng.File;
+                        existing.Genre = sng.Genre;
+                        existing.Track = sng.Track;
+                        existing.Index = sng.Index;
+                    }
+                    else
+                    {
+                        Queue.Add(sng);
+                    }
 
-                        UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
+                    if (++count % 100 == 0)
+                        await Task.Yield();
+                }
 
-                        // Set Current and NowPlaying.
-                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
-                        if (curitem is not null)
+
+                // Sorting.
+                // Sort here because Queue list may have been re-ordered.
+                UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
+
+                // AvaloniaUI/WinUI3 doesn't have this.
+                //var collectionView = CollectionViewSource.GetDefaultView(Queue);
+                // no need to add because It's been added when "loading".
+                //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
+                //collectionView.Refresh();
+
+                // This is not good, all the selections will be cleared, but no problem for Avalonia UI?. TOO slow for WinUI3.
+                //Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
+                /*
+                Debug.WriteLine("Queue sort started. @UpdateCurrentQueue");
+                var sortableList = new List<SongInfoEx>(Queue);
+                sortableList.Sort((a, b) => a.Index.CompareTo(b.Index));
+                for (int i = 0; i < sortableList.Count; i++)
+                {
+                    var hoge = sortableList[i] as SongInfoEx;
+                    var oldIndex = Queue.IndexOf(hoge);
+                    if (hoge.Index != oldIndex)
+                    {
+                        //Debug.WriteLine($"Song index {hoge.Index}, list index {oldIndex}");
+                        Queue.Move(oldIndex, i);
+                    }
+                }
+                Debug.WriteLine("Queue sort end. @UpdateCurrentQueue");
+                */
+                Debug.WriteLine($"[{DateTimeOffset.UtcNow:O}] Queue sort started. @UpdateCurrentQueue");
+                // Sorting: only move items that are out of place.
+                var sorted = Queue.OrderBy(n => n.Index).ToList();
+                for (int i = 0; i < sorted.Count; i++)
+                {
+                    var oldIndex = Queue.IndexOf(sorted[i]);
+                    if (oldIndex != i)
+                        Queue.Move(oldIndex, i);
+                }
+                Debug.WriteLine($"[{DateTimeOffset.UtcNow:O}] Queue sort finished. @UpdateCurrentQueue");
+
+                UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
+
+                // Set Current and NowPlaying.
+                var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
+                if (curitem is not null)
+                {
+                    bool asdf = false;
+                    if (CurrentSong is not null)
+                    {
+                        if (CurrentSong.Id == curitem.Id)
                         {
-                            if (CurrentSong is not null)
+                            asdf = curitem.IsAlbumCoverNeedsUpdate;
+                        }
+                    }
+                    else
+                    {
+                        asdf = true;
+                    }
+
+                    CurrentSong = curitem;
+                    CurrentSong.IsPlaying = true;
+                    CurrentSong.IsAlbumCoverNeedsUpdate = asdf;
+
+                    //if (IsAutoScrollToNowPlaying)
+                    //{
+                    //    // use ScrollIntoViewAndSelect instead of ScrollIntoView
+                    //    ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
+                    //}
+
+                    //AlbumArt
+                    if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
+                    {
+                        var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
+                        if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
+                        {
+                            if (res.AlbumCover?.SongFilePath == CurrentSong.File)
                             {
-                                if (CurrentSong.Id != curitem.Id)
+                                AlbumCover = res.AlbumCover;
+                                AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    CurrentSong = null;
+
+                    //IsAlbumArtVisible = false;
+                    AlbumCover = null;
+                    AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
+                }
+
+                #endregion
+            }
+            else
+            {
+                #region == Initial Load ==
+
+                UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
+
+                Queue = new ObservableCollection<SongInfoEx>(_mpc.CurrentQueue);
+
+                UpdateProgress?.Invoke(this, "[UI] Queue checking current song...");
+
+                bool isNeedToFindCurrentSong = false;
+
+                if (CurrentSong is not null)
+                {
+                    if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
+                    {
+                        isNeedToFindCurrentSong = true;
+
+                        CurrentSong.IsPlaying = false;
+                    }
+                    else
+                    {
+                        if (_mpc.MpdCurrentSong is not null)
+                        {
+                            // This means CurrentSong is already aquired by "currentsong" command.
+                            if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.CurrentSongID)
+                            {
+                                // Set Current(again) and NowPlaying.
+
+                                // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
+                                var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
+                                if (curitem is not null)
                                 {
                                     CurrentSong = curitem;
                                     CurrentSong.IsPlaying = true;
+                                    //CurrentSong.IsSelected = true;
 
                                     if (IsAutoScrollToNowPlaying)
-                                        // ScrollIntoView while don't change the selection 
-                                        ScrollIntoView?.Invoke(this, CurrentSong.Index);
+                                        // use ScrollIntoViewAndSelect instead of ScrollIntoView
+                                        ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
 
                                     // AlbumArt
-
-
+                                    if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
+                                    {
+                                        var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
+                                        if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
+                                        {
+                                            if (res.AlbumCover?.SongFilePath == CurrentSong.File)
+                                            {
+                                                AlbumCover = res.AlbumCover;
+                                                AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
+                                                SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
+                                                CurrentSong.IsAlbumCoverNeedsUpdate = false;
+                                            }
+                                        }
+                                    }
                                 }
-                                else
-                                {
-                                    curitem.IsPlaying = true;
+                                /*
+                                // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
+                                _mpc.MpdCurrentSong.IsPlaying = true;
 
-                                    if (IsAutoScrollToNowPlaying)
-                                        // ScrollIntoView while don't change the selection 
-                                        ScrollIntoView?.Invoke(this, curitem.Index);
+                                // just in case. < no. don't override.
+                                //CurrentSong.IsPlaying = true;
 
-                                }
+                                // currentsong command does not return pos, so it's needed to be set.
+                                CurrentSong.Index = _mpc.MpdCurrentSong.Index;
+
+                                _mpc.MpdCurrentSong.IsSelected = true;
+
+                                if (IsAutoScrollToNowPlaying)
+                                    // use ScrollIntoViewAndSelect instead of ScrollIntoView
+                                    ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
+                                */
+                            }
+                            else
+                            {
+                                Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.CurrentSongID. @UpdateCurrentQueue()");
+                                isNeedToFindCurrentSong = true;
                             }
                         }
                         else
                         {
-                            CurrentSong = null;
-
-                            //IsAlbumArtVisible = false;
-                            AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-                        }
-
-                        UpdateProgress?.Invoke(this, "");
-
-                        IsWorking = false;
-
-                        UpdateProgress?.Invoke(this, "");
-
-                    });
-                    */
-                    #endregion
-
-                    #region == better way ==
-
-                    IsWorking = true;
-                    await Task.Yield();
-                    await Task.Delay(1);
-
-                    UpdateProgress?.Invoke(this, "[UI] Updating the queue...");
-
-                    if (_mpc.CurrentQueue.Count == 0)
-                    {
-                        Queue.Clear();
-
-                        CurrentSong = null;
-
-                        //IsAlbumArtVisible = false;
-                        AlbumCover = null;
-                        AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-
-                        UpdateProgress?.Invoke(this, "");
-
-                        IsWorking = false;
-
-                        return;
-                    }
-
-                    // tmp list of deletion
-                    List<SongInfoEx> tmpQueue = [];
-
-                    // deletes items that does not exists in the new queue. 
-                    foreach (var sng in Queue)
-                    {
-                        UpdateProgress?.Invoke(this, "[UI] Queue list updating...(checking deleted items)");
-
-                        IsWorking = true;
-
-                        var queitem = _mpc.CurrentQueue.FirstOrDefault(i => i.Id == sng.Id);
-                        if (queitem is null)
-                        {
-                            // add to tmp deletion list.
-                            tmpQueue.Add(sng);
+                            //Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentQueue()");
+                            isNeedToFindCurrentSong = true;
                         }
                     }
+                }
+                else
+                {
+                    //Debug.WriteLine("CurrentSong is null. @UpdateCurrentQueue()");
+                    isNeedToFindCurrentSong = true;
+                }
 
-                    // loop the tmp deletion list and remove.
-                    foreach (var hoge in tmpQueue)
-                    {
-                        UpdateProgress?.Invoke(this, "[UI] Queue list updating...(deletion)");
-
-                        IsWorking = true;
-
-                        Queue.Remove(hoge);
-                    }
-
-                    // update or add item from the new queue list.
-                    foreach (var sng in _mpc.CurrentQueue)
-                    {
-                        UpdateProgress?.Invoke(this, $"[UI] Queue list updating...(checking and adding new items {sng.Id})");
-
-                        IsWorking = true;
-
-                        var fuga = Queue.FirstOrDefault(i => i.Id == sng.Id);
-                        if (fuga is not null)
-                        {
-                            // this cuase strange selection problem.
-                            //sng.IsSelected = fuga.IsSelected;
-                            //fuga.IsSelected = false; // so clear it for now.
-                            fuga.IsPlaying = false;
-
-                            // Just update.
-                            //fuga = sng; // < sort won't work. why...
-
-                            fuga.Pos = sng.Pos;
-                            //fuga.Id = sng.Id;
-                            fuga.LastModified = sng.LastModified;
-                            //fuga.Time = sng.Time; // format exception
-                            fuga.Title = sng.Title;
-                            fuga.Artist = sng.Artist;
-                            fuga.Album = sng.Album;
-                            fuga.AlbumArtist = sng.AlbumArtist;
-                            fuga.Composer = sng.Composer;
-                            fuga.Date = sng.Date;
-                            fuga.Duration = sng.Duration;
-                            fuga.File = sng.File;
-                            fuga.Genre = sng.Genre;
-                            fuga.Track = sng.Track;
-
-                            fuga.Index = sng.Index;
-
-                        }
-                        else
-                        {
-                            Queue.Add(sng);
-                        }
-                    }
-
-                    // Sorting.
-                    // Sort here because Queue list may have been re-ordered.
-                    UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
-
-                    // AvaloniaUI/WinUI3 doesn't have this.
-                    //var collectionView = CollectionViewSource.GetDefaultView(Queue);
-                    // no need to add because It's been added when "loading".
-                    //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
-                    //collectionView.Refresh();
-
-                    // This is not good, all the selections will be cleared, but no problem for Avalonia UI?. TOO slow for WinUI3.
-                    //Queue = new ObservableCollection<SongInfoEx>(Queue.OrderBy(n => n.Index));
-                    Debug.WriteLine("Queue sort started. @UpdateCurrentQueue");
-                    var sortableList = new List<SongInfoEx>(Queue);
-                    sortableList.Sort((a, b) => a.Index.CompareTo(b.Index));
-                    for (int i = 0; i < sortableList.Count; i++)
-                    {
-                        var hoge = sortableList[i] as SongInfoEx;
-                        var oldIndex = Queue.IndexOf(hoge);
-                        if (hoge.Index != oldIndex)
-                        {
-                            //Debug.WriteLine($"Song index {hoge.Index}, list index {oldIndex}");
-                            Queue.Move(oldIndex, i);
-                        }
-                    }
-                    Debug.WriteLine("Queue sort end. @UpdateCurrentQueue");
-
-                    //UpdateProgress?.Invoke(this, "");
-
-                    UpdateProgress?.Invoke(this, "[UI] Checking current song after Queue update.");
-
+                if (isNeedToFindCurrentSong)
+                {
                     // Set Current and NowPlaying.
                     var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
                     if (curitem is not null)
                     {
-                        bool asdf = false;
-                        if (CurrentSong is not null)
-                        {
-                            if (CurrentSong.Id == curitem.Id)
-                            {
-                                asdf = curitem.IsAlbumCoverNeedsUpdate;
-                            }
-                        }
-                        else
-                        {
-                            asdf = true;
-                        }
+                        //Debug.WriteLine($"Currentsong is set. {curitem.Title}. @UpdateCurrentQueue()");
 
                         CurrentSong = curitem;
                         CurrentSong.IsPlaying = true;
-                        CurrentSong.IsAlbumCoverNeedsUpdate = asdf;
+                        //CurrentSong.IsSelected = true;
 
-                        //if (IsAutoScrollToNowPlaying)
-                        //{
-                        //    // use ScrollIntoViewAndSelect instead of ScrollIntoView
-                        //    ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
-                        //}
+                        if (IsAutoScrollToNowPlaying)
+                            // use ScrollIntoViewAndSelect instead of ScrollIntoView
+                            ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
 
-                        //AlbumArt
+                        // AlbumArt
+                        /*
+                        if (_mpc.AlbumCover.SongFilePath != curitem.File)
+                        {
+                            //IsAlbumArtVisible = false;
+                            //AlbumArt = _albumArtDefault;
+
+                            if (!string.IsNullOrEmpty(CurrentSong.File))
+                            {
+                                //isAlbumArtChanged = true;
+                            }
+                        }
+                        */
+
+                        // AlbumArt
                         if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
                         {
                             var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
@@ -6515,255 +6601,38 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     }
                     else
                     {
+                        Debug.WriteLine("Looks like starting up with playback status Stop. @UpdateCurrentQueue()");
+                        // just in case.
                         CurrentSong = null;
-
-                        //IsAlbumArtVisible = false;
                         AlbumCover = null;
+                        //IsAlbumArtVisible = false;
                         AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
                     }
-
-                    UpdateProgress?.Invoke(this, "");
-
-                    IsWorking = false;
-
-
-                    #endregion
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Exception@UpdateCurrentQueue: " + e.Message);
-                    UpdateProgress?.Invoke(this, "Exception@UpdateCurrentQueue: " + e.Message);
-                    IsWorking = false;
-                    App.AppendErrorLog("Exception@UpdateCurrentQueue", e.Message);
-
-                    return;
-                }
-                finally
-                {
-                    IsWorking = false;
-                    UpdateProgress?.Invoke(this, "");
                 }
 
-                await Task.Yield();
-                await Task.Delay(1);
+                // Add SortDescription to the Listview.
+                //UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
+                //var collectionView = CollectionViewSource.GetDefaultView(Queue);
+                //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
+                //collectionView.Refresh();
+
+                #endregion
             }
-            else
-            {
-                //Debug.WriteLine("Queue.Count == 0. @UpdateCurrentQueue()");
+        }
+        catch (Exception ex)
+        {
+            UpdateProgress?.Invoke(this, "Exception@UpdateCurrentQueue: " + ex.Message);
+            Debug.WriteLine($"Exception@UpdateCurrentQueue: {ex}");
 
-                UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
-                await Task.Delay(20);
-                /*
-                if (IsSwitchingProfile)
-                    return;
-                */
-                IsWorking = true;
-
-                try
-                {
-                    IsWorking = true;
-
-                    UpdateProgress?.Invoke(this, "[UI] Loading the queue...");
-
-                    Queue = new ObservableCollection<SongInfoEx>(_mpc.CurrentQueue);
-
-                    UpdateProgress?.Invoke(this, "[UI] Queue checking current song...");
-
-                    bool isNeedToFindCurrentSong = false;
-
-                    if (CurrentSong is not null)
-                    {
-                        if (CurrentSong.Id != _mpc.MpdStatus.CurrentSongID)
-                        {
-                            isNeedToFindCurrentSong = true;
-
-                            CurrentSong.IsPlaying = false;
-                        }
-                        else
-                        {
-                            if (_mpc.MpdCurrentSong is not null)
-                            {
-                                // This means CurrentSong is already aquired by "currentsong" command.
-                                if (_mpc.MpdCurrentSong.Id == _mpc.MpdStatus.CurrentSongID)
-                                {
-                                    // Set Current(again) and NowPlaying.
-
-                                    // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
-                                    var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
-                                    if (curitem is not null)
-                                    {
-                                        CurrentSong = curitem;
-                                        CurrentSong.IsPlaying = true;
-                                        //CurrentSong.IsSelected = true;
-
-                                        if (IsAutoScrollToNowPlaying)
-                                            // use ScrollIntoViewAndSelect instead of ScrollIntoView
-                                            ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
-
-                                        // AlbumArt
-                                        if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
-                                        {
-                                            var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-                                            if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
-                                            {
-                                                if (res.AlbumCover?.SongFilePath == CurrentSong.File)
-                                                {
-                                                    AlbumCover = res.AlbumCover;
-                                                    AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
-                                                    SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
-                                                    CurrentSong.IsAlbumCoverNeedsUpdate = false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    /*
-                                    // the reason not to use CurrentSong is that it points different instance (set by "currentsong" command and currentqueue). 
-                                    _mpc.MpdCurrentSong.IsPlaying = true;
-
-                                    // just in case. < no. don't override.
-                                    //CurrentSong.IsPlaying = true;
-
-                                    // currentsong command does not return pos, so it's needed to be set.
-                                    CurrentSong.Index = _mpc.MpdCurrentSong.Index;
-
-                                    _mpc.MpdCurrentSong.IsSelected = true;
-
-                                    if (IsAutoScrollToNowPlaying)
-                                        // use ScrollIntoViewAndSelect instead of ScrollIntoView
-                                        ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
-                                    */
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("_mpc.MpdCurrentSong.Id != _mpc.MpdStatus.CurrentSongID. @UpdateCurrentQueue()");
-                                    isNeedToFindCurrentSong = true;
-                                }
-                            }
-                            else
-                            {
-                                //Debug.WriteLine("_mpc.MpdCurrentSong is null. @UpdateCurrentQueue()");
-                                isNeedToFindCurrentSong = true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //Debug.WriteLine("CurrentSong is null. @UpdateCurrentQueue()");
-                        isNeedToFindCurrentSong = true;
-                    }
-
-                    if (isNeedToFindCurrentSong)
-                    {
-                        // Set Current and NowPlaying.
-                        var curitem = Queue.FirstOrDefault(i => i.Id == _mpc.MpdStatus.CurrentSongID);
-                        if (curitem is not null)
-                        {
-                            //Debug.WriteLine($"Currentsong is set. {curitem.Title}. @UpdateCurrentQueue()");
-
-                            CurrentSong = curitem;
-                            CurrentSong.IsPlaying = true;
-                            //CurrentSong.IsSelected = true;
-
-                            if (IsAutoScrollToNowPlaying)
-                                // use ScrollIntoViewAndSelect instead of ScrollIntoView
-                                ScrollIntoViewAndSelect?.Invoke(this, CurrentSong.Index);
-
-                            // AlbumArt
-                            /*
-                            if (_mpc.AlbumCover.SongFilePath != curitem.File)
-                            {
-                                //IsAlbumArtVisible = false;
-                                //AlbumArt = _albumArtDefault;
-
-                                if (!string.IsNullOrEmpty(CurrentSong.File))
-                                {
-                                    //isAlbumArtChanged = true;
-                                }
-                            }
-                            */
-
-                            // AlbumArt
-                            if (IsDownloadAlbumArt && CurrentSong.IsAlbumCoverNeedsUpdate)
-                            {
-                                var res = await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-                                if ((res.AlbumCover.IsSuccess) && (!res.AlbumCover.IsDownloading) && (res.AlbumCover?.SongFilePath != null))
-                                {
-                                    if (res.AlbumCover?.SongFilePath == CurrentSong.File)
-                                    {
-                                        AlbumCover = res.AlbumCover;
-                                        AlbumArtBitmapSource = AlbumCover.AlbumImageSource;
-                                        SaveAlbumCoverImage(CurrentSong, res.AlbumCover);
-                                        CurrentSong.IsAlbumCoverNeedsUpdate = false;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Debug.WriteLine("Looks like starting up with playback status Stop. @UpdateCurrentQueue()");
-                            // just in case.
-                            CurrentSong = null;
-                            AlbumCover = null;
-                            //IsAlbumArtVisible = false;
-                            AlbumArtBitmapSource = _albumArtBitmapSourceDefault;
-                        }
-                    }
-
-                    // Add SortDescription to the Listview.
-                    UpdateProgress?.Invoke(this, "[UI] Queue list sorting...");
-                    //var collectionView = CollectionViewSource.GetDefaultView(Queue);
-                    //collectionView.SortDescriptions.Add(new SortDescription("Index", ListSortDirection.Ascending));
-                    //collectionView.Refresh();
-                    UpdateProgress?.Invoke(this, "");
-
-                    UpdateProgress?.Invoke(this, "");
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Exception@UpdateCurrentQueue: " + e.ToString());
-                    //StatusBarMessage = "Exception@UpdateCurrentQueue: " + e.Message;
-                    IsWorking = false;
-                    App.AppendErrorLog("Exception@UpdateCurrentQueue", e.ToString());
-
-                    return;
-                }
-                finally
-                {
-                    IsWorking = false;
-                    UpdateProgress?.Invoke(this, "");
-                }
-
-
-            }
-            /*
-            if (CurrentSong is not null)
-                if (IsDownloadAlbumArt)
-                    if (isAlbumArtChanged)
-                    {
-                        //UpdateProgress?.Invoke(this, "[UI] Queue QueryAlbumArt.");
-                        await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-                        //UpdateProgress?.Invoke(this, "");
-                    }
-            */
-            /*
-            if (IsDownloadAlbumArt)
-            {
-                //Debug.WriteLine("if (IsDownloadAlbumArt)");
-                if (CurrentSong != null)
-                {
-                    //Debug.WriteLine("if (CurrentSong != null)" + " " + CurrentSong.File);
-                    if (isAlbumArtChanged)
-                    {
-                        //Debug.WriteLine("if (isAlbumArtChanged)");
-                        await _mpc.MpdQueryAlbumArt(CurrentSong.File, IsDownloadAlbumArtEmbeddedUsingReadPicture);
-                    }
-                }
-            }
-            */
-
-
+            //(Application.Current as App)?.AppendErrorLog("Exception @UpdateCurrentQueue", ex.Message + $" StackTrace: {ex.StackTrace}, Source: {ex.Source}");
+            //(Application.Current as App)?.SaveErrorLog();
+        }
+        finally
+        {
             IsWorking = false;
-        });
+            UpdateProgress?.Invoke(this, string.Empty);
+            OnPropertyChanged(nameof(QueuePageSubTitleSongCount));
+        }
     }
 
     private async Task UpdateAlbumsAndArtistsAsync()
@@ -7940,8 +7809,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
         });
     }
-
-
 
     private static int CompareVersionString(string a, string b)
     {

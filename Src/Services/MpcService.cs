@@ -1,3 +1,4 @@
+using Avalonia.Controls.Shapes;
 using Avalonia.Threading;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services.Contracts;
@@ -3511,6 +3512,58 @@ public partial class MpcService : IMpcService, IDisposable
 
     #region == Response parser methods ==
 
+    // Tags MPD may repeat, joined with "/".
+    private static readonly HashSet<string> MultiValueTags =
+        new(StringComparer.OrdinalIgnoreCase) { "Genre", "Artist", "AlbumArtist", "Composer", "Performer" };
+
+    // Splits "Key: value" at the FIRST ':' only.
+    private static bool TryParseLine(string line, out string key, out string val)
+    {
+        var idx = line.IndexOf(':');
+        if (idx <= 0)
+        {
+            key = val = string.Empty;
+            return false;
+        }
+
+        key = line[..idx].Trim();
+        val = line[(idx + 1)..].TrimStart();   // everything after the first colon
+        return true;
+        /*
+        key = string.Empty;
+        val = string.Empty;
+
+        var idx = line.IndexOf(':');
+        if (idx <= 0)
+            return false;
+
+        key = line[..idx].Trim();
+
+        var start = idx + 1;
+        if (start < line.Length && line[start] == ' ')   // MPD puts exactly one space after the colon
+            start++;
+
+        val = line[start..];
+        return key.Length > 0;
+        */
+    }
+
+    private static void AddTag(Dictionary<string, string> values, string key, string val)
+    {
+        if (values.TryGetValue(key, out var existing))
+        {
+            if (MultiValueTags.Contains(key) && !string.Equals(existing, val, StringComparison.Ordinal))
+            {
+                values[key] = existing + "/" + val;
+            }
+            // else: keep the first value
+        }
+        else
+        {
+            values[key] = val;
+        }
+    }
+
     private Task<bool> ParseProtocolFeatures(string result)
     {
         if (MpdStop) { return Task.FromResult(false); }
@@ -3971,8 +4024,9 @@ public partial class MpcService : IMpcService, IDisposable
             var comparer = StringComparer.OrdinalIgnoreCase;
             Dictionary<string, string> songValues = new(comparer);
 
-            foreach (string value in resultLines)
+            foreach (string line in resultLines)
             {
+                /*
                 string[] statusValuePair = value.Trim().Split(':');
                 if (statusValuePair.Length > 1)
                 {
@@ -3988,6 +4042,12 @@ public partial class MpcService : IMpcService, IDisposable
                     {
                         songValues.TryAdd(statusValuePair[0].Trim(), value.Replace(statusValuePair[0].Trim() + ": ", ""));
                     }
+                }
+                */
+
+                if (TryParseLine(line, out var key, out var val))
+                {
+                    AddTag(songValues, key, val);
                 }
             }
 
@@ -4023,9 +4083,9 @@ public partial class MpcService : IMpcService, IDisposable
         return Task.FromResult(true);
     }
 
-    private Task<bool> ParsePlaylistInfo(string result)
+    private async Task<bool> ParsePlaylistInfo(string result)
     {
-        if (MpdStop) return Task.FromResult(false);
+        if (MpdStop) return false;
 
         bool isEmptyResult = false;
 
@@ -4045,16 +4105,6 @@ public partial class MpcService : IMpcService, IDisposable
                 isEmptyResult = true;
         }
 
-        if (isEmptyResult)
-        {
-            Dispatcher.UIThread.Post(() =>
-            //Application.Current.Dispatcher.Invoke(() =>
-            {
-                CurrentQueue.Clear();
-            });
-
-            return Task.FromResult(true);
-        }
 
         // aka Queue
 
@@ -4117,6 +4167,19 @@ public partial class MpcService : IMpcService, IDisposable
 
         try
         {
+
+            if (isEmptyResult)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                //Application.Current.Dispatcher.Invoke(() =>
+                {
+                    //CurrentQueue.Clear();
+                    CurrentQueue = [];   // replace, never mutate a published collection
+                });
+
+                return true;
+            }
+
             IsBusy?.Invoke(this, true);
 
             ObservableCollection<SongInfoEx> tmpQueue = [];
@@ -4134,10 +4197,11 @@ public partial class MpcService : IMpcService, IDisposable
             int i = 0;
 
             if (resultLines is null)
-                return Task.FromResult(true);
+                return true;
 
-            foreach (string value in resultLines)
+            foreach (string line in resultLines)
             {
+                /*
                 string[] statusValuePair = value.Trim().Split(':');
                 if (statusValuePair.Length > 1)
                 {
@@ -4155,7 +4219,8 @@ public partial class MpcService : IMpcService, IDisposable
 
                                 i++;
 
-                                MpcProgress?.Invoke(this, $"[Background] Parsing queue item... ({i})");
+                                //MpcProgress?.Invoke(this, $"[Background] Parsing queue item... ({i})");
+                                if (i % 100 == 0) MpcProgress?.Invoke(this, $"[Background] Parsing queue item... ({i})");
 
                                 songValues.Clear();
                             }
@@ -4169,6 +4234,34 @@ public partial class MpcService : IMpcService, IDisposable
                     {
                         songValues.TryAdd(statusValuePair[0].Trim(), value.Replace(statusValuePair[0].Trim() + ": ", ""));
                     }
+                }
+                */
+                if (!TryParseLine(line, out var key, out var val))
+                    continue;
+
+                if (key.Equals("file", StringComparison.OrdinalIgnoreCase))
+                {
+                    // A new "file" line starts the next song. Finish the previous one first.
+                    if (songValues.ContainsKey("Id"))
+                    {
+                        SongInfoEx? sng = FillSongInfoEx(songValues, i);
+
+                        if (sng is not null)
+                        {
+                            tmpQueue.Add(sng);
+                            i++;
+
+                            if (i % 100 == 0)
+                                MpcProgress?.Invoke(this, $"[Background] Parsing queue item... ({i})");
+                        }
+                    }
+
+                    songValues.Clear();
+                    songValues[key] = val;   // "file" always starts a fresh song
+                }
+                else
+                {
+                    AddTag(songValues, key, val);
                 }
             }
 
@@ -4197,7 +4290,7 @@ public partial class MpcService : IMpcService, IDisposable
             MpcProgress?.Invoke(this, "[Background] Updating internal queue list...");
 
             //Application.Current.Dispatcher.Invoke((Action)(() =>
-            Dispatcher.UIThread.Post(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 //CurrentQueue.Clear();
                 //_queue = tmpQueue;
@@ -4216,14 +4309,14 @@ public partial class MpcService : IMpcService, IDisposable
                 App.AppendErrorLog("Exception@MPC@ParsePlaylistInfo", ex.Message);
             });
 
-            return Task.FromResult(false);
+            return false;
         }
         finally
         {
             IsBusy?.Invoke(this, false);
         }
 
-        return Task.FromResult(true);
+        return true;
     }
 
     private SongInfoEx? FillSongInfoEx(Dictionary<string, string> songValues, int i)
@@ -4783,6 +4876,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (string line in resultLines)
             {
+                /*
                 //Debug.WriteLine(line);
                 string[] valuePair = line.Split(':');
                 if (valuePair.Length > 1)
@@ -4817,6 +4911,37 @@ public partial class MpcService : IMpcService, IDisposable
                         songValues.TryAdd(valuePair[0].Trim(), line.Replace(valuePair[0].Trim() + ": ", ""));
 
                     }
+                }
+                */
+                if (!TryParseLine(line, out var key, out var val))
+                    continue;
+
+                if (key.Equals("file", StringComparison.OrdinalIgnoreCase))
+                {
+                    // A new "file" line starts the next song. Finish the previous one first.
+                    if (songValues.ContainsKey("file"))
+                    {
+                        SongInfo? sng = FillSongInfo(songValues, i);
+
+                        if (sng is not null)
+                        {
+                            //tmpQueue.Add(sng);
+
+                            i++;
+
+                            res.Add(sng);
+
+                            if (i % 100 == 0)
+                                MpcProgress?.Invoke(this, $"[Background] Parsing search result item... ({i})");
+                        }
+                    }
+
+                    songValues.Clear();
+                    songValues[key] = val;   // "file" always starts a fresh song
+                }
+                else
+                {
+                    AddTag(songValues, key, val);
                 }
             }
 
@@ -4908,6 +5033,7 @@ public partial class MpcService : IMpcService, IDisposable
 
             foreach (string line in resultLines)
             {
+                /*
                 string[] valuePair = line.Split(':');
                 if (valuePair.Length > 1)
                 {
@@ -4941,20 +5067,34 @@ public partial class MpcService : IMpcService, IDisposable
                         //SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].TrimStart() + ": ", ""));
                         songValues.TryAdd(valuePair[0].Trim(), line.Replace(valuePair[0].Trim() + ": ", ""));
                     }
-                    /*
-                    if (!SongValues.ContainsKey(ValuePair[0].Trim()))
+                }
+                */
+                if (!TryParseLine(line, out var key, out var val))
+                    continue;
+
+                if (key.Equals("file", StringComparison.OrdinalIgnoreCase))
+                {
+                    // A new "file" line starts the next song. Finish the previous one first.
+                    if (songValues.ContainsKey("file"))
                     {
-                        SongValues.Add(ValuePair[0].Trim(), line.Replace(ValuePair[0].Trim() + ": ", ""));
-                    }
-                    else
-                    {
-                        if (ValuePair[0].Trim() == "Genre")
+                        SongInfo? sng = FillSongInfo(songValues, i);
+
+                        if (sng is not null)
                         {
-                            SongValues["Genre"] = SongValues["Genre"] + "/" + line.Replace(ValuePair[0].Trim() + ": ", "");
+                            songList.Add(sng);
+                            i++;
+
+                            if (i % 100 == 0)
+                                MpcProgress?.Invoke(this, $"[Background] Parsing playlist item... ({i})");
                         }
                     }
-                    */
 
+                    songValues.Clear();
+                    songValues[key] = val;   // "file" always starts a fresh song
+                }
+                else
+                {
+                    AddTag(songValues, key, val);
                 }
             }
 

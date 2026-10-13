@@ -9,11 +9,19 @@ internal static class TaskExtensions
     /// <summary>
     /// Observes a task that nobody awaits. Cancellation is ignored; other exceptions are logged.
     /// </summary>
-    public static async Task SafeAsync(this Task task, string origin)
+    public static async Task SafeAsync(this Task task, string origin, bool continueOnCapturedContext = false)
     {
         try
         {
-            await task.ConfigureAwait(true);
+            //
+            if (continueOnCapturedContext)
+            {
+                await task.ConfigureAwait(false);
+            }
+            else
+            {
+                await task;// no ConfigureAwait(false): continuations stay on the UI thread
+            }
         }
         catch (OperationCanceledException)
         {
