@@ -13,6 +13,7 @@
 		Title="MPDCtrlX"
 		WindowDecorations="Full"
 		ExtendClientAreaToDecorationsHint="True"
+		Background="Transparent"
 		MinWidth="320" 
 		MinHeight="460"
 		Activated="Window_Activated"
@@ -51,8 +52,8 @@
 	</Window.KeyBindings>
 
 	<Grid x:Name="MainGrid">
-		<Border x:Name="BackgroundLayerBorder" Grid.Row="0" Grid.RowSpan="5" Background="#131313" Opacity="1" IsVisible="{OnPlatform Default=False, Windows=False, Linux=True, x:TypeArguments=x:Boolean}"></Border>
-		<Grid x:Name="ContentGrid" Margin="0" RowDefinitions="*,Auto,1,128,Auto,Auto" WindowDecorationProperties.ElementRole="None">
+		<Border x:Name="BackgroundLayerBorder" Grid.Row="0" IsVisible="{OnPlatform Default=False, Windows=False, Linux=True, x:TypeArguments=x:Boolean}"></Border>
+		<Grid x:Name="ContentGrid" Grid.Row="0" RowDefinitions="*,Auto,1,128,Auto,Auto" Margin="0" Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
 
 			<!-- NavigationView -->
 			<ui:FANavigationView Grid.Row="0" Margin="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Visible">
@@ -115,7 +116,7 @@
 				The Location in Documentation: While it doesn't have its own dedicated page in the side navigation, the cache settings are documented directly inside the Frame documentation page (which you can access via the FluentAvalonia Frame Control Docs link in that directory).
 				By utilizing attached properties, you can convert any standard Avalonia control into a cacheable page inside the FAFrame without breaking Avalonia's core control hierarchy.
 				-->
-				<ui:FAFrame Grid.Row="1" x:Name="RootFrame" WindowDecorationProperties.ElementRole="None"/>
+				<ui:FAFrame Grid.Row="1" x:Name="RootFrame"/>
 			
 			</ui:FANavigationView>
 

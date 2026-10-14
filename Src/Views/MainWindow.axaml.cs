@@ -29,17 +29,16 @@ internal sealed partial class MainWindow : Window
     {
         this.DataContext = vm;
 
-        InitializeComponent();
-
+        bool isMax = false;
         if (vm.WindowState == WindowState.Maximized)
         {
             this.WindowState = WindowState.Maximized;
-            UpdateWindowMargins(true);
+            isMax = true;
         }
         else
         {
             this.WindowState = WindowState.Normal;
-            UpdateWindowMargins(false);
+            isMax = false;
 
             if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
             {
@@ -57,6 +56,8 @@ internal sealed partial class MainWindow : Window
             }
         }
 
+        InitializeComponent();
+
         //this.ContentFrame.Navigate(typeof(MainView));
         this.NavigateViewControl.Content = App.GetService<MainView>();
 
@@ -69,6 +70,7 @@ internal sealed partial class MainWindow : Window
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
+            UpdateWindowMargins(isMax);
             UpdateThemeBackground(ActualThemeVariant);
         }
     }
@@ -170,7 +172,7 @@ internal sealed partial class MainWindow : Window
             if (theme == ThemeVariant.Dark)
             {
                 //this.TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
-                this.BackgroundLayerBorder.Background = new SolidColorBrush(Color.Parse("#121212"));
+                this.BackgroundLayerBorder.Background = new SolidColorBrush(Color.Parse("#202020"));
             }
             else if (theme == ThemeVariant.Light)
             {
@@ -208,8 +210,8 @@ internal sealed partial class MainWindow : Window
             {
                 // It's actually 10px on all sides, but the window border is 2px, so the total is 10px.
                 // This covers the window border and makes it look little sophisticated.
-                this.ContentGrid.Margin = new Thickness(8, 8, 8, 8);
-                this.BackgroundLayerBorder.Margin = new Thickness(9, 9, 9, 9);
+                this.ContentGrid.Margin = new Thickness(9);
+                this.BackgroundLayerBorder.Margin = new Thickness(7);
             }
         }
     }
