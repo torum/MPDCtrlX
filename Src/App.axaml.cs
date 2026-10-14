@@ -5,7 +5,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
@@ -37,8 +36,8 @@ namespace MPDCtrlX
         private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
         public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
-        private Task? _appHostStartTask;
-        private readonly CancellationTokenSource _appHostStartCts = new();
+        //private Task? _appHostStartTask;
+        //private readonly CancellationTokenSource _appHostStartCts = new();
         public App()
         {
             // Platform specific Cache folder path
@@ -91,6 +90,33 @@ namespace MPDCtrlX
                 SaveErrorLog();
             }
 
+            var services = new ServiceCollection();
+
+            services.AddSingleton<MainWindow>();
+            services.AddSingleton<MainView>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<IMpcService, MpcService>();
+            services.AddTransient<IMpcBinaryService, MpcBinaryService>();
+            services.AddSingleton<IDialogService, DialogService>();
+
+            services.AddSingleton<MprisPlayerController>();
+            services.AddSingleton<MprisPathMethodHandler>();
+            services.AddSingleton<IPathMethodHandler>(provider => provider.GetRequiredService<MprisPathMethodHandler>());
+            //services.AddHostedService<MprisDbusHostedService>();
+            services.AddSingleton<MprisDbusHostedService>();
+
+            services.AddSingleton<QueuePage>();
+            services.AddSingleton<SearchPage>();
+            services.AddSingleton<FilesPage>();
+            services.AddSingleton<PlaylistItemPage>();
+            services.AddSingleton<AlbumPage>();
+            services.AddSingleton<ArtistPage>();
+            services.AddSingleton<SettingsPage>();
+            services.AddTransient<InitWindow>();
+
+            // Build the provider
+            ServiceProvider = services.BuildServiceProvider();
+            /*
             AppHost = Microsoft.Extensions.Hosting.Host
                     .CreateDefaultBuilder()
                     .UseContentRoot(AppContext.BaseDirectory)
@@ -129,13 +155,24 @@ namespace MPDCtrlX
                         services.AddTransient<InitWindow>();
                     })
                     .Build();
+            */
         }
 
-        public IHost AppHost { get; }
+        //public IHost AppHost { get; }
+        public IServiceProvider ServiceProvider { get; private set; } = null!;
 
         public static T GetService<T>() where T : class
         {
-            return ((App.Current as App)!.AppHost.Services.GetRequiredService<T>());
+            /*
+            if ((App.Current as App)!.ServiceProvider is not { })
+            {
+                return null;
+            }
+            */
+
+            return (App.Current as App)!.ServiceProvider.GetRequiredService<T>();
+
+            //return ((App.Current as App)!.AppHost.Services.GetRequiredService<T>());
             /*
             if ((App.Current as App)!.AppHost!.Services.GetService(typeof(T)) is not T service)
             {
@@ -170,10 +207,10 @@ namespace MPDCtrlX
                 //Dispatcher.UIThread.UnhandledException += OnUnhandledException;
                 RegisterGlobalExceptionHandlers();
 
-                _appHostStartTask = StartAppHostAsync();
-                desktop.MainWindow = App.GetService<MainWindow>();
+                //_appHostStartTask = StartAppHostAsync();
+                desktop.MainWindow = ServiceProvider.GetRequiredService<MainWindow>();//App.GetService<MainWindow>();
                 //desktop.MainWindow.Closing += OnMainWindowClosing;
-                desktop.Exit += OnDesktopExit; // Fallback for shutdowns that bypass window closing.
+                //desktop.Exit += OnDesktopExit; // Fallback for shutdowns that bypass window closing.
                 /*
                 desktop.MainWindow.Closed += async (sender, e) =>
                 {
@@ -191,13 +228,17 @@ namespace MPDCtrlX
                     }
                 };
                 */
-                desktop.MainWindow.ShowActivated = true;
-                desktop.MainWindow.Show();
+
+                // In Avalonia UI, don't show or activate the main window.
+                // Let the Avalonia UI framework handle the window activation when the app is ready.
+                //desktop.MainWindow.ShowActivated = true;
+                //desktop.MainWindow.Show();
             }
 
             base.OnFrameworkInitializationCompleted();
         }
 
+        /*
         private async Task StartAppHostAsync()
         {
             try
@@ -215,7 +256,9 @@ namespace MPDCtrlX
                 SaveErrorLog();
             }
         }
+        */
 
+        /*
         private bool _isShuttingDown;
         public bool IsShuttingDown => _isShuttingDown;
         private bool _hostDisposed;
@@ -223,22 +266,6 @@ namespace MPDCtrlX
         // Fallback: Shutdown() from code, OS logout, SIGTERM, etc.
         private void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
         {
-            /*
-            try
-            {
-                if (_appHostStartTask is not null)
-                {
-                    await _appHostStartTask;
-                }
-
-                await AppHost.StopAsync();
-            }
-            finally
-            {
-                AppHost.Dispose();
-                System.Diagnostics.Debug.WriteLine("AppHost disposed.");
-            }
-            */
             if (_isShuttingDown)
                 return;
 
@@ -251,34 +278,7 @@ namespace MPDCtrlX
                 SaveErrorLog();
             }
         }
-        /*
-        private async void OnMainWindowClosing(object? sender, WindowClosingEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("OnMainWindowClosing @App");
-            if (_isShuttingDown)
-            {
-                return; // Second pass, triggered by Shutdown(). Let the window close.
-            }
 
-            _isShuttingDown = true;
-            e.Cancel = true; // Keep the process alive while the host stops.
-
-            // Hide immediately so the user doesn't think the app froze.
-            if (sender is Window window)
-            {
-                window.Hide();
-            }
-
-            try
-            {
-                await StopAndDisposeHostAsync();
-            }
-            finally
-            {
-                (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
-            }
-        }
-        */
         /// <summary>
         /// Stops and disposes the host, then shuts down the application.
         /// Called from MainWindow.OnClosing.
@@ -308,29 +308,7 @@ namespace MPDCtrlX
             {
                 return;
             }
-            /*
-            try
-            {
-                if (_appHostStartTask is not null)
-                {
-                    await _appHostStartTask.ConfigureAwait(false);
-                }
 
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                await AppHost.StopAsync(cts.Token).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                AppendErrorLog("AppHost.StopAsync", ex.ToString());
-                SaveErrorLog();
-            }
-            finally
-            {
-                _hostDisposed = true;
-                AppHost.Dispose();
-                System.Diagnostics.Debug.WriteLine("AppHost disposed.");
-            }
-            */
             try
             {
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -368,6 +346,7 @@ namespace MPDCtrlX
                 System.Diagnostics.Debug.WriteLine("AppHost disposed.");
             }
         }
+        */
 
         // Log file.
         private static readonly StringBuilder _errortxt = new();
@@ -457,7 +436,7 @@ namespace MPDCtrlX
 
         public void Dispose()
         {
-            _appHostStartCts?.Dispose(); // Safe to call more than once.
+            //_appHostStartCts?.Dispose(); // Safe to call more than once.
             GC.SuppressFinalize(this);  // Satisfies CA1816.
         }
     }

@@ -38,7 +38,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly InitWindow _initWin;
     private readonly IDialogService _dialog;
     private readonly IMpcService _mpc;
-    private readonly ILogger<MainViewModel> _logger;
+    private readonly MprisDbusHostedService _mprisDbusHostedService;
 
     #region == Events ==
 
@@ -74,12 +74,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, ILogger<MainViewModel> logger)
+    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, MprisDbusHostedService mprisDbusHostedService)
     {
         _mpc = mpcService;
         _initWin = initWin;
         _dialog = dialogService;
-        _logger = logger;
+        _mprisDbusHostedService = mprisDbusHostedService;
 
         #region == Subscribe to events ==
 
@@ -5436,7 +5436,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
                 //var InitWin = new InitWindow();// use DI.
                 _initWin.DataContext = this;
-                await _initWin.ShowDialog(owner: App.GetService<MainWindow>());
+
+                //var owner = App.GetService<MainWindow>();
+                if (sender is Window owner)
+                {
+                    await _initWin.ShowDialog(owner: owner);
+                }
 
                 return;
             }
@@ -5735,18 +5740,21 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     // Closing
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
+        Debug.WriteLine("OnWindowClosing");
         if (sender is Window w)
         {
-            Debug.WriteLine("OnWindowClosing");
             SaveSettings(w);
         }
     }
 
-
-
     public void OnWindowClosed(object? sender, EventArgs e)
     {
-        //
+        Debug.WriteLine("OnWindowClosed");
+        if (sender is Window w)
+        {
+            // In Avalonia UI, it seems we need to explicitly call Dispose() to clean up resources when the window is closed.
+            Dispose();
+        }
     }
 
     #endregion
@@ -7919,13 +7927,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             {
                 MpdVersion = _mpc.MpdVerText;
 
-                //Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
-                if (_logger.IsEnabled(LogLevel.Information))
-                {
-#pragma warning disable CA1848 // Use the LoggerMessage delegates
-                    _logger.LogInformation("OK MPD {MPDVer} @OnMpdIdleConnected.", MpdVersion);
-#pragma warning restore CA1848 // Use the LoggerMessage delegates
-                }
+                System.Diagnostics.Debug.WriteLine($"OK MPD {MpdVersion} @OnMpdIdleConnected");
+
                 //MpdStatusMessage = MpdVersion;// + ": " + MPDCtrlX.Properties.Resources.MPD_StatusConnected;
 
                 MpdStatusButton = _pathMpdOkButton;
@@ -7979,6 +7982,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             // 
             //await Task.Run(LoadInitialData, _cts.Token);
             await LoadInitialDataAsync();
+
+            //
+            await _mprisDbusHostedService.StartAsync(_cts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -11754,24 +11760,54 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             {
                 _cts?.Cancel();
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @OnWindowClosing() _mpc.Cancel() {ex}");
+                if (IsSaveLog)
+                {
+                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+                }
+            }
             finally
             {
                 if (IsConnected)
                 {
                     // TODO: This (Dispose()) maybe too late to cancel the tasks. Need to cancel them before Dispose() is called such as Window.Closed.
-                    _mpc.MpdStop = true;
-                    _mpc.MpdDisconnect(false);
+                    _mpc?.MpdStop = true;
+                    _mpc?.MpdDisconnect(false);
                 }
+                _mpc?.Dispose();
             }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+                
+            }
         }
         finally
         {
-            _cts?.Dispose();
+            try
+            {
+                _cts?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @OnWindowClosing() _cts.Dispose() {ex}");
+                if (IsSaveLog)
+                {
+                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+                }
+            }
+                   
             Debug.WriteLine("MainViewModel disposed.");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(App.SaveErrorLog);
+            }
         }
 
         GC.SuppressFinalize(this);

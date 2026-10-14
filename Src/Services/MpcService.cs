@@ -5324,7 +5324,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
         */
 
-
+        Debug.WriteLine("MpdConnection is disconnected.");
     }
 
     private static void DisposeConnection(ref TcpClient connection, ref StreamReader? reader, ref StreamWriter? writer)
@@ -5351,9 +5351,27 @@ public partial class MpcService : IMpcService, IDisposable
 
     public void Dispose()
     {
-        _cts?.Dispose();
-        _cts = null;
-        Debug.WriteLine("MpcService disposed.");
+        try
+        {
+            _cts?.Dispose();
+            _cts = null;
+            Debug.WriteLine("MpcService disposed.");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @MpcService.Dispose(): {ex}");
+        }
+        finally
+        {
+            try
+            {
+                _binaryDownloader.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @MpcService.Dispose() _binaryDownloader: {ex}");
+            }
+        }
 
         GC.SuppressFinalize(this);
     }

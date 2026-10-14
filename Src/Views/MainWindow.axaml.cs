@@ -128,6 +128,7 @@ internal sealed partial class MainWindow : Window
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
+        /*
         var app = (App)Application.Current!;
 
         // Second pass, triggered by Shutdown(). Let the window close.
@@ -155,11 +156,12 @@ internal sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             Debug.WriteLine($"Exception @OnClosing {ex}");
-            try { App.AppendErrorLog("Exception @MainWindow.OnClosing", ex.ToString()); } catch { /* never throw from here */ }
+            try { App.AppendErrorLog("Exception @MainWindow.OnClosing", ex.ToString()); } catch {  }
 
             // The window is hidden and the close is cancelled, so without this the process would linger.
             Environment.Exit(1);
         }
+        */
     }
 
     private void UpdateThemeBackground(ThemeVariant theme)

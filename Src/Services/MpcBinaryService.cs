@@ -1306,6 +1306,8 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
         _cts?.Dispose();
         _cts = null;
+
+        Debug.WriteLine("MpdBinaryConnection disconnected.");
     }
 
     private static void DisposeConnection(ref TcpClient connection, ref StreamReader? reader, ref StreamWriter? writer)

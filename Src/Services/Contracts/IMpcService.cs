@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace MPDCtrlX.Services.Contracts;
 
-public interface IMpcService
+public interface IMpcService : IDisposable
 {
     //AlbumImage AlbumCover { get; }
     ConnectionStatus ConnectionState { get; }

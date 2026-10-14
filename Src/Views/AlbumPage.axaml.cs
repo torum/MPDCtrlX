@@ -123,7 +123,7 @@ internal sealed partial class AlbumPage : UserControl
         }
 
         var vm = App.GetService<MainViewModel>();
-        vm.VisibleViewportItemsAlbumEx = visibleItems;
+        vm?.VisibleViewportItemsAlbumEx = visibleItems;
     }
 
 

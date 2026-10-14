@@ -2,7 +2,7 @@ using MPDCtrlX.Models;
 
 namespace MPDCtrlX.Services.Contracts;
 
-public interface IMpcBinaryService
+public interface IMpcBinaryService : IDisposable
 {
     //AlbumImage AlbumCover { get; }
 
