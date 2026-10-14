@@ -111,11 +111,18 @@ internal sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
+            .UseWaylandWithFallback()
+            .With(new WaylandPlatformOptions()
+            {
+                AppId = "MPDCtrlX",  // Matches your .desktop launcher file
+                UseDmabufSwapchain = true,     // Enables high-performance rendering
+                UseGLibMainLoop = true         // Integrates with Linux desktop loops
+            })
+            .WithInterFont();
             //.With(new AvaloniaNativePlatformOptions { OverlayPopups = true })
             //.With(new Win32PlatformOptions { OverlayPopups = true })
             //.With(new X11PlatformOptions { OverlayPopups = true })
-            .LogToTrace(LogEventLevel.Error);
+            //.LogToTrace(LogEventLevel.Error);
 
     private static void OnProcessExit(object? sender, EventArgs e)
     {

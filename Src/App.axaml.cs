@@ -135,13 +135,15 @@ namespace MPDCtrlX
 
         public static T GetService<T>() where T : class
         {
+            return ((App.Current as App)!.AppHost.Services.GetRequiredService<T>());
+            /*
             if ((App.Current as App)!.AppHost!.Services.GetService(typeof(T)) is not T service)
             {
                 throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
             }
 
             return service;
-
+            */
         }
 
         public override void Initialize()

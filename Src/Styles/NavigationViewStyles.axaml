@@ -353,7 +353,7 @@
                             </SplitView.Pane>
 
                             <SplitView.Content>
-                                <Grid RowDefinitions="{OnPlatform Default='0,*', Windows='32,*'}">
+                                <Grid RowDefinitions="{OnPlatform Default='32,*', Windows='32,*'}">
                                     <!-- Added for v12.0.2 -->
                                     <Border Grid.Row="0" 
                                             WindowDecorationProperties.ElementRole="TitleBar" 

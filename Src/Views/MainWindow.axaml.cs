@@ -2,8 +2,10 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using MPDCtrlX.Models;
@@ -20,9 +22,6 @@ internal sealed partial class MainWindow : Window
     public int WinRestoreTop { get; private set; } = 100;
     public int WinRestoreLeft { get; private set; } = 100;
 
-    public event EventHandler<string>? DebugCommandHandler;// = (sender, arg) => this.OnDebugCommandOutput(arg);
-    public event EventHandler<string>? DebugIdleHandler;// = (sender, arg) => this.OnDebugIdleOutput(arg);
-
     // Optional parameterless constructor for XAML Previewer
     public MainWindow() { InitializeComponent(); }
 
@@ -30,13 +29,17 @@ internal sealed partial class MainWindow : Window
     {
         this.DataContext = vm;
 
+        InitializeComponent();
+
         if (vm.WindowState == WindowState.Maximized)
         {
             this.WindowState = WindowState.Maximized;
+            UpdateWindowMargins(true);
         }
         else
         {
             this.WindowState = WindowState.Normal;
+            UpdateWindowMargins(false);
 
             if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
             {
@@ -54,8 +57,6 @@ internal sealed partial class MainWindow : Window
             }
         }
 
-        InitializeComponent();
-
         //this.ContentFrame.Navigate(typeof(MainView));
         this.NavigateViewControl.Content = App.GetService<MainView>();
 
@@ -65,6 +66,11 @@ internal sealed partial class MainWindow : Window
 
         this.AddHandler(InputElement.KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);
         this.AddHandler(InputElement.KeyUpEvent, OnPreviewKeyUp, RoutingStrategies.Tunnel);
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            UpdateThemeBackground(ActualThemeVariant);
+        }
     }
 
     protected override void OnOpened(EventArgs e)
@@ -82,11 +88,11 @@ internal sealed partial class MainWindow : Window
         this.Closing += vm.OnWindowClosing;
         this.Closed += vm.OnWindowClosed;
 
+        this.ActualThemeVariantChanged += OnActualThemeVariantChanged;
+        this.PropertyChanged += this.OnWindow_PropertyChanged;
         vm.DebugWindowShowHide += OnDebugWindowShowHide;
-        DebugCommandHandler = (sender, arg) => this.OnDebugCommandOutput(arg);
-        vm.DebugCommandOutput += DebugCommandHandler;
-        DebugIdleHandler = (sender, arg) => this.OnDebugIdleOutput(arg);
-        vm.DebugIdleOutput += DebugIdleHandler;
+        vm.DebugCommandOutput += OnDebugCommandOutput;
+        vm.DebugIdleOutput += OnDebugIdleOutput;
         vm.GoToSettingsPage += OnGoToSettingsPage;
         vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
         vm.WorkingStateChanged += OnWorkingStateChanged;
@@ -107,9 +113,11 @@ internal sealed partial class MainWindow : Window
         this.Closing -= vm.OnWindowClosing;
         this.Closed -= vm.OnWindowClosed;
 
+        this.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
+        this.PropertyChanged -= this.OnWindow_PropertyChanged;
         vm.DebugWindowShowHide -= OnDebugWindowShowHide;
-        vm.DebugCommandOutput -= DebugCommandHandler;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
-        vm.DebugIdleOutput -= DebugIdleHandler;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
+        vm.DebugCommandOutput -= OnDebugCommandOutput;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
+        vm.DebugIdleOutput -= OnDebugIdleOutput;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
         vm.GoToSettingsPage -= OnGoToSettingsPage;
         vm.UserCanExecuteChanged -= OnUserCanExecuteChanged;
         vm.WorkingStateChanged -= OnWorkingStateChanged;
@@ -149,6 +157,99 @@ internal sealed partial class MainWindow : Window
 
             // The window is hidden and the close is cancelled, so without this the process would linger.
             Environment.Exit(1);
+        }
+    }
+
+    private void UpdateThemeBackground(ThemeVariant theme)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            this.BackgroundLayerBorder.IsVisible = true;
+            this.BackgroundLayerBorder.Opacity = 1;
+
+            if (theme == ThemeVariant.Dark)
+            {
+                //this.TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
+                this.BackgroundLayerBorder.Background = new SolidColorBrush(Color.Parse("#121212"));
+            }
+            else if (theme == ThemeVariant.Light)
+            {
+                //this.TransparencyLevelHint = [WindowTransparencyLevel.Blur];
+                this.BackgroundLayerBorder.Background = new SolidColorBrush(Color.Parse("#EEEEEE"));
+            }
+            else if (theme == ThemeVariant.Default)
+            {
+                //this.TransparencyLevelHint = [WindowTransparencyLevel.AcrylicBlur];
+                this.BackgroundLayerBorder.Background = new SolidColorBrush(Color.Parse("#121212"));
+            }
+        }
+    }
+
+    private void OnActualThemeVariantChanged(object? sender, EventArgs e)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
+        { 
+            UpdateThemeBackground(ActualThemeVariant);
+        }
+    }
+
+    private void UpdateWindowMargins(bool isMax)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            if (isMax)
+            {
+                // It's actually 10px on all sides, but the window border is 2px, so the total is 10px.
+                // This covers the window border and makes it look little sophisticated.
+                this.ContentGrid.Margin = new Thickness(0, 0, 0, 0);
+                this.BackgroundLayerBorder.Margin = new Thickness(0, 0, 0, 0);
+            }
+            else
+            {
+                // It's actually 10px on all sides, but the window border is 2px, so the total is 10px.
+                // This covers the window border and makes it look little sophisticated.
+                this.ContentGrid.Margin = new Thickness(8, 8, 8, 8);
+                this.BackgroundLayerBorder.Margin = new Thickness(9, 9, 9, 9);
+            }
+        }
+    }
+
+    private void OnWindow_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            if (sender is not Window)
+            {
+                return;
+            }
+            if (e.Property.Name != nameof(WindowState))
+            {
+                return;
+            }
+
+            // For linux.
+            if (e.NewValue != null && e.OldValue != null)
+            {
+                if (e.NewValue.Equals(e.OldValue))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                return;
+            }
+
+            //Debug.WriteLine($"WindowState changed from {e.OldValue} to {e.NewValue}");
+
+            if (e.NewValue is WindowState.FullScreen || e.NewValue is WindowState.Maximized )
+            {
+                UpdateWindowMargins(true);
+            }
+            else
+            {
+                UpdateWindowMargins(false);
+            }
         }
     }
 
@@ -338,7 +439,7 @@ internal sealed partial class MainWindow : Window
     }
 
     //private readonly StringBuilder _sbCommandOutput = new();
-    public void OnDebugCommandOutput(string arg)
+    public void OnDebugCommandOutput(object? sender, string arg)
     {
         // AppendText() is much faster than data binding.
         //DebugCommandTextBox.AppendText(arg);
@@ -352,7 +453,7 @@ internal sealed partial class MainWindow : Window
     }
 
     //private readonly StringBuilder _sbIdleOutput = new();
-    public void OnDebugIdleOutput(string arg)
+    public void OnDebugIdleOutput(object? sender, string arg)
     {
         /*
         // AppendText() is much faster than data binding.
