@@ -61,7 +61,7 @@
 					<Border WindowDecorationProperties.ElementRole="TitleBar" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
 						<Grid ColumnDefinitions="*,Auto">
 							<!-- App Icon and Title hide when x11 -->
-							<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="{OnPlatform Default=False, Windows=True, Linux=True, x:TypeArguments=x:Boolean}">
+							<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,12,0" IsVisible="{OnPlatform Default=False, Windows=True, Linux=True, x:TypeArguments=x:Boolean}">
 								<Image x:Name="ImageAppIcon" Width="16" Height="16" Margin="0,0,6,0" Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 								<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold" Margin="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 							</StackPanel>

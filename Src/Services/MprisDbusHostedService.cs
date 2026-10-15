@@ -82,6 +82,11 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
 
     public async Task StopAsync()//CancellationToken cancellationToken
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            return;
+        }
+
         var connection = _connection;
         _connection = null;
 
