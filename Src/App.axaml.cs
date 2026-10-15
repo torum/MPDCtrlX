@@ -105,8 +105,10 @@ namespace MPDCtrlX
             //services.AddHostedService<MprisDbusHostedService>();
             services.AddSingleton<MprisDbusHostedService>();
 
+            // This is not good for Wayland. There would be an extra invisible window created.
+            // So, we will not use this for now.
+            //services.AddTransient<InitWindow>();
 
-            services.AddTransient<InitWindow>();
             services.AddSingleton<QueuePage>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<FilesPage>();
@@ -119,6 +121,7 @@ namespace MPDCtrlX
             ServiceProvider = services.BuildServiceProvider();
 
         }
+
         public IServiceProvider ServiceProvider { get; private set; } = null!;
 
         public static T GetService<T>() where T : class

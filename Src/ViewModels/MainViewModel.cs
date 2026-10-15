@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentAvalonia.Styling;
-using Microsoft.Extensions.Logging;
 using MPDCtrlX.Common;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services;
@@ -19,13 +18,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0028
@@ -35,11 +29,11 @@ namespace MPDCtrlX.ViewModels;
 internal sealed partial class MainViewModel : ObservableObject, IDisposable
 {
     private readonly CancellationTokenSource _cts = new();
-    private readonly InitWindow _initWin;
     private readonly IDialogService _dialog;
     private readonly IMpcService _mpc;
     private readonly IConfigurationService _configurationService;
     private readonly MprisDbusHostedService _mprisDbusHostedService;
+    private InitWindow? _initWin;
 
     #region == Events ==
 
@@ -75,10 +69,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, IConfigurationService configurationService, MprisDbusHostedService mprisDbusHostedService)
+    public MainViewModel(IMpcService mpcService, IDialogService dialogService, IConfigurationService configurationService, MprisDbusHostedService mprisDbusHostedService)
     {
         _mpc = mpcService;
-        _initWin = initWin;
         _dialog = dialogService;
         _configurationService = configurationService;
         _mprisDbusHostedService = mprisDbusHostedService;
@@ -3965,8 +3958,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 // Show connection setting
                 //IsConnectionSettingShow = true;
 
-                //var InitWin = new InitWindow();// use DI.
-                _initWin.DataContext = this;
+                // Do not use DI. Not good in Wayland environment. Use DI for non-UI classes only.
+                _initWin = new()
+                {
+                    DataContext = this
+                };
 
                 //var owner = App.GetService<MainWindow>();
                 if (sender is Window owner)
@@ -6260,6 +6256,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                             }
                         }
                         _initWin.Close();
+                        _initWin = null;
                     }
                 }
             });
