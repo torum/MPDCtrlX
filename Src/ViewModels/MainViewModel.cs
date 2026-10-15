@@ -38,6 +38,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly InitWindow _initWin;
     private readonly IDialogService _dialog;
     private readonly IMpcService _mpc;
+    private readonly IConfigurationService _configurationService;
     private readonly MprisDbusHostedService _mprisDbusHostedService;
 
     #region == Events ==
@@ -74,11 +75,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, MprisDbusHostedService mprisDbusHostedService)
+    public MainViewModel(IMpcService mpcService, InitWindow initWin, IDialogService dialogService, IConfigurationService configurationService, MprisDbusHostedService mprisDbusHostedService)
     {
         _mpc = mpcService;
         _initWin = initWin;
         _dialog = dialogService;
+        _configurationService = configurationService;
         _mprisDbusHostedService = mprisDbusHostedService;
 
         #region == Subscribe to events ==
@@ -116,25 +118,15 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         #endregion
 
-        #region == Load settings ==
-
-        if (!System.IO.Directory.Exists(App.AppDataFolder))
-        {
-            System.IO.Directory.CreateDirectory(App.AppDataFolder);
-        }
-
-        LoadSettings();
-
-        #endregion
-
         #region == Themes ==
 
-        // Sets default if not set in "load settings".
-        if (_currentTheme is null)
-        {
-            CurrentTheme = Themes[0]; // needs this.
-            _currentTheme = Themes[0]; // just because VS IDE complains to me to set.
-        }
+        // Gets the theme form Themes property and sets it to CurrentTheme. 
+        // Otherwise, selected theme will not be applied when the app is started.
+        var thm = Themes.FirstOrDefault(x => x.Name == _configurationService.CurrentConfiguration.ThemeSetting.Name);
+        if (thm is not null)
+            CurrentTheme = thm;
+        else
+            CurrentTheme = _configurationService.CurrentConfiguration.ThemeSetting;
 
         // On linux there seems to be a bug where user prefered color is not picked up.
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -143,6 +135,26 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             //_faTheme!.PreferSystemTheme = true;
             faTheme!.CustomAccentColor = Avalonia.Media.Color.FromRgb(28, 96, 168);
         }
+
+        #endregion
+
+        #region == Options ==
+
+        IsAutoScrollToNowPlaying = _configurationService.CurrentConfiguration.IsAutoScrollToNowPlaying;
+        IsArtistSortWithoutThePrefix = _configurationService.CurrentConfiguration.IsArtistSortWithoutThePrefix;
+        IsAlbumSortWithoutThePrefix = _configurationService.CurrentConfiguration.IsAlbumSortWithoutThePrefix;
+        IsUpdateOnStartup = _configurationService.CurrentConfiguration.IsUpdateOnStartup;
+        IsShowDebugWindow = _configurationService.CurrentConfiguration.IsShowDebugWindow;
+        IsSaveLog = _configurationService.CurrentConfiguration.IsSaveLog;
+        IsDownloadAlbumArt = _configurationService.CurrentConfiguration.IsDownloadAlbumArt;
+        IsDownloadAlbumArtEmbeddedUsingReadPicture = _configurationService.CurrentConfiguration.IsDownloadAlbumArtEmbeddedUsingReadPicture;
+        IsForceSetVolumeExplicitly = _configurationService.CurrentConfiguration.IsForceSetVolumeExplicitly;
+
+        #endregion
+
+        #region == Layout ==
+
+        IsNavigationViewMenuOpen = _configurationService.CurrentConfiguration.IsNavigationViewMenuOpen;
 
         #endregion
 
@@ -178,24 +190,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Window and loading flag ==
 
-    public int WindowTop;
-    public int WindowLeft;
-    public double WindowHeight;
-    public double WindowWidth;
-    public WindowState WindowState = WindowState.Normal;
 
-    public bool IsFullyLoaded
-    {
-        get;
-        set
-        {
-            if (field == value)
-                return;
-
-            field = value;
-            OnPropertyChanged();
-        }
-    }
 
     // TODO: no longer used...
     public double MainLeftPainActualWidth
@@ -1116,31 +1111,25 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Themes ==
 
+    public ObservableCollection<Theme> Themes { get; init; } = ThemeTypeLabel.GetThemes();
 
-    public ObservableCollection<Theme> Themes { get; set; } = [
-            new Theme() { Id = 0, Name = "System", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_System, IconData="M7.5,2C5.71,3.15 4.5,5.18 4.5,7.5C4.5,9.82 5.71,11.85 7.53,13C4.46,13 2,10.54 2,7.5A5.5,5.5 0 0,1 7.5,2M19.07,3.5L20.5,4.93L4.93,20.5L3.5,19.07L19.07,3.5M12.89,5.93L11.41,5L9.97,6L10.39,4.3L9,3.24L10.75,3.12L11.33,1.47L12,3.1L13.73,3.13L12.38,4.26L12.89,5.93M9.59,9.54L8.43,8.81L7.31,9.59L7.65,8.27L6.56,7.44L7.92,7.35L8.37,6.06L8.88,7.33L10.24,7.36L9.19,8.23L9.59,9.54M19,13.5A5.5,5.5 0 0,1 13.5,19C12.28,19 11.15,18.6 10.24,17.93L17.93,10.24C18.6,11.15 19,12.28 19,13.5M14.6,20.08L17.37,18.93L17.13,22.28L14.6,20.08M18.93,17.38L20.08,14.61L22.28,17.15L18.93,17.38M20.08,12.42L18.94,9.64L22.28,9.88L20.08,12.42M9.63,18.93L12.4,20.08L9.87,22.27L9.63,18.93Z"},
-            new Theme() { Id = 1, Name = "Dark", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Dark, IconData="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.36,12.31 6.2,9.5 6.04,6.68C3.23,9.82 3.34,14.64 6.35,17.66C9.37,20.67 14.19,20.78 17.33,17.97Z"},
-            new Theme() { Id = 2, Name = "Light", Label = MPDCtrlX.Properties.Resources.Settings_Opts_Themes_Light, IconData="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"}
-        ];
-
-    private Theme _currentTheme;
     public Theme CurrentTheme
     {
-        get => _currentTheme;
+        get;
         set
         {
-            if (_currentTheme == value) return;
+            if (field == value) return;
 
-            _currentTheme = value;
+            field = value;
             OnPropertyChanged();
 
             FluentAvaloniaTheme? faTheme = ((Application.Current as App)!.Styles[0] as FluentAvaloniaTheme);
-            if (_currentTheme.Id == 1)
+            if (field.Id == 1)
             {
                 faTheme!.PreferSystemTheme = false;
                 (Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Dark;
             }
-            else if (_currentTheme.Id == 2)
+            else if (field.Id == 2)
             {
                 faTheme!.PreferSystemTheme = false;
                 (Application.Current as App)!.RequestedThemeVariant = ThemeVariant.Light;
@@ -2044,8 +2033,14 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     IsWorking = true;
                     await Task.Yield();
                     await Task.Delay(10);
-                    CurrentPage = App.GetService<SearchPage>();
-                    IsWorking = false;
+                    try
+                    {
+                        CurrentPage = App.GetService<SearchPage>();
+                    }
+                    finally
+                    {
+                        IsWorking = false;
+                    }
                 });
                 //CurrentPage = App.GetService<SearchPage>();
             }
@@ -2061,13 +2056,19 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     IsWorking = true;
                     await Task.Yield();
                     await Task.Delay(10);
-                    if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
+                    try
                     {
-                        SelectedAlbumArtist = Artists[0];
-                    }
-                    CurrentPage = App.GetService<ArtistPage>();
 
-                    IsWorking = false;
+                        if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
+                        {
+                            SelectedAlbumArtist = Artists[0];
+                        }
+                        CurrentPage = App.GetService<ArtistPage>();
+                    }
+                    finally
+                    {
+                        IsWorking = false;
+                    }
                 });
             }
             else if (value is NodeMenuAlbum nmb)
@@ -2077,11 +2078,15 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     IsWorking = true;
                     await Task.Yield();
                     await Task.Delay(10);
-
-                    CurrentPage = App.GetService<AlbumPage>();
-
-                    await Task.Delay(1);
-                    IsWorking = false;
+                    try
+                    {
+                        CurrentPage = App.GetService<AlbumPage>();
+                    }
+                    finally
+                    {
+                        await Task.Delay(1);
+                        IsWorking = false;
+                    }
                 });
             }
             else if (value is NodeMenuFiles nml)
@@ -2092,16 +2097,22 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     await Task.Yield();
                     await Task.Delay(1);
 
-                    CurrentPage = App.GetService<FilesPage>();
-
-                    if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                    try
                     {
-                        //GetFiles(nml);
-                        _ = GetFilesAsync(nml).SafeAsync(nameof(GetFilesAsync));
+                        CurrentPage = App.GetService<FilesPage>();
+
+                        if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                        {
+                            //GetFiles(nml);
+                            _ = GetFilesAsync(nml).SafeAsync(nameof(GetFilesAsync));
+                        }
+                    }
+                    finally
+                    {
+                        await Task.Yield();
+                        IsWorking = false;
                     }
 
-                    await Task.Yield();
-                    IsWorking = false;
                 });
             }
             else if (value is NodeMenuPlaylists)
@@ -2113,19 +2124,27 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             {
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    //CurrentPage = null; // Just for the animation of page transition...
-
-                    CurrentPage = App.GetService<PlaylistItemPage>();
-
-                    SelectedPlaylistSong = null;
-                    PlaylistSongs = nmpli.PlaylistSongs;
-                    SelectedPlaylistName = nmpli.Name;
-
-                    if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                    try
                     {
-                        //GetPlaylistSongsAsync(nmpli);
-                        _ = GetPlaylistSongsAsync(nmpli).SafeAsync(nameof(GetPlaylistSongsAsync));
+                        //CurrentPage = null; // Just for the animation of page transition...
+
+                        CurrentPage = App.GetService<PlaylistItemPage>();
+
+                        SelectedPlaylistSong = null;
+                        PlaylistSongs = nmpli.PlaylistSongs;
+                        SelectedPlaylistName = nmpli.Name;
+
+                        if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                        {
+                            //GetPlaylistSongsAsync(nmpli);
+                            _ = GetPlaylistSongsAsync(nmpli).SafeAsync(nameof(GetPlaylistSongsAsync));
+                        }
                     }
+                    finally
+                    {
+                        await Task.Yield();
+                    }
+
                 });
             }
             else if (value is NodeMenu)
@@ -3477,121 +3496,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private static string Encrypt(string s)
-    {
-        if (string.IsNullOrEmpty(s)) { return ""; }
-
-        byte[] entropy = [0x72, 0xa2, 0x12, 0x04];
-
-        // Uses System.Security.Cryptography.ProtectedData
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            try
-            {
-                byte[] userData = System.Text.Encoding.UTF8.GetBytes(s);
-                byte[] encryptedData = System.Security.Cryptography.ProtectedData.Protect(userData, entropy, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-
-                return System.Convert.ToBase64String(encryptedData);
-            }
-            catch
-            {
-                Debug.WriteLine("Encrypt fail.");
-                return s;
-            }
-        }
-        //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        else
-        {
-            try
-            {
-                string encryptionKey = "withas";
-                byte[] sBytes = Encoding.Unicode.GetBytes(s);
-                using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
-                {
-                    // Obsolete and deprecated in .NET 10.
-                    //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                    //encryptor.Key = pdb.GetBytes(32);
-                    //encryptor.IV = pdb.GetBytes(16);
-                    // New since .NET 10.
-                    encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
-                    encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
-
-                    using MemoryStream ms = new();
-                    using (CryptoStream cs = new(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(sBytes, 0, sBytes.Length);
-                        cs.Close();
-                    }
-                    s = Convert.ToBase64String(ms.ToArray());
-                }
-                return s;
-            }
-            catch
-            {
-                Debug.WriteLine($"Encrypt fail.");
-                return s;
-            }
-        }
-    }
-
-    private static string Decrypt(string s)
-    {
-        if (string.IsNullOrEmpty(s)) { return ""; }
-
-        byte[] entropy = [0x72, 0xa2, 0x12, 0x04];
-
-        // Uses System.Security.Cryptography.ProtectedData
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            try
-            {
-                byte[] encryptedData = System.Convert.FromBase64String(s);
-                byte[] userData = System.Security.Cryptography.ProtectedData.Unprotect(encryptedData, entropy, DataProtectionScope.CurrentUser);
-
-                return System.Text.Encoding.UTF8.GetString(userData);
-            }
-            catch
-            {
-                Debug.WriteLine($"Decrypt fail.");
-                return "";
-            }
-        }
-        //else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        else
-        {
-            try
-            {
-                string encryptionKey = "withas";
-                s = s.Replace(" ", "+");
-                byte[] sBytes = Convert.FromBase64String(s);
-                using (System.Security.Cryptography.Aes encryptor = System.Security.Cryptography.Aes.Create())
-                {
-                    // Obsolete and deprecated in .NET 10.
-                    //Rfc2898DeriveBytes pdb = new(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1);
-                    //encryptor.Key = pdb.GetBytes(32);
-                    //encryptor.IV = pdb.GetBytes(16);
-                    // New since .NET 10.
-                    encryptor.Key = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 32);
-                    encryptor.IV = Rfc2898DeriveBytes.Pbkdf2(encryptionKey, entropy, 10000, HashAlgorithmName.SHA1, 16);
-
-                    using MemoryStream ms = new();
-                    using (CryptoStream cs = new(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(sBytes, 0, sBytes.Length);
-                        cs.Close();
-                    }
-                    s = Encoding.Unicode.GetString(ms.ToArray());
-                }
-
-                return s;
-            }
-            catch
-            {
-                Debug.WriteLine($"Decrypt fail.");
-                return "";
-            }
-        }
-    }
 
     private static string DummyPassword(string s)
     {
@@ -4032,1400 +3936,27 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Startup and Shutdown ==
 
-    private void LoadSettings()
-    {
-        #region == Load app setting  ==
-        try
-        {
-            // Load config file.
-            if (File.Exists(App.AppConfigFilePath))
-            {
-                var xdoc = XDocument.Load(App.AppConfigFilePath);
-                if (xdoc.Root is not null)
-                {
-                    #region == Window setting ==
-
-                    // Main Window element
-                    var mainWindow = xdoc.Root.Element("MainWindow");
-                    if (mainWindow is not null)
-                    {
-                        int wY = 24;
-                        int wX = 24;
-
-                        var hoge = mainWindow.Attribute("top");
-                        if (hoge is not null)
-                        {
-                            //w.Top = double.Parse(hoge.Value);
-                            //wY = int.Parse(hoge.Value);
-                            if (Int32.TryParse(hoge.Value, out wY))
-                            {
-                                WindowTop = wY;
-                            }
-                        }
-
-                        hoge = mainWindow.Attribute("left");
-                        if (hoge is not null)
-                        {
-                            //w.Left = double.Parse(hoge.Value);
-                            //wX = int.Parse(hoge.Value);
-                            if (Int32.TryParse(hoge.Value, out wX))
-                            {
-                                WindowLeft = wX;
-                            }
-                        }
-                        //w.Position = new PixelPoint(wX, wY);
-
-                        hoge = mainWindow.Attribute("height");
-                        if (hoge is not null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                //w.Height = double.Parse(hoge.Value);
-                                WindowHeight = double.Parse(hoge.Value, CultureInfo.InvariantCulture);
-                            }
-                        }
-
-                        hoge = mainWindow.Attribute("width");
-                        if (hoge is not null)
-                        {
-                            if (!string.IsNullOrEmpty(hoge.Value))
-                            {
-                                //w.Width = double.Parse(hoge.Value);
-                                WindowWidth = double.Parse(hoge.Value, CultureInfo.InvariantCulture);
-                            }
-                        }
-
-                        hoge = mainWindow.Attribute("state");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "Maximized")
-                            {
-                                //w.WindowState = WindowState.Maximized;
-                                // Since there is no restorebounds in AvaloniaUI.....
-                                WindowState = WindowState.Maximized;
-                            }
-                            else if (hoge.Value == "Normal")
-                            {
-                                //w.WindowState = WindowState.Normal;
-                                WindowState = WindowState.Normal;
-                            }
-                            else if (hoge.Value == "Minimized")
-                            {
-                                //w.WindowState = WindowState.Normal;
-                                WindowState = WindowState.Normal;
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region == Theme ==
-
-                    var thm = xdoc.Root.Element("Theme");
-                    if (thm is not null)
-                    {
-                        var hoge = thm.Attribute("ThemeName");
-                        if (hoge is not null)
-                        {
-                            if ((hoge.Value == "Dark") || hoge.Value == "Light" || hoge.Value == "System")
-                            {
-                                Theme? theme = Themes.FirstOrDefault(x => x.Name == hoge.Value);
-                                if (theme is not null)
-                                {
-                                    CurrentTheme = theme;
-                                }
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region == Options ==
-
-                    var opts = xdoc.Root.Element("Options");
-                    if (opts is not null)
-                    {
-                        var hoge = opts.Attribute("AutoScrollToNowPlaying");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsAutoScrollToNowPlaying = true;
-                            }
-                            else
-                            {
-                                IsAutoScrollToNowPlaying = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("ArtistSortWithoutThePrefix");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsArtistSortWithoutThePrefix = true;
-                            }
-                            else
-                            {
-                                IsArtistSortWithoutThePrefix = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("AlbumSortWithoutThePrefix");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsAlbumSortWithoutThePrefix = true;
-                            }
-                            else
-                            {
-                                IsAlbumSortWithoutThePrefix = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("UpdateOnStartup");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsUpdateOnStartup = true;
-                            }
-                            else
-                            {
-                                IsUpdateOnStartup = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("ShowDebugWindow");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsShowDebugWindow = true;
-
-                            }
-                            else
-                            {
-                                IsShowDebugWindow = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("SaveLog");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsSaveLog = true;
-
-                            }
-                            else
-                            {
-                                IsSaveLog = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("DownloadAlbumArt");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsDownloadAlbumArt = true;
-
-                            }
-                            else
-                            {
-                                IsDownloadAlbumArt = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("DownloadAlbumArtEmbeddedUsingReadPicture");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsDownloadAlbumArtEmbeddedUsingReadPicture = true;
-
-                            }
-                            else
-                            {
-                                IsDownloadAlbumArtEmbeddedUsingReadPicture = false;
-                            }
-                        }
-
-                        hoge = opts.Attribute("ForceSetVolumeExplicitly");
-                        if (hoge is not null)
-                        {
-                            if (hoge.Value == "True")
-                            {
-                                IsForceSetVolumeExplicitly = true;
-
-                            }
-                            else
-                            {
-                                IsForceSetVolumeExplicitly = false;
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region == Profiles  ==
-
-                    var xProfiles = xdoc.Root.Element("Profiles");
-                    if (xProfiles is not null)
-                    {
-                        var profileList = xProfiles.Elements("Profile");
-
-                        foreach (var p in profileList)
-                        {
-                            Profile pro = new();
-
-                            if (p.Attribute("Name") is not null)
-                            {
-                                var s = p.Attribute("Name")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                    pro.Name = s;
-                            }
-                            if (p.Attribute("Host") is not null)
-                            {
-                                var s = p.Attribute("Host")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                    pro.Host = s;
-                            }
-                            if (p.Attribute("Port") is not null)
-                            {
-                                var s = p.Attribute("Port")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                {
-                                    try
-                                    {
-                                        pro.Port = Int32.Parse(s, CultureInfo.InvariantCulture);
-                                    }
-                                    catch
-                                    {
-                                        pro.Port = 6600;
-                                    }
-                                }
-                            }
-                            if (p.Attribute("Password") is not null)
-                            {
-                                var s = p.Attribute("Password")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                    pro.Password = Decrypt(s);
-                            }
-                            if (p.Attribute("IsDefault") is not null)
-                            {
-                                var s = p.Attribute("IsDefault")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                {
-                                    if (s == "True")
-                                    {
-                                        pro.IsDefault = true;
-                                    }
-                                }
-                            }
-                            if (p.Attribute("Volume") is not null)
-                            {
-                                var s = p.Attribute("Volume")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                {
-                                    try
-                                    {
-                                        pro.Volume = double.Parse(s, CultureInfo.InvariantCulture);
-                                    }
-                                    catch
-                                    {
-                                        pro.Volume = 50;
-                                    }
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(pro.Host.Trim()))
-                            {
-                                if (pro.IsDefault)
-                                {
-                                    CurrentProfile = pro;
-
-                                    //OnPropertyChanged(nameof(IsCurrentProfileSet));
-                                }
-
-                                Profiles.Add(pro);
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Host info is empty. @LoadSettings");
-                            }
-                        }
-                    }
-                    #endregion
-
-                    #region == Layout ==
-
-                    var lay = xdoc.Root.Element("Layout");
-                    if (lay is not null)
-                    {
-                        var leftpain = lay.Element("LeftPain");
-                        if (leftpain is not null)
-                        {
-                            if (leftpain.Attribute("Width") is not null)
-                            {
-                                var s = leftpain.Attribute("Width")?.Value;
-                                if (!string.IsNullOrEmpty(s))
-                                {
-                                    try
-                                    {
-                                        MainLeftPainWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                    }
-                                    catch
-                                    {
-                                        MainLeftPainWidth = 241;
-                                    }
-                                }
-                            }
-
-                            var hoge = leftpain.Attribute("NavigationViewMenuOpen");
-                            if (hoge is not null)
-                            {
-                                // Call 
-                                // "OnPropertyChanged(nameof(IsNavigationViewMenuOpen));"
-                                // AFTER NavigationMenuItems is added.
-                                if (hoge.Value == "True")
-                                {
-                                    // Don't apply change here.
-                                    _isNavigationViewMenuOpen = true;
-
-                                }
-                                else
-                                {
-                                    // Don't apply change here.
-                                    _isNavigationViewMenuOpen = false;
-                                }
-                            }
-                        }
-
-                        #region == Header columns ==
-
-                        var Headers = lay.Element("Headers");
-                        if (Headers is not null)
-                        {
-                            // Queue page
-                            var Que = Headers.Element("Queue");
-                            if (Que is not null)
-                            {
-                                var column = Que.Element("Position");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                            {
-                                                IsQueueColumnHeaderPositionVisible = true;
-                                            }
-                                            else
-                                            {
-                                                IsQueueColumnHeaderPositionVisible = false;
-                                            }
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderPositionWidth = 60;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("NowPlaying");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderNowPlayingVisible = true;
-                                            else
-                                                IsQueueColumnHeaderNowPlayingVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderNowPlayingWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderNowPlayingWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Title");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                                if (QueueColumnHeaderTitleWidth < 120)
-                                                    QueueColumnHeaderTitleWidth = 160;
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderTitleWidth = 160;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Time");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderTimeVisible = true;
-                                            else
-                                                IsQueueColumnHeaderTimeVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderTimeWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Artist");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderArtistVisible = true;
-                                            else
-                                                IsQueueColumnHeaderArtistVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderArtistWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Album");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderAlbumVisible = true;
-                                            else
-                                                IsQueueColumnHeaderAlbumVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderAlbumWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Disc");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderDiscVisible = true;
-                                            else
-                                                IsQueueColumnHeaderDiscVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderDiscWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Track");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderTrackVisible = true;
-                                            else
-                                                IsQueueColumnHeaderTrackVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderTrackWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("Genre");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderGenreVisible = true;
-                                            else
-                                                IsQueueColumnHeaderGenreVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderGenreWidth = 100;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Que.Element("LastModified");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsQueueColumnHeaderLastModifiedVisible = true;
-                                            else
-                                                IsQueueColumnHeaderLastModifiedVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                QueueColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                QueueColumnHeaderLastModifiedWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Files page
-                            var Filp = Headers.Element("Files");
-                            if (Filp is not null)
-                            {
-                                var column = Filp.Element("FileName");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                FilesColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                //LibraryColumnHeaderTitleWidth = 160;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Filp.Element("FilePath");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                FilesColumnHeaderFilePathWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                //LibraryColumnHeaderFilePathWidth = 160;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            //Playlist page
-                            var Playl = Headers.Element("Playlist");
-                            if (Playl is not null)
-                            {
-                                var column = Playl.Element("Position");
-                                if (column is not null)
-                                {
-                                    /*
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                            {
-                                                IsPlaylistColumnHeaderPositionVisible = true;
-                                            }
-                                            else
-                                            {
-                                                IsPlaylistColumnHeaderPositionVisible = false;
-                                            }
-                                        }
-                                    }
-                                    */
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderPositionWidth = 60;
-                                            }
-                                        }
-                                    }
-                                }
-                                /*
-                                column = Playl.Element("NowPlaying");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderNowPlayingVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderNowPlayingVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderNowPlayingWidth = Double.Parse(s);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderNowPlayingWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                */
-                                column = Playl.Element("Title");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                                if (PlaylistColumnHeaderTitleWidth < 120)
-                                                    PlaylistColumnHeaderTitleWidth = 160;
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderTitleWidth = 160;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Time");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderTimeVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderTimeVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderTimeWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Artist");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderArtistVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderArtistVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderArtistWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Album");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderAlbumVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderAlbumVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderAlbumWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Disc");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderDiscVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderDiscVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderDiscWidth = 62;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Track");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderTrackVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderTrackVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderTrackWidth = 62;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("Genre");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderGenreVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderGenreVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderGenreWidth = 100;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Playl.Element("LastModified");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderLastModifiedVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderLastModifiedVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderLastModifiedWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            //Search page
-                            var Seal = Headers.Element("Search");
-                            if (Seal is not null)
-                            {
-                                var column = Seal.Element("Position");
-                                if (column is not null)
-                                {
-                                    /*
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                            {
-                                                IsPlaylistColumnHeaderPositionVisible = true;
-                                            }
-                                            else
-                                            {
-                                                IsPlaylistColumnHeaderPositionVisible = false;
-                                            }
-                                        }
-                                    }
-                                    */
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderPositionWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderPositionWidth = 60;
-                                            }
-                                        }
-                                    }
-                                }
-                                /*
-                                column = Playl.Element("NowPlaying");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsPlaylistColumnHeaderNowPlayingVisible = true;
-                                            else
-                                                IsPlaylistColumnHeaderNowPlayingVisible = false;
-                                        }
-                                    }
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                PlaylistColumnHeaderNowPlayingWidth = Double.Parse(s);
-                                            }
-                                            catch
-                                            {
-                                                PlaylistColumnHeaderNowPlayingWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                */
-                                column = Seal.Element("Title");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderTitleWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                                if (SearchColumnHeaderTitleWidth < 120)
-                                                    SearchColumnHeaderTitleWidth = 160;
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderTitleWidth = 160;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Time");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderTimeVisible = true;
-                                            else
-                                                IsSearchColumnHeaderTimeVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderTimeWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderTimeWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Artist");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderArtistVisible = true;
-                                            else
-                                                IsSearchColumnHeaderArtistVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderArtistWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderArtistWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Album");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderAlbumVisible = true;
-                                            else
-                                                IsSearchColumnHeaderAlbumVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderAlbumWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderAlbumWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Disc");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderDiscVisible = true;
-                                            else
-                                                IsSearchColumnHeaderDiscVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderDiscWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderDiscWidth = 62;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Track");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderTrackVisible = true;
-                                            else
-                                                IsSearchColumnHeaderTrackVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderTrackWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderTrackWidth = 62;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("Genre");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderGenreVisible = true;
-                                            else
-                                                IsSearchColumnHeaderGenreVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderGenreWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderGenreWidth = 100;
-                                            }
-                                        }
-                                    }
-                                }
-                                column = Seal.Element("LastModified");
-                                if (column is not null)
-                                {
-                                    if (column.Attribute("Visible") is not null)
-                                    {
-                                        var s = column.Attribute("Visible")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            if (s == "True")
-                                                IsSearchColumnHeaderLastModifiedVisible = true;
-                                            else
-                                                IsSearchColumnHeaderLastModifiedVisible = false;
-                                        }
-                                    }
-
-                                    if (column.Attribute("Width") is not null)
-                                    {
-                                        var s = column.Attribute("Width")?.Value;
-                                        if (!string.IsNullOrEmpty(s))
-                                        {
-                                            try
-                                            {
-                                                SearchColumnHeaderLastModifiedWidth = Double.Parse(s, CultureInfo.InvariantCulture);
-                                            }
-                                            catch
-                                            {
-                                                SearchColumnHeaderLastModifiedWidth = 53;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-
-                        #endregion
-
-                    }
-
-                    #endregion
-
-                }
-                else
-                {
-                    Debug.WriteLine("Oops. xdoc.Root is null.");
-                }
-            }
-
-            IsFullyLoaded = true;
-        }
-        catch (System.IO.FileNotFoundException ex)
-        {
-            Debug.WriteLine("Oops. @Load(AppConfigFilePath)");
-            if (IsSaveLog)
-            {
-                Dispatcher.UIThread.Post(() => { App.AppendErrorLog("System.IO.FileNotFoundExceptionLoad(AppConfigFilePath)", ex.Message); });
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("Oops. @Load(AppConfigFilePath)");
-            if (IsSaveLog)
-            {
-                Dispatcher.UIThread.Post(() => { App.AppendErrorLog("ExceptionLoad(AppConfigFilePath)", ex.Message); });
-            }
-        }
-
-        #endregion
-
-        if (Profiles.Count <= 0) return;
-
-        if (CurrentProfile is not null) return;
-        var prof = Profiles.FirstOrDefault(x => x.IsDefault);
-        CurrentProfile = prof ?? Profiles[0];
-        //OnPropertyChanged(nameof(IsCurrentProfileSet));
-    }
-
     public async void OnWindowLoaded(object? sender, EventArgs e)
     {
         try
         {
+            foreach (var profile in _configurationService.CurrentConfiguration.Profiles)
+            {
+                Profiles.Add(profile);
+                if (profile.IsDefault)
+                {
+                    CurrentProfile = profile;
+                }
+            }
+
+            CurrentProfile ??= _configurationService.CurrentConfiguration.CurrentProfile;
+
+            if (Profiles.Count > 0 && CurrentProfile is null)
+            {
+                var prof = Profiles.FirstOrDefault(x => x.IsDefault);
+                CurrentProfile = prof ?? Profiles[0];
+            }
+
             if (CurrentProfile is null)
             {
                 //ConnectionStatusMessage = MPDCtrlX.Properties.Resources.Init_NewConnectionSetting; // no need. 
@@ -5471,290 +4002,44 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     }
 
-    private void SaveSettings(Window sender)
+    public void UpdateCurrentSettings()
     {
-        // Make sure Window and settings have been fully loaded and not overriding with empty data.
-        if (!IsFullyLoaded)
-        {
-            return;
-        }
-
-        double windowWidth = 780;
-
-        #region == Save App Setting ==
-
-        // Config xml file
-        XmlDocument doc = new();
-        XmlDeclaration xmlDeclaration = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-        doc.InsertBefore(xmlDeclaration, doc.DocumentElement);
-
-        // Root Document Element
-        XmlElement root = doc.CreateElement(string.Empty, "App", string.Empty);
-        doc.AppendChild(root);
-
-        XmlAttribute attrs;
-
-        // MainWindow
-        if (sender is MainWindow w)
-        {
-            #region == Window settings ==
-
-            // Main Window element
-            XmlElement mainWindow = doc.CreateElement(string.Empty, "MainWindow", string.Empty);
-
-            //Window w = (sender as Window);
-            // Main Window attributes
-            attrs = doc.CreateAttribute("height");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Height.ToString(CultureInfo.InvariantCulture) : w.WinRestoreHeight.ToString(CultureInfo.InvariantCulture);
-            mainWindow.SetAttributeNode(attrs);
-
-            attrs = doc.CreateAttribute("width");
-            if (w.WindowState == WindowState.Normal)
-            {
-                attrs.Value = w.Width.ToString(CultureInfo.InvariantCulture);
-                windowWidth = w.Width;
-            }
-            else
-            {
-                attrs.Value = w.WinRestoreWidth.ToString(CultureInfo.InvariantCulture);
-            }
-            mainWindow.SetAttributeNode(attrs);
-
-            attrs = doc.CreateAttribute("top");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.Y.ToString(CultureInfo.InvariantCulture) : w.WinRestoreTop.ToString(CultureInfo.InvariantCulture);
-            mainWindow.SetAttributeNode(attrs);
-
-            attrs = doc.CreateAttribute("left");
-            attrs.Value = w.WindowState == WindowState.Normal ? w.Position.X.ToString(CultureInfo.InvariantCulture) : w.WinRestoreLeft.ToString(CultureInfo.InvariantCulture);
-            mainWindow.SetAttributeNode(attrs);
-
-            attrs = doc.CreateAttribute("state");
-            attrs.Value = w.WindowState switch
-            {
-                WindowState.Maximized => "Maximized",
-                WindowState.Normal => "Normal",
-                WindowState.Minimized => "Minimized",
-                _ => attrs.Value
-            };
-            mainWindow.SetAttributeNode(attrs);
-
-            // set MainWindow element to root.
-            root.AppendChild(mainWindow);
-
-
-
-            #endregion
-
-            #region == Layout ==
-
-            var lay = doc.CreateElement(string.Empty, "Layout", string.Empty);
-
-            // LeftPain
-            var leftpain = doc.CreateElement(string.Empty, "LeftPain", string.Empty);
-            var lAttrs = doc.CreateAttribute("Width");
-            if (IsFullyLoaded) // instead of IsFullyRendered
-            {
-                lAttrs.Value = windowWidth > (MainLeftPainActualWidth - 24) ? MainLeftPainActualWidth.ToString(CultureInfo.InvariantCulture) : "241";
-            }
-            else
-            {
-                lAttrs.Value = MainLeftPainWidth.ToString(CultureInfo.InvariantCulture);
-            }
-            leftpain.SetAttributeNode(lAttrs);
-
-            lAttrs = doc.CreateAttribute("NavigationViewMenuOpen");
-            lAttrs.Value = _isNavigationViewMenuOpen ? "True" : "False";
-            leftpain.SetAttributeNode(lAttrs);
-
-            //
-            lay.AppendChild(leftpain);
-
-            #region == Header columns ==
-
-            var headers = doc.CreateElement(string.Empty, "Headers", string.Empty);
-
-            ////
-            lay.AppendChild(headers);
-
-            #endregion
-
-            ////
-            root.AppendChild(lay);
-
-            #endregion
-        }
-
-        #region == Options ==
-
-        var opts = doc.CreateElement(string.Empty, "Options", string.Empty);
-
-        //
-        attrs = doc.CreateAttribute("AutoScrollToNowPlaying");
-        attrs.Value = IsAutoScrollToNowPlaying ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("ArtistSortWithoutThePrefix");
-        attrs.Value = IsArtistSortWithoutThePrefix ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("AlbumSortWithoutThePrefix");
-        attrs.Value = IsAlbumSortWithoutThePrefix ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        // 
-        attrs = doc.CreateAttribute("UpdateOnStartup");
-        attrs.Value = IsUpdateOnStartup ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("ShowDebugWindow");
-        attrs.Value = IsShowDebugWindow ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("SaveLog");
-        attrs.Value = IsSaveLog ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("DownloadAlbumArt");
-        attrs.Value = IsDownloadAlbumArt ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("DownloadAlbumArtEmbeddedUsingReadPicture");
-        attrs.Value = IsDownloadAlbumArtEmbeddedUsingReadPicture ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        //
-        attrs = doc.CreateAttribute("ForceSetVolumeExplicitly");
-        attrs.Value = IsForceSetVolumeExplicitly ? "True" : "False";
-        opts.SetAttributeNode(attrs);
-
-        /// 
-        root.AppendChild(opts);
-
-        #endregion
-
-        #region == Profiles  ==
-
-        var xProfiles = doc.CreateElement(string.Empty, "Profiles", string.Empty);
-
-        XmlElement xProfile;
-        XmlAttribute xAttrs;
-
-        if (Profiles.Count == 1)
-            Profiles[0].IsDefault = true;
-
-        foreach (var p in Profiles)
-        {
-            xProfile = doc.CreateElement(string.Empty, "Profile", string.Empty);
-
-            xAttrs = doc.CreateAttribute("Name");
-            xAttrs.Value = p.Name;
-            xProfile.SetAttributeNode(xAttrs);
-
-            xAttrs = doc.CreateAttribute("Host");
-            xAttrs.Value = p.Host;
-            xProfile.SetAttributeNode(xAttrs);
-
-            xAttrs = doc.CreateAttribute("Port");
-            xAttrs.Value = p.Port.ToString(CultureInfo.InvariantCulture);
-            xProfile.SetAttributeNode(xAttrs);
-
-            xAttrs = doc.CreateAttribute("Password");
-            xAttrs.Value = Encrypt(p.Password);
-            xProfile.SetAttributeNode(xAttrs);
-
-            if (p.IsDefault)
-            {
-                xAttrs = doc.CreateAttribute("IsDefault");
-                xAttrs.Value = "True";
-                xProfile.SetAttributeNode(xAttrs);
-            }
-
-            xAttrs = doc.CreateAttribute("Volume");
-            xAttrs.Value = p == CurrentProfile ? _volume.ToString(CultureInfo.InvariantCulture) : p.Volume.ToString(CultureInfo.InvariantCulture);
-            xProfile.SetAttributeNode(xAttrs);
-
-            xProfiles.AppendChild(xProfile);
-        }
-
-        // TODO:
-        if (IsRememberAsProfile)
-        {
-
-        }
-        root.AppendChild(xProfiles);
-
-        #endregion
-
-        #region == Theme ==
-
-        XmlElement thm = doc.CreateElement(string.Empty, "Theme", string.Empty);
-
-        attrs = doc.CreateAttribute("ThemeName");
-        attrs.Value = _currentTheme.Name;
-        thm.SetAttributeNode(attrs);
-
-        /// 
-        root.AppendChild(thm);
-
-        #endregion
-
-        try
-        {
-            if (!Directory.Exists(App.AppDataFolder))
-            {
-                Directory.CreateDirectory(App.AppDataFolder);
-            }
-
-            //doc.Save(App.AppConfigFilePath);
-            var temporaryPath = App.AppConfigFilePath + ".tmp";
-            doc.Save(temporaryPath);
-            File.Move(temporaryPath, App.AppConfigFilePath, overwrite: true);
-        }
-        //catch (System.IO.FileNotFoundException) { }
-        catch (Exception ex)
-        {
-            if (IsSaveLog)
-            {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    App.AppendErrorLog("Exception@OnWindowClosing", ex.Message);
-                });
-            }
-        }
-
-        if (IsSaveLog)
-        {
-            // Save error logs.
-            Dispatcher.UIThread.Post(App.SaveErrorLog);
-        }
-
-        #endregion
+        var config = _configurationService.CurrentConfiguration;
+
+        // Profile
+        CurrentProfile?.Volume = Volume;
+        config.CurrentProfile = CurrentProfile;
+
+        config.Profiles = [.. Profiles];
+
+        // Theme
+        config.ThemeSetting = CurrentTheme;
+
+        // Opts
+        config.IsAutoScrollToNowPlaying = IsAutoScrollToNowPlaying;
+        config.IsArtistSortWithoutThePrefix = IsArtistSortWithoutThePrefix;
+        config.IsAlbumSortWithoutThePrefix = IsAlbumSortWithoutThePrefix;
+        config.IsUpdateOnStartup = IsUpdateOnStartup;
+        config.IsShowDebugWindow = IsShowDebugWindow;
+        config.IsSaveLog = IsSaveLog;
+        config.IsDownloadAlbumArt = IsDownloadAlbumArt;
+        config.IsDownloadAlbumArtEmbeddedUsingReadPicture = IsDownloadAlbumArtEmbeddedUsingReadPicture;
+        config.IsForceSetVolumeExplicitly = IsForceSetVolumeExplicitly;
+
+        config.IsNavigationViewMenuOpen = IsNavigationViewMenuOpen;
     }
 
     // Closing
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
         Debug.WriteLine("OnWindowClosing");
-        if (sender is Window w)
-        {
-            SaveSettings(w);
-        }
+
     }
 
     public void OnWindowClosed(object? sender, EventArgs e)
     {
         Debug.WriteLine("OnWindowClosed");
-        if (sender is Window w)
-        {
-            // In Avalonia UI, it seems we need to explicitly call Dispose() to clean up resources when the window is closed.
-            Dispose();
-        }
+
     }
 
     #endregion

@@ -10,18 +10,13 @@ namespace MPDCtrlX.Views;
 
 internal sealed partial class AlbumPage : UserControl
 {
-    //private ScrollViewer? _scrollViewer;
-    //private WrapPanel? _wrapPanel;
-
-    // Optional parameterless constructor for XAML Previewer
-    public AlbumPage() { InitializeComponent(); }
-    public AlbumPage(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public AlbumPage()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();
-
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

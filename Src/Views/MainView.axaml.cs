@@ -6,11 +6,10 @@ namespace MPDCtrlX.Views;
 
 internal sealed partial class MainView : UserControl
 {
-    // Optional parameterless constructor for XAML Previewer
-    public MainView() { InitializeComponent(); }
-    public MainView(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public MainView()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();

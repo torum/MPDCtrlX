@@ -6,11 +6,10 @@ namespace MPDCtrlX.Views;
 
 internal sealed partial class SettingsPage : UserControl
 {
-    // Optional parameterless constructor for XAML Previewer
-    public SettingsPage() { InitializeComponent(); }
-    public SettingsPage(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public SettingsPage()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();

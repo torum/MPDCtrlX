@@ -12,11 +12,10 @@ internal sealed partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    // Optional parameterless constructor for XAML Previewer
-    public QueuePage() { InitializeComponent(); }
-    public QueuePage(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public QueuePage()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();

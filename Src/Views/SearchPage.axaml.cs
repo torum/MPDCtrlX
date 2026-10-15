@@ -8,11 +8,10 @@ internal sealed partial class SearchPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    // Optional parameterless constructor for XAML Previewer
-    public SearchPage() { InitializeComponent(); }
-    public SearchPage(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public SearchPage()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();

@@ -8,7 +8,10 @@ using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
+using MPDCtrlX.Services;
+using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -17,20 +20,24 @@ namespace MPDCtrlX.Views;
 
 internal sealed partial class MainWindow : Window
 {
+    private readonly IConfigurationService _configurationService;
+
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
     public int WinRestoreTop { get; private set; } = 100;
     public int WinRestoreLeft { get; private set; } = 100;
 
-    // Optional parameterless constructor for XAML Previewer
-    public MainWindow() { InitializeComponent(); }
-
-    public MainWindow(MainViewModel vm)
+    // Parameterless constructor for XAML Previewer
+    public MainWindow()
     {
+        _configurationService = ((App.Current as App)?.ServiceProvider.GetRequiredService<IConfigurationService>()) ?? throw new InvalidOperationException("IConfigurationService is not available in the service provider.");
+
+        var vm = ((App.Current as App)?.ServiceProvider.GetRequiredService<MainViewModel>()) ?? throw new InvalidOperationException("MainViewModel is not available in the service provider.");
         this.DataContext = vm;
 
         bool isMax = false;
-        if (vm.WindowState == WindowState.Maximized)
+        var mw = _configurationService.CurrentConfiguration.MainWindow;
+        if (mw.WindowState == WindowState.Maximized)
         {
             this.WindowState = WindowState.Maximized;
             isMax = true;
@@ -40,19 +47,24 @@ internal sealed partial class MainWindow : Window
             this.WindowState = WindowState.Normal;
             isMax = false;
 
-            if ((vm.WindowLeft > 0) && (vm.WindowTop > 0))
+            // TODO: multi-monitor support. If the saved position is outside of the current monitor, move it to the monitor.
+            if ((mw.Left >= 0) && (mw.Top >= 0))
             {
-                this.Position = new PixelPoint(vm.WindowLeft, vm.WindowTop);
+                this.Position = new PixelPoint(mw.Left, mw.Top);
+            }
+            else
+            {
+                this.Position = new PixelPoint(100, 100);
             }
 
-            if (vm.WindowHeight >= 120)
+            if (mw.Height >= 120)
             {
-                this.Height = vm.WindowHeight;
+                this.Height = mw.Height;
             }
 
-            if (vm.WindowWidth >= 480)
+            if (mw.Width >= 480)
             {
-                this.Width = vm.WindowWidth;
+                this.Width = mw.Width;
             }
         }
 
@@ -73,6 +85,22 @@ internal sealed partial class MainWindow : Window
             UpdateWindowMargins(isMax);
             UpdateThemeBackground(ActualThemeVariant);
         }
+
+        this.Loaded += async (s, e) =>
+        {
+            var config = _configurationService.CurrentConfiguration;
+            this.Width = config.MainWindow.Width;
+            this.Height = config.MainWindow.Height;
+            //this.Position = new PixelPoint(config.MainWindow.Left, config.MainWindow.Top);
+            //this.WindowState = config.MainWindow.WindowState;
+            WinRestoreWidth = (int)config.MainWindow.RestoreWidth;
+            WinRestoreHeight = (int)config.MainWindow.RestoreHeight;
+            WinRestoreLeft = config.MainWindow.RestoreLeft;
+            WinRestoreTop = config.MainWindow.RestoreTop;
+
+            //this.NavigateViewControl.IsPaneOpen = config.IsNavigationViewMenuOpen;
+            //"OnPropertyChanged(nameof(IsNavigationViewMenuOpen));"
+        };
     }
 
     protected override void OnOpened(EventArgs e)
@@ -80,6 +108,7 @@ internal sealed partial class MainWindow : Window
         base.OnOpened(e);
 
         this.SizeChanged += this.Window_SizeChanged;
+        this.PositionChanged += this.Window_PositionChanged;
 
         if (this.DataContext is not MainViewModel vm)
         {
@@ -87,8 +116,6 @@ internal sealed partial class MainWindow : Window
         }
 
         this.Loaded += vm.OnWindowLoaded;
-        this.Closing += vm.OnWindowClosing;
-        this.Closed += vm.OnWindowClosed;
 
         this.ActualThemeVariantChanged += OnActualThemeVariantChanged;
         this.PropertyChanged += this.OnWindow_PropertyChanged;
@@ -98,70 +125,61 @@ internal sealed partial class MainWindow : Window
         vm.GoToSettingsPage += OnGoToSettingsPage;
         vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
         vm.WorkingStateChanged += OnWorkingStateChanged;
+
     }
 
-    protected override void OnClosed(EventArgs e)
+    protected override async void OnClosed(EventArgs e)
     {
-        base.OnClosed(e);
-
         this.SizeChanged -= this.Window_SizeChanged;
+        this.PositionChanged -= this.Window_PositionChanged;
 
-        if (this.DataContext is not MainViewModel vm)
+        if (this.DataContext is MainViewModel vm)
         {
-            return;
+            this.Loaded -= vm.OnWindowLoaded;
+
+            this.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
+            this.PropertyChanged -= this.OnWindow_PropertyChanged;
+            vm.DebugWindowShowHide -= OnDebugWindowShowHide;
+            vm.DebugCommandOutput -= OnDebugCommandOutput;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
+            vm.DebugIdleOutput -= OnDebugIdleOutput;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
+            vm.GoToSettingsPage -= OnGoToSettingsPage;
+            vm.UserCanExecuteChanged -= OnUserCanExecuteChanged;
+            vm.WorkingStateChanged -= OnWorkingStateChanged;
+
+            vm.Dispose();
         }
 
-        this.Loaded -= vm.OnWindowLoaded;
-        this.Closing -= vm.OnWindowClosing;
-        this.Closed -= vm.OnWindowClosed;
-
-        this.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
-        this.PropertyChanged -= this.OnWindow_PropertyChanged;
-        vm.DebugWindowShowHide -= OnDebugWindowShowHide;
-        vm.DebugCommandOutput -= OnDebugCommandOutput;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
-        vm.DebugIdleOutput -= OnDebugIdleOutput;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
-        vm.GoToSettingsPage -= OnGoToSettingsPage;
-        vm.UserCanExecuteChanged -= OnUserCanExecuteChanged;
-        vm.WorkingStateChanged -= OnWorkingStateChanged;
-
+        // must be the last.
+        base.OnClosed(e);
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
-        /*
-        var app = (App)Application.Current!;
-
-        // Second pass, triggered by Shutdown(). Let the window close.
-        if (app.IsShuttingDown)
+        if (this.DataContext is MainViewModel vm)
         {
-            return;
+            // Tell vm the window is closed, so it should update settings.
+            vm.UpdateCurrentSettings();
         }
 
-        // Raises the Closing event first (vm.OnWindowClosing saves window settings).
-        base.OnClosing(e);
-        if (e.Cancel)
-        {
-            return; // Something else cancelled the close.
-        }
+        // Window Position must be saved before the window is closed, otherwise the position will be lost.
+        #region == Save Configuration ==
 
-        e.Cancel = true; // Keep the process alive while the host stops.
+        var config = _configurationService.CurrentConfiguration;
+        config.MainWindow.Width = this.Width;
+        config.MainWindow.Height = this.Height;
+        config.MainWindow.Left = this.Position.X;
+        config.MainWindow.Top = this.Position.Y;
+        config.MainWindow.WindowState = this.WindowState;
+        config.MainWindow.RestoreWidth = WinRestoreWidth;
+        config.MainWindow.RestoreHeight = WinRestoreHeight;
+        config.MainWindow.RestoreLeft = WinRestoreLeft;
+        config.MainWindow.RestoreTop = WinRestoreTop;
 
-        // Hide immediately so the user doesn't think the app froze.
-        this.Hide();
+        config.IsNavigationViewMenuOpen = this.NavigateViewControl.IsPaneOpen;
 
-        try
-        {
-            await app.ShutdownAsync();
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception @OnClosing {ex}");
-            try { App.AppendErrorLog("Exception @MainWindow.OnClosing", ex.ToString()); } catch {  }
+        await _configurationService.SaveConfigurationAsync();
 
-            // The window is hidden and the close is cancelled, so without this the process would linger.
-            Environment.Exit(1);
-        }
-        */
+        #endregion
     }
 
     private void UpdateThemeBackground(ThemeVariant theme)
@@ -191,8 +209,8 @@ internal sealed partial class MainWindow : Window
 
     private void OnActualThemeVariantChanged(object? sender, EventArgs e)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) 
-        { 
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
             UpdateThemeBackground(ActualThemeVariant);
         }
     }
@@ -246,7 +264,7 @@ internal sealed partial class MainWindow : Window
 
             //Debug.WriteLine($"WindowState changed from {e.OldValue} to {e.NewValue}");
 
-            if (e.NewValue is WindowState.FullScreen || e.NewValue is WindowState.Maximized )
+            if (e.NewValue is WindowState.FullScreen || e.NewValue is WindowState.Maximized)
             {
                 UpdateWindowMargins(true);
             }
@@ -437,8 +455,17 @@ internal sealed partial class MainWindow : Window
         {
             WinRestoreHeight = (int)this.Height;
             WinRestoreWidth = (int)this.Width;
-            WinRestoreTop = (int)this.Position.Y;
-            WinRestoreLeft = (int)this.Position.X;
+            WinRestoreTop = this.Position.Y;
+            WinRestoreLeft = this.Position.X;
+        }
+    }
+
+    private void Window_PositionChanged(object? sender, PixelPointEventArgs e)
+    {
+        if (this.WindowState == WindowState.Normal)
+        {
+            WinRestoreTop = this.Position.Y;
+            WinRestoreLeft = this.Position.X;
         }
     }
 
@@ -771,4 +798,5 @@ internal sealed partial class MainWindow : Window
     {
         this.AppTitle.Opacity = 0.5;
     }
+
 }

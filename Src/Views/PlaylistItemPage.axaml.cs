@@ -11,11 +11,10 @@ internal sealed partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
-    // Optional parameterless constructor for XAML Previewer
-    public PlaylistItemPage() { InitializeComponent(); }
-    public PlaylistItemPage(MainViewModel vm)
+    // parameterless constructor for XAML Previewer
+    public PlaylistItemPage()
     {
-        //var vm = App.GetService<MainViewModel>();
+        var vm = App.GetService<MainViewModel>();
         DataContext = vm;
 
         InitializeComponent();

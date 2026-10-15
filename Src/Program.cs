@@ -115,8 +115,8 @@ internal sealed class Program
             .With(new WaylandPlatformOptions()
             {
                 AppId = "MPDCtrlX",  // Matches your .desktop launcher file
-                UseDmabufSwapchain = true,     // Enables high-performance rendering
-                UseGLibMainLoop = true         // Integrates with Linux desktop loops
+                //UseDmabufSwapchain = true,     // Enables high-performance rendering
+                //UseGLibMainLoop = true         // Integrates with Linux desktop loops
             })
             .WithInterFont();
             //.With(new AvaloniaNativePlatformOptions { OverlayPopups = true })

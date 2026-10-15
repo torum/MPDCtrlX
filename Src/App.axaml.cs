@@ -36,8 +36,7 @@ namespace MPDCtrlX
         private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
         private readonly string _envCacheAppFolder;// = System.IO.Path.Combine((System.IO.Path.Combine(_envAppCacheFolder, AppDeveloper)), AppName);
         public static string AlbumCoverCacheFolder { get; private set; } = System.IO.Path.Combine(_envAppLocalAppFolder, "AlbumCoverCache");
-        //private Task? _appHostStartTask;
-        //private readonly CancellationTokenSource _appHostStartCts = new();
+
         public App()
         {
             // Platform specific Cache folder path
@@ -98,6 +97,7 @@ namespace MPDCtrlX
             services.AddSingleton<IMpcService, MpcService>();
             services.AddTransient<IMpcBinaryService, MpcBinaryService>();
             services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<IConfigurationService, ConfigurationService>();
 
             services.AddSingleton<MprisPlayerController>();
             services.AddSingleton<MprisPathMethodHandler>();
@@ -105,82 +105,25 @@ namespace MPDCtrlX
             //services.AddHostedService<MprisDbusHostedService>();
             services.AddSingleton<MprisDbusHostedService>();
 
+
+            services.AddTransient<InitWindow>();
             services.AddSingleton<QueuePage>();
-            services.AddSingleton<SearchPage>();
+            services.AddSingleton<SettingsPage>();
             services.AddSingleton<FilesPage>();
             services.AddSingleton<PlaylistItemPage>();
             services.AddSingleton<AlbumPage>();
             services.AddSingleton<ArtistPage>();
-            services.AddSingleton<SettingsPage>();
-            services.AddTransient<InitWindow>();
+            services.AddSingleton<SearchPage>();
 
             // Build the provider
             ServiceProvider = services.BuildServiceProvider();
-            /*
-            AppHost = Microsoft.Extensions.Hosting.Host
-                    .CreateDefaultBuilder()
-                    .UseContentRoot(AppContext.BaseDirectory)
-                    .ConfigureLogging((context, logging) =>
-                    {
-#if DEBUG
-                        logging.AddFilter("Microsoft.Extensions.Hosting", LogLevel.Debug);
-                        logging.AddFilter("Microsoft.Hosting.Lifetime", LogLevel.Information);
-#else
-                        // Strips log destinations and shuts down the framework engines for production
-                        logging.ClearProviders(); 
-                        logging.AddFilter(null, LogLevel.None); 
-#endif
-                    })
-                    .ConfigureServices((context, services) =>
-                    {
-                        services.AddSingleton<MainWindow>();
-                        services.AddSingleton<MainView>();
-                        services.AddSingleton<MainViewModel>();
-                        services.AddSingleton<IMpcService, MpcService>();
-                        services.AddTransient<IMpcBinaryService, MpcBinaryService>();
-                        services.AddSingleton<IDialogService, DialogService>();
 
-                        services.AddSingleton<MprisPlayerController>();
-                        services.AddSingleton<MprisPathMethodHandler>();
-                        services.AddSingleton<IPathMethodHandler>(provider => provider.GetRequiredService<MprisPathMethodHandler>());
-                        services.AddHostedService<MprisDbusHostedService>();
-
-                        services.AddSingleton<QueuePage>();
-                        services.AddSingleton<SearchPage>();
-                        services.AddSingleton<FilesPage>();
-                        services.AddSingleton<PlaylistItemPage>();
-                        services.AddSingleton<AlbumPage>();
-                        services.AddSingleton<ArtistPage>();
-                        services.AddSingleton<SettingsPage>();
-                        services.AddTransient<InitWindow>();
-                    })
-                    .Build();
-            */
         }
-
-        //public IHost AppHost { get; }
         public IServiceProvider ServiceProvider { get; private set; } = null!;
 
         public static T GetService<T>() where T : class
         {
-            /*
-            if ((App.Current as App)!.ServiceProvider is not { })
-            {
-                return null;
-            }
-            */
-
             return (App.Current as App)!.ServiceProvider.GetRequiredService<T>();
-
-            //return ((App.Current as App)!.AppHost.Services.GetRequiredService<T>());
-            /*
-            if ((App.Current as App)!.AppHost!.Services.GetService(typeof(T)) is not T service)
-            {
-                throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-            }
-
-            return service;
-            */
         }
 
         public override void Initialize()
@@ -188,7 +131,7 @@ namespace MPDCtrlX
             AvaloniaXamlLoader.Load(this);
         }
 
-        public override void OnFrameworkInitializationCompleted()
+        public async override void OnFrameworkInitializationCompleted()
         {
             // TMP: For testing locale strings
             //Properties.Resources.Culture = new CultureInfo("en-US");
@@ -207,27 +150,11 @@ namespace MPDCtrlX
                 //Dispatcher.UIThread.UnhandledException += OnUnhandledException;
                 RegisterGlobalExceptionHandlers();
 
-                //_appHostStartTask = StartAppHostAsync();
+                var configurationService = ServiceProvider.GetRequiredService<IConfigurationService>();
+                configurationService.Initialize(AppConfigFilePath);
+                await configurationService.LoadConfigurationAsync();
+
                 desktop.MainWindow = ServiceProvider.GetRequiredService<MainWindow>();//App.GetService<MainWindow>();
-                //desktop.MainWindow.Closing += OnMainWindowClosing;
-                //desktop.Exit += OnDesktopExit; // Fallback for shutdowns that bypass window closing.
-                /*
-                desktop.MainWindow.Closed += async (sender, e) =>
-                {
-                    try
-                    {
-                        if (_appHostStartTask is not null)
-                        {
-                            await _appHostStartTask;
-                        }
-                        await AppHost.StopAsync();
-                    }
-                    finally
-                    {
-                        AppHost.Dispose();
-                    }
-                };
-                */
 
                 // In Avalonia UI, don't show or activate the main window.
                 // Let the Avalonia UI framework handle the window activation when the app is ready.
@@ -237,116 +164,6 @@ namespace MPDCtrlX
 
             base.OnFrameworkInitializationCompleted();
         }
-
-        /*
-        private async Task StartAppHostAsync()
-        {
-            try
-            {
-                await AppHost.StartAsync(_appHostStartCts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                // Start was cancelled because the app is shutting down.
-                System.Diagnostics.Debug.WriteLine("AppHost.StartAsync cancelled.");
-            }
-            catch (Exception ex)
-            {
-                AppendErrorLog("AppHost.StartAsync", ex.ToString());
-                SaveErrorLog();
-            }
-        }
-        */
-
-        /*
-        private bool _isShuttingDown;
-        public bool IsShuttingDown => _isShuttingDown;
-        private bool _hostDisposed;
-
-        // Fallback: Shutdown() from code, OS logout, SIGTERM, etc.
-        private void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
-        {
-            if (_isShuttingDown)
-                return;
-
-            _isShuttingDown = true;
-
-            var stopTask = Task.Run(StopAndDisposeHostAsync);
-            if (!stopTask.Wait(TimeSpan.FromSeconds(10)))
-            {
-                AppendErrorLog("OnDesktopExit", "Host shutdown timed out.");
-                SaveErrorLog();
-            }
-        }
-
-        /// <summary>
-        /// Stops and disposes the host, then shuts down the application.
-        /// Called from MainWindow.OnClosing.
-        /// </summary>
-        public async Task ShutdownAsync()
-        {
-            if (_isShuttingDown)
-            {
-                return;
-            }
-
-            _isShuttingDown = true;
-
-            try
-            {
-                await StopAndDisposeHostAsync();
-            }
-            finally
-            {
-                (ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.Shutdown();
-            }
-        }
-
-        private async Task StopAndDisposeHostAsync()
-        {
-            if (_hostDisposed)
-            {
-                return;
-            }
-
-            try
-            {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-
-                // 1. Abort a start that is still in progress (e.g. a hung D-Bus connect).
-                await _appHostStartCts.CancelAsync().ConfigureAwait(false);
-
-                // 2. Wait for the start task, but never longer than the timeout.
-                if (_appHostStartTask is not null)
-                {
-                    try
-                    {
-                        await _appHostStartTask.WaitAsync(cts.Token).ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        AppendErrorLog("StopAndDisposeHostAsync", "AppHost start did not finish within the timeout.");
-                        SaveErrorLog();
-                    }
-                }
-
-                // 3. Stop the host, bounded by the same timeout.
-                await AppHost.StopAsync(cts.Token).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                AppendErrorLog("AppHost.StopAsync", ex.ToString());
-                SaveErrorLog();
-            }
-            finally
-            {
-                _hostDisposed = true;
-                _appHostStartCts.Dispose();
-                AppHost.Dispose();
-                System.Diagnostics.Debug.WriteLine("AppHost disposed.");
-            }
-        }
-        */
 
         // Log file.
         private static readonly StringBuilder _errortxt = new();

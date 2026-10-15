@@ -8,50 +8,32 @@
 		xmlns:vm="clr-namespace:MPDCtrlX.ViewModels"
 		x:DataType="vm:MainViewModel"
         x:Class="MPDCtrlX.Views.Dialogs.InitWindow"
-        
         TransparencyLevelHint="AcrylicBlur"
         ExtendClientAreaToDecorationsHint="True"
-		
 		WindowStartupLocation="CenterOwner"
 		Width="500"
-		Height="600"
+		Height="580"
         Title="">
-	<!-- Topmost="True" -->
-	<Window.Resources>
-
-	</Window.Resources>
 	<Grid>
-		<!--
-		<ExperimentalAcrylicBorder IsHitTestVisible="False">
-			<ExperimentalAcrylicBorder.Material>
-				<ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="Black"
-                    TintOpacity="1"
-                    MaterialOpacity="0.65" />
-			</ExperimentalAcrylicBorder.Material>
-		</ExperimentalAcrylicBorder>
-		-->
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<ScrollViewer Grid.Row="0">
-			<StackPanel Spacing="12" HorizontalAlignment="Stretch" Margin="24">
+			<StackPanel Spacing="24" HorizontalAlignment="Stretch" Margin="24">
 
 				<StackPanel>
 					<TextBlock Text="MPDCtrlX" Theme="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,10"/>
 					<Separator/>
 				</StackPanel>
 
-				<StackPanel Spacing="6" Margin="0,0,0,12">
+				<StackPanel Spacing="6" Margin="0,0,0,0">
 					<StackPanel Orientation="Vertical" Spacing="12">
 						<TextBlock Text="{x:Static prop:Resources.InitialSetupWindow_Subtitle}" Theme="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Bottom"/>
 						<TextBlock Text="{x:Static prop:Resources.InitialSetupWindow_Description}" Theme="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Bottom"/>
 					</StackPanel>
 				</StackPanel>
-
 
 				<StackPanel Spacing="3" HorizontalAlignment="Left">
 					<TextBlock Text="{x:Static prop:Resources.Host}"></TextBlock>
@@ -69,19 +51,6 @@
 						<TextBlock Text="" VerticalAlignment="Bottom"></TextBlock>
 					</StackPanel>
 				</StackPanel>
-
-				<StackPanel>
-					<CheckBox Content="{x:Static prop:Resources.InitialSetupWindow_RememberThis}" IsChecked="{Binding IsRememberAsProfile,Mode=TwoWay}" HorizontalAlignment="Left" />
-				</StackPanel>
-				<!--
-			<StackPanel Spacing="3" Margin="0,12,0,0">
-				
-				<Button Content="Apply changes and connect" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding Text, ElementName=PasswordBox}" IsDefault="False"></Button>
-							<Button Content="{x:Static prop:Resources.Connect}" IsEnabled="{Binding Path=IsNotConnecting}" Command="{Binding ChangeConnectionProfileCommand}" CommandParameter="{Binding ElementName=PasswordBox}" IsDefault="False"></Button>
-							
-			</StackPanel>
-			-->
-
 			</StackPanel>
 		</ScrollViewer>
 
