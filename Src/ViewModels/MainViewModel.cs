@@ -4026,16 +4026,17 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     }
 
     // Closing
-    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    public async void OnWindowClosing(object? sender, CancelEventArgs e)
     {
         Debug.WriteLine("OnWindowClosing");
 
+        //
+        await _mprisDbusHostedService.StopAsync();
     }
 
     public void OnWindowClosed(object? sender, EventArgs e)
     {
         Debug.WriteLine("OnWindowClosed");
-
     }
 
     #endregion
@@ -6261,12 +6262,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 }
             });
 
-            // 
-            //await Task.Run(LoadInitialData, _cts.Token);
-            await LoadInitialDataAsync();
-
             //
             await _mprisDbusHostedService.StartAsync(_cts.Token).ConfigureAwait(false);
+             
+            //
+            await LoadInitialDataAsync();
+
         }
         catch (OperationCanceledException)
         {

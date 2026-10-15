@@ -80,7 +80,7 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         }
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync()//CancellationToken cancellationToken
     {
         var connection = _connection;
         _connection = null;
@@ -113,6 +113,7 @@ internal sealed class MprisDbusHostedService(IEnumerable<IPathMethodHandler> met
         finally
         {
             connection.Dispose();
+            System.Diagnostics.Debug.WriteLine($"Unregistered and disposed MPRIS service {BusName}.");
         }
     }
 
