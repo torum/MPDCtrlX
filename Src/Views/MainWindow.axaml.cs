@@ -21,6 +21,7 @@ namespace MPDCtrlX.Views;
 internal sealed partial class MainWindow : Window
 {
     private readonly IConfigurationService _configurationService;
+    private bool _isClosing;
 
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
@@ -116,6 +117,8 @@ internal sealed partial class MainWindow : Window
 
         this.SizeChanged += this.Window_SizeChanged;
         this.PositionChanged += this.Window_PositionChanged;
+        this.ActualThemeVariantChanged += OnActualThemeVariantChanged;
+        this.PropertyChanged += this.OnWindow_PropertyChanged;
 
         if (this.DataContext is not MainViewModel vm)
         {
@@ -124,8 +127,6 @@ internal sealed partial class MainWindow : Window
 
         this.Loaded += vm.OnWindowLoaded;
 
-        this.ActualThemeVariantChanged += OnActualThemeVariantChanged;
-        this.PropertyChanged += this.OnWindow_PropertyChanged;
         vm.DebugWindowShowHide += OnDebugWindowShowHide;
         vm.DebugCommandOutput += OnDebugCommandOutput;
         vm.DebugIdleOutput += OnDebugIdleOutput;
@@ -139,13 +140,13 @@ internal sealed partial class MainWindow : Window
     {
         this.SizeChanged -= this.Window_SizeChanged;
         this.PositionChanged -= this.Window_PositionChanged;
+        this.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
+        this.PropertyChanged -= this.OnWindow_PropertyChanged;
 
         if (this.DataContext is MainViewModel vm)
         {
             this.Loaded -= vm.OnWindowLoaded;
 
-            this.ActualThemeVariantChanged -= OnActualThemeVariantChanged;
-            this.PropertyChanged -= this.OnWindow_PropertyChanged;
             vm.DebugWindowShowHide -= OnDebugWindowShowHide;
             vm.DebugCommandOutput -= OnDebugCommandOutput;//(sender, arg) => { this.OnDebugCommandOutput(arg); };
             vm.DebugIdleOutput -= OnDebugIdleOutput;//(sender, arg) => { this.OnDebugIdleOutput(arg); };
@@ -162,6 +163,13 @@ internal sealed partial class MainWindow : Window
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
+        Debug.WriteLine("OnClosing");
+
+        if (_isClosing) return;
+        _isClosing = true;
+
+        e.Cancel = true; // Cancel the default close behavior to allow for async operations
+
         if (this.DataContext is MainViewModel vm)
         {
             // Tell vm the window is closed, so it should update settings.
@@ -185,6 +193,8 @@ internal sealed partial class MainWindow : Window
         config.IsNavigationViewMenuOpen = this.NavigateViewControl.IsPaneOpen;
 
         await _configurationService.SaveConfigurationAsync();
+
+        this.Close();
 
         #endregion
     }
