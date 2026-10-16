@@ -16,13 +16,24 @@ using System.Xml.Linq;
 
 namespace MPDCtrlX.Services;
 
+/*
+ * WinUI3/AvaloniaUI does not provide a way to get the restore bounds of a window like WPF does when it is maximized or minimized.
+ * So, we need to manually track the restore bounds of the window when it is in the restored state.
+ * AppWindow_Changed(WinUI3)/Window_PositionChanged(AvaloniaUI) and Window_SizeChanged event handlers are called when the window state changes, such as when the window is maximized, minimized, or restored.
+ * Make sure to update the restore bounds when the window is in the restored state.
+ * Also, use Window_Activated event handler to update the restore bounds when the window is activated, because sometimes the window state change events are not fired when the window is activated.
+ * This way, even if the window is closed while maximized or minimized, we can still save the restore bounds to the configuration file.
+        WinRestoreWidth = (int)mw.RestoreWidth;
+        WinRestoreHeight = (int)mw.RestoreHeight;
+        WinRestoreLeft = mw.RestoreLeft;
+        WinRestoreTop = mw.RestoreTop;
+ */
+
 internal sealed class ConfigurationService : IConfigurationService
 {
     private bool _isInitialized;
-    private string? _configFilePath = string.Empty;
-
     private bool _isConfigLoaded;
-
+    private string? _configFilePath = string.Empty;
     private XDocument? _xdoc;
 
     public ConfigurationService()
@@ -33,14 +44,14 @@ internal sealed class ConfigurationService : IConfigurationService
 
     public Models.Configuration CurrentConfiguration { get; private set; }
 
-
     public void Initialize(string configFilePath)
     {
         _configFilePath = configFilePath;
         _isConfigLoaded = false;
-        CurrentConfiguration = new Models.Configuration();
         _xdoc = null;
         _isInitialized = true;
+
+        CurrentConfiguration = new Models.Configuration();
     }
 
     public async Task<Models.Configuration> LoadConfigurationAsync()
@@ -51,10 +62,11 @@ internal sealed class ConfigurationService : IConfigurationService
         }
 
         var config = new Models.Configuration();
-        // Make sure Window and settings have been fully loaded and not overriding with empty data.
+
         if (_isConfigLoaded)
         {
-            return config;
+            Debug.WriteLine("LoadConfigurationAsync() - Already loaded, returning current configuration.");
+            return CurrentConfiguration ?? config;
         }
         if (string.IsNullOrEmpty(_configFilePath))
         {
@@ -62,10 +74,13 @@ internal sealed class ConfigurationService : IConfigurationService
         }
         if (!System.IO.File.Exists(_configFilePath))
         {
+            Debug.WriteLine($"Configuration file not found: {_configFilePath}");
+            // Set _isConfigLoaded to true so that SaveConfigurationAsync() can create the file with default settings.
+            _isConfigLoaded = true;
             return config;
         }
 
-        Debug.WriteLine("LoadSettings()");
+        Debug.WriteLine("LoadConfigurationAsync()");
 
         try
         {
@@ -1358,6 +1373,7 @@ internal sealed class ConfigurationService : IConfigurationService
         {
             throw new InvalidOperationException("ConfigurationService is not initialized.");
         }
+        // TODO: Make sure Window and settings have been fully loaded and not overriding with empty data.
         if (!_isConfigLoaded)
         {
             // Don't return, because we want to save the configuration even if it hasn't been loaded yet, like the first time.

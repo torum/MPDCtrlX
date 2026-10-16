@@ -37,6 +37,32 @@ internal sealed partial class MainWindow : Window
 
         bool isMax = false;
         var mw = _configurationService.CurrentConfiguration.MainWindow;
+
+        // TODO: multi-monitor support. If the saved position is outside of the current monitor, move it to the monitor.
+        if ((mw.Left >= 0) && (mw.Top >= 0))
+        {
+            this.Position = new PixelPoint(mw.Left, mw.Top);
+        }
+        else
+        {
+            this.Position = new PixelPoint(100, 100);
+        }
+
+        if (mw.Height >= 120)
+        {
+            this.Height = mw.Height;
+        }
+
+        if (mw.Width >= 480)
+        {
+            this.Width = mw.Width;
+        }
+
+        WinRestoreWidth = (int)mw.RestoreWidth;
+        WinRestoreHeight = (int)mw.RestoreHeight;
+        WinRestoreLeft = mw.RestoreLeft;
+        WinRestoreTop = mw.RestoreTop;
+
         if (mw.WindowState == WindowState.Maximized)
         {
             this.WindowState = WindowState.Maximized;
@@ -46,26 +72,6 @@ internal sealed partial class MainWindow : Window
         {
             this.WindowState = WindowState.Normal;
             isMax = false;
-
-            // TODO: multi-monitor support. If the saved position is outside of the current monitor, move it to the monitor.
-            if ((mw.Left >= 0) && (mw.Top >= 0))
-            {
-                this.Position = new PixelPoint(mw.Left, mw.Top);
-            }
-            else
-            {
-                this.Position = new PixelPoint(100, 100);
-            }
-
-            if (mw.Height >= 120)
-            {
-                this.Height = mw.Height;
-            }
-
-            if (mw.Width >= 480)
-            {
-                this.Width = mw.Width;
-            }
         }
 
         InitializeComponent();
@@ -85,7 +91,7 @@ internal sealed partial class MainWindow : Window
             UpdateWindowMargins(isMax);
             UpdateThemeBackground(ActualThemeVariant);
         }
-
+        /*
         this.Loaded += async (s, e) =>
         {
             var config = _configurationService.CurrentConfiguration;
@@ -101,6 +107,7 @@ internal sealed partial class MainWindow : Window
             //this.NavigateViewControl.IsPaneOpen = config.IsNavigationViewMenuOpen;
             //"OnPropertyChanged(nameof(IsNavigationViewMenuOpen));"
         };
+        */
     }
 
     protected override void OnOpened(EventArgs e)
@@ -180,6 +187,23 @@ internal sealed partial class MainWindow : Window
         await _configurationService.SaveConfigurationAsync();
 
         #endregion
+    }
+
+    private void Window_Activated(object? sender, EventArgs e)
+    {
+        this.AppTitle.Opacity = 1;
+        if (this.WindowState == WindowState.Normal)
+        {
+            WinRestoreHeight = (int)this.Height;
+            WinRestoreWidth = (int)this.Width;
+            WinRestoreTop = this.Position.Y;
+            WinRestoreLeft = this.Position.X;
+        }
+    }
+
+    private void Window_Deactivated(object? sender, EventArgs e)
+    {
+        this.AppTitle.Opacity = 0.5;
     }
 
     private void UpdateThemeBackground(ThemeVariant theme)
@@ -464,6 +488,8 @@ internal sealed partial class MainWindow : Window
     {
         if (this.WindowState == WindowState.Normal)
         {
+            WinRestoreHeight = (int)this.Height;
+            WinRestoreWidth = (int)this.Width;
             WinRestoreTop = this.Position.Y;
             WinRestoreLeft = this.Position.X;
         }
@@ -787,16 +813,6 @@ internal sealed partial class MainWindow : Window
             }
         }
 
-    }
-
-    private void Window_Activated(object? sender, EventArgs e)
-    {
-        this.AppTitle.Opacity = 1;
-    }
-
-    private void Window_Deactivated(object? sender, EventArgs e)
-    {
-        this.AppTitle.Opacity = 0.5;
     }
 
 }

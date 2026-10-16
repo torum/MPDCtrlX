@@ -4041,7 +4041,106 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    #region == Methods ==
+    #region == Public Methods ==
+
+    // TODO: make this a command (or make changes so that we don't have to call this from code behind).
+    public async Task GetCacheFolderSizeAsync()
+    {
+        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(AlbumCacheFolderPath).ConfigureAwait(true));
+    }
+
+    public void Dispose()
+    {
+        #region == UnSubscribe to events ==
+
+        // Unsubscribe events to avoid callbacks after shutdown
+        _mpc.IsBusy -= OnMpcIsBusy;
+        _mpc.MpdIdleConnected -= OnMpdIdleConnected;
+        _mpc.DebugCommandOutput -= OnDebugCommandOutput;
+        _mpc.DebugIdleOutput -= OnDebugIdleOutput;
+        _mpc.ConnectionStatusChanged -= OnConnectionStatusChanged;
+        _mpc.ConnectionError -= OnConnectionError;
+        _mpc.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
+        _mpc.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
+        _mpc.MpdPlaylistsChanged -= OnMpdPlaylistsChanged;
+        _mpc.MpdOutputChanged -= OnMpdOutputChanged;
+        _mpc.MpdAckError -= OnMpdAckError;
+        _mpc.MpdFatalError -= OnMpdFatalError;
+        _mpc.MpdAlbumArtChanged -= OnAlbumArtChanged;
+
+        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
+
+        // [Background][UI] etc
+        _mpc.MpcProgress -= OnMpcProgress;
+        //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
+        this.UpdateProgress -= OnUpdateProgress;
+
+        _elapsedTimer.Elapsed -= ElapsedTimer;
+        _volumeDelayTimer.Elapsed -= DoChangeVolume;
+        #endregion
+
+        try
+        {
+            try
+            {
+                _cts?.Cancel();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @OnWindowClosing() _mpc.Cancel() {ex}");
+                if (IsSaveLog)
+                {
+                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+                }
+            }
+            finally
+            {
+                if (IsConnected)
+                {
+                    // TODO: This (Dispose()) maybe too late to cancel the tasks. Need to cancel them before Dispose() is called such as Window.Closed.
+                    _mpc?.MpdStop = true;
+                    _mpc?.MpdDisconnect(false);
+                }
+                _mpc?.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+
+            }
+        }
+        finally
+        {
+            try
+            {
+                _cts?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Exception @OnWindowClosing() _cts.Dispose() {ex}");
+                if (IsSaveLog)
+                {
+                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
+                }
+            }
+
+            Debug.WriteLine("MainViewModel disposed.");
+            if (IsSaveLog)
+            {
+                Dispatcher.UIThread.Post(App.SaveErrorLog);
+            }
+        }
+
+        GC.SuppressFinalize(this);
+    }
+
+    #endregion
+
+    #region == Private Methods ==
 
     private readonly SemaphoreSlim _startGate = new(1, 1);
 
@@ -6164,12 +6263,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         {
             return ((size >> 50) / 1024F).ToString("F0", CultureInfo.InvariantCulture) + " EB";
         }
-    }
-
-    // TODO: make this a command (or make changes so that we don't have to call this from code behind).
-    public async Task GetCacheFolderSizeAsync()
-    {
-        AlbumCacheFolderSizeFormatted = ToFileSizeString(await GetFolderSizeAsync(AlbumCacheFolderPath).ConfigureAwait(true));
     }
 
     private static void DeleteAllContents(string directoryPath)
@@ -10007,92 +10100,4 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    public void Dispose()
-    {
-        #region == UnSubscribe to events ==
-
-        // Unsubscribe events to avoid callbacks after shutdown
-        _mpc.IsBusy -= OnMpcIsBusy;
-        _mpc.MpdIdleConnected -= OnMpdIdleConnected;
-        _mpc.DebugCommandOutput -= OnDebugCommandOutput;
-        _mpc.DebugIdleOutput -= OnDebugIdleOutput;
-        _mpc.ConnectionStatusChanged -= OnConnectionStatusChanged;
-        _mpc.ConnectionError -= OnConnectionError;
-        _mpc.MpdPlayerStatusChanged -= OnMpdPlayerStatusChanged;
-        _mpc.MpdCurrentQueueChanged -= OnMpdCurrentQueueChanged;
-        _mpc.MpdPlaylistsChanged -= OnMpdPlaylistsChanged;
-        _mpc.MpdOutputChanged -= OnMpdOutputChanged;
-        _mpc.MpdAckError -= OnMpdAckError;
-        _mpc.MpdFatalError -= OnMpdFatalError;
-        _mpc.MpdAlbumArtChanged -= OnAlbumArtChanged;
-
-        //_mpc.MpcInfo += new MpcService.MpcInfoEvent(OnMpcInfoEvent);
-
-        // [Background][UI] etc
-        _mpc.MpcProgress -= OnMpcProgress;
-        //this.UpdateProgress -= (sender, arg) => { this.OnUpdateProgress(arg); };
-        this.UpdateProgress -= OnUpdateProgress;
-
-        _elapsedTimer.Elapsed -= ElapsedTimer;
-        _volumeDelayTimer.Elapsed -= DoChangeVolume;
-        #endregion
-
-        try
-        {
-            try
-            {
-                _cts?.Cancel();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception @OnWindowClosing() _mpc.Cancel() {ex}");
-                if (IsSaveLog)
-                {
-                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
-                }
-            }
-            finally
-            {
-                if (IsConnected)
-                {
-                    // TODO: This (Dispose()) maybe too late to cancel the tasks. Need to cancel them before Dispose() is called such as Window.Closed.
-                    _mpc?.MpdStop = true;
-                    _mpc?.MpdDisconnect(false);
-                }
-                _mpc?.Dispose();
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception @OnWindowClosing() {ex}");
-            if (IsSaveLog)
-            {
-                Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
-                
-            }
-        }
-        finally
-        {
-            try
-            {
-                _cts?.Dispose();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception @OnWindowClosing() _cts.Dispose() {ex}");
-                if (IsSaveLog)
-                {
-                    Dispatcher.UIThread.Post(() => App.AppendErrorLog("Exception @Dispose()", ex.ToString()));
-                }
-            }
-                   
-            Debug.WriteLine("MainViewModel disposed.");
-            if (IsSaveLog)
-            {
-                Dispatcher.UIThread.Post(App.SaveErrorLog);
-            }
-        }
-
-        GC.SuppressFinalize(this);
-    }
 }
