@@ -194,9 +194,10 @@ internal sealed partial class MainWindow : Window
 
         await _configurationService.SaveConfigurationAsync();
 
+        #endregion
+
         this.Close();
 
-        #endregion
     }
 
     private void Window_Activated(object? sender, EventArgs e)
