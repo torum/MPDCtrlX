@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Install NativeAOT Compile Dependencies
       run: |
@@ -33,7 +33,7 @@ jobs:
         sudo apt-get install -y clang zlib1g-dev libkrb5-dev
 
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -82,18 +82,20 @@ jobs:
 
     - name: Download AppImageTool
       run: |
-        wget -q https://github.com
+        wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         chmod +x appimagetool-x86_64.AppImage
 
     - name: Build AppImage
       run: |
         export ARCH=x86_64
+        # Configure variables to bypass the FUSE mount restriction inside CI containers
+        export APPIMAGE_EXTRACT_AND_RUN=1
         ./appimagetool-x86_64.AppImage ${{ env.APP_NAME }}.AppDir
 
     - name: Rename Output AppImage
       run: |
         # Renames the AppImage to include the specific tag name (e.g., my-avalonia-app-v1.0.0-x86_64.AppImage)
-        mv *.AppImage ${{ env.APP_NAME }}-${{ github.ref_name }}-x86_64.AppImage
+        mv "${{ env.DISPLAY_NAME }}-x86_64.AppImage" ${{ env.APP_NAME }}-${{ github.ref_name }}-x86_64.AppImage
 
     - name: Create GitHub Release and Upload Asset
       env:
