@@ -1,0 +1,104 @@
+name: Build Linux AppImage
+
+# Manual trigger only
+on:
+  workflow_dispatch: # Allows manual triggering if needed
+
+# Grant permissions required to create releases and upload assets
+#permissions:
+#  contents: write
+
+jobs:
+  release-appimage:
+    runs-on: ubuntu-latest
+
+    env:
+      # CONFIGURATION: Change these to match your project details
+      PROJECT_PATH: "./Src/MPDCtrlX.csproj"
+      APP_NAME: "MPDCtrlX"
+      DISPLAY_NAME: "MPDCtrlX"
+      BINARY_NAME: "MPDCtrlX" 
+      DOTNET_VERSION: "10.0.x"       
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v6
+
+    - name: Install NativeAOT Compile Dependencies
+      run: |
+        # NativeAOT requires a local compiler suite and development libraries to bind code natively
+        sudo apt-get update
+        sudo apt-get install -y clang zlib1g-dev libkrb5-dev
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Publish Self-Contained App
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} \
+          -c Release \
+          -r linux-x64 \
+          --self-contained true \
+          -f net10.0 \
+          -p:IncludeNativeLibrariesForSelfExtract=true \
+          -o ./publish_output
+
+    - name: Create AppDir Structure
+      run: |
+        mkdir -p ${{ env.APP_NAME }}.AppDir/usr/bin
+        cp -r ./publish_output/* ${{ env.APP_NAME }}.AppDir/usr/bin/
+
+    - name: Copy Existing Repository Icon to AppDir
+      run: |
+        # 1. Copies your repository icon file into the root of AppDir
+        # 2. Renames it to match your APP_NAME exactly (required by AppImage standards)
+        # CHANGE "./Assets/Icon.png" to match your actual repository icon path!
+        cp ./Src/Assets/MPDCtrlX.png ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.png
+
+    - name: Generate .desktop File
+      run: |
+        cat <<EOF > ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.desktop
+        [Desktop Entry]
+        Type=Application
+        Name=${{ env.DISPLAY_NAME }}
+        Exec=${{ env.BINARY_NAME }}
+        Icon=${{ env.APP_NAME }}
+        Categories=Multimedia;
+        EOF
+
+    - name: Create AppRun Script
+      run: |
+        cat <<'EOF' > ${{ env.APP_NAME }}.AppDir/AppRun
+        #!/bin/sh
+        HERE="$(dirname "$(readlink -f "${0}")")"
+        export PATH="${HERE}/usr/bin:${PATH}"
+        exec "${HERE}/usr/bin/${{ env.BINARY_NAME }}" "$@"
+        EOF
+        chmod +x ${{ env.APP_NAME }}.AppDir/AppRun
+
+    - name: Download AppImageTool
+      run: |
+        wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+
+    - name: Build AppImage
+      run: |
+        export ARCH=x86_64
+        # Configure variables to bypass the FUSE mount restriction inside CI containers
+        export APPIMAGE_EXTRACT_AND_RUN=1
+        ./appimagetool-x86_64.AppImage ${{ env.APP_NAME }}.AppDir
+        # Create a dedicated directory and move the file there
+        mkdir -p ./local_binaries
+        mv "${{ env.DISPLAY_NAME }}-x86_64.AppImage" "./local_binaries/${{ env.APP_NAME }}-x86_64.AppImage"
+
+    - name: Save AppImage as Action Artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: Compiled-Linux-AppImage
+        path: ./local_binaries/${{ env.APP_NAME }}-x86_64.AppImage
+
+
+          
+
