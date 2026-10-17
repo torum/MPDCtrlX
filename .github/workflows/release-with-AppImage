@@ -1,0 +1,106 @@
+name: Build and Release Linux AppImage
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers the workflow on any tag push starting with 'v' (e.g., v1.0.0)
+  workflow_dispatch: # Allows manual triggering if needed
+
+# Grant permissions required to create releases and upload assets
+permissions:
+  contents: write
+
+jobs:
+  release-appimage:
+    runs-on: ubuntu-latest
+
+    env:
+      # CONFIGURATION: Change these to match your project details
+      PROJECT_PATH: "./Src/MPDCtrlX.csproj"
+      APP_NAME: "MPDCtrlX"
+      DISPLAY_NAME: "MPDCtrlX"
+      BINARY_NAME: "MPDCtrlX" 
+      DOTNET_VERSION: "10.0.x"       
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install NativeAOT Compile Dependencies
+      run: |
+        # NativeAOT requires a local compiler suite and development libraries to bind code natively
+        sudo apt-get update
+        sudo apt-get install -y clang zlib1g-dev libkrb5-dev
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Publish Self-Contained App
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} \
+          -c Release \
+          -r linux-x64 \
+          --self-contained true \
+          -f net10.0 \
+          -p:IncludeNativeLibrariesForSelfExtract=true \
+          -o ./publish_output
+
+    - name: Create AppDir Structure
+      run: |
+        mkdir -p ${{ env.APP_NAME }}.AppDir/usr/bin
+        cp -r ./publish_output/* ${{ env.APP_NAME }}.AppDir/usr/bin/
+
+    - name: Copy Existing Repository Icon to AppDir
+      run: |
+        # 1. Copies your repository icon file into the root of AppDir
+        # 2. Renames it to match your APP_NAME exactly (required by AppImage standards)
+        # CHANGE "./Assets/Icon.png" to match your actual repository icon path!
+        cp ./Assets/MPDCtrlX.png ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.png
+
+    - name: Generate .desktop File
+      run: |
+        cat <<EOF > ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.desktop
+        [Desktop Entry]
+        Type=Application
+        Name=${{ env.DISPLAY_NAME }}
+        Exec=${{ env.BINARY_NAME }}
+        Icon=${{ env.APP_NAME }}
+        Categories=Multimedia;
+        EOF
+
+    - name: Create AppRun Script
+      run: |
+        cat <<'EOF' > ${{ env.APP_NAME }}.AppDir/AppRun
+        #!/bin/sh
+        HERE="$(dirname "$(readlink -f "${0}")")"
+        export PATH="${HERE}/usr/bin:${PATH}"
+        exec "${HERE}/usr/bin/${{ env.BINARY_NAME }}" "$@"
+        EOF
+        chmod +x ${{ env.APP_NAME }}.AppDir/AppRun
+
+    - name: Download AppImageTool
+      run: |
+        wget -q https://github.com
+        chmod +x appimagetool-x86_64.AppImage
+
+    - name: Build AppImage
+      run: |
+        export ARCH=x86_64
+        ./appimagetool-x86_64.AppImage ${{ env.APP_NAME }}.AppDir
+
+    - name: Rename Output AppImage
+      run: |
+        # Renames the AppImage to include the specific tag name (e.g., my-avalonia-app-v1.0.0-x86_64.AppImage)
+        mv *.AppImage ${{ env.APP_NAME }}-${{ github.ref_name }}-x86_64.AppImage
+
+    - name: Create GitHub Release and Upload Asset
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # Checks if the release already exists; if not, it creates a new draft/release and attaches the file
+        gh release create ${{ github.ref_name }} \
+          --title "Release ${{ github.ref_name }}" \
+          --generate-notes \
+          ${{ env.APP_NAME }}-${{ github.ref_name }}-x86_64.AppImage
