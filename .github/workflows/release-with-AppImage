@@ -67,7 +67,7 @@ jobs:
         Name=${{ env.DISPLAY_NAME }}
         Exec=${{ env.BINARY_NAME }}
         Icon=${{ env.APP_NAME }}
-        Categories=Multimedia;
+        Categories=AudioVideo;Audio;Player;
         EOF
 
     - name: Create AppRun Script
