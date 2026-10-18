@@ -270,6 +270,11 @@
 										<Bold>CommunityToolkit.Mvvm</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
 									</TextBlock>
 								</HyperlinkButton>
+								<HyperlinkButton NavigateUri="https://github.com/dotnet/dotnet">
+									<TextBlock>
+										<Bold>.NET SDK</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									</TextBlock>
+								</HyperlinkButton>
 								<HyperlinkButton NavigateUri="https://github.com/Egolds/Xaml.Behaviors.Interactions.Animated">
 									<TextBlock>
 										<Bold>Egolds.Xaml.Behaviors.Interactions.Animated</Bold> by <Italic>Egolds</Italic> <Run>(MIT license)</Run>
@@ -280,9 +285,9 @@
 									<Bold>FluentAvalonia</Bold> by <Italic>amwx</Italic> <Run>(MIT license)</Run>
 									</TextBlock>
 								</HyperlinkButton>
-								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/microsoft.extensions.hosting/">
+								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/microsoft.extensions.dependencyinjection/">
 									<TextBlock>
-									<Bold>Microsoft.Extensions.Hosting</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
+									<Bold>Microsoft.Extensions.DependencyInjection</Bold> by <Italic>Microsoft</Italic> <Run>(MIT license)</Run>
 									</TextBlock>
 								</HyperlinkButton>
 								<HyperlinkButton NavigateUri="https://www.nuget.org/packages/system.security.cryptography.protecteddata/">

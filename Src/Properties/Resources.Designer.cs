@@ -1753,7 +1753,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This project is hosted at GitHub as a open source project..
+        ///   Looks up a localized string similar to This project is hosted at GitHub as an open source project..
         /// </summary>
         public static string Settings_ProjectPage_Description {
             get {

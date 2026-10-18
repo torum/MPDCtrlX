@@ -625,7 +625,7 @@ SOFTWARE.</value>
     <value>Project info</value>
   </data>
   <data name="Settings_ProjectPage_Description" xml:space="preserve">
-    <value>This project is hosted at GitHub as a open source project.</value>
+    <value>This project is hosted at GitHub as an open source project.</value>
   </data>
   <data name="Dialog_TextBox_Watermark_EnterNewPlaylistName" xml:space="preserve">
     <value>Enter a new playlist name</value>
