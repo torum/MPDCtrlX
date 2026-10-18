@@ -115,7 +115,7 @@ internal sealed class Program
             .UseWaylandWithFallback()
             .With(new WaylandPlatformOptions()
             {
-                AppId = "MPDCtrlX",  // Matches your .desktop launcher file
+                AppId = "MPDCtrlX",  // Matches .desktop launcher file
                 UseDmabufSwapchain = null,     // Enables high-performance rendering
                 UseGLibMainLoop = false,         // Integrates with Linux desktop loops
                 ForceDrawnDecorations = true    // Enables custom window decorations especially for KDE environments where they prefer server-side decorations.
@@ -126,6 +126,7 @@ internal sealed class Program
             //.With(new X11PlatformOptions { OverlayPopups = true })
             //.LogToTrace(LogEventLevel.Error);
 #pragma warning restore AVALONIA_WAYLAND_FORCE_CSD
+
     private static void OnProcessExit(object? sender, EventArgs e)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

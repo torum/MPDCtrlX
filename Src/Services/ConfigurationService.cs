@@ -313,6 +313,20 @@ internal sealed class ConfigurationService : IConfigurationService
                         config.IsForceSetVolumeExplicitly = false;
                     }
                 }
+
+                hoge = opts.Attribute("IsMPRISIntegrationEnabled");
+                if (hoge is not null)
+                {
+                    if (hoge.Value == "True")
+                    {
+                        config.IsMPRISIntegrationEnabled = true;
+
+                    }
+                    else
+                    {
+                        config.IsMPRISIntegrationEnabled = false;
+                    }
+                }
             }
 
             #endregion
@@ -1535,6 +1549,11 @@ internal sealed class ConfigurationService : IConfigurationService
         //
         attrs = doc.CreateAttribute("ForceSetVolumeExplicitly");
         attrs.Value = config.IsForceSetVolumeExplicitly ? "True" : "False";
+        opts.SetAttributeNode(attrs);
+
+        //
+        attrs = doc.CreateAttribute("IsMPRISIntegrationEnabled");
+        attrs.Value = config.IsMPRISIntegrationEnabled ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         /// 

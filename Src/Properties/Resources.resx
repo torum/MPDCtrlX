@@ -749,4 +749,7 @@ SOFTWARE.</value>
   <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
     <value>Play next</value>
   </data>
+  <data name="Settings_Opts_IsMPRISIntegrationEnabled" xml:space="preserve">
+    <value>Enable MPRIS integration</value>
+  </data>
 </root>

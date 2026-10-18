@@ -47,6 +47,9 @@ public class Configuration
 
     public bool IsForceSetVolumeExplicitly { get; set; }
 
-
     public bool IsNavigationViewMenuOpen { get; set; }
+
+    // TODO: MPRIS integration.
+    public bool IsMPRISIntegrationEnabled { get; set; } = true;
+
 }

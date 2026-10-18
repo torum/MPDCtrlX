@@ -742,4 +742,7 @@ SOFTWARE.</value>
   <data name="ListviewItemContextMenu_AddToQueueAfter" xml:space="preserve">
     <value>次に再生</value>
   </data>
+  <data name="Settings_Opts_IsMPRISIntegrationEnabled" xml:space="preserve">
+    <value>MPRIS 連携を有効にする</value>
+  </data>
 </root>

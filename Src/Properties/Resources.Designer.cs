@@ -1546,6 +1546,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable MPRIS integration.
+        /// </summary>
+        public static string Settings_Opts_IsMPRISIntegrationEnabled {
+            get {
+                return ResourceManager.GetString("Settings_Opts_IsMPRISIntegrationEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Music Player Daemon.
         /// </summary>
         public static string Settings_Opts_MPD {

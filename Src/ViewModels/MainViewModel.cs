@@ -142,6 +142,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         IsDownloadAlbumArt = _configurationService.CurrentConfiguration.IsDownloadAlbumArt;
         IsDownloadAlbumArtEmbeddedUsingReadPicture = _configurationService.CurrentConfiguration.IsDownloadAlbumArtEmbeddedUsingReadPicture;
         IsForceSetVolumeExplicitly = _configurationService.CurrentConfiguration.IsForceSetVolumeExplicitly;
+        IsMPRISIntegrationEnabled = _configurationService.CurrentConfiguration.IsMPRISIntegrationEnabled;
 
         #endregion
 
@@ -3318,6 +3319,18 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    public bool IsMPRISIntegrationEnabled
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+            field = value;
+            OnPropertyChanged();
+        }
+    }
+
     #endregion
 
     #region == Profile settings ==
@@ -4021,6 +4034,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         config.IsDownloadAlbumArt = IsDownloadAlbumArt;
         config.IsDownloadAlbumArtEmbeddedUsingReadPicture = IsDownloadAlbumArtEmbeddedUsingReadPicture;
         config.IsForceSetVolumeExplicitly = IsForceSetVolumeExplicitly;
+        config.IsMPRISIntegrationEnabled = IsMPRISIntegrationEnabled;
 
         config.IsNavigationViewMenuOpen = IsNavigationViewMenuOpen;
     }
@@ -4030,8 +4044,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         Debug.WriteLine("OnWindowClosing");
 
-        //
-        await _mprisDbusHostedService.StopAsync();
+        // Stop MPRIS integration if enabled.
+        // TODO: It's probably OK if enabled state is changed while the app is running....
+        if (IsMPRISIntegrationEnabled)
+        {
+            await _mprisDbusHostedService.StopAsync();
+        }
     }
 
     public void OnWindowClosed(object? sender, EventArgs e)
@@ -6355,9 +6373,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 }
             });
 
-            //
-            await _mprisDbusHostedService.StartAsync(_cts.Token).ConfigureAwait(false);
-             
+            // Start MPRIS integration if enabled
+            if (IsMPRISIntegrationEnabled)
+            {
+                await _mprisDbusHostedService.StartAsync(_cts.Token).ConfigureAwait(false);
+            }
+
             //
             await LoadInitialDataAsync();
 

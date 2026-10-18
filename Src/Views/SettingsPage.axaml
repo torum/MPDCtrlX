@@ -137,33 +137,33 @@
 						</ui:FASettingsExpanderItem>
 
 						<ui:FASettingsExpanderItem>
-<StackPanel Orientation="Vertical" Spacing="12" VerticalAlignment="Top">
-	<TextBlock Text="{x:Static prop:Resources.Settings_Opts_AudioOutputs}" VerticalAlignment="Center"></TextBlock>
-	<ListBox ItemsSource="{Binding AudioOutputs, Mode=OneWay}" SelectedItem="{Binding SelectedAudioOutput, Mode=TwoWay}" HorizontalAlignment="Stretch" MaxHeight="100">
-		<ListBox.ItemTemplate>
-			<DataTemplate x:DataType="mod:AudioOutput">
-				<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-					<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
-						<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="{Binding PathIconData, Mode=OneWay}"></PathIcon>
-					</Viewbox>
-					<TextBlock Text="{Binding Name}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
-				</StackPanel>
-			</DataTemplate>
-		</ListBox.ItemTemplate>
-		<ListBox.Styles>
-					<Style Selector="ListBoxItem" x:DataType="mod:AudioOutput">
-						<Setter Property="ContextFlyout">
-							<Setter.Value>
-								<MenuFlyout>
-									<MenuItem Header="{x:Static prop:Resources.Settings_Opts_ToggleEnableAudioOutput}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).AudioOutputToggleEnableCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}">
-									</MenuItem>
-								</MenuFlyout>
-							</Setter.Value>
-						</Setter>
-					</Style>
-		</ListBox.Styles>
-	</ListBox>
-</StackPanel>
+							<StackPanel Orientation="Vertical" Spacing="12" VerticalAlignment="Top">
+								<TextBlock Text="{x:Static prop:Resources.Settings_Opts_AudioOutputs}" VerticalAlignment="Center"></TextBlock>
+								<ListBox ItemsSource="{Binding AudioOutputs, Mode=OneWay}" SelectedItem="{Binding SelectedAudioOutput, Mode=TwoWay}" HorizontalAlignment="Stretch" MaxHeight="100">
+									<ListBox.ItemTemplate>
+										<DataTemplate x:DataType="mod:AudioOutput">
+											<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+												<Viewbox Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,2,0,0">
+													<PathIcon Background="Transparent" Width="NaN" Height="NaN" Data="{Binding PathIconData, Mode=OneWay}"></PathIcon>
+												</Viewbox>
+												<TextBlock Text="{Binding Name}" Margin="12,0,0,0" VerticalAlignment="Center" Padding="4"></TextBlock>
+											</StackPanel>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+									<ListBox.Styles>
+										<Style Selector="ListBoxItem" x:DataType="mod:AudioOutput">
+											<Setter Property="ContextFlyout">
+												<Setter.Value>
+													<MenuFlyout>
+														<MenuItem Header="{x:Static prop:Resources.Settings_Opts_ToggleEnableAudioOutput}" Command="{Binding Path=$parent[ListBox].((vm:MainViewModel)DataContext).AudioOutputToggleEnableCommand}" CommandParameter="{Binding $parent[ListBox].SelectedItem}">
+														</MenuItem>
+													</MenuFlyout>
+												</Setter.Value>
+											</Setter>
+										</Style>
+									</ListBox.Styles>
+								</ListBox>
+							</StackPanel>
 						</ui:FASettingsExpanderItem>
 
 						<ui:FASettingsExpander.Footer>
@@ -192,6 +192,10 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_ForceSetVolumeExplicitly}" IsChecked="{Binding IsForceSetVolumeExplicitly}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
 
+						<ui:FASettingsExpanderItem IsVisible="{OnPlatform Default=False, Linux=True, x:TypeArguments=x:Boolean}">
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_IsMPRISIntegrationEnabled}" IsChecked="{Binding IsMPRISIntegrationEnabled}" Margin="0"></CheckBox>
+						</ui:FASettingsExpanderItem>
+
 					</ui:FASettingsExpander>
 
 					<!-- Local storage -->
@@ -215,10 +219,10 @@
 					<!-- Project info -->
 					<ui:FASettingsExpander Header="{x:Static prop:Resources.Settings_ProjectPage}" Description="{x:Static prop:Resources.Settings_ProjectPage_Description}">
 						<!--
-				<ui:FASettingsExpanderItem>
-					<HyperlinkButton NavigateUri="https://torum.github.io/MPDCtrlX">https://torum.github.io/MPDCtrlX</HyperlinkButton>
-				</ui:FASettingsExpanderItem>
-				-->
+						<ui:FASettingsExpanderItem>
+							<HyperlinkButton NavigateUri="https://torum.github.io/MPDCtrlX">https://torum.github.io/MPDCtrlX</HyperlinkButton>
+						</ui:FASettingsExpanderItem>
+						-->
 						<ui:FASettingsExpanderItem>
 							<HyperlinkButton NavigateUri="https://github.com/torum/MPDCtrlX">https://github.com/torum/MPDCtrlX</HyperlinkButton>
 						</ui:FASettingsExpanderItem>
@@ -295,7 +299,6 @@
 						</ui:FASettingsExpanderItem>
 
 					</ui:FASettingsExpander>
-					
 					
 				</StackPanel>
 			</ScrollViewer>
