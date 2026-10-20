@@ -5331,7 +5331,10 @@ public partial class MpcService : IMpcService, IDisposable
     {
         try
         {
-            connection.Client?.Shutdown(SocketShutdown.Both);
+            if (connection?.Client != null && connection.Client?.Connected == true)
+            {
+                connection.Client.Shutdown(SocketShutdown.Both);
+            }
         }
         catch
         {
@@ -5342,7 +5345,7 @@ public partial class MpcService : IMpcService, IDisposable
         // and a failure in one step must not skip the others.
         try { writer?.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
         try { reader?.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
-        try { connection.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
+        try { connection?.Dispose(); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException) { }
 
         writer = null;
         reader = null;

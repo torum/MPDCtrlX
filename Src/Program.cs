@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Logging;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;

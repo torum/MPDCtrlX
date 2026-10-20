@@ -36,6 +36,8 @@ internal sealed partial class MainWindow : Window
         var vm = ((App.Current as App)?.ServiceProvider.GetRequiredService<MainViewModel>()) ?? throw new InvalidOperationException("MainViewModel is not available in the service provider.");
         this.DataContext = vm;
 
+        InitializeComponent();
+
         bool isMax = false;
         var mw = _configurationService.CurrentConfiguration.MainWindow;
 
@@ -46,7 +48,7 @@ internal sealed partial class MainWindow : Window
         }
         else
         {
-            this.Position = new PixelPoint(100, 100);
+            this.Position = new PixelPoint(0, 0);
         }
 
         if (mw.Height >= 120)
@@ -75,8 +77,6 @@ internal sealed partial class MainWindow : Window
             isMax = false;
         }
 
-        InitializeComponent();
-
         //this.ContentFrame.Navigate(typeof(MainView));
         this.NavigateViewControl.Content = App.GetService<MainView>();
 
@@ -92,23 +92,6 @@ internal sealed partial class MainWindow : Window
             UpdateWindowMargins(isMax);
             UpdateThemeBackground(ActualThemeVariant);
         }
-        /*
-        this.Loaded += async (s, e) =>
-        {
-            var config = _configurationService.CurrentConfiguration;
-            this.Width = config.MainWindow.Width;
-            this.Height = config.MainWindow.Height;
-            //this.Position = new PixelPoint(config.MainWindow.Left, config.MainWindow.Top);
-            //this.WindowState = config.MainWindow.WindowState;
-            WinRestoreWidth = (int)config.MainWindow.RestoreWidth;
-            WinRestoreHeight = (int)config.MainWindow.RestoreHeight;
-            WinRestoreLeft = config.MainWindow.RestoreLeft;
-            WinRestoreTop = config.MainWindow.RestoreTop;
-
-            //this.NavigateViewControl.IsPaneOpen = config.IsNavigationViewMenuOpen;
-            //"OnPropertyChanged(nameof(IsNavigationViewMenuOpen));"
-        };
-        */
     }
 
     protected override void OnOpened(EventArgs e)

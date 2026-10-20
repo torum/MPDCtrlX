@@ -1,16 +1,13 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using MPDCtrlX.Views;
-using MPDCtrlX.Views.Dialogs;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -209,16 +206,6 @@ namespace MPDCtrlX
             SaveErrorLog(); // Last chance: the process terminates after this.
         }
 
-        public static void AppendErrorLog(string source, string details)
-        {
-            var nowString = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
-
-            lock (_logLock)
-            {
-                _errortxt.AppendLine(nowString + " - " + source + " - " + details);
-            }
-        }
-
         private static void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
         {
             if (e.Exception.InnerExceptions.All(ex => ex is OperationCanceledException))
@@ -232,8 +219,21 @@ namespace MPDCtrlX
             e.SetObserved();
         }
 
+        public static void AppendErrorLog(string source, string details)
+        {
+            var nowString = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+            lock (_logLock)
+            {
+                _errortxt.AppendLine(nowString + " - " + source + " - " + details);
+            }
+        }
+
         public static void SaveErrorLog()
         {
+            if (!App.GetService<MainViewModel>()?.IsSaveLog ?? false)
+                return;
+
             try
             {
                 lock (_logLock)

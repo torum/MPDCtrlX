@@ -1314,7 +1314,10 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
     {
         try
         {
-            connection.Client?.Shutdown(SocketShutdown.Both);
+            if (connection?.Client != null && connection.Client?.Connected == true)
+            {
+                connection.Client.Shutdown(SocketShutdown.Both);
+            }
         }
         catch
         {
@@ -1323,7 +1326,7 @@ public class MpcBinaryService : IMpcBinaryService, IDisposable
 
         writer?.Dispose();
         reader?.Dispose();
-        connection.Dispose();
+        connection?.Dispose();
 
         writer = null;
         reader = null;
