@@ -4091,14 +4091,14 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #region == Public Methods ==
 
-    public async Task ReorderQueueSongs(SongInfoEx dragged, SongInfoEx? target, bool isDropAbove)
+    public async Task ReorderQueueSongs(List<SongInfoEx> dragged, SongInfoEx? target, bool isDropAbove)
     {
         if (!QueueListviewMoveCanExecute())
             return;
 
-        if (target == null || dragged == null || dragged == target)
+        if (target == null || dragged == null || dragged.Count == 0)
             return;
-
+        /*
         int oldIndex = Queue.IndexOf(dragged);
         int targetIndex = Queue.IndexOf(target);
 
@@ -4123,10 +4123,19 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         {
             Queue[i].Index = i + 1;
         }
+        */
 
-        Dictionary<string, string> idToNewPos = [];
+        int targetIndex = Queue.IndexOf(target);
+        int newIndex = isDropAbove ? targetIndex : targetIndex + 1;
 
-        idToNewPos.Add(dragged.Id, newIndex.ToString(CultureInfo.InvariantCulture));
+        var idToNewPos = new Dictionary<string, string>();
+        foreach (var item in dragged)
+        {
+            idToNewPos.Add(item.Id, newIndex.ToString(CultureInfo.InvariantCulture));
+            newIndex++;
+        }
+
+        //idToNewPos.Add(dragged.Id, newIndex.ToString(CultureInfo.InvariantCulture));
 
         await _mpc.MpdMoveId(idToNewPos);
     }

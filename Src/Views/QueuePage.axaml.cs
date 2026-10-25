@@ -18,7 +18,7 @@ internal sealed partial class QueuePage : UserControl
     private bool _isHeaderWidthInitialized;
 
     #region == Drag and Drop ==
-    private readonly DataFormat<SongInfoEx> _nodeFormat = DataFormat.CreateInProcessFormat<SongInfoEx>("SongInfoExFormat");
+    private readonly DataFormat<List<SongInfoEx>> _nodeFormat = DataFormat.CreateInProcessFormat<List<SongInfoEx>>("SongInfoExFormat");
     private InsertionLineAdorner? _insertionLine;
     private AdornerLayer? _adornerLayer;
     private Point _pointerPressedPoint;
@@ -66,6 +66,19 @@ internal sealed partial class QueuePage : UserControl
             return;
         }
 
+        var selectedItems = QueueListBox.SelectedItems;
+        if (selectedItems == null || selectedItems.Count == 0)
+            return;
+
+        var payload = new List<SongInfoEx>();
+        foreach (var selectedItem in selectedItems)
+        {
+            if (selectedItem is SongInfoEx songInfo)
+            {
+                payload.Add(songInfo);
+            }
+        }
+
         _pointerPressedPoint = e.GetPosition(this);
         _isPressed = true;
         _isPressedAndMoved = false;
@@ -83,7 +96,9 @@ internal sealed partial class QueuePage : UserControl
             return;
         }
 
-        var transferItem = DataTransferItem.Create(_nodeFormat, item);
+
+
+        var transferItem = DataTransferItem.Create(_nodeFormat, payload);
 
         // 2. Prepare the v12 DataTransfer container payload
         var dragData = new DataTransfer();
@@ -122,7 +137,7 @@ internal sealed partial class QueuePage : UserControl
 
         var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
 
-        if (draggedNode is SongInfoEx)
+        if (draggedNode is List<SongInfoEx> draggedNodes)
         {
             var pos = e.GetPosition(QueueListBox);
             AutoScroll(QueueListBox, pos);
