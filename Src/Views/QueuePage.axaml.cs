@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
+using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
@@ -19,7 +20,6 @@ internal sealed partial class QueuePage : UserControl
         DataContext = vm;
 
         InitializeComponent();
-
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -29,9 +29,7 @@ internal sealed partial class QueuePage : UserControl
         {
             return;
         }
-        //vm.ScrollIntoView += (sender, arg) => { this.OnScrollIntoView(arg); };
         vm.ScrollIntoView += OnScrollIntoView;
-        //vm.ScrollIntoViewAndSelect += (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
         vm.ScrollIntoViewAndSelect += OnScrollIntoViewAndSelect;
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
     }
@@ -44,7 +42,6 @@ internal sealed partial class QueuePage : UserControl
             return;
         }
         vm.ScrollIntoView -= OnScrollIntoView;
-        //vm.ScrollIntoViewAndSelect -= (sender, arg) => { this.OnScrollIntoViewAndSelect(arg); };
         vm.ScrollIntoViewAndSelect -= OnScrollIntoViewAndSelect;
         vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
         base.OnDetachedFromVisualTree(e);

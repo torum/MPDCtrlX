@@ -95,6 +95,7 @@ namespace MPDCtrlX
             services.AddTransient<IMpcBinaryService, MpcBinaryService>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton<IConfigurationService, ConfigurationService>();
+            services.AddSingleton<INavigationService, NavigationService>();
 
             services.AddSingleton<MprisPlayerController>();
             services.AddSingleton<MprisPathMethodHandler>();

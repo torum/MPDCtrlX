@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -7,7 +8,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
+using FluentAvalonia.UI.Media.Animation;
 using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
 using MPDCtrlX.Services;
@@ -15,13 +18,26 @@ using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace MPDCtrlX.Views;
 
 internal sealed partial class MainWindow : Window
 {
     private readonly IConfigurationService _configurationService;
+    private readonly INavigationService _navigationService;
+    private readonly MainViewModel _mainViewModel;
     private bool _isClosing;
+    private readonly Dictionary<string, Type> _pageMap = new()
+    {
+        { "MPDCtrlX.Views.QueuePage", typeof(Views.QueuePage) },
+        { "MPDCtrlX.Views.AlbumPage", typeof(Views.AlbumPage) },
+        { "MPDCtrlX.Views.ArtistPage", typeof(Views.ArtistPage) },
+        { "MPDCtrlX.Views.FilesPage", typeof(Views.FilesPage) },
+        { "MPDCtrlX.Views.SearchPage", typeof(Views.SearchPage) },
+        { "MPDCtrlX.Views.PlaylistItemPage", typeof(Views.PlaylistItemPage) },
+        { "MPDCtrlX.Views.SettingsPage", typeof(Views.SettingsPage) },
+    };
 
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
@@ -31,10 +47,10 @@ internal sealed partial class MainWindow : Window
     // Parameterless constructor for XAML Previewer
     public MainWindow()
     {
-        _configurationService = ((App.Current as App)?.ServiceProvider.GetRequiredService<IConfigurationService>()) ?? throw new InvalidOperationException("IConfigurationService is not available in the service provider.");
-
-        var vm = ((App.Current as App)?.ServiceProvider.GetRequiredService<MainViewModel>()) ?? throw new InvalidOperationException("MainViewModel is not available in the service provider.");
-        this.DataContext = vm;
+        _configurationService = App.GetService<IConfigurationService>();
+        _navigationService = App.GetService<INavigationService>();
+        _mainViewModel = App.GetService<MainViewModel>();
+        this.DataContext = _mainViewModel;
 
         InitializeComponent();
 
@@ -78,7 +94,8 @@ internal sealed partial class MainWindow : Window
         }
 
         //this.ContentFrame.Navigate(typeof(MainView));
-        this.NavigateViewControl.Content = App.GetService<MainView>();
+        //this.NavigateViewControl.Content = App.GetService<MainView>();
+        _navigationService.Initialize(RootFrame, _pageMap);
 
         //this.Icon = new WindowIcon(new Bitmap())
         Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));
@@ -339,22 +356,33 @@ internal sealed partial class MainWindow : Window
             return;
         }
 
-        vm.SelectedNodeMenu = vm.MainMenuItems.FirstOrDefault();
-        vm.SelectedNodeMenu?.Selected = true;
-
-        if (vm.IsNavigationViewMenuOpen)
+        //var item  = vm.MainMenuItems.FirstOrDefault();
+        //var navItem = NavigateViewControl.MenuItems.OfType<FANavigationViewItem>().Where(x => x.IsVisible == IsVisible).FirstOrDefault();//.First();
+       
+        if (_navigationService.NavigateTo("MPDCtrlX.Views.QueuePage", null))
         {
-            foreach (var fuga in vm.MainMenuItems)
+            var queueNode = vm.MainMenuItems.OfType<NodeMenuQueue>().FirstOrDefault();
+            vm.SelectedNodeMenu = queueNode;
+            vm.SelectedNodeMenu?.Selected = true;
+
+            if (vm.IsNavigationViewMenuOpen)
             {
-                if (fuga is NodeMenuLibrary lib)
+                foreach (var fuga in vm.MainMenuItems)
                 {
-                    lib.Expanded = true;
-                }
-                else if (fuga is NodeMenuPlaylists plt)
-                {
-                    plt.Expanded = true;
+                    if (fuga is NodeMenuLibrary lib)
+                    {
+                        lib.Expanded = true;
+                    }
+                    else if (fuga is NodeMenuPlaylists plt)
+                    {
+                        plt.Expanded = true;
+                    }
                 }
             }
+        }
+        else
+        {
+            Debug.WriteLine("NavigationView_Loaded: Failed to navigate to QueuePage");
         }
     }
 
@@ -376,9 +404,10 @@ internal sealed partial class MainWindow : Window
             return;
         }
 
-        if (e.SelectedItem is NodeTree)
+        if (e.SelectedItem is NodeMenu node)
         {
-            vm.SelectedNodeMenu = e.SelectedItem as NodeTree;
+            vm.SelectedNodeMenu = node;
+            //Debug.WriteLine($"e.SelectedItem is NodeTree. @NavigationView_SelectionChanged: {node.Tag}");
         }
         else
         {
@@ -422,17 +451,45 @@ internal sealed partial class MainWindow : Window
         {
             //await vm.GetCacheFolderSizeAsync();
             await RefreshCacheFolderSizeSafeAsync(vm);
-
+            /*
             nv.Content = App.GetService<SettingsPage>();
-
+            */
+            if (_navigationService.NavigateTo("MPDCtrlX.Views.SettingsPage", null))
+            {
+                Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to SettingsPage");
+            }
             return;
         }
 
+        if (e.InvokedItemContainer.DataContext is NodeMenu node)
+        {
+            if (node is NodeMenuPlaylistItem && RootFrame.Content is PlaylistItemPage page)
+            {
+                // Clear the content so that the page is animated when navigating to the same page with a different parameter.
+                RootFrame.Content = null;
+            }
+
+            if (_navigationService.NavigateTo(node.Tag, null))
+            {
+                //Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to {node.GetType().FullName}");
+            }
+            else
+            {
+                Debug.WriteLine($"NavigationView_ItemInvoked: Failed to navigate to {node.GetType().FullName}");
+            }
+        }
+        else
+        {
+            Debug.WriteLine("NavigationView_ItemInvoked: e.InvokedItemContainer.DataContext is not NodeMenu");
+        }
+
+        /*
         var mainView = App.GetService<MainView>();
         if (nv.Content is not MainView)
         {
             nv.Content = mainView;
         }
+        */
     }
 
     private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
@@ -538,14 +595,34 @@ internal sealed partial class MainWindow : Window
         {
             return;
         }
-
+        /*
         //await vm.GetCacheFolderSizeAsync();
         await RefreshCacheFolderSizeSafeAsync(vm);
 
         vm.SelectedNodeMenu = null;
-        this.NavigateViewControl.SelectedItem = null;
+        try
+        {
+            // This causes FluentAvalonia to throw null ex in some cases.
+            this.NavigateViewControl.SelectedItem = null;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @NavigateViewControl.SelectedItem = null; {ex}");
+        }
+
         this.NavigateViewControl.Content = App.GetService<SettingsPage>();
         //this.ContentFrame.Navigate(typeof(SettingsPage));
+        */
+
+        await RefreshCacheFolderSizeSafeAsync(vm);
+
+        if (_navigationService.NavigateTo("MPDCtrlX.Views.SettingsPage", null))
+        {
+            Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to SettingsPage");
+
+            vm.SelectedNodeMenu = null;
+            this.NavigateViewControl.SelectedItem = null;
+        }
     }
 
     private void VolumeSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)

@@ -89,7 +89,7 @@
 				</ui:FANavigationView.PaneHeader>
 				<ui:FANavigationView.Resources>
 					<DataTemplate x:Key="NavigationViewMenuItem" x:DataType="mod:NodeMenu">
-						<ui:FANavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
+						<ui:FANavigationViewItem MenuItemsSource="{Binding Children, Mode=OneWay}" Tag="{Binding Tag, Mode=OneWay}" IsExpanded="{Binding Expanded, Mode=TwoWay}" IsSelected="{Binding Selected, Mode=TwoWay}">
 							<ui:FANavigationViewItem.IconSource>
 								<ui:FAPathIconSource Data="{Binding PathIcon}"/>
 							</ui:FANavigationViewItem.IconSource>

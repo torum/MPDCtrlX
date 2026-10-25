@@ -2,8 +2,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
+using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
@@ -18,6 +20,7 @@ internal sealed partial class PlaylistItemPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

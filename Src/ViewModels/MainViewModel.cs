@@ -3944,6 +3944,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     public async void OnWindowLoaded(object? sender, EventArgs e)
     {
+        await Task.Yield();
+
         try
         {
             foreach (var profile in _configurationService.CurrentConfiguration.Profiles)
@@ -3994,8 +3996,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
 
             // start the connection
-            //await Task.Run(async () => await StartAsync(CurrentProfile.Host, CurrentProfile.Port), _cts.Token);
-            // let's not await for faster start up.
             await StartAsync(CurrentProfile.Host, CurrentProfile.Port);
         }
         catch (Exception ex)
