@@ -4124,7 +4124,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             Queue[i].Index = i + 1;
         }
         */
-
+        /*
         int targetIndex = Queue.IndexOf(target);
         int newIndex = isDropAbove ? targetIndex : targetIndex + 1;
 
@@ -4138,6 +4138,53 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         //idToNewPos.Add(dragged.Id, newIndex.ToString(CultureInfo.InvariantCulture));
 
         await _mpc.MpdMoveId(idToNewPos);
+        */
+
+        int targetIndex = Queue.IndexOf(target);
+        if (targetIndex < 0)
+        {
+            return;
+        }
+
+        var selected = dragged.Where(Queue.Contains).ToHashSet();
+        if (selected.Count == 0 || selected.Contains(target))
+        {
+            return;
+        }
+
+        // Convert the drop location to an insertion index after removing the dragged songs.
+        int insertionIndex = isDropAbove ? targetIndex : targetIndex + 1;
+        insertionIndex -= Queue.Take(insertionIndex).Count(selected.Contains);
+
+        var movedSongs = Queue.Where(selected.Contains).ToList();
+        var remainingSongs = Queue.Where(song => !selected.Contains(song)).ToList();
+
+        remainingSongs.InsertRange(insertionIndex, movedSongs);
+
+        // Generate moves in an order that accounts for each move shifting the queue.
+        var workingOrder = Queue.ToList();
+        var idToNewPos = new Dictionary<string, string>();
+
+        for (int i = 0; i < remainingSongs.Count; i++)
+        {
+            if (ReferenceEquals(workingOrder[i], remainingSongs[i]))
+            {
+                continue;
+            }
+
+            var song = remainingSongs[i];
+            int oldIndex = workingOrder.IndexOf(song);
+
+            workingOrder.RemoveAt(oldIndex);
+            workingOrder.Insert(i, song);
+
+            idToNewPos.Add(song.Id, i.ToString(CultureInfo.InvariantCulture));
+        }
+
+        if (idToNewPos.Count > 0)
+        {
+            await _mpc.MpdMoveId(idToNewPos);
+        }
     }
 
     public async Task ReorderPlaylistSongs(SongInfo dragged, SongInfo? target, bool isDropAbove)

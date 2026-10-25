@@ -67,7 +67,6 @@ public class VirtualizingUniformPanel : VirtualizingPanel
         int firstVisibleIndex = firstVisibleRow * columns;
         int lastVisibleIndex = Math.Min(items.Count - 1, ((lastVisibleRow + 1) * columns) - 1);
 
-        // 1. Recycle items that went out of view
         List<int> toRecycle = new();
         foreach (var index in _realizedContainers.Keys)
         {
@@ -184,6 +183,3 @@ public class VirtualizingUniformPanel : VirtualizingPanel
 
     protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap) => from;
 }
-
-
-

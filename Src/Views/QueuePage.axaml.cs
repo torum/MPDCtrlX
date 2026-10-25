@@ -139,7 +139,7 @@ internal sealed partial class QueuePage : UserControl
 
         var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
 
-        if (draggedNode is List<SongInfoEx> draggedNodes)
+        if (draggedNode is List<SongInfoEx>)
         {
             var pos = e.GetPosition(QueueListBox);
             AutoScroll(QueueListBox, pos);
@@ -239,6 +239,20 @@ internal sealed partial class QueuePage : UserControl
                     return;
                 }
 
+                // Success.
+
+                //Debug.WriteLine($"DraggedNode = {draggedNode.Text}, TargetNode = {targetNode?.Text}");
+
+                await vm.ReorderQueueSongs(draggedNode, targetNode, _isDropAbove);
+
+                // Report success.
+                e.DragEffects = DragDropEffects.Move;
+                e.Handled = true;
+
+                RemoveInsertionLine();
+
+                QueueListBox.SelectedItems?.Clear();
+                /*
                 if (!ReferenceEquals(draggedNode, targetNode))
                 {
                     // Success.
@@ -260,6 +274,7 @@ internal sealed partial class QueuePage : UserControl
 
                     RemoveInsertionLine();
                 }
+                */
             }
 
             e.Handled = true;
