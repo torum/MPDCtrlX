@@ -4132,7 +4132,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         foreach (var item in dragged)
         {
             idToNewPos.Add(item.Id, newIndex.ToString(CultureInfo.InvariantCulture));
-            newIndex++;
+            //newIndex++; not good.
         }
 
         //idToNewPos.Add(dragged.Id, newIndex.ToString(CultureInfo.InvariantCulture));

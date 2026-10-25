@@ -55,7 +55,7 @@ internal sealed partial class QueuePage : UserControl
 
         if (e.Source is not Control control || control.DataContext is not SongInfoEx item)
         {
-            //Debug.WriteLine($"Not DataContext is PlaylistItem: {e.Source}");
+            Debug.WriteLine($"Not DataContext is PlaylistItem: {e.Source}");
             return;
         }
 
@@ -70,14 +70,13 @@ internal sealed partial class QueuePage : UserControl
         if (selectedItems == null || selectedItems.Count == 0)
             return;
 
-        var payload = new List<SongInfoEx>();
-        foreach (var selectedItem in selectedItems)
-        {
-            if (selectedItem is SongInfoEx songInfo)
-            {
-                payload.Add(songInfo);
-            }
-        }
+        var isSelected = selectedItems.Contains(item);
+        var payload = isSelected
+            ? selectedItems.OfType<SongInfoEx>().ToList()
+            : new List<SongInfoEx> { item };
+
+        // Keep the ListBox from replacing the multi-selection on pointer-down.
+        if (isSelected) e.Handled = true;
 
         _pointerPressedPoint = e.GetPosition(this);
         _isPressed = true;
@@ -92,11 +91,10 @@ internal sealed partial class QueuePage : UserControl
 
         if (!_isPressedAndMoved)
         {
+            e.Handled = false;
             //Debug.WriteLine("Pointer did not move");
             return;
         }
-
-
 
         var transferItem = DataTransferItem.Create(_nodeFormat, payload);
 
@@ -114,6 +112,10 @@ internal sealed partial class QueuePage : UserControl
         if (result == DragDropEffects.Move)
         {
             e.Handled = true;
+        }
+        else
+        {
+            e.Handled = false;
         }
 
         Debug.WriteLine(result == DragDropEffects.Move
@@ -408,8 +410,8 @@ internal sealed partial class QueuePage : UserControl
 
     private void QueueListBox_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        _isPressedAndMoved = false;
-        _isPressed = false;
+        //_isPressedAndMoved = false;
+        //_isPressed = false;
     }
 
     private void QueueListBox_PointerReleased(object? sender, PointerReleasedEventArgs e)
