@@ -1994,7 +1994,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-                    CurrentPage = null; // needed this.
+                    //CurrentPage = null; // needed this.
 
                     SelectedPlaylistName = string.Empty;
                     RenamedSelectPendingPlaylistName = string.Empty;
@@ -2018,10 +2018,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     IsWorking = false;
                 });
                 */
-                CurrentPage = App.GetService<QueuePage>();
+                //CurrentPage = App.GetService<QueuePage>();
             }
             else if (value is NodeMenuSearch)
             {
+                /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
@@ -2037,6 +2038,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     }
                 });
                 //CurrentPage = App.GetService<SearchPage>();
+                */
             }
             else if (value is NodeMenuLibrary)
             {
@@ -2045,6 +2047,11 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
             else if (value is NodeMenuArtist)
             {
+                if ((Artists.Count > 0) && (SelectedAlbumArtist is null))
+                {
+                    SelectedAlbumArtist = Artists[0];
+                }
+                /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
@@ -2064,9 +2071,12 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                         IsWorking = false;
                     }
                 });
+                */
             }
             else if (value is NodeMenuAlbum nmb)
             {
+                AlbumsCollectionHasBeenReset?.Invoke(this, EventArgs.Empty);
+                /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
@@ -2082,9 +2092,16 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                         IsWorking = false;
                     }
                 });
+                */
             }
             else if (value is NodeMenuFiles nml)
             {
+                if (!nml.IsAcquired || (MusicDirectories.Count <= 1) && (MusicEntries.Count == 0))
+                {
+                    //GetFiles(nml);
+                    _ = GetFilesAsync(nml).SafeAsync(nameof(GetFilesAsync));
+                }
+                /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     IsWorking = true;
@@ -2108,6 +2125,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     }
 
                 });
+                */
             }
             else if (value is NodeMenuPlaylists)
             {
@@ -2116,13 +2134,23 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
             else if (value is NodeMenuPlaylistItem nmpli)
             {
+                SelectedPlaylistSong = null;
+                PlaylistSongs = nmpli.PlaylistSongs;
+                SelectedPlaylistName = nmpli.Name;
+
+                if ((nmpli.PlaylistSongs.Count == 0) || nmpli.IsUpdateRequied)
+                {
+                    //GetPlaylistSongsAsync(nmpli);
+                    _ = GetPlaylistSongsAsync(nmpli).SafeAsync(nameof(GetPlaylistSongsAsync));
+                }
+                /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     try
                     {
                         //CurrentPage = null; // Just for the animation of page transition...
 
-                        CurrentPage = App.GetService<PlaylistItemPage>();
+                        //CurrentPage = App.GetService<PlaylistItemPage>();
 
                         SelectedPlaylistSong = null;
                         PlaylistSongs = nmpli.PlaylistSongs;
@@ -2138,8 +2166,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     {
                         await Task.Yield();
                     }
-
                 });
+                */
             }
             else if (value is NodeMenu)
             {
@@ -2157,6 +2185,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     } = new NodeMenu("root");
 
+    /*
     public UserControl? CurrentPage
     {
         get;
@@ -2169,6 +2198,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             this.OnPropertyChanged();
         }
     }
+    */
 
     public string SelectedPlaylistName
     {
@@ -10000,7 +10030,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 await Task.Yield();
                 await Task.Delay(100);
                 SelectedAlbumArtist = null; //Test.
-                CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
+                //CurrentPage = App.GetService<ArtistPage>(); //Needed this...for the strange selection issue.
                 await Task.Yield();
                 await Task.Delay(100);
                 SelectedAlbumArtist = artist;

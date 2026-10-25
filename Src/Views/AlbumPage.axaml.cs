@@ -5,6 +5,8 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
+using MPDCtrlX.Views.Controls;
+using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
 
@@ -17,6 +19,7 @@ internal sealed partial class AlbumPage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -36,7 +39,7 @@ internal sealed partial class AlbumPage : UserControl
             base.OnDetachedFromVisualTree(e);
             return;
         }
-        vm.AlbumsCollectionHasBeenReset += this.OnAlbumsCollectionHasBeenReset;
+        vm.AlbumsCollectionHasBeenReset -= this.OnAlbumsCollectionHasBeenReset;
         base.OnDetachedFromVisualTree(e);
     }
 
@@ -85,17 +88,24 @@ internal sealed partial class AlbumPage : UserControl
         {
             var scrollViewer = AlbumsListBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
 
-            var wrapPanel = AlbumsListBox.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.UniformGrid>().FirstOrDefault();
+            //var wrapPanel = AlbumsListBox.GetVisualDescendants().OfType<Avalonia.Controls.Primitives.UniformGrid>().FirstOrDefault();
+            //VirtualizingUniformPanel
+            var wrapPanel = AlbumsListBox.GetVisualDescendants().OfType<VirtualizingUniformPanel>().FirstOrDefault();
 
             if ((scrollViewer != null) && (wrapPanel != null))
             {
                 UpdateVisibleItems(scrollViewer, wrapPanel);
             }
+            else
+            {
+                Debug.WriteLine("ScrollViewer or WrapPanel is null in OnAlbumsCollectionHasBeenReset");
+            }
         }, DispatcherPriority.Render);
     }
 
-    private static void UpdateVisibleItems(ScrollViewer scrollViewer, Avalonia.Controls.Primitives.UniformGrid uniformGridPanel)
+    private static void UpdateVisibleItems(ScrollViewer scrollViewer, VirtualizingUniformPanel uniformGridPanel) //Avalonia.Controls.Primitives.UniformGrid
     {
+        /*
         //var _scrollViewer = listBox.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
         if (scrollViewer == null) return;
 
@@ -116,11 +126,43 @@ internal sealed partial class AlbumPage : UserControl
                 visibleItems.Add(dataItem);
             }
         }
+        */
+        /*
+        if (uniformGridPanel == null) return;
 
+        var visibleItems = new List<object>();
+
+        // Because it's a virtualizing panel, Children ONLY contains 
+        // the layoutable items currently visible inside the viewport bounds.
+        foreach (var itemContainer in uniformGridPanel.Children)
+        {
+            var dataItem = itemContainer.DataContext;
+            if (dataItem != null)
+            {
+                visibleItems.Add(dataItem);
+            }
+        }
+
+        var vm = App.GetService<MainViewModel>();
+        vm?.VisibleViewportItemsAlbumEx = visibleItems;
+        */
+    }
+
+    private void OnVisibleItemsChanged(object? sender, List<object> visibleItems)
+    {
         var vm = App.GetService<MainViewModel>();
         vm?.VisibleViewportItemsAlbumEx = visibleItems;
     }
 
+    private void VirtualizingUniformPanel_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (sender is VirtualizingUniformPanel panel)
+        {
+            // Unsubscribe first to protect against multiple attachment cycles (e.g., UI tab switching)
+            panel.VisibleItemsChanged -= OnVisibleItemsChanged;
+            panel.VisibleItemsChanged += OnVisibleItemsChanged;
+        }
+    }
 
     private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
     {

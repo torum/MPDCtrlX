@@ -8,6 +8,7 @@
 			 xmlns:mod="clr-namespace:MPDCtrlX.Models"
 			 xmlns:prop="clr-namespace:MPDCtrlX.Properties"
 			 xmlns:common="clr-namespace:MPDCtrlX.Common"
+             xmlns:controls="using:MPDCtrlX.Views.Controls"
 			 xmlns:ia="using:Xaml.Behaviors.Interactions.Animated"
              x:Class="MPDCtrlX.Views.AlbumPage"
 			 x:DataType="vm:MainViewModel"
@@ -365,7 +366,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 				</SplitView.Pane>
 				<!-- Album view ListBox -->
 				<Grid Name="AlbumsListBoxGrid">
-					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Padding="0,0,12,0" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
+					<ListBox Name="AlbumsListBox" ItemsSource="{Binding Albums, Mode=OneWay}" SelectedItem="{Binding SelectedAlbum}" SelectionMode="Single" Padding="0,0,12,0" Loaded="ListBox_Loaded" common:ListBoxUniformGridBehaviors.VisibleItems="{Binding VisibleViewportItemsAlbumEx, Mode=OneWayToSource}" ScrollViewer.ScrollChanged="ScrollViewer_ScrollChanged" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" AutoScrollToSelectedItem="True" SelectionChanged="ListBox_SelectionChanged">
 						<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 						<ListBox.Resources>
 							
@@ -542,7 +543,11 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 						</ListBox.Resources>
 						<ListBox.ItemsPanel>
 							<ItemsPanelTemplate>
+								<!--
 								<UniformGrid Columns="4" HorizontalAlignment="Stretch" Margin="0"/>
+								-->
+								<controls:VirtualizingUniformPanel ItemWidth="226" ItemHeight="260" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" AttachedToVisualTree="VirtualizingUniformPanel_AttachedToVisualTree"/>
+
 								<!-- Use VirtualizedUniformPanel when Avalonia implements it.  -->
 								<!-- <WrapPanel HorizontalAlignment="Left"/> WrapPanel works but slow. -->
 								<!-- <VirtualizingStackPanel /> virtualized, but only vertical one col. -->

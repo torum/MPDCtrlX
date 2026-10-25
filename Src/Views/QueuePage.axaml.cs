@@ -20,11 +20,13 @@ internal sealed partial class QueuePage : UserControl
         DataContext = vm;
 
         InitializeComponent();
+
+        this.Loaded += QueuePage_Loaded;
+        this.Unloaded += QueuePage_Unloaded;
     }
 
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    private void QueuePage_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        base.OnAttachedToVisualTree(e);
         if (this.DataContext is not MainViewModel vm)
         {
             return;
@@ -34,16 +36,24 @@ internal sealed partial class QueuePage : UserControl
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
     }
 
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    private void QueuePage_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (this.DataContext is not MainViewModel vm)
         {
-            base.OnDetachedFromVisualTree(e);
             return;
         }
         vm.ScrollIntoView -= OnScrollIntoView;
         vm.ScrollIntoViewAndSelect -= OnScrollIntoViewAndSelect;
         vm.QueueHeaderVisibilityChanged -= this.OnQueueHeaderVisibilityChanged;
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
         base.OnDetachedFromVisualTree(e);
     }
 

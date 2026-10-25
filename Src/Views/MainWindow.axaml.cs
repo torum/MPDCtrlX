@@ -133,7 +133,6 @@ internal sealed partial class MainWindow : Window
         vm.GoToSettingsPage += OnGoToSettingsPage;
         vm.UserCanExecuteChanged += OnUserCanExecuteChanged;
         vm.WorkingStateChanged += OnWorkingStateChanged;
-
     }
 
     protected override async void OnClosed(EventArgs e)
