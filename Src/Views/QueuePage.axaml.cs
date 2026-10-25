@@ -1,10 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
+using MPDCtrlX.Views.Controls;
 using System.Diagnostics;
 
 namespace MPDCtrlX.Views;
@@ -12,6 +16,16 @@ namespace MPDCtrlX.Views;
 internal sealed partial class QueuePage : UserControl
 {
     private bool _isHeaderWidthInitialized;
+
+    #region == Drag and Drop ==
+    private readonly DataFormat<SongInfoEx> _nodeFormat = DataFormat.CreateInProcessFormat<SongInfoEx>("SongInfoExFormat");
+    private InsertionLineAdorner? _insertionLine;
+    private AdornerLayer? _adornerLayer;
+    private Point _pointerPressedPoint;
+    private bool _isPressed;
+    private bool _isPressedAndMoved;
+    private bool _isDropAbove;
+    #endregion
 
     // parameterless constructor for XAML Previewer
     public QueuePage()
@@ -23,7 +37,369 @@ internal sealed partial class QueuePage : UserControl
 
         this.Loaded += QueuePage_Loaded;
         this.Unloaded += QueuePage_Unloaded;
+
+        this.QueueListBox.AddHandler(InputElement.PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
+
     }
+
+    #region == Drag and Drop ==
+
+    private async void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is not MainViewModel)
+            return;
+
+        if (e.Source is not Control control || control.DataContext is not SongInfoEx item)
+        {
+            //Debug.WriteLine($"Not DataContext is PlaylistItem: {e.Source}");
+            return;
+        }
+
+        //Debug.WriteLine($"PointerPressed on {item.Text}");
+        var point = e.GetCurrentPoint(this);
+        if (!point.Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        _pointerPressedPoint = e.GetPosition(this);
+        _isPressed = true;
+        _isPressedAndMoved = false;
+
+        while (_isPressed)
+        {
+            await Task.Delay(100);
+            if (_isPressedAndMoved)
+                break;
+        }
+
+        if (!_isPressedAndMoved)
+        {
+            //Debug.WriteLine("Pointer did not move");
+            return;
+        }
+
+        var transferItem = DataTransferItem.Create(_nodeFormat, item);
+
+        // 2. Prepare the v12 DataTransfer container payload
+        var dragData = new DataTransfer();
+
+        dragData.Add(transferItem);
+
+        // Initiate the asynchronous native drag frame
+        // This will block synchronously until the user releases the cursor
+        var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+
+        // Logic to remove node from its old parent if necessary
+
+        if (result == DragDropEffects.Move)
+        {
+            e.Handled = true;
+        }
+
+        Debug.WriteLine(result == DragDropEffects.Move
+            ? "DoDragDropAsync result = Succuses (Move)"
+            : "DoDragDropAsync result = Fail (None)");
+
+        _isPressedAndMoved = false;
+        _isPressed = false;
+
+        RemoveInsertionLine();
+    }
+
+    private async void ListBox_DragOver(object? sender, DragEventArgs e)
+    {
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+            e.Handled = true;
+            return;
+        }
+
+        var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
+
+        if (draggedNode is SongInfoEx)
+        {
+            var pos = e.GetPosition(QueueListBox);
+            AutoScroll(QueueListBox, pos);
+
+            var currentPosition = e.GetPosition(QueueListBox);
+            var visualTarget = QueueListBox.GetVisualAt(currentPosition);
+            var targetListBoxItem = visualTarget?.FindAncestorOfType<ListBoxItem>();
+
+            if (targetListBoxItem != null)
+            {
+                e.DragEffects = DragDropEffects.Move;
+                e.Handled = true;
+                /*
+                // Determine whether to draw the line above or below the item
+                var positionInItem = e.GetPosition(targetListBoxItem);
+                double itemHeight = targetListBoxItem.Bounds.Height;
+                double itemCenterY = itemHeight / 2;
+                double insertionY;
+                if (positionInItem.Y < itemCenterY)
+                {
+                    // Cursor is on the top half -> Intent is ABOVE
+                    // Map local 0 back to the ListBox coordinate space
+                    insertionY = targetListBoxItem.Bounds.Y;
+                    _isDropAbove = true;
+                }
+                else
+                {
+                    // Cursor is on the bottom half -> Intent is BELOW
+                    // Map local bottom back to the ListBox coordinate space
+                    insertionY = targetListBoxItem.Bounds.Y + itemHeight;
+                    _isDropAbove = false;
+                }
+                */
+
+                var positionInItem = e.GetPosition(targetListBoxItem);
+                var itemHeight = targetListBoxItem.Bounds.Height;
+                _isDropAbove = positionInItem.Y < itemHeight / 2;
+
+                var itemEdge = new Point(0, _isDropAbove ? 0 : itemHeight);
+                var edgeInListBox = targetListBoxItem.TranslatePoint(itemEdge, QueueListBox);
+
+                if (edgeInListBox is null)
+                {
+                    RemoveInsertionLine();
+                    return;
+                }
+
+                ShowInsertionLine(edgeInListBox.Value.Y);
+
+                /*
+                
+                // Get the bounding box of the item being hovered over
+                var itemBounds = targetListBoxItem.Bounds;
+                double itemCenterY = itemBounds.Y + (itemBounds.Height / 2);
+
+                double insertionY;
+                if (currentPosition.Y < itemCenterY)
+                {
+                    // Cursor is on the top half -> Draw line at the top edge of this item
+                    insertionY = itemBounds.Y;
+                }
+                else
+                {
+                    // Cursor is on the bottom half -> Draw line at the bottom edge of this item
+                    insertionY = itemBounds.Y + itemBounds.Height;
+                }
+                */
+
+                // Trigger your adorner update method
+                //ShowInsertionLine(insertionY);
+
+                return;
+            }
+        }
+
+        // Fallback: If they hover over empty space or an invalid format, reject the drop
+        e.DragEffects = DragDropEffects.None;
+
+        RemoveInsertionLine();
+    }
+
+    private async void ListBox_Drop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (e.DataTransfer.Formats.Contains(_nodeFormat))
+        {
+            var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
+
+            if (draggedNode is not null)
+            {
+                if ((e.Source as Control)?.DataContext is not SongInfoEx targetNode)
+                {
+                    e.DragEffects = DragDropEffects.None;
+                    e.Handled = true;
+                    return;
+                }
+
+                if (!ReferenceEquals(draggedNode, targetNode))
+                {
+                    // Success.
+
+                    //Debug.WriteLine($"DraggedNode = {draggedNode.Text}, TargetNode = {targetNode?.Text}");
+
+                    await vm.ReorderQueueSongs(draggedNode, targetNode, _isDropAbove);
+
+                    // Report success.
+                    e.DragEffects = DragDropEffects.Move;
+                    e.Handled = true;
+
+                    RemoveInsertionLine();
+                }
+                else
+                {
+                    e.DragEffects = DragDropEffects.None;
+                    e.Handled = true;
+
+                    RemoveInsertionLine();
+                }
+            }
+
+            e.Handled = true;
+            return;
+        }
+
+        /*
+        // Handle file drops from outside of the application.
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            var files = e.DataTransfer.TryGetFiles();
+
+            if (files != null)
+            {
+                // Convert IStorageItem to local paths (for Desktop use cases)
+                var localPaths = files
+                    .Select(file => file.TryGetLocalPath())
+                    .Where(path => path != null)
+                    ;//.ToArray();
+
+                await vm.FilesDroped(localPaths);
+            }
+
+            e.Handled = true;
+            return;
+        }
+        */
+    }
+
+    private void ShowInsertionLine(double y)
+    {
+        if (_adornerLayer == null)
+            return;
+
+        if (_insertionLine == null)
+        {
+            _insertionLine = new InsertionLineAdorner();
+            AdornerLayer.SetAdornedElement(_insertionLine, this.QueueListBox);
+            _adornerLayer.Children.Add(_insertionLine);
+        }
+
+        _insertionLine.Y = y;
+        _insertionLine.InvalidateVisual();
+    }
+
+    private void RemoveInsertionLine()
+    {
+        if (_adornerLayer == null)
+            return;
+
+        if (_insertionLine != null)
+        {
+            _adornerLayer.Children.Remove(_insertionLine);
+            _insertionLine = null;
+        }
+    }
+
+    /*
+    private async void ListBox_FileDrop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            var files = e.DataTransfer.TryGetFiles();
+
+            if (files != null)
+            {
+                // 3. Convert IStorageItem to local paths (for Desktop use cases)
+                var localPaths = files
+                    .Select(file => file.TryGetLocalPath())
+                    .Where(path => path != null)
+                    .ToArray();
+
+                if (localPaths.Length > 0)
+                {
+                    vm.AddFilesToPlaylist(localPaths!);
+                }
+            }
+
+            e.Handled = true;
+        }
+    }
+    */
+
+    private static void AutoScroll(ListBox listBox, Avalonia.Point pointerPos)
+    {
+        const double scrollMargin = 30;
+
+        if (listBox.Scroll != null)
+        {
+            if (pointerPos.Y < scrollMargin)
+                listBox.Scroll.Offset = new Avalonia.Vector(listBox.Scroll.Offset.X, listBox.Scroll.Offset.Y - 10);
+
+            else if (pointerPos.Y > listBox.Bounds.Height - scrollMargin)
+                listBox.Scroll.Offset = new Avalonia.Vector(listBox.Scroll.Offset.X, listBox.Scroll.Offset.Y + 10);
+        }
+    }
+
+    private void QueueListBox_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        /*
+        if (vm.SelectedItem == null)
+            return;
+
+        bool ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+
+        if (!ctrl)
+            return;
+
+        if (e.Key == Key.Up)
+        {
+            vm.MoveItemUp(vm.SelectedItem);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Down)
+        {
+            vm.MoveItemDown(vm.SelectedItem);
+            e.Handled = true;
+        }
+        */
+    }
+
+    private void QueueListBox_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!_isPressed)
+        {
+            return;
+        }
+
+        var currentPoint = e.GetPosition(this);
+
+        // Calculate the distance moved
+        var deltaX = Math.Abs(currentPoint.X - _pointerPressedPoint.X);
+        var deltaY = Math.Abs(currentPoint.Y - _pointerPressedPoint.Y);
+
+        if (deltaX > 4 || deltaY > 4)
+        {
+            // The pointer HAS moved beyond a tiny jitter threshold
+            //Debug.WriteLine("Pointer is moved");
+            _isPressedAndMoved = true;
+            _isPressed = false;
+        }
+    }
+
+    private void QueueListBox_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        _isPressedAndMoved = false;
+        _isPressed = false;
+    }
+
+    private void QueueListBox_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isPressedAndMoved = false;
+        _isPressed = false;
+    }
+
+    #endregion
 
     private void QueuePage_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
@@ -34,6 +410,8 @@ internal sealed partial class QueuePage : UserControl
         vm.ScrollIntoView += OnScrollIntoView;
         vm.ScrollIntoViewAndSelect += OnScrollIntoViewAndSelect;
         vm.QueueHeaderVisibilityChanged += this.OnQueueHeaderVisibilityChanged;
+
+        _adornerLayer = AdornerLayer.GetAdornerLayer(QueueListBox);
     }
 
     private void QueuePage_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

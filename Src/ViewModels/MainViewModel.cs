@@ -2075,7 +2075,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
             else if (value is NodeMenuAlbum nmb)
             {
-                AlbumsCollectionHasBeenReset?.Invoke(this, EventArgs.Empty);
+                //AlbumsCollectionHasBeenReset?.Invoke(this, EventArgs.Empty);
                 /*
                 _ = Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -4090,6 +4090,46 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     #endregion
 
     #region == Public Methods ==
+
+    public async Task ReorderQueueSongs(SongInfoEx dragged, SongInfoEx? target, bool isDropAbove)
+    {
+        if (!QueueListviewMoveCanExecute())
+            return;
+
+        if (target == null || dragged == null || dragged == target)
+            return;
+
+        int oldIndex = Queue.IndexOf(dragged);
+        int targetIndex = Queue.IndexOf(target);
+
+        if (oldIndex == -1 || targetIndex == -1)
+            return;
+
+        int newIndex = isDropAbove ? targetIndex : targetIndex + 1;
+
+        if (oldIndex < newIndex)
+        {
+            newIndex--;
+        }
+
+        if (newIndex < 0 || newIndex >= Queue.Count || oldIndex == newIndex)
+            return;
+
+        Queue.RemoveAt(oldIndex);
+        Queue.Insert(newIndex, dragged);
+
+        // Reindex Items
+        for (int i = 0; i < Queue.Count; i++)
+        {
+            Queue[i].Index = i + 1;
+        }
+
+        Dictionary<string, string> idToNewPos = [];
+
+        idToNewPos.Add(dragged.Id, newIndex.ToString(CultureInfo.InvariantCulture));
+
+        await _mpc.MpdMoveId(idToNewPos);
+    }
 
     // TODO: make this a command (or make changes so that we don't have to call this from code behind).
     public async Task GetCacheFolderSizeAsync()
