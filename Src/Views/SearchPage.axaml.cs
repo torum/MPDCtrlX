@@ -11,8 +11,7 @@ internal sealed partial class SearchPage : UserControl
     // parameterless constructor for XAML Previewer
     public SearchPage()
     {
-        var vm = App.GetService<MainViewModel>();
-        DataContext = vm;
+        DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
     }

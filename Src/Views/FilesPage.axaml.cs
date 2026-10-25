@@ -15,8 +15,7 @@ internal sealed partial class FilesPage : UserControl
     // parameterless constructor for XAML Previewer
     public FilesPage()
     {
-        var vm = App.GetService<MainViewModel>();
-        DataContext = vm;
+        DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
     }

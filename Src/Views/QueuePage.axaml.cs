@@ -39,15 +39,19 @@ internal sealed partial class QueuePage : UserControl
         this.Unloaded += QueuePage_Unloaded;
 
         this.QueueListBox.AddHandler(InputElement.PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
-
     }
 
     #region == Drag and Drop ==
 
     private async void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (DataContext is not MainViewModel)
+        if (DataContext is not MainViewModel vm)
             return;
+
+        if (!vm.QueueListviewMoveCanExecute())
+        {
+            return;
+        }
 
         if (e.Source is not Control control || control.DataContext is not SongInfoEx item)
         {

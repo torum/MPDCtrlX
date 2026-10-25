@@ -9,8 +9,7 @@ internal sealed partial class SettingsPage : UserControl
     // parameterless constructor for XAML Previewer
     public SettingsPage()
     {
-        var vm = App.GetService<MainViewModel>();
-        DataContext = vm;
+        DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
 

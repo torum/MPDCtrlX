@@ -16,11 +16,9 @@ internal sealed partial class PlaylistItemPage : UserControl
     // parameterless constructor for XAML Previewer
     public PlaylistItemPage()
     {
-        var vm = App.GetService<MainViewModel>();
-        DataContext = vm;
+        DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
-
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)

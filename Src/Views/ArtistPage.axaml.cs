@@ -11,8 +11,7 @@ internal sealed partial class ArtistPage : UserControl
     // parameterless constructor for XAML Previewer
     public ArtistPage()
     {
-        var vm = App.GetService<MainViewModel>();
-        DataContext = vm;
+        DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
     }

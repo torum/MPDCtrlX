@@ -7278,7 +7278,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
         await _mpc.MpdMoveId(idToNewPos);
     }
-    private bool QueueListviewMoveCanExecute()
+    public bool QueueListviewMoveCanExecute()
     {
         if (!_mpc.Commands.Contains("moveid")) { return false; }
         return true;
@@ -8443,7 +8443,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         return true;
     }
 
-    [RelayCommand(CanExecute = nameof(QueueListviewMoveCanExecute))]
+    [RelayCommand(CanExecute = nameof(PlaylistMovePosCanExecute))]
     private async Task PlaylistMovePos(Dictionary<string, string> posToNewPos)
     {
         if (posToNewPos is null) return;
