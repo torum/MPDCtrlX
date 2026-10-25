@@ -89,7 +89,6 @@ namespace MPDCtrlX
             var services = new ServiceCollection();
 
             services.AddSingleton<MainWindow>();
-            services.AddSingleton<MainView>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<IMpcService, MpcService>();
             services.AddTransient<IMpcBinaryService, MpcBinaryService>();

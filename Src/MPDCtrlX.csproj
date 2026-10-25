@@ -95,8 +95,7 @@
 		<PackageReference Include="Avalonia.Wayland" Version="12.1.4" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.13" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.13" />
 		<PackageReference Include="SkiaSharp" Version="4.153.1" />
 		<!-- SkiaSharp.NativeAssets.Linux must match with SkiaSharp package ver -->
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.153.1" />

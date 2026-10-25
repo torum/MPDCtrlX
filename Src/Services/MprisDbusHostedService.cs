@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using MPDCtrlX.Services.Contracts;
+﻿using MPDCtrlX.Services.Contracts;
 using System.Runtime.InteropServices;
 using Tmds.DBus.Protocol;
 
