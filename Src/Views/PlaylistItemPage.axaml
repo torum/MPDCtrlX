@@ -265,7 +265,14 @@
 				</Grid>
 			</ScrollViewer>
 			<Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource LayerFillColorDefaultBrush}" Opacity="0.5"></Border>
-			<ListBox x:Name="PlaylistSongListBox" Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded">
+			<ListBox x:Name="PlaylistSongListBox" Grid.Row="3" ItemsSource="{Binding PlaylistSongs}" SelectionMode="Single" SelectedItem="{Binding SelectedPlaylistSong}" BorderThickness="0" Margin="0,3,0,4" ScrollViewer.AllowAutoHide="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ListBox_Loaded"
+					DragDrop.AllowDrop="True"
+                    DragDrop.DragOver="ListBox_DragOver"
+                    DragDrop.Drop="ListBox_Drop"
+                    PointerMoved="PlaylistSongListBox_PointerMoved"
+                    PointerPressed="PlaylistSongListBox_PointerPressed"
+                    PointerReleased="PlaylistSongListBox_PointerReleased"
+                    KeyDown="PlaylistSongListBox_KeyDown">
 				<!--  Background="{DynamicResource LayerFillColorDefaultBrush}" -->
 				<ListBox.Resources>
 					<!-- Edit: VerticalScrollViewerAnimatedBehavior. -->

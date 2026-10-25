@@ -4131,6 +4131,52 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         await _mpc.MpdMoveId(idToNewPos);
     }
 
+    public async Task ReorderPlaylistSongs(SongInfo dragged, SongInfo? target, bool isDropAbove)
+    {
+        if (!PlaylistMovePosCanExecute())
+            return;
+
+        if (target == null || dragged == null || dragged == target)
+            return;
+
+        int oldIndex = PlaylistSongs.IndexOf(dragged);
+        int targetIndex = PlaylistSongs.IndexOf(target);
+
+        if (oldIndex == -1 || targetIndex == -1)
+            return;
+
+        int newIndex = isDropAbove ? targetIndex : targetIndex + 1;
+
+        if (oldIndex < newIndex)
+        {
+            newIndex--;
+        }
+
+        if (newIndex < 0 || newIndex >= Queue.Count || oldIndex == newIndex)
+            return;
+
+        PlaylistSongs.RemoveAt(oldIndex);
+        PlaylistSongs.Insert(newIndex, dragged);
+
+        var posToNewPos = new Dictionary<string, string>();
+
+        int i = 0;
+        foreach (var item in PlaylistSongs)
+        {
+            if (item.Index != i)
+            {
+                Debug.WriteLine($"Item with ID {item.Title} moved from position {item.Index} to {i}");
+                posToNewPos.Add(item.Index.ToString(CultureInfo.InvariantCulture), i.ToString(CultureInfo.InvariantCulture));
+            }
+            i++;
+        }
+
+        if (posToNewPos.Count > 0 && PlaylistMovePosCommand.CanExecute(posToNewPos))
+        {
+            await PlaylistMovePosCommand.ExecuteAsync(posToNewPos);
+        }
+    }
+
     // TODO: make this a command (or make changes so that we don't have to call this from code behind).
     public async Task GetCacheFolderSizeAsync()
     {
@@ -8473,7 +8519,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             return;
         }
     }
-    private bool PlaylistMovePosCanExecute()
+    public bool PlaylistMovePosCanExecute()
     {
         if (!_mpc.Commands.Contains("playlistmove")) { return false; }
         return true;

@@ -1,11 +1,15 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using MPDCtrlX.Models;
 using MPDCtrlX.ViewModels;
+using MPDCtrlX.Views.Controls;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace MPDCtrlX.Views;
 
@@ -13,13 +17,346 @@ internal sealed partial class PlaylistItemPage : UserControl
 {
     private bool _isHeaderWidthInitialized;
 
+    #region == Drag and Drop ==
+    private readonly DataFormat<SongInfo> _nodeFormat = DataFormat.CreateInProcessFormat<SongInfo>("SongInfoFormat");
+    private InsertionLineAdorner? _insertionLine;
+    private AdornerLayer? _adornerLayer;
+    private Point _pointerPressedPoint;
+    private bool _isPressed;
+    private bool _isPressedAndMoved;
+    private bool _isDropAbove;
+    #endregion
+
     // parameterless constructor for XAML Previewer
     public PlaylistItemPage()
     {
         DataContext = App.GetService<MainViewModel>();
 
         InitializeComponent();
+
+        this.PlaylistSongListBox.AddHandler(InputElement.PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
     }
+
+    #region == Drag and Drop ==
+
+    private async void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (!vm.PlaylistMovePosCanExecute())
+        {
+            return;
+        }
+
+        if (e.Source is not Control control || control.DataContext is not SongInfo item)
+        {
+            //Debug.WriteLine($"Not DataContext is PlaylistItem: {e.Source}");
+            return;
+        }
+
+        //Debug.WriteLine($"PointerPressed on {item.Text}");
+        var point = e.GetCurrentPoint(this);
+        if (!point.Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        _pointerPressedPoint = e.GetPosition(this);
+        _isPressed = true;
+        _isPressedAndMoved = false;
+
+        while (_isPressed)
+        {
+            await Task.Delay(100);
+            if (_isPressedAndMoved)
+                break;
+        }
+
+        if (!_isPressedAndMoved)
+        {
+            //Debug.WriteLine("Pointer did not move");
+            return;
+        }
+
+        var transferItem = DataTransferItem.Create(_nodeFormat, item);
+
+        // 2. Prepare the v12 DataTransfer container payload
+        var dragData = new DataTransfer();
+
+        dragData.Add(transferItem);
+
+        // Initiate the asynchronous native drag frame
+        // This will block synchronously until the user releases the cursor
+        var result = await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+
+        // Logic to remove node from its old parent if necessary
+
+        if (result == DragDropEffects.Move)
+        {
+            e.Handled = true;
+        }
+
+        Debug.WriteLine(result == DragDropEffects.Move
+            ? "DoDragDropAsync result = Succuses (Move)"
+            : "DoDragDropAsync result = Fail (None)");
+
+        _isPressedAndMoved = false;
+        _isPressed = false;
+
+        RemoveInsertionLine();
+    }
+
+    private async void ListBox_DragOver(object? sender, DragEventArgs e)
+    {
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            e.DragEffects = DragDropEffects.Copy;
+            e.Handled = true;
+            return;
+        }
+
+        var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
+
+        if (draggedNode is SongInfo)
+        {
+            var pos = e.GetPosition(PlaylistSongListBox);
+            AutoScroll(PlaylistSongListBox, pos);
+
+            var currentPosition = e.GetPosition(PlaylistSongListBox);
+            var visualTarget = PlaylistSongListBox.GetVisualAt(currentPosition);
+            var targetListBoxItem = visualTarget?.FindAncestorOfType<ListBoxItem>();
+
+            if (targetListBoxItem != null)
+            {
+                e.DragEffects = DragDropEffects.Move;
+                e.Handled = true;
+
+                var positionInItem = e.GetPosition(targetListBoxItem);
+                var itemHeight = targetListBoxItem.Bounds.Height;
+                _isDropAbove = positionInItem.Y < itemHeight / 2;
+
+                var itemEdge = new Point(0, _isDropAbove ? 0 : itemHeight);
+                var edgeInListBox = targetListBoxItem.TranslatePoint(itemEdge, PlaylistSongListBox);
+
+                if (edgeInListBox is null)
+                {
+                    RemoveInsertionLine();
+                    return;
+                }
+
+                ShowInsertionLine(edgeInListBox.Value.Y);
+
+                return;
+            }
+        }
+
+        // Fallback: If they hover over empty space or an invalid format, reject the drop
+        e.DragEffects = DragDropEffects.None;
+
+        RemoveInsertionLine();
+    }
+
+    private async void ListBox_Drop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (e.DataTransfer.Formats.Contains(_nodeFormat))
+        {
+            var draggedNode = e.DataTransfer.TryGetValue(_nodeFormat);
+
+            if (draggedNode is not null)
+            {
+                if ((e.Source as Control)?.DataContext is not SongInfo targetNode)
+                {
+                    e.DragEffects = DragDropEffects.None;
+                    e.Handled = true;
+                    return;
+                }
+
+                if (!ReferenceEquals(draggedNode, targetNode))
+                {
+                    // Success.
+
+                    //Debug.WriteLine($"DraggedNode = {draggedNode.Text}, TargetNode = {targetNode?.Text}");
+
+                    await vm.ReorderPlaylistSongs(draggedNode, targetNode, _isDropAbove);
+
+                    // Report success.
+                    e.DragEffects = DragDropEffects.Move;
+                    e.Handled = true;
+
+                    RemoveInsertionLine();
+                }
+                else
+                {
+                    e.DragEffects = DragDropEffects.None;
+                    e.Handled = true;
+
+                    RemoveInsertionLine();
+                }
+            }
+
+            e.Handled = true;
+            return;
+        }
+
+        /*
+        // Handle file drops from outside of the application.
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            var files = e.DataTransfer.TryGetFiles();
+
+            if (files != null)
+            {
+                // Convert IStorageItem to local paths (for Desktop use cases)
+                var localPaths = files
+                    .Select(file => file.TryGetLocalPath())
+                    .Where(path => path != null)
+                    ;//.ToArray();
+
+                await vm.FilesDroped(localPaths);
+            }
+
+            e.Handled = true;
+            return;
+        }
+        */
+    }
+
+    private void ShowInsertionLine(double y)
+    {
+        if (_adornerLayer == null)
+            return;
+
+        if (_insertionLine == null)
+        {
+            _insertionLine = new InsertionLineAdorner();
+            AdornerLayer.SetAdornedElement(_insertionLine, this.PlaylistSongListBox);
+            _adornerLayer.Children.Add(_insertionLine);
+        }
+
+        _insertionLine.Y = y;
+        _insertionLine.InvalidateVisual();
+    }
+
+    private void RemoveInsertionLine()
+    {
+        if (_adornerLayer == null)
+            return;
+
+        if (_insertionLine != null)
+        {
+            _adornerLayer.Children.Remove(_insertionLine);
+            _insertionLine = null;
+        }
+    }
+
+    /*
+    private async void ListBox_FileDrop(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        if (e.DataTransfer.Formats.Contains(DataFormat.File))
+        {
+            var files = e.DataTransfer.TryGetFiles();
+
+            if (files != null)
+            {
+                // 3. Convert IStorageItem to local paths (for Desktop use cases)
+                var localPaths = files
+                    .Select(file => file.TryGetLocalPath())
+                    .Where(path => path != null)
+                    .ToArray();
+
+                if (localPaths.Length > 0)
+                {
+                    vm.AddFilesToPlaylist(localPaths!);
+                }
+            }
+
+            e.Handled = true;
+        }
+    }
+    */
+
+    private static void AutoScroll(ListBox listBox, Avalonia.Point pointerPos)
+    {
+        const double scrollMargin = 30;
+
+        if (listBox.Scroll != null)
+        {
+            if (pointerPos.Y < scrollMargin)
+                listBox.Scroll.Offset = new Avalonia.Vector(listBox.Scroll.Offset.X, listBox.Scroll.Offset.Y - 10);
+
+            else if (pointerPos.Y > listBox.Bounds.Height - scrollMargin)
+                listBox.Scroll.Offset = new Avalonia.Vector(listBox.Scroll.Offset.X, listBox.Scroll.Offset.Y + 10);
+        }
+    }
+
+    private void PlaylistSongListBox_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+        /*
+        if (vm.SelectedItem == null)
+            return;
+
+        bool ctrl = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+
+        if (!ctrl)
+            return;
+
+        if (e.Key == Key.Up)
+        {
+            vm.MoveItemUp(vm.SelectedItem);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Down)
+        {
+            vm.MoveItemDown(vm.SelectedItem);
+            e.Handled = true;
+        }
+        */
+    }
+
+    private void PlaylistSongListBox_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!_isPressed)
+        {
+            return;
+        }
+
+        var currentPoint = e.GetPosition(this);
+
+        // Calculate the distance moved
+        var deltaX = Math.Abs(currentPoint.X - _pointerPressedPoint.X);
+        var deltaY = Math.Abs(currentPoint.Y - _pointerPressedPoint.Y);
+
+        if (deltaX > 4 || deltaY > 4)
+        {
+            // The pointer HAS moved beyond a tiny jitter threshold
+            //Debug.WriteLine("Pointer is moved");
+            _isPressedAndMoved = true;
+            _isPressed = false;
+        }
+    }
+
+    private void PlaylistSongListBox_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        _isPressedAndMoved = false;
+        _isPressed = false;
+    }
+
+    private void PlaylistSongListBox_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        _isPressedAndMoved = false;
+        _isPressed = false;
+    }
+
+    #endregion
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -46,6 +383,8 @@ internal sealed partial class PlaylistItemPage : UserControl
 
     private void ListBox_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        _adornerLayer = AdornerLayer.GetAdornerLayer(PlaylistSongListBox);
+
         if (_isHeaderWidthInitialized)
         {
             // Everytime page is changed back, this loaded is called. So.
@@ -507,6 +846,7 @@ internal sealed partial class PlaylistItemPage : UserControl
             vm?.PlaylistSongFilterSelectCommand.Execute(song);
         }
     }
+
     private void Page_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
     {
         if (e.Key == Avalonia.Input.Key.Escape)
