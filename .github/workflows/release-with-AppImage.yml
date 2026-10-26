@@ -57,7 +57,7 @@ jobs:
         # 1. Copies your repository icon file into the root of AppDir
         # 2. Renames it to match your APP_NAME exactly (required by AppImage standards)
         # CHANGE "./Assets/Icon.png" to match your actual repository icon path!
-        cp ./Assets/MPDCtrlX.png ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.png
+        cp ./Src/Assets/MPDCtrlX.png ${{ env.APP_NAME }}.AppDir/${{ env.APP_NAME }}.png
 
     - name: Generate .desktop File
       run: |
