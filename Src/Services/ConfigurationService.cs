@@ -364,6 +364,13 @@ internal sealed class ConfigurationService : IConfigurationService
                         if (!string.IsNullOrEmpty(s))
                             pro.Host = s;
                     }
+
+                    // Temp fix for duplicate profile issue. If a profile with the same host already exists, skip adding this profile.
+                    if (config.Profiles.FirstOrDefault<Profile>(p=>p.Host == pro.Host) is not null)
+                    {
+                        continue;
+                    }
+
                     if (p.Attribute("Port") is not null)
                     {
                         var s = p.Attribute("Port")?.Value;
@@ -419,6 +426,7 @@ internal sealed class ConfigurationService : IConfigurationService
                             config.CurrentProfile = pro;
 
                         }
+
                         config.Profiles.Add(pro);
                     }
                 }
