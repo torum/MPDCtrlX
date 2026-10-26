@@ -269,7 +269,8 @@
 								</ToggleButton>
 							</WrapPanel>
 
-							<Slider x:Name="VolumeSlider" PointerWheelChanged="VolumeSlider_PointerWheelChanged" Orientation="Vertical" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderVolume}" ToolTip.Placement="Top" ToolTip.VerticalOffset="-6" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,0,10,10"></Slider>
+							<Slider x:Name="VolumeSlider" PointerWheelChanged="VolumeSlider_PointerWheelChanged" Orientation="Vertical" ToolTip.Tip="{x:Static prop:Resources.Playback_SliderVolume}" ToolTip.Placement="Top" ToolTip.VerticalOffset="-6" Value="{Binding Volume,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,0,10,10"
+									IsVisible="{Binding IsVolumeVisible, Mode=OneWay}"></Slider>
 
 						</StackPanel>
 					</Grid>

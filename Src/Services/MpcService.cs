@@ -31,8 +31,9 @@ public partial class MpcService : IMpcService, IDisposable
     public string MpdVerText { get; private set; } = "";
 
     public MpdStatus MpdStatus { get; private set; } = new();
-
-    public bool MpdForceSetVolume { get; set; }
+    public int MixerVolume { get; set; } = 50;
+    public bool IsMixerEnabled { get; set; }// = false;
+    //public bool MpdForceSetVolume { get; set; }
 
     public bool MpdStop { get; set; }
 
@@ -1251,7 +1252,10 @@ public partial class MpcService : IMpcService, IDisposable
                 await _binaryDownloader.MpdBinaryConnectionStart(MpdHost, MpdPort, MpdPassword, cancellationToken);
 
                 // Get available commands
-                await MpdCommands();
+                await MpdQueryCommands();
+
+                // Check if Mixer is enabled and get volume.
+                await MpdGetVol();
 
                 return d.IsSuccess;
             }
@@ -2092,12 +2096,22 @@ public partial class MpcService : IMpcService, IDisposable
 
     #region == Command Connection's MPD Commands with results other than OK == 
 
-    public async Task<CommandResult> MpdCommands()
+    public async Task<CommandResult> MpdQueryCommands()
     {
         CommandResult result = await MpdCommandSendCommand("commands");
         if (result.IsSuccess)
         {
             result.IsSuccess = await ParseCommands(result.ResultText);
+        }
+        return result;
+    }
+
+    public async Task<CommandResult> MpdGetVol()
+    {
+        CommandResult result = await MpdCommandSendCommand("getvol");
+        if (result.IsSuccess)
+        {
+            result.IsSuccess = await ParseGetvol(result.ResultText);
         }
         return result;
     }
@@ -2530,6 +2544,10 @@ public partial class MpcService : IMpcService, IDisposable
             cmd = "playid " + songId;
         }
 
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             if (MpdStatus.IsVolumeSet || !MpdForceSetVolume)
@@ -2571,6 +2589,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdPlaybackPause()
@@ -2582,6 +2601,10 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdPlaybackResume(int volume)
     {
+        CommandResult result = await MpdCommandSendCommand("pause 0");
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             if (MpdStatus.IsVolumeSet || !MpdForceSetVolume)
@@ -2623,6 +2646,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdPlaybackStop()
@@ -2634,6 +2658,10 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdPlaybackNext(int volume)
     {
+        CommandResult result = await MpdCommandSendCommand("next");
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             if (MpdStatus.IsVolumeSet || !MpdForceSetVolume)
@@ -2675,10 +2703,15 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdPlaybackPrev(int volume)
     {
+        CommandResult result = await MpdCommandSendCommand("previous");
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             if (MpdStatus.IsVolumeSet || !MpdForceSetVolume)
@@ -2720,6 +2753,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdSetVolume(int v)
@@ -3087,6 +3121,24 @@ public partial class MpcService : IMpcService, IDisposable
             return f;
         }
 
+        string cmd = "command_list_begin" + "\n";
+        cmd = cmd + "clear" + "\n";
+        foreach (var uri in uris)
+        {
+            cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+        }
+        cmd = cmd + "play" + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        //if (result.IsSuccess)
+        //{
+        //    await ParseCurrentSong(result.ResultText);
+        //}
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             string cmd = "command_list_begin" + "\n";
@@ -3154,6 +3206,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdSinglePlay(string uri, int volume)
@@ -3167,6 +3220,22 @@ public partial class MpcService : IMpcService, IDisposable
             return f;
         }
 
+        string cmd = "command_list_begin" + "\n";
+        cmd = cmd + "clear" + "\n";
+        cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+        cmd = cmd + "play" + "\n";
+        //cmd = cmd + "currentsong" + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        if (result.IsSuccess)
+        {
+            await ParseCurrentSong(result.ResultText);
+        }
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             string cmd = "command_list_begin" + "\n";
@@ -3228,6 +3297,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdChangePlaylist(string playlistName, int volume)
@@ -3243,6 +3313,23 @@ public partial class MpcService : IMpcService, IDisposable
 
         playlistName = Regex.Escape(playlistName);
 
+        string cmd = "command_list_begin" + "\n";
+        //cmd = cmd + "stop" + "\n";
+        cmd = cmd + "clear" + "\n";
+        cmd = cmd + "load \"" + playlistName + "\"\n";
+        cmd = cmd + "play" + "\n";
+        //cmd = cmd + "currentsong" + "\n";
+        cmd = cmd + "command_list_end" + "\n";
+
+        CommandResult result = await MpdCommandSendCommand(cmd);
+
+        if (result.IsSuccess)
+        {
+            await ParseCurrentSong(result.ResultText);
+        }
+
+        return result;
+        /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
             string cmd = "command_list_begin" + "\n";
@@ -3303,6 +3390,7 @@ public partial class MpcService : IMpcService, IDisposable
             CommandResult result = new();
             return result;
         }
+        */
     }
 
     public async Task<CommandResult> MpdLoadPlaylist(string playlistName)
@@ -3592,6 +3680,40 @@ public partial class MpcService : IMpcService, IDisposable
             if (value.StartsWith("command: ", StringComparison.InvariantCultureIgnoreCase))
             {
                 Commands.Add(value.Replace("command: ", "").Trim());
+            }
+        }
+
+        return Task.FromResult(true);
+    }
+
+    private Task<bool> ParseGetvol(string result)
+    {
+        if (MpdStop) { return Task.FromResult(false); }
+        if (string.IsNullOrEmpty(result)) return Task.FromResult(false);
+        List<string> resultLines = result.Split('\n').ToList();
+        if (resultLines.Count == 0) return Task.FromResult(false);
+
+        //Debug.WriteLine(result);
+
+        foreach (string line in resultLines)
+        {
+            if (line.StartsWith("volume: ", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string[] parts = line.Split(':', StringSplitOptions.TrimEntries);
+                if (parts.Length < 2) continue;
+
+                string key = parts[0];   // "Id"
+                string value = parts[1]; // "999"
+
+                if (string.Equals(key, "volume", StringComparison.OrdinalIgnoreCase))
+                {
+                    //value
+                    if (int.TryParse(value, CultureInfo.InvariantCulture, out int intvalue))
+                    {
+                        MixerVolume = intvalue;
+                        IsMixerEnabled = true;
+                    }
+                }
             }
         }
 
@@ -5234,6 +5356,8 @@ public partial class MpcService : IMpcService, IDisposable
 
     #endregion
 
+    #region == Disconnect and Dispose ==
+
     public void MpdDisconnect(bool isReconnect)
     {
         //Debug.WriteLine($"MpdDisconnect() is called, (isReconnect = {isReconnect})");
@@ -5378,5 +5502,8 @@ public partial class MpcService : IMpcService, IDisposable
 
         GC.SuppressFinalize(this);
     }
+
+    #endregion
+
 }
 

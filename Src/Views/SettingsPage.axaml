@@ -188,9 +188,11 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_AlbumSortWithoutTheAndAPrefix}" IsChecked="{Binding IsAlbumSortWithoutThePrefix}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
 						
+						<!--
 						<ui:FASettingsExpanderItem>
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_ForceSetVolumeExplicitly}" IsChecked="{Binding IsForceSetVolumeExplicitly}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
+						-->
 
 						<ui:FASettingsExpanderItem IsVisible="{OnPlatform Default=False, Linux=True, x:TypeArguments=x:Boolean}">
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_IsMPRISIntegrationEnabled}" IsChecked="{Binding IsMPRISIntegrationEnabled}" Margin="0"></CheckBox>
