@@ -4024,7 +4024,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             _volume = CurrentProfile.Volume;
             OnPropertyChanged(nameof(Volume));
 
-
             // start the connection
             await StartAsync(CurrentProfile.Host, CurrentProfile.Port);
         }
@@ -4049,7 +4048,16 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         CurrentProfile?.Volume = Volume;
         config.CurrentProfile = CurrentProfile;
 
-        config.Profiles = [.. Profiles];
+        //config.Profiles = [.. Profiles];
+        foreach (var profile in Profiles)
+        {
+            if (ReferenceEquals(profile, CurrentProfile))
+            {
+                profile.Volume = Volume;
+            }
+
+            config.Profiles.Add(profile);
+        }
 
         // Theme
         config.ThemeSetting = CurrentTheme;
@@ -4179,6 +4187,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             workingOrder.Insert(i, song);
 
             idToNewPos.Add(song.Id, i.ToString(CultureInfo.InvariantCulture));
+
         }
 
         if (idToNewPos.Count > 0)

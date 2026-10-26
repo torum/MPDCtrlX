@@ -1609,7 +1609,7 @@ internal sealed class ConfigurationService : IConfigurationService
             }
 
             xAttrs = doc.CreateAttribute("Volume");
-            xAttrs.Value = p == config.CurrentProfile ? 20.ToString(CultureInfo.InvariantCulture) : p.Volume.ToString(CultureInfo.InvariantCulture);
+            xAttrs.Value = p.Volume.ToString(CultureInfo.InvariantCulture);
             xProfile.SetAttributeNode(xAttrs);
 
             xProfiles.AppendChild(xProfile);

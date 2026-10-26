@@ -28,6 +28,7 @@ internal sealed partial class MainWindow : Window
     private readonly INavigationService _navigationService;
     private readonly MainViewModel _mainViewModel;
     private bool _isClosing;
+    private bool _isAllowClose;
     private readonly Dictionary<string, Type> _pageMap = new()
     {
         { "MPDCtrlX.Views.QueuePage", typeof(Views.QueuePage) },
@@ -164,10 +165,14 @@ internal sealed partial class MainWindow : Window
     {
         Debug.WriteLine("OnClosing");
 
+        if (_isAllowClose) return;
+
+        e.Cancel = true; // Cancel the default close behavior to allow for async operations
+
         if (_isClosing) return;
         _isClosing = true;
 
-        e.Cancel = true; // Cancel the default close behavior to allow for async operations
+        this.Hide();
 
         if (this.DataContext is MainViewModel vm)
         {
@@ -195,8 +200,9 @@ internal sealed partial class MainWindow : Window
 
         #endregion
 
-        this.Close();
+        _isAllowClose = true;
 
+        this.Close();
     }
 
     private void Window_Activated(object? sender, EventArgs e)
