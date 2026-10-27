@@ -6,6 +6,6 @@ Exec=MPDCtrlX
 StartupWMClass=MPDCtrlX
 Terminal=false
 Type=Application
-Categories=Music
+Categories=AudioVideo;Audio;Player;
 GenericName=MPDCtrlX
 Keywords=MPD

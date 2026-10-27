@@ -741,7 +741,7 @@ SOFTWARE.</value>
     <value>Add</value>
   </data>
   <data name="Settings_Opts_ForceSetVolumeExplicitly" xml:space="preserve">
-    <value>Override volume (Use this only if the "mixer_type" is set to "hardware").</value>
+    <value>Override volume (Use this only if MPD is running on Windows and the "mixer_type" is set to "hardware").</value>
   </data>
   <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
     <value>Reflesh</value>

@@ -1537,7 +1537,7 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Override volume (Use this only if the &quot;mixer_type&quot; is set to &quot;hardware&quot;)..
+        ///   Looks up a localized string similar to Override volume (Use this only if MPD is running on Windows and the &quot;mixer_type&quot; is set to &quot;hardware&quot;)..
         /// </summary>
         public static string Settings_Opts_ForceSetVolumeExplicitly {
             get {
