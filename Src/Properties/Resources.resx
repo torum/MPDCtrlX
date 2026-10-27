@@ -741,7 +741,7 @@ SOFTWARE.</value>
     <value>Add</value>
   </data>
   <data name="Settings_Opts_ForceSetVolumeExplicitly" xml:space="preserve">
-    <value>Always remember and set the volume explicitly</value>
+    <value>Override volume (Use this only if the "mixer_type" is set to "hardware").</value>
   </data>
   <data name="FlyoutMenu_FilesRefresh" xml:space="preserve">
     <value>Reflesh</value>

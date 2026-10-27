@@ -141,7 +141,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         IsSaveLog = _configurationService.CurrentConfiguration.IsSaveLog;
         IsDownloadAlbumArt = _configurationService.CurrentConfiguration.IsDownloadAlbumArt;
         IsDownloadAlbumArtEmbeddedUsingReadPicture = _configurationService.CurrentConfiguration.IsDownloadAlbumArtEmbeddedUsingReadPicture;
-        //IsForceSetVolumeExplicitly = _configurationService.CurrentConfiguration.IsForceSetVolumeExplicitly;
+        IsForceSetVolumeExplicitly = _configurationService.CurrentConfiguration.IsForceSetVolumeExplicitly;
         IsMPRISIntegrationEnabled = _configurationService.CurrentConfiguration.IsMPRISIntegrationEnabled;
 
         #endregion
@@ -3348,7 +3348,6 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     } = true;
 
-    /*
     public bool IsForceSetVolumeExplicitly
     {
         get; set
@@ -3358,12 +3357,28 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
             field = value;
 
-            _mpc.MpdForceSetVolume = field;
+            if (_mpc.IsMixerEnabled)
+            {
+                _mpc.IsForceSetVolume = false;
+                IsVolumeVisible = true;
+            }
+            else
+            {
+                if (field)
+                {
+                    IsVolumeVisible = true;
+                    _mpc.IsForceSetVolume = true;
+                }
+                else
+                {
+                    IsVolumeVisible = false;
+                    _mpc.IsForceSetVolume = false;
+                }
+            }
 
             OnPropertyChanged();
         }
     }
-    */
 
     public bool IsMPRISIntegrationEnabled
     {
@@ -4088,7 +4103,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         config.IsSaveLog = IsSaveLog;
         config.IsDownloadAlbumArt = IsDownloadAlbumArt;
         config.IsDownloadAlbumArtEmbeddedUsingReadPicture = IsDownloadAlbumArtEmbeddedUsingReadPicture;
-        //config.IsForceSetVolumeExplicitly = IsForceSetVolumeExplicitly;
+        config.IsForceSetVolumeExplicitly = IsForceSetVolumeExplicitly;
         config.IsMPRISIntegrationEnabled = IsMPRISIntegrationEnabled;
 
         config.IsNavigationViewMenuOpen = IsNavigationViewMenuOpen;
@@ -4574,10 +4589,22 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 IsVolumeVisible = true;
                 _volume = _mpc.MixerVolume;
                 OnPropertyChanged(nameof(Volume));
+                _mpc.IsForceSetVolume = false;
+                Debug.WriteLine($"MixerVolume: {_volume} @UpdateVolume()");
             }
             else
             {
-                IsVolumeVisible = false;
+                if (IsForceSetVolumeExplicitly)
+                {
+                    IsVolumeVisible = true;
+                    _mpc.IsForceSetVolume = true;
+                }
+                else
+                {
+                    IsVolumeVisible = false;
+                    _mpc.IsForceSetVolume = false;
+                }
+                Debug.WriteLine($"Mixer is not enabled. @UpdateVolume() IsForceSetVolumeExplicitly: {IsForceSetVolumeExplicitly}");
             }
         });
     }
@@ -4731,21 +4758,22 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                         //_pathStopButton
                 }
 
-                if (_mpc.MpdStatus.IsVolumeReturned)
+                if (_mpc.MpdStatus.IsVolumeReturned && _mpc.MpdStatus.CurrentPlayState != MpdPlayState.Stop) //_mpc.IsMixerEnabled && 
                 {
                     // Only update volume when Playing or Paused. (Because of MPD's strange behavior where it returns volume 100 when stopped)
-                    if (_mpc.MpdStatus.CurrentPlayState != MpdPlayState.Stop)
-                    {
-                        //Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.MpdVolume}. @UpdateButtonStatus()");
+                    Debug.WriteLine($"Volume is set to {_mpc.MpdStatus.CurrentVolume} @UpdateButtonStatus()");
 
-                        double tmpVol = Convert.ToDouble(_mpc.MpdStatus.CurrentVolume);
-                        if (_volume != tmpVol)
-                        {
-                            // "quietly" update.
-                            _volume = tmpVol;
-                            OnPropertyChanged(nameof(Volume));
-                        }
-                    } 
+                    double tmpVol = Convert.ToDouble(_mpc.MpdStatus.CurrentVolume);
+                    if (_volume != tmpVol)
+                    {
+                        // "quietly" update.
+                        _volume = tmpVol;
+                        OnPropertyChanged(nameof(Volume));
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"Volume is not set, Status.CurrentVolume: {_mpc.MpdStatus.CurrentVolume}, IsMixerEnabled:{_mpc.IsMixerEnabled} && IsVolumeReturned:{_mpc.MpdStatus.IsVolumeReturned} && CurrentPlayState:{_mpc.MpdStatus.CurrentPlayState} @UpdateButtonStatus()");
                 }
 
                 _random = _mpc.MpdStatus.IsRandom;
@@ -8054,7 +8082,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 CurrentSong = null;
             });
 
-            await _mpc.MpdSinglePlay(song.OriginalFileUri, Convert.ToInt32(_volume));
+            var list = new List<string> { song.OriginalFileUri };
+            await _mpc.MpdMultiplePlay(list, Convert.ToInt32(_volume));
 
             // get album cover.
             await Task.Yield();
@@ -8859,7 +8888,8 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             Queue.Clear();
             CurrentSong = null;
 
-            await _mpc.MpdSinglePlay(song.File, Convert.ToInt32(_volume));
+            var list = new List<string> { song.File };
+            await _mpc.MpdMultiplePlay(list, Convert.ToInt32(_volume));
         }
     }
 

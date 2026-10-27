@@ -5,6 +5,7 @@ using MPDCtrlX.Services.Contracts;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,7 +34,7 @@ public partial class MpcService : IMpcService, IDisposable
     public MpdStatus MpdStatus { get; private set; } = new();
     public int MixerVolume { get; set; } = 50;
     public bool IsMixerEnabled { get; set; }// = false;
-    //public bool MpdForceSetVolume { get; set; }
+    public bool IsForceSetVolume { get; set; }
 
     public bool MpdStop { get; set; }
 
@@ -2544,9 +2545,7 @@ public partial class MpcService : IMpcService, IDisposable
             cmd = "playid " + songId;
         }
 
-        CommandResult result = await MpdCommandSendCommand(cmd);
-
-        return result;
+        return await SendWithVolume(cmd, volume);
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
@@ -2592,6 +2591,55 @@ public partial class MpcService : IMpcService, IDisposable
         */
     }
 
+    private async Task<CommandResult> SendWithVolume(string cmd, int volume)
+    {
+        if (IsForceSetVolume && !IsMixerEnabled)
+        {
+            if (MpdStatus.CurrentPlayState == MpdPlayState.Stop)
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"SendWithVolume. State is stop. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                CommandResult result = await MpdCommandSendCommand(cmd);
+
+                if (result.IsSuccess && string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    // If you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
+                    // So send "setvol" command separately.
+
+                    Debug.WriteLine($"SendWithVolume. State is stop. Sending setvol command separately. Volume: {volume}");
+
+                    await Task.Delay(120);
+                    await MpdCommandSendCommand($"setvol {volume}");
+                }
+
+                return result;
+            }
+            else
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"SendWithVolume. State is play or pause. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                string cmdList = "command_list_begin" + "\n";
+                cmdList = cmdList + cmd + "\n";
+                cmdList = cmdList + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
+                cmdList = cmdList + "command_list_end" + "\n";
+
+                CommandResult result = await MpdCommandSendCommand(cmdList);
+
+                return result;
+            }
+        }
+        else
+        {
+            CommandResult result = await MpdCommandSendCommand(cmd);
+
+            return result;
+        }
+    }
+
     public async Task<CommandResult> MpdPlaybackPause()
     {
         CommandResult result = await MpdCommandSendCommand("pause 1");
@@ -2601,9 +2649,7 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdPlaybackResume(int volume)
     {
-        CommandResult result = await MpdCommandSendCommand("pause 0");
-
-        return result;
+        return await SendWithVolume("pause 0", volume);
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
@@ -2658,9 +2704,7 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdPlaybackNext(int volume)
     {
-        CommandResult result = await MpdCommandSendCommand("next");
-
-        return result;
+        return await SendWithVolume("next", volume);
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
@@ -2708,9 +2752,8 @@ public partial class MpcService : IMpcService, IDisposable
 
     public async Task<CommandResult> MpdPlaybackPrev(int volume)
     {
-        CommandResult result = await MpdCommandSendCommand("previous");
+        return await SendWithVolume("previous", volume);
 
-        return result;
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
@@ -3121,6 +3164,78 @@ public partial class MpcService : IMpcService, IDisposable
             return f;
         }
 
+        if (IsForceSetVolume && !IsMixerEnabled)
+        {
+            if (MpdStatus.CurrentPlayState == MpdPlayState.Stop)
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"MpdMultiplePlay State is stop. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                string cmd = "command_list_begin" + "\n";
+                cmd = cmd + "clear" + "\n";
+                foreach (var uri in uris)
+                {
+                    cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+                }
+                cmd = cmd + "play" + "\n";
+                //cmd = cmd + "currentsong" + "\n";
+                cmd = cmd + "command_list_end" + "\n";
+
+                CommandResult result = await MpdCommandSendCommand(cmd);
+
+                if (result.IsSuccess && string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    // If you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
+                    // So send "setvol" command separately.
+
+                    Debug.WriteLine($"State is stop. Sending setvol command separately. Volume: {volume}");
+
+                    await Task.Delay(120);
+                    await MpdCommandSendCommand($"setvol {volume}");
+                }
+
+                return result;
+            }
+            else
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"MpdMultiplePlay State is play or pause. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                string cmd = "command_list_begin" + "\n";
+                cmd = cmd + "clear" + "\n";
+                foreach (var uri in uris)
+                {
+                    cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+                }
+                cmd = cmd + "play" + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
+                //cmd = cmd + "currentsong" + "\n";
+                cmd = cmd + "command_list_end" + "\n";
+
+                CommandResult result = await MpdCommandSendCommand(cmd);
+
+                return result;
+            }
+        }
+        else
+        {
+            string cmd = "command_list_begin" + "\n";
+            cmd = cmd + "clear" + "\n";
+            foreach (var uri in uris)
+            {
+                cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
+            }
+            cmd = cmd + "play" + "\n";
+            //cmd = cmd + "currentsong" + "\n";
+            cmd = cmd + "command_list_end" + "\n";
+
+            CommandResult result = await MpdCommandSendCommand(cmd);
+
+            return result;
+        }
+        /*
         string cmd = "command_list_begin" + "\n";
         cmd = cmd + "clear" + "\n";
         foreach (var uri in uris)
@@ -3132,12 +3247,8 @@ public partial class MpcService : IMpcService, IDisposable
 
         CommandResult result = await MpdCommandSendCommand(cmd);
 
-        //if (result.IsSuccess)
-        //{
-        //    await ParseCurrentSong(result.ResultText);
-        //}
-
         return result;
+        */
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
@@ -3209,97 +3320,6 @@ public partial class MpcService : IMpcService, IDisposable
         */
     }
 
-    public async Task<CommandResult> MpdSinglePlay(string uri, int volume)
-    {
-        if (string.IsNullOrEmpty(uri))
-        {
-            CommandResult f = new()
-            {
-                IsSuccess = false
-            };
-            return f;
-        }
-
-        string cmd = "command_list_begin" + "\n";
-        cmd = cmd + "clear" + "\n";
-        cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
-        cmd = cmd + "play" + "\n";
-        //cmd = cmd + "currentsong" + "\n";
-        cmd = cmd + "command_list_end" + "\n";
-
-        CommandResult result = await MpdCommandSendCommand(cmd);
-
-        if (result.IsSuccess)
-        {
-            await ParseCurrentSong(result.ResultText);
-        }
-
-        return result;
-        /*
-        if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
-        {
-            string cmd = "command_list_begin" + "\n";
-            cmd = cmd + "clear" + "\n";
-            cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
-            cmd = cmd + "play" + "\n";
-            if (!MpdStatus.IsVolumeSet || MpdForceSetVolume)
-            {
-                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
-            }
-            cmd = cmd + "currentsong" + "\n";
-            cmd = cmd + "command_list_end" + "\n";
-
-            CommandResult result = await MpdCommandSendCommand(cmd);
-
-            if (result.IsSuccess)
-            {
-                await ParseCurrentSong(result.ResultText);
-            }
-
-            return result;
-        }
-        else if (MpdStatus.CurrentPlayState == MpdPlayState.Stop)
-        {
-            string cmd = "command_list_begin" + "\n";
-            cmd = cmd + "clear" + "\n";
-            cmd = cmd + "add \"" + Regex.Escape(uri) + "\"\n";
-            cmd = cmd + "play" + "\n";
-            //cmd = cmd + "currentsong" + "\n";
-            cmd = cmd + "command_list_end" + "\n";
-
-            CommandResult result = await MpdCommandSendCommand(cmd);
-            if (result.IsSuccess)
-            {
-                var result2 = await MpdCommandSendCommand("currentsong");
-                if (result2.IsSuccess)
-                {
-                    await ParseCurrentSong(result2.ResultText);
-                }
-
-                if (string.IsNullOrEmpty(result.ErrorMessage) && (!MpdStatus.IsVolumeSet || MpdForceSetVolume))
-                {
-                    // Needed this...
-                    await Task.Delay(200);
-
-                    Debug.WriteLine($"MpdSinglePlay. State is stop. Sending setvol command separately. Volume: {volume}");
-                    // MPD's volume is reset to 100% when the state is stop. So set the volume.
-                    // Also, if you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
-                    // So send "setvol" command separately.
-                    await MpdCommandSendCommand($"setvol {volume}");
-                }
-            }
-
-            return result;
-        }
-        else
-        {
-            Debug.WriteLine("This shouldn't happen. @MpdSinglePlay");
-            CommandResult result = new();
-            return result;
-        }
-        */
-    }
-
     public async Task<CommandResult> MpdChangePlaylist(string playlistName, int volume)
     {
         if (string.IsNullOrEmpty(playlistName))
@@ -3313,6 +3333,73 @@ public partial class MpcService : IMpcService, IDisposable
 
         playlistName = Regex.Escape(playlistName);
 
+        if (IsForceSetVolume && !IsMixerEnabled)
+        {
+            if (MpdStatus.CurrentPlayState == MpdPlayState.Stop)
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"MpdChangePlaylist. State is stop. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                string cmd = "command_list_begin" + "\n";
+                //cmd = cmd + "stop" + "\n";
+                cmd = cmd + "clear" + "\n";
+                cmd = cmd + "load \"" + playlistName + "\"\n";
+                cmd = cmd + "play" + "\n";
+                //cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
+                //cmd = cmd + "currentsong" + "\n";
+                cmd = cmd + "command_list_end" + "\n";
+
+                CommandResult result = await MpdCommandSendCommand(cmd);
+
+                if (result.IsSuccess && string.IsNullOrEmpty(result.ErrorMessage))
+                {
+                    // If you use "command_list_begin", you receive "all outputs are disabled" ark message and the setvol command is not executed.
+                    // So send "setvol" command separately.
+
+                    Debug.WriteLine($"MpdChangePlaylist. State is stop. Sending setvol command separately. Volume: {volume}");
+
+                    await Task.Delay(120);
+                    await MpdCommandSendCommand($"setvol {volume}");
+                }
+
+                return result;
+            }
+            else
+            {
+                // MPD's volume is reset to 100% when the state is stop and restarted. So set the volume.
+
+                Debug.WriteLine($"MpdChangePlaylist. State is play or pause. Volume: {volume}, Status.IsVolumeReturned:{MpdStatus.IsVolumeReturned}, IsForceSetVolume: {IsForceSetVolume}, IsMixerEnabled: {IsMixerEnabled}");
+
+                string cmd = "command_list_begin" + "\n";
+                //cmd = cmd + "stop" + "\n";
+                cmd = cmd + "clear" + "\n";
+                cmd = cmd + "load \"" + playlistName + "\"\n";
+                cmd = cmd + "play" + "\n";
+                cmd = cmd + "setvol " + volume.ToString(CultureInfo.InvariantCulture) + "\n";
+                //cmd = cmd + "currentsong" + "\n";
+                cmd = cmd + "command_list_end" + "\n";
+
+                CommandResult result = await MpdCommandSendCommand(cmd);
+
+                return result;
+            }
+        }
+        else
+        {
+            string cmd = "command_list_begin" + "\n";
+            //cmd = cmd + "stop" + "\n";
+            cmd = cmd + "clear" + "\n";
+            cmd = cmd + "load \"" + playlistName + "\"\n";
+            cmd = cmd + "play" + "\n";
+            //cmd = cmd + "currentsong" + "\n";
+            cmd = cmd + "command_list_end" + "\n";
+
+            CommandResult result = await MpdCommandSendCommand(cmd);
+
+            return result;
+        }
+        /*
         string cmd = "command_list_begin" + "\n";
         //cmd = cmd + "stop" + "\n";
         cmd = cmd + "clear" + "\n";
@@ -3329,6 +3416,7 @@ public partial class MpcService : IMpcService, IDisposable
         }
 
         return result;
+        */
         /*
         if ((MpdStatus.CurrentPlayState == MpdPlayState.Play) || (MpdStatus.CurrentPlayState == MpdPlayState.Pause))
         {
