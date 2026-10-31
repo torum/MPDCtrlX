@@ -1741,66 +1741,70 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     } = true;
 
 
-    private bool _repeat;
-    public bool Repeat
+    private bool _isRepeat;
+    public bool IsRepeat
     {
-        get => _repeat;
+        get => _isRepeat;
         set
         {
-            _repeat = value;
+            _isRepeat = value;
             OnPropertyChanged();
 
             if (_mpc.MpdStatus.IsRepeat != value)
             {
-                _ = SetRpeat();
+                //_ = SetRepeat();
+                _ = SetRepeat().SafeAsync(nameof(SetRepeat));
             }
         }
     }
 
-    private bool _random;
-    public bool Random
+    private bool _isRandom;
+    public bool IsRandom
     {
-        get => _random;
+        get => _isRandom;
         set
         {
-            _random = value;
+            _isRandom = value;
             OnPropertyChanged();
 
             if (_mpc.MpdStatus.IsRandom != value)
             {
-                _ = SetRandom();
+                //_ = SetRandom();
+                _ = SetRandom().SafeAsync(nameof(SetRandom));
             }
         }
     }
 
-    private bool _consume;
-    public bool Consume
+    private bool _isConsume;
+    public bool IsConsume
     {
-        get => _consume;
+        get => _isConsume;
         set
         {
-            _consume = value;
+            _isConsume = value;
             OnPropertyChanged();
 
             if (_mpc.MpdStatus.IsConsume != value)
             {
-                _ = SetConsume();
+                //_ = SetConsume();
+                _ = SetConsume().SafeAsync(nameof(SetConsume));
             }
         }
     }
 
-    private bool _single;
-    public bool Single
+    private bool _isSingle;
+    public bool IsSingle
     {
-        get => _single;
+        get => _isSingle;
         set
         {
-            _single = value;
+            _isSingle = value;
             OnPropertyChanged();
 
             if (_mpc.MpdStatus.IsSingle != value)
             {
-                _ = SetSingle();
+                //_ = SetSingle();
+                _ = SetSingle().SafeAsync(nameof(SetSingle));
             }
         }
     }
@@ -1926,7 +1930,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (_elapsed < Time)
         {
-            _ = SetSeek();
+            _ = SetSeek().SafeAsync(nameof(SetSeek));
         }
     }
 
@@ -4776,17 +4780,17 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                     Debug.WriteLine($"Volume is not set, Status.CurrentVolume: {_mpc.MpdStatus.CurrentVolume}, IsMixerEnabled:{_mpc.IsMixerEnabled} && IsVolumeReturned:{_mpc.MpdStatus.IsVolumeReturned} && CurrentPlayState:{_mpc.MpdStatus.CurrentPlayState} @UpdateButtonStatus()");
                 }
 
-                _random = _mpc.MpdStatus.IsRandom;
-                OnPropertyChanged(nameof(Random));
+                _isRandom = _mpc.MpdStatus.IsRandom;
+                OnPropertyChanged(nameof(IsRandom));
 
-                _repeat = _mpc.MpdStatus.IsRepeat;
-                OnPropertyChanged(nameof(Repeat));
+                _isRepeat = _mpc.MpdStatus.IsRepeat;
+                OnPropertyChanged(nameof(IsRepeat));
 
-                _consume = _mpc.MpdStatus.IsConsume;
-                OnPropertyChanged(nameof(Consume));
+                _isConsume = _mpc.MpdStatus.IsConsume;
+                OnPropertyChanged(nameof(IsConsume));
 
-                _single = _mpc.MpdStatus.IsSingle;
-                OnPropertyChanged(nameof(Single));
+                _isSingle = _mpc.MpdStatus.IsSingle;
+                OnPropertyChanged(nameof(IsSingle));
 
                 //start elapsed timer.
                 if (_mpc.MpdStatus.CurrentPlayState == MpdPlayState.Play)
@@ -5493,7 +5497,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 PlayPauseCommand.NotifyCanExecuteChanged();
                 PlayStopCommand.NotifyCanExecuteChanged();
                 SetRandomCommand.NotifyCanExecuteChanged();
-                SetRpeatCommand.NotifyCanExecuteChanged();
+                SetRepeatCommand.NotifyCanExecuteChanged();
                 SetConsumeCommand.NotifyCanExecuteChanged();
                 SetSingleCommand.NotifyCanExecuteChanged();
                 SetVolumeCommand.NotifyCanExecuteChanged();
@@ -7127,7 +7131,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task SetRandom()
     {
         if (IsBusy) return;
-        await _mpc.MpdSetRandom(_random);
+        await _mpc.MpdSetRandom(_isRandom);
     }
     private bool SetRandomCanExecute()
     {
@@ -7135,13 +7139,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         return true;
     }
 
-    [RelayCommand(CanExecute = nameof(SetRpeatCanExecute))]
-    private async Task SetRpeat()
+    [RelayCommand(CanExecute = nameof(SetRepeatCanExecute))]
+    private async Task SetRepeat()
     {
         if (IsBusy) return;
-        await _mpc.MpdSetRepeat(_repeat);
+        await _mpc.MpdSetRepeat(_isRepeat);
     }
-    private bool SetRpeatCanExecute()
+    private bool SetRepeatCanExecute()
     {
         if (!_mpc.Commands.Contains("repeat")) { return false; }
         return true;
@@ -7151,7 +7155,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task SetConsume()
     {
         if (IsBusy) return;
-        await _mpc.MpdSetConsume(_consume);
+        await _mpc.MpdSetConsume(_isConsume);
     }
     private bool SetConsumeCanExecute()
     {
@@ -7163,7 +7167,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task SetSingle()
     {
         if (IsBusy) return;
-        await _mpc.MpdSetSingle(_single);
+        await _mpc.MpdSetSingle(_isSingle);
     }
     private bool SetSingleCanExecute()
     {

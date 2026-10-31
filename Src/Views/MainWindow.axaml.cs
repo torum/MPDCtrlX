@@ -338,7 +338,7 @@ internal sealed partial class MainWindow : Window
         VolumeSlider.IsEnabled = vm.SetVolumeCommand.CanExecute(null);
         SeekSlider.IsEnabled = vm.SetSeekCommand.CanExecute(null);
 
-        RepeatButton.IsEnabled = vm.SetRpeatCommand.CanExecute(null);
+        RepeatButton.IsEnabled = vm.SetRepeatCommand.CanExecute(null);
         SingleButton.IsEnabled = vm.SetSingleCommand.CanExecute(null);
         RandomButton.IsEnabled = vm.SetRandomCommand.CanExecute(null);
         ConsumeButton.IsEnabled = vm.SetConsumeCommand.CanExecute(null);

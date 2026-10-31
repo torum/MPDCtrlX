@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace MPDCtrlX.Services;
 
-public class MpcBinaryService : IMpcBinaryService, IDisposable
+public class MpcBinaryService : IMpcBinaryService
 {
     private CancellationTokenSource? _cts;
 
