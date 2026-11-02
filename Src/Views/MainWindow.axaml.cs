@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -8,17 +7,12 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Avalonia.VisualTree;
 using FluentAvalonia.UI.Controls;
-using FluentAvalonia.UI.Media.Animation;
-using Microsoft.Extensions.DependencyInjection;
 using MPDCtrlX.Models;
-using MPDCtrlX.Services;
 using MPDCtrlX.Services.Contracts;
 using MPDCtrlX.ViewModels;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Xml.Linq;
 
 namespace MPDCtrlX.Views;
 
@@ -363,7 +357,7 @@ internal sealed partial class MainWindow : Window
 
         //var item  = vm.MainMenuItems.FirstOrDefault();
         //var navItem = NavigateViewControl.MenuItems.OfType<FANavigationViewItem>().Where(x => x.IsVisible == IsVisible).FirstOrDefault();//.First();
-       
+
         if (_navigationService.NavigateTo("MPDCtrlX.Views.QueuePage", null))
         {
             var queueNode = vm.MainMenuItems.OfType<NodeMenuQueue>().FirstOrDefault();
@@ -487,14 +481,6 @@ internal sealed partial class MainWindow : Window
         {
             Debug.WriteLine("NavigationView_ItemInvoked: e.InvokedItemContainer.DataContext is not NodeMenu");
         }
-
-        /*
-        var mainView = App.GetService<MainView>();
-        if (nv.Content is not MainView)
-        {
-            nv.Content = mainView;
-        }
-        */
     }
 
     private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
@@ -600,24 +586,6 @@ internal sealed partial class MainWindow : Window
         {
             return;
         }
-        /*
-        //await vm.GetCacheFolderSizeAsync();
-        await RefreshCacheFolderSizeSafeAsync(vm);
-
-        vm.SelectedNodeMenu = null;
-        try
-        {
-            // This causes FluentAvalonia to throw null ex in some cases.
-            this.NavigateViewControl.SelectedItem = null;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception @NavigateViewControl.SelectedItem = null; {ex}");
-        }
-
-        this.NavigateViewControl.Content = App.GetService<SettingsPage>();
-        //this.ContentFrame.Navigate(typeof(SettingsPage));
-        */
 
         await RefreshCacheFolderSizeSafeAsync(vm);
 
@@ -670,7 +638,7 @@ internal sealed partial class MainWindow : Window
         e.Handled = true;
     }
 
-    private void OnPreviewKeyDown(object? sender, KeyEventArgs e)
+    private async void OnPreviewKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Avalonia.Input.Key.Escape)
         {
@@ -678,105 +646,102 @@ internal sealed partial class MainWindow : Window
             {
                 return;
             }
-            vm.EscapeCommand.Execute(null);
-        }
-        else if (e.Key == Avalonia.Input.Key.Space)
-        {
-            if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
-            {
-                // Alt + Space pressed.
-                Debug.WriteLine("OnPreviewKeyDown: Alt + Space pressed. Ignoring for play/pause to allow system menu access.");
 
-                // Handle this at keyup.
+            vm.EscapeCommand.Execute(null);
+
+            return;
+        }
+
+        if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && !e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            // Alt + Space pressed.
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Debug.WriteLine("OnPreviewKeyDown: Alt + Space pressed.");
+
+                // Avalonia UI v12.1.5 fixed the issue where Alt + Space does not show the system menu on Windows.
+                // https://github.com/AvaloniaUI/Avalonia/pull/22520
+
+                // Handled this at keyup because the system menu is not shown on keydown, but on keyup.
                 //if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
                 //NativeMethods.ShowSystemWindowMenu(handle.Handle);
+
                 e.Handled = true;
-                return;
             }
 
-            // TODO:
-            //e.Handled = true;
+            return;
+        }
+
+        if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            if (this.DataContext is MainViewModel vm)
+            {
+                await vm.PlayCommand.ExecuteAsync(null);
+            }
+
+            e.Handled = true;
+
+            return;
         }
     }
 
     private async void OnPreviewKeyUp(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Avalonia.Input.Key.Space)
+        if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && !e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
-            if (e.KeyModifiers.HasFlag(KeyModifiers.Alt))
-            {
-                // Alt + Space pressed.
-                Debug.WriteLine("OnPreviewKeyUp: Alt + Space pressed. Ignoring for play/pause to allow system menu access.");
+            // Alt + Space pressed.
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
-                    NativeMethods.ShowSystemWindowMenu(handle.Handle);
-                    e.Handled = true;
-                    return;
-                }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Debug.WriteLine("OnPreviewKeyUp: Alt + Space pressed.");
+
+                // Avalonia UI v12.1.5 fixed the issue where Alt + Space does not show the system menu on Windows.
+                // https://github.com/AvaloniaUI/Avalonia/pull/22520
+
+                if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
+                NativeMethods.ShowSystemWindowMenu(handle.Handle);
+
+                e.Handled = true;
             }
 
-            var focusedControl = this.FocusManager?.GetFocusedElement();
-            if (focusedControl is Avalonia.Controls.ListBox || focusedControl is Avalonia.Controls.ListBoxItem || focusedControl is Avalonia.Controls.TextBox
-                || focusedControl is Avalonia.Controls.Button || focusedControl is Avalonia.Controls.ToggleSplitButton || focusedControl is Avalonia.Controls.CheckBox)
-            {
-                Debug.WriteLine($"OnPreviewKeyUp: Focused control: {focusedControl?.GetType().Name}. Space key pressed, but focus is on a control that should handle it. Ignoring for play/pause.");
+            return;
+        }
 
-                return;
-            }
+        if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            // Handled this at keydown.
 
-            if (this.DataContext is not MainViewModel vm)
-            {
-                Debug.WriteLine("OnPreviewKeyUp: DataContext is not MainViewModel. Cannot toggle play/pause.");
-                return;
-            }
+            e.Handled = true;
 
-            Debug.WriteLine("OnPreviewKeyUp: Space key pressed. Toggling play/pause.");
-            try
-            {
-                await vm.PlayCommand.ExecuteAsync(null);
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignore.
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception @OnPreviewKeyUp {ex}");
-                App.AppendErrorLog("Exception @MainWindow.OnPreviewKeyUp", ex.ToString());
-            }
-
-            // TODO:
-            //e.Handled = true;
+            return;
         }
     }
 
-    private async void PlaybackPlay_Loaded(object? sender, RoutedEventArgs e)
+    private void TitleBar_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        // Delays focus until all current layout/focus cycles are finished
-        Dispatcher.UIThread.Post(async () =>
+        var pointerProperties = e.GetCurrentPoint(this).Properties;
+
+        if (pointerProperties.IsRightButtonPressed) 
         {
-            try
-            {
-                await Task.Delay(500);
+            e.Handled = true;
+        }
+    }
 
-                if (PlaybackPlay.Focusable)
-                {
-                    PlaybackPlay.Focus();
-                }
-                else
-                {
-                    Debug.WriteLine("PlaybackPlay button is not focusable. Cannot set initial focus.");
-                }
+    private void TitleBar_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        var pointerProperties = e.GetCurrentPoint(this).Properties;
 
-                this.FocusManager?.Focus(PlaybackPlay, NavigationMethod.Unspecified);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Exception @PlaybackPlay_Loaded {ex}");
-            }
-        }, DispatcherPriority.Background);
+        if (pointerProperties.IsRightButtonPressed)
+        {
+            if (GetTopLevel(this)?.TryGetPlatformHandle() is not { } handle) return;
+            var visualPoint = e.GetPosition(this);
+            var screenPoint = this.PointToScreen(visualPoint);
+
+            NativeMethods.ShowNativeSystemMenu(handle.Handle, screenPoint, this.WindowState, true);
+
+            e.Handled = true;
+        }
     }
 
     public static partial class NativeMethods
@@ -836,56 +801,49 @@ internal sealed partial class MainWindow : Window
             }
         }
 
-        public static void ShowNativeSystemMenu(PointerPressedEventArgs e, IntPtr hWnd, PixelPoint screenPoint, WindowState windowState, bool canResize)
+        public static void ShowNativeSystemMenu(IntPtr hWnd, PixelPoint screenPoint, WindowState windowState, bool canResize)
         {
             // Fetch the window's live System Menu handle
             IntPtr sysMenu = GetSystemMenu(hWnd, false);
-            if (sysMenu != IntPtr.Zero)
+            if (sysMenu == IntPtr.Zero)
             {
-                // FORCE WINDOWS TO RE-EVALUATE/ENABLE SYSTEM MENU ITEMS
-                // wParam is the menu handle; lParam contains flags (IntPtr.Zero is standard)
-                // 0x00010000 tells Windows: "This is the System Menu, update states relative to the window"
-                //IntPtr lParam = new IntPtr(0x00010000);
-                //SendMessage(hWnd, WM_INITMENUPOPUP, sysMenu, lParam);
+                return;
+            }
+            // Explicitly force the Close menu option to become enabled
 
-                // Explicitly force the Close menu option to become enabled
+            // Close is always active
+            EnableMenuItem(sysMenu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
 
-                // Close is always active
-                EnableMenuItem(sysMenu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+            // Adjust actions based on WindowState
+            if (windowState == WindowState.Maximized)
+            {
+                EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
+                EnableMenuItem(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND | MF_GRAYED);
+                EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_GRAYED);
+                EnableMenuItem(sysMenu, SC_SIZE, MF_BYCOMMAND | MF_GRAYED);
+            }
+            else if (windowState == WindowState.Minimized)
+            {
+                EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
+                EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_GRAYED);
+            }
+            else // Normal / Restored
+            {
+                EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_GRAYED);
+                EnableMenuItem(sysMenu, SC_MAXIMIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
+                EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_ENABLED);
+                EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_ENABLED);
+                EnableMenuItem(sysMenu, SC_SIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
+            }
 
-                // Adjust actions based on WindowState
-                if (windowState == WindowState.Maximized)
-                {
-                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
-                    EnableMenuItem(sysMenu, SC_MAXIMIZE, MF_BYCOMMAND | MF_GRAYED);
-                    EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_GRAYED);
-                    EnableMenuItem(sysMenu, SC_SIZE, MF_BYCOMMAND | MF_GRAYED);
-                }
-                else if (windowState == WindowState.Minimized)
-                {
-                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_ENABLED);
-                    EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_GRAYED);
-                }
-                else // Normal / Restored
-                {
-                    EnableMenuItem(sysMenu, SC_RESTORE, MF_BYCOMMAND | MF_GRAYED);
-                    EnableMenuItem(sysMenu, SC_MAXIMIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
-                    EnableMenuItem(sysMenu, SC_MINIMIZE, MF_BYCOMMAND | MF_ENABLED);
-                    EnableMenuItem(sysMenu, SC_MOVE, MF_BYCOMMAND | MF_ENABLED);
-                    EnableMenuItem(sysMenu, SC_SIZE, canResize ? (MF_BYCOMMAND | MF_ENABLED) : (MF_BYCOMMAND | MF_GRAYED));
-                }
+            // Display the native menu at the cursor context.
+            // TPM_RETURNCMD forces TrackPopupMenu to return the ID of the clicked menu item.
+            int command = TrackPopupMenu(sysMenu, TPM_RETURNCMD, screenPoint.X, screenPoint.Y, 0, hWnd, IntPtr.Zero);
 
-                // Display the native menu at the cursor context.
-                // TPM_RETURNCMD forces TrackPopupMenu to return the ID of the clicked menu item.
-                int command = TrackPopupMenu(sysMenu, TPM_RETURNCMD, screenPoint.X, screenPoint.Y, 0, hWnd, IntPtr.Zero);
-
-                if (command > 0)
-                {
-                    // Post the selected command back to the window loop so Windows handles it (Minimize, Maximize, Close, Move, etc.)
-                    PostMessage(hWnd, WM_SYSCOMMAND, (IntPtr)command, IntPtr.Zero);
-                }
-
-                e.Handled = true;
+            if (command > 0)
+            {
+                // Post the selected command back to the window loop so Windows handles it (Minimize, Maximize, Close, Move, etc.)
+                PostMessage(hWnd, WM_SYSCOMMAND, (IntPtr)command, IntPtr.Zero);
             }
         }
 

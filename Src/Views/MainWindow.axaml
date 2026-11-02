@@ -59,9 +59,10 @@
 			<ui:FANavigationView Grid.Row="0" Margin="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Auto">
 				<ui:FANavigationView.PaneHeader>
 					<Border WindowDecorationProperties.ElementRole="TitleBar" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-						<Grid ColumnDefinitions="*,Auto">
+						<Grid ColumnDefinitions="*,Auto" PointerReleased="TitleBar_PointerReleased" PointerPressed="TitleBar_PointerPressed">
 							<!-- App Icon and Title hide when x11 -->
-							<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,18,0" IsVisible="{OnPlatform Default=False, Windows=True, Linux=True, x:TypeArguments=x:Boolean}">
+							<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,18,0" 
+										IsVisible="{OnPlatform Default=False, Windows=True, Linux=True, x:TypeArguments=x:Boolean}">
 								<Image x:Name="ImageAppIcon" Width="16" Height="16" Margin="0,0,6,0" Stretch="Uniform" StretchDirection="DownOnly" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 								<TextBlock Text="MPDCtrlX" Opacity="0.9" FontWeight="SemiBold" Margin="0,0,0,1" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 							</StackPanel>
@@ -219,7 +220,7 @@
 								</PathIcon>
 							</Viewbox>
 						</Button>
-						<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" HotKey="Ctrl+P" AutomationProperties.AccessKey="P" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" ToolTip.Placement="TopEdgeAlignedLeft" ToolTip.VerticalOffset="-6" Command="{Binding PlayCommand}" Focusable="True" Width="54" Height="54" CornerRadius="27" Background="Transparent" BorderThickness="0" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0" Loaded="PlaybackPlay_Loaded">
+						<Button Grid.Row="0" Grid.Column="1" x:Name="PlaybackPlay" HotKey="Ctrl+P" AutomationProperties.AccessKey="P" ToolTip.Tip="{x:Static prop:Resources.Playback_PlayPauseButton}" ToolTip.Placement="TopEdgeAlignedLeft" ToolTip.VerticalOffset="-6" Command="{Binding PlayCommand}" Focusable="True" Width="54" Height="54" CornerRadius="27" Background="Transparent" BorderThickness="0" Margin="18,0,18,0" VerticalAlignment="Center" Padding="0">
 							<Viewbox Width="46" Height="46">
 								<PathIcon Background="Transparent" Width="NaN" Height="NaN"
 									Data="{Binding PlayButton, Mode=OneWay}">
