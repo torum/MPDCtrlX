@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.VisualTree;
 
 namespace MPDCtrlX.Views.Controls;
 
@@ -170,6 +171,9 @@ public class VirtualizingUniformPanel : VirtualizingPanel
     protected override Control? ContainerFromIndex(int index) => _realizedContainers.TryGetValue(index, out var c) ? c : null;
     protected override int IndexFromContainer(Control container) => _realizedIndices.TryGetValue(container, out int idx) ? idx : -1;
 
+    /*
+     * only calls BringIntoView() when the item is already realized. For off-screen items it returns without scrolling, so AutoScrollToSelectedItem cannot bring them into view.
+     * 
     protected override Control? ScrollIntoView(int index)
     {
         if (index < 0 || index >= (Items?.Count ?? 0)) return null;
@@ -178,6 +182,55 @@ public class VirtualizingUniformPanel : VirtualizingPanel
             container.BringIntoView();
             return container;
         }
+        return null;
+    }
+    */
+
+    protected override Control? ScrollIntoView(int index)
+    {
+        if (index < 0 || index >= (Items?.Count ?? 0))
+        {
+            return null;
+        }
+
+        if (_realizedContainers.TryGetValue(index, out var container))
+        {
+            container.BringIntoView();
+            return container;
+        }
+
+        var scrollViewer = this.GetVisualAncestors()
+            .OfType<ScrollViewer>()
+            .FirstOrDefault();
+
+        if (scrollViewer is null || ItemWidth <= 0 || ItemHeight <= 0)
+        {
+            return null;
+        }
+
+        var width = Bounds.Width > 0 ? Bounds.Width : scrollViewer.Viewport.Width;
+        if (width <= 0)
+        {
+            return null;
+        }
+
+        var columns = Math.Max(1, (int)(width / ItemWidth));
+        var itemTop = (index / columns) * ItemHeight;
+        var itemBottom = itemTop + ItemHeight;
+        var viewportTop = scrollViewer.Offset.Y;
+        var viewportBottom = viewportTop + scrollViewer.Viewport.Height;
+
+        var targetOffset = itemTop < viewportTop
+            ? itemTop
+            : itemBottom > viewportBottom
+                ? itemBottom - scrollViewer.Viewport.Height
+                : viewportTop;
+
+        var maxOffset = Math.Max(0, scrollViewer.Extent.Height - scrollViewer.Viewport.Height);
+        scrollViewer.Offset = new Vector(
+            scrollViewer.Offset.X,
+            Math.Clamp(targetOffset, 0, maxOffset));
+
         return null;
     }
 

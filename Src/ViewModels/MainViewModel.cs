@@ -32,6 +32,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private readonly IDialogService _dialog;
     private readonly IMpcService _mpc;
     private readonly IConfigurationService _configurationService;
+    private readonly INavigationService _navigationService;
     private readonly MprisDbusHostedService _mprisDbusHostedService;
     private InitWindow? _initWin;
 
@@ -69,12 +70,13 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
 
     #endregion
 
-    public MainViewModel(IMpcService mpcService, IDialogService dialogService, IConfigurationService configurationService, MprisDbusHostedService mprisDbusHostedService)
+    public MainViewModel(IMpcService mpcService, IDialogService dialogService, IConfigurationService configurationService, MprisDbusHostedService mprisDbusHostedService, INavigationService navigationService)
     {
         _mpc = mpcService;
         _dialog = dialogService;
         _configurationService = configurationService;
         _mprisDbusHostedService = mprisDbusHostedService;
+        _navigationService = navigationService;
 
         #region == Subscribe to events ==
 
@@ -8161,7 +8163,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     #region == Albums ==
 
     [RelayCommand]
-    private void AlbumsItemInvoked(object obj)
+    private async Task AlbumsItemInvoked(object obj)
     {
         if (obj is null)
         {
@@ -8182,7 +8184,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
 
         //GetAlbumSongs(album);
-        _ = GetAlbumSongsAsync(album).SafeAsync(nameof(GetAlbumSongsAsync));
+        await GetAlbumSongsAsync(album);//.SafeAsync(nameof(GetAlbumSongsAsync));
     }
 
     [RelayCommand]
@@ -10190,48 +10192,22 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     {
         if (album is null) return;
 
-        await Dispatcher.UIThread.InvokeAsync(async () =>
-        {
-            IsWorking = true;
-            try
-            {
-                await Task.Yield();
-                await Task.Delay(100);
-                // Not good
-                //SelectedAlbum = null;
-                //CurrentPage = App.GetService<AlbumPage>(); // not good
-                //await Task.Yield();
-                //await Task.Delay(100);
-                SelectedAlbum = album;
-                await Task.Yield();
-                await Task.Delay(100);
-                IsNavigationViewMenuOpen = true; // Need this somehow.
-                await Task.Yield();
-                await Task.Delay(100);
-                _mainMenuItems.AlbumsDirectory.Selected = true;
-                
-            }
-            finally
-            {
-                IsWorking = false;
-            }
-        });
+        IsNavigationViewMenuOpen = true; // Need this somehow.
 
-        //GoToSelectedPage?.Invoke(this, _mainMenuItems.AlbumsDirectory);
+        await Task.Yield();
+        await Task.Delay(100);
+        SelectedAlbum = album;
 
-        /*
-        foreach (var hoge in MainMenuItems)
+        if (_navigationService.NavigateTo("MPDCtrlX.Views.AlbumPage", null))
         {
-            if (hoge is not NodeMenuLibrary) continue;
-            foreach (var fuga in hoge.Children)
-            {
-                if (fuga is not NodeMenuAlbum) continue;
-                IsNavigationViewMenuOpen = true;
-                fuga.Selected = true;
-                break;
-            }
+            await Task.Yield();
+            await Task.Delay(100);
+            _mainMenuItems.AlbumsDirectory.Selected = true;
         }
-        */
+
+        await Task.Yield();
+        await Task.Delay(100);
+        await AlbumsItemInvoked(album);
     }
 
     [RelayCommand]
@@ -10262,6 +10238,22 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     private async Task GoToArtistPageAsync(AlbumArtist artist)
     {
         if (artist is null) return;
+
+        IsNavigationViewMenuOpen = true; // Need this somehow.
+
+        await Task.Yield();
+        await Task.Delay(100);
+        SelectedAlbumArtist = artist;
+
+        if (_navigationService.NavigateTo("MPDCtrlX.Views.ArtistPage", null))
+        {
+            await Task.Yield();
+            await Task.Delay(100);
+            _mainMenuItems.ArtistsDirectory.Selected = true;
+        }
+
+
+        /*
         await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             IsWorking = true;
@@ -10286,6 +10278,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                 IsWorking = false;
             }
         });
+        */
 
         /*
         SelectedAlbumArtist = artist;
