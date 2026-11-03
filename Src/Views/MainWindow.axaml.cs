@@ -24,6 +24,7 @@ internal sealed partial class MainWindow : Window
     private bool _isClosing;
     private bool _isAllowClose;
 
+    /*
     private readonly Dictionary<string, NavigationPageType> _pageMap = new()
     {
         { "MPDCtrlX.Views.QueuePage", static () => typeof(Views.QueuePage) },
@@ -34,6 +35,7 @@ internal sealed partial class MainWindow : Window
         { "MPDCtrlX.Views.PlaylistItemPage", static () => typeof(Views.PlaylistItemPage) },
         { "MPDCtrlX.Views.SettingsPage", static () => typeof(Views.SettingsPage) },
     };
+    */
 
     public int WinRestoreWidth { get; private set; } = 1024;
     public int WinRestoreHeight { get; private set; } = 768;
@@ -91,7 +93,7 @@ internal sealed partial class MainWindow : Window
 
         //this.ContentFrame.Navigate(typeof(MainView));
         //this.NavigateViewControl.Content = App.GetService<MainView>();
-        _navigationService.Initialize(RootFrame, _pageMap);
+        _navigationService.Initialize(RootFrame); //, _pageMap
 
         //this.Icon = new WindowIcon(new Bitmap())
         Bitmap bitmap = new(AssetLoader.Open(new Uri("avares://MPDCtrlX/Assets/MPDCtrlX-24.png")));

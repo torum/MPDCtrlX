@@ -1,9 +1,10 @@
-﻿using MPDCtrlX.Services.Contracts;
+﻿using Avalonia.Controls;
 using FluentAvalonia;
-using Avalonia.Controls;
+using MPDCtrlX.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MPDCtrlX.Services;
 
@@ -11,20 +12,20 @@ public class NavigationService : INavigationService
 {
     private FluentAvalonia.UI.Controls.FAFrame? _frame;
 
-    public void Initialize(FluentAvalonia.UI.Controls.FAFrame frame, Dictionary<string, NavigationPageType> pages)
+    public void Initialize(FluentAvalonia.UI.Controls.FAFrame frame)
     {
         _frame = frame;
-        _pageMap = pages;
     }
-
-    private Dictionary<string, NavigationPageType>? _pageMap;
 
     public bool NavigateTo(object? selectedPage, object? parameter)
     {
-        if (_frame is null) return false;
-        if (_pageMap is null) return false;
+        if (_frame is null)
+        {
+            return false;
+        }
 
         string? tag = null;
+
         if (selectedPage is FluentAvalonia.UI.Controls.FANavigationViewItem navItem)
         {
             tag = navItem.Tag as string;
@@ -34,17 +35,31 @@ public class NavigationService : INavigationService
             tag = str;
         }
 
-        if (tag != null && _pageMap.TryGetValue(tag, out var pageType) &&
-            _frame.CurrentSourcePageType != pageType())
+        Type? pageType = ResolvePageType(tag);
+
+        if (pageType is not null && _frame.CurrentSourcePageType != pageType)
         {
-            return _frame.Navigate(pageType(), parameter);
+            return _frame.Navigate(pageType, parameter);
         }
-        else
-        {
-            Debug.WriteLine("NavigationService.NavigateTo: No valid page found (or navigated to the same page) for " + tag);
-            return false;
-        }
+
+        Debug.WriteLine(
+            $"NavigationService.NavigateTo: No valid page found (or navigated to the same page) for {tag}");
+
+        return false;
     }
+
+    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+    private static Type? ResolvePageType(string? tag) => tag switch
+    {
+        "MPDCtrlX.Views.QueuePage" => typeof(MPDCtrlX.Views.QueuePage),
+        "MPDCtrlX.Views.AlbumPage" => typeof(MPDCtrlX.Views.AlbumPage),
+        "MPDCtrlX.Views.ArtistPage" => typeof(MPDCtrlX.Views.ArtistPage),
+        "MPDCtrlX.Views.FilesPage" => typeof(MPDCtrlX.Views.FilesPage),
+        "MPDCtrlX.Views.SearchPage" => typeof(MPDCtrlX.Views.SearchPage),
+        "MPDCtrlX.Views.PlaylistItemPage" => typeof(MPDCtrlX.Views.PlaylistItemPage),
+        "MPDCtrlX.Views.SettingsPage" => typeof(MPDCtrlX.Views.SettingsPage),
+        _ => null
+    };
 
     public void GoBack()
     {
