@@ -23,15 +23,16 @@ internal sealed partial class MainWindow : Window
     private readonly MainViewModel _mainViewModel;
     private bool _isClosing;
     private bool _isAllowClose;
-    private readonly Dictionary<string, Type> _pageMap = new()
+
+    private readonly Dictionary<string, NavigationPageType> _pageMap = new()
     {
-        { "MPDCtrlX.Views.QueuePage", typeof(Views.QueuePage) },
-        { "MPDCtrlX.Views.AlbumPage", typeof(Views.AlbumPage) },
-        { "MPDCtrlX.Views.ArtistPage", typeof(Views.ArtistPage) },
-        { "MPDCtrlX.Views.FilesPage", typeof(Views.FilesPage) },
-        { "MPDCtrlX.Views.SearchPage", typeof(Views.SearchPage) },
-        { "MPDCtrlX.Views.PlaylistItemPage", typeof(Views.PlaylistItemPage) },
-        { "MPDCtrlX.Views.SettingsPage", typeof(Views.SettingsPage) },
+        { "MPDCtrlX.Views.QueuePage", static () => typeof(Views.QueuePage) },
+        { "MPDCtrlX.Views.AlbumPage", static () => typeof(Views.AlbumPage) },
+        { "MPDCtrlX.Views.ArtistPage", static () => typeof(Views.ArtistPage) },
+        { "MPDCtrlX.Views.FilesPage", static () => typeof(Views.FilesPage) },
+        { "MPDCtrlX.Views.SearchPage", static () => typeof(Views.SearchPage) },
+        { "MPDCtrlX.Views.PlaylistItemPage", static () => typeof(Views.PlaylistItemPage) },
+        { "MPDCtrlX.Views.SettingsPage", static () => typeof(Views.SettingsPage) },
     };
 
     public int WinRestoreWidth { get; private set; } = 1024;

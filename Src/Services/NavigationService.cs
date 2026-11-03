@@ -11,13 +11,13 @@ public class NavigationService : INavigationService
 {
     private FluentAvalonia.UI.Controls.FAFrame? _frame;
 
-    public void Initialize(FluentAvalonia.UI.Controls.FAFrame frame, Dictionary<string, Type> pages)
+    public void Initialize(FluentAvalonia.UI.Controls.FAFrame frame, Dictionary<string, NavigationPageType> pages)
     {
         _frame = frame;
         _pageMap = pages;
     }
 
-    private Dictionary<string, Type>? _pageMap;
+    private Dictionary<string, NavigationPageType>? _pageMap;
 
     public bool NavigateTo(object? selectedPage, object? parameter)
     {
@@ -34,9 +34,10 @@ public class NavigationService : INavigationService
             tag = str;
         }
 
-        if (tag != null && _pageMap.TryGetValue(tag, out var pageType) && _frame.CurrentSourcePageType != pageType)
+        if (tag != null && _pageMap.TryGetValue(tag, out var pageType) &&
+            _frame.CurrentSourcePageType != pageType())
         {
-            return _frame.Navigate(pageType, parameter);
+            return _frame.Navigate(pageType(), parameter);
         }
         else
         {
