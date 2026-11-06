@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
+using System.Collections.Specialized;
 
 namespace MPDCtrlX.Views.Controls;
 
@@ -36,10 +37,25 @@ public class VirtualizingUniformPanel : VirtualizingPanel
     public VirtualizingUniformPanel()
     {
         EffectiveViewportChanged += OnEffectiveViewportChanged;
+        ItemWidthProperty.Changed.AddClassHandler<VirtualizingUniformPanel>((panel, _) => panel.InvalidateMeasure());
+        ItemHeightProperty.Changed.AddClassHandler<VirtualizingUniformPanel>((panel, _) => panel.InvalidateMeasure());
+    }
+
+    protected override void OnItemsChanged(IReadOnlyList<object?>? items, NotifyCollectionChangedEventArgs e)
+    {
+        if (items is not null)
+        {
+            base.OnItemsChanged(items, e);
+        }
+
+        InvalidateMeasure();
     }
 
     private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
+        if (_viewport == e.EffectiveViewport)
+            return;
+
         _viewport = e.EffectiveViewport;
         InvalidateMeasure();
     }
@@ -47,8 +63,14 @@ public class VirtualizingUniformPanel : VirtualizingPanel
     protected override Size MeasureOverride(Size availableSize)
     {
         var items = Items;
-        if (items == null || items.Count == 0 || ItemContainerGenerator == null)
+        if (items == null || ItemContainerGenerator == null)
             return new Size(0, 0);
+
+        if (items.Count == 0)
+        {
+            RecycleAll();
+            return new Size(0, 0);
+        }
 
         double baseWidth = double.IsInfinity(availableSize.Width) ? ItemWidth : availableSize.Width;
         int columns = Math.Max(1, (int)(baseWidth / ItemWidth));
@@ -59,8 +81,10 @@ public class VirtualizingUniformPanel : VirtualizingPanel
         double totalWidth = baseWidth;
         double totalHeight = rows * ItemHeight;
 
-        int firstVisibleRow = (int)Math.Floor(_viewport.Top / ItemHeight);
-        int lastVisibleRow = (int)Math.Ceiling(_viewport.Bottom / ItemHeight);
+        //var viewport = _viewport.Height > 0 ? _viewport : new Rect(0, 0, baseWidth, availableSize.Height);
+        var viewport = _viewport;
+        int firstVisibleRow = (int)Math.Floor(viewport.Top / ItemHeight);
+        int lastVisibleRow = (int)Math.Ceiling(viewport.Bottom / ItemHeight);
 
         firstVisibleRow = Math.Max(0, firstVisibleRow);
         lastVisibleRow = Math.Min(rows - 1, lastVisibleRow);
@@ -69,9 +93,9 @@ public class VirtualizingUniformPanel : VirtualizingPanel
         int lastVisibleIndex = Math.Min(items.Count - 1, ((lastVisibleRow + 1) * columns) - 1);
 
         List<int> toRecycle = new();
-        foreach (var index in _realizedContainers.Keys)
+        foreach (var (index, container) in _realizedContainers)
         {
-            if (index < firstVisibleIndex || index > lastVisibleIndex)
+            if (index < firstVisibleIndex || index > lastVisibleIndex || index >= items.Count || !ReferenceEquals(container.DataContext, items[index]))
             {
                 toRecycle.Add(index);
             }
@@ -134,6 +158,23 @@ public class VirtualizingUniformPanel : VirtualizingPanel
         return new Size(totalWidth, totalHeight);
     }
 
+    private void RecycleAll()
+    {
+        foreach (var container in _realizedContainers.Values)
+        {
+            ItemContainerGenerator?.ClearItemContainer(container);
+            //RemoveInternalChildRange(Children.IndexOf(container), 1);
+            var childIndex = Children.IndexOf(container);
+            if (childIndex >= 0)
+            {
+                RemoveInternalChildRange(childIndex, 1);
+            }
+        }
+
+        _realizedContainers.Clear();
+        _realizedIndices.Clear();
+    }
+
     protected override Size ArrangeOverride(Size finalSize)
     {
         var items = Items;
@@ -171,27 +212,10 @@ public class VirtualizingUniformPanel : VirtualizingPanel
     protected override Control? ContainerFromIndex(int index) => _realizedContainers.TryGetValue(index, out var c) ? c : null;
     protected override int IndexFromContainer(Control container) => _realizedIndices.TryGetValue(container, out int idx) ? idx : -1;
 
-    /*
-     * only calls BringIntoView() when the item is already realized. For off-screen items it returns without scrolling, so AutoScrollToSelectedItem cannot bring them into view.
-     * 
     protected override Control? ScrollIntoView(int index)
     {
-        if (index < 0 || index >= (Items?.Count ?? 0)) return null;
-        if (_realizedContainers.TryGetValue(index, out var container))
-        {
-            container.BringIntoView();
-            return container;
-        }
-        return null;
-    }
-    */
 
-    protected override Control? ScrollIntoView(int index)
-    {
-        if (index < 0 || index >= (Items?.Count ?? 0))
-        {
-            return null;
-        }
+        if (index < 0 || index >= (Items?.Count ?? 0)) return null;
 
         if (_realizedContainers.TryGetValue(index, out var container))
         {
