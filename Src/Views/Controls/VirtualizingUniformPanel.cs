@@ -258,5 +258,51 @@ public class VirtualizingUniformPanel : VirtualizingPanel
         return null;
     }
 
-    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap) => from;
+    //protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap) => from;
+
+    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap)
+    {
+        var items = Items;
+        if (items is null || items.Count == 0)
+        {
+            return null;
+        }
+
+        // Find the realized container that owns the focused element.
+        int current = -1;
+        for (Visual? v = from as Visual; v is not null; v = v.GetVisualParent())
+        {
+            if (v is Control c && _realizedIndices.TryGetValue(c, out int idx))
+            {
+                current = idx;
+                break;
+            }
+        }
+
+        if (current < 0)
+        {
+            return ContainerFromIndex(direction == NavigationDirection.Last ? items.Count - 1 : 0);
+        }
+
+        int columns = Math.Max(1, (int)(Bounds.Width / ItemWidth));
+
+        int target = direction switch
+        {
+            NavigationDirection.Left or NavigationDirection.Previous => current - 1,
+            NavigationDirection.Right or NavigationDirection.Next => current + 1,
+            NavigationDirection.Up => current - columns,
+            NavigationDirection.Down => current + columns,
+            NavigationDirection.First => 0,
+            NavigationDirection.Last => items.Count - 1,
+            _ => -1
+        };
+
+        if (target < 0 || target >= items.Count || target == current)
+        {
+            return null;
+        }
+
+        // Scrolls the target into view and returns its container.
+        return ScrollIntoView(target) ?? ContainerFromIndex(target);
+    }
 }

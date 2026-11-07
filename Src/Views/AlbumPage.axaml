@@ -558,9 +558,12 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<!-- <VirtualizingStackPanel /> virtualized, but only vertical one col. -->
 							</ItemsPanelTemplate>
 						</ListBox.ItemsPanel>
+						<ListBox.KeyBindings>
+							<KeyBinding Command="{Binding AlbumsItemInvokedCommand}" CommandParameter="{Binding #AlbumsListBox.SelectedItem}" Gesture="Enter"/>
+						</ListBox.KeyBindings>
 						<ListBox.ItemTemplate>
 							<DataTemplate x:DataType="mod:AlbumEx">
-								<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" Background="Transparent" BorderThickness="0" CommandParameter="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+								<Button Command="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).AlbumsItemInvokedCommand}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Focusable="False">
 									<Button.Styles>
 										<Style Selector="Border#ClipBorder:pointerover">
 											<Setter Property="RenderTransform" Value="Scale(1.05, 1.05)" />
