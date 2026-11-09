@@ -89,10 +89,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="12.1.5" />
-		<PackageReference Include="Avalonia.Desktop" Version="12.1.5" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.5" />
-		<PackageReference Include="Avalonia.Wayland" Version="12.1.5" />
+		<PackageReference Include="Avalonia" Version="12.1.6" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+		<PackageReference Include="Avalonia.Wayland" Version="12.1.6" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
