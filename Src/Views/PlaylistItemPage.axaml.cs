@@ -37,6 +37,8 @@ internal sealed partial class PlaylistItemPage : UserControl
         this.PlaylistSongListBox.AddHandler(InputElement.PointerPressedEvent, OnItemPointerPressed, RoutingStrategies.Tunnel);
     }
 
+    //public string PlaylistName { get; set; } = string.Empty;
+
     #region == Drag and Drop ==
 
     private async void OnItemPointerPressed(object? sender, PointerPressedEventArgs e)

@@ -20,6 +20,8 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Xml.Linq;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable IDE0028
@@ -2205,17 +2207,48 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
     } = new NodeMenu("root");
 
     /*
-    public UserControl? CurrentPage
+    public void SetSelectedNodeMenu(string? tag)
     {
-        get;
-        set
+        if (string.IsNullOrEmpty(tag))
         {
-            if (field == value)
-                return;
-
-            field = value;
-            this.OnPropertyChanged();
+            return;
         }
+
+        NodeMenu? nodeType = tag switch
+        {
+            "MPDCtrlX.Views.QueuePage" => _mainMenuItems.QueueDirectory,
+            "MPDCtrlX.Views.AlbumPage" => _mainMenuItems.AlbumsDirectory,
+            "MPDCtrlX.Views.ArtistPage" => _mainMenuItems.ArtistsDirectory,
+            "MPDCtrlX.Views.FilesPage" => _mainMenuItems.FilesDirectory,
+            "MPDCtrlX.Views.SearchPage" => _mainMenuItems.SearchDirectory,
+            "MPDCtrlX.Views.PlaylistItemPage" => _mainMenuItems.PlaylistsDirectory,
+            _ => null
+        };
+
+        if (nodeType is null)
+        {
+            Debug.WriteLine($"(nodeType is null) @SetSelectedNodeMenu");
+            return;
+        }
+
+        //if (tag == "MPDCtrlX.Views.PlaylistItemPage")
+        if (nodeType is NodeMenuPlaylists playlists)
+        {
+    // no SelectedPlaylistName isn't it.
+            var node = playlists.Children.FirstOrDefault(x => x.Name.Equals(SelectedPlaylistName, StringComparison.OrdinalIgnoreCase));
+            if (node is null)
+            {
+                Debug.WriteLine("(node is null) @SetSelectedNodeMenu");
+                return;
+            }
+            SelectedNodeMenu = node;
+        }
+        else
+        {
+            SelectedNodeMenu = nodeType; 
+        }
+
+        SelectedNodeMenu?.Selected = true;
     }
     */
 

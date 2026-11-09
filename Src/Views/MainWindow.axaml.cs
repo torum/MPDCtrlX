@@ -409,30 +409,13 @@ internal sealed partial class MainWindow : Window
         if (e.SelectedItem is NodeMenu node)
         {
             vm.SelectedNodeMenu = node;
+            vm.SelectedNodeMenu.Selected = true;
             //Debug.WriteLine($"e.SelectedItem is NodeTree. @NavigationView_SelectionChanged: {node.Tag}");
         }
         else
         {
             Debug.WriteLine("e.SelectedItem is not NodeTree. @NavigationView_SelectionChanged");
             vm.SelectedNodeMenu = null;
-        }
-    }
-
-    // The cache size is informational only. A failure must not block navigation to Settings.
-    private static async Task RefreshCacheFolderSizeSafeAsync(MainViewModel vm)
-    {
-        try
-        {
-            await vm.GetCacheFolderSizeAsync();
-        }
-        catch (OperationCanceledException)
-        {
-            // Ignore.
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception @GetCacheFolderSizeAsync {ex}");
-            App.AppendErrorLog("Exception @MainWindow GetCacheFolderSizeAsync", ex.ToString());
         }
     }
 
@@ -483,6 +466,66 @@ internal sealed partial class MainWindow : Window
         else
         {
             Debug.WriteLine("NavigationView_ItemInvoked: e.InvokedItemContainer.DataContext is not NodeMenu");
+        }
+    }
+
+    private void RootFrame_Navigated(object sender, FluentAvalonia.UI.Navigation.FANavigationEventArgs e)
+    {
+        var pageType = MPDCtrlX.Services.NavigationService.ResolvePageType(e.SourcePageType.FullName);
+        if (pageType is null)
+        {
+            Debug.WriteLine($"RootFrame_Navigated: Failed to resolve page type for {e.SourcePageType.FullName}");
+            return;
+        }
+
+        if (sender is not FluentAvalonia.UI.Controls.FAFrame frame)
+        {
+            return;
+        }
+
+        if (this.NavigateViewControl is null)
+        {
+            return;
+        }
+
+        //Debug.WriteLine($"RootFrame_Navigated: Navigated to {pageType.FullName}");
+
+        //_mainViewModel.SetSelectedNodeMenu(pageType.FullName);
+    }
+
+    public async void OnGoToSettingsPage(object? sender, System.EventArgs e)
+    {
+        if (this.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        await RefreshCacheFolderSizeSafeAsync(vm);
+
+        if (_navigationService.NavigateTo("MPDCtrlX.Views.SettingsPage", null))
+        {
+            Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to SettingsPage");
+
+            vm.SelectedNodeMenu = null;
+            this.NavigateViewControl.SelectedItem = null;
+        }
+    }
+
+    // The cache size is informational only. A failure must not block navigation to Settings.
+    private static async Task RefreshCacheFolderSizeSafeAsync(MainViewModel vm)
+    {
+        try
+        {
+            await vm.GetCacheFolderSizeAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignore.
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception @GetCacheFolderSizeAsync {ex}");
+            App.AppendErrorLog("Exception @MainWindow GetCacheFolderSizeAsync", ex.ToString());
         }
     }
 
@@ -583,24 +626,6 @@ internal sealed partial class MainWindow : Window
         }
     }
 
-    public async void OnGoToSettingsPage(object? sender, System.EventArgs e)
-    {
-        if (this.DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        await RefreshCacheFolderSizeSafeAsync(vm);
-
-        if (_navigationService.NavigateTo("MPDCtrlX.Views.SettingsPage", null))
-        {
-            Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to SettingsPage");
-
-            vm.SelectedNodeMenu = null;
-            this.NavigateViewControl.SelectedItem = null;
-        }
-    }
-
     private void VolumeSlider_PointerWheelChanged(object? sender, Avalonia.Input.PointerWheelEventArgs e)
     {
         // Adjust the Slider's Value based on the mouse wheel delta
@@ -655,6 +680,7 @@ internal sealed partial class MainWindow : Window
             return;
         }
 
+        /*
         if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && !e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
             // Alt + Space pressed.
@@ -675,6 +701,7 @@ internal sealed partial class MainWindow : Window
 
             return;
         }
+        */
 
         if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
@@ -691,6 +718,7 @@ internal sealed partial class MainWindow : Window
 
     private async void OnPreviewKeyUp(object? sender, KeyEventArgs e)
     {
+        /*
         if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && !e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
             // Alt + Space pressed.
@@ -710,6 +738,7 @@ internal sealed partial class MainWindow : Window
 
             return;
         }
+        */
 
         if (e.Key == Avalonia.Input.Key.Space && e.KeyModifiers.HasFlag(KeyModifiers.Alt) && e.KeyModifiers.HasFlag(KeyModifiers.Control))
         {
@@ -721,11 +750,12 @@ internal sealed partial class MainWindow : Window
         }
     }
 
+    /*
     private void TitleBar_PointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         var pointerProperties = e.GetCurrentPoint(this).Properties;
 
-        if (pointerProperties.IsRightButtonPressed) 
+        if (pointerProperties.IsRightButtonPressed)
         {
             e.Handled = true;
         }
@@ -746,7 +776,9 @@ internal sealed partial class MainWindow : Window
             e.Handled = true;
         }
     }
+    */
 
+    /*
     public static partial class NativeMethods
     {
         private const int WM_SYSCOMMAND = 0x0112;
@@ -851,5 +883,5 @@ internal sealed partial class MainWindow : Window
         }
 
     }
-
+    */
 }

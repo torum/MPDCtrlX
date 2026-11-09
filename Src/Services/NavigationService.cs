@@ -49,7 +49,7 @@ public class NavigationService : INavigationService
     }
 
     [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-    private static Type? ResolvePageType(string? tag) => tag switch
+    public static Type? ResolvePageType(string? tag) => tag switch
     {
         "MPDCtrlX.Views.QueuePage" => typeof(MPDCtrlX.Views.QueuePage),
         "MPDCtrlX.Views.AlbumPage" => typeof(MPDCtrlX.Views.AlbumPage),

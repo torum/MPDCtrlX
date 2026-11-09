@@ -246,7 +246,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 											<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
 											<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
 											<Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
-											<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="True" />
+											<Setter Property="ScrollViewer.IsScrollInertiaEnabled" Value="False" />
 											<Setter Property="Template">
 												<ControlTemplate>
 													<Border Name="border"
@@ -594,7 +594,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 														<TransformOperationsTransition Property="RenderTransform" Duration="0:00:00.200" />
 													</Transitions>
 												</Border.Transitions>
-												<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}" IsVisible="{Binding AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}">
+												<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}"> <!--  IsVisible="{Binding AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}" -->
 													<TransitioningContentControl.ContentTemplate>
 														<DataTemplate DataType="Bitmap">
 															<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center">

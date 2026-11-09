@@ -59,7 +59,7 @@
 			<ui:FANavigationView Grid.Row="0" Margin="0" Name="NavigateViewControl" MenuItemsSource="{Binding MainMenuItems, Mode=OneWay}" MenuItemTemplate="{StaticResource NavigationViewMenuItem}" Loaded="NavigationView_Loaded" SelectionFollowsFocus="False" ItemInvoked="NavigationView_ItemInvoked" SelectionChanged="NavigationView_SelectionChanged" IsPaneToggleButtonVisible="True" IsSettingsVisible="False" PaneDisplayMode="Auto" OpenPaneLength="280" IsPaneOpen="{Binding IsNavigationViewMenuOpen, Mode=TwoWay}" ScrollViewer.AllowAutoHide="True" CompactModeThresholdWidth="740" ExpandedModeThresholdWidth="1000" ScrollViewer.VerticalScrollBarVisibility="Auto">
 				<ui:FANavigationView.PaneHeader>
 					<Border WindowDecorationProperties.ElementRole="TitleBar" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent">
-						<Grid ColumnDefinitions="*,Auto" PointerReleased="TitleBar_PointerReleased" PointerPressed="TitleBar_PointerPressed">
+						<Grid ColumnDefinitions="*,Auto">
 							<!-- App Icon and Title hide when x11 -->
 							<StackPanel x:Name="AppTitle" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,18,0" 
 										IsVisible="{OnPlatform Default=False, Windows=True, Linux=True, x:TypeArguments=x:Boolean}">
@@ -117,7 +117,7 @@
 				The Location in Documentation: While it doesn't have its own dedicated page in the side navigation, the cache settings are documented directly inside the Frame documentation page (which you can access via the FluentAvalonia Frame Control Docs link in that directory).
 				By utilizing attached properties, you can convert any standard Avalonia control into a cacheable page inside the FAFrame without breaking Avalonia's core control hierarchy.
 				-->
-				<ui:FAFrame Grid.Row="1" x:Name="RootFrame"/>
+				<ui:FAFrame Grid.Row="1" x:Name="RootFrame" Navigated="RootFrame_Navigated"/>
 			
 			</ui:FANavigationView>
 
