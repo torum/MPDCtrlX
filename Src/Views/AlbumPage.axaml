@@ -141,7 +141,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 								<Image
     Source="{Binding SelectedAlbum.AlbumImage, Mode=OneWay}"
     IsVisible="{Binding SelectedAlbum.AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}"
-    Stretch="UniformToFill"
+    Stretch="{Binding IsUseUniformAlbumImageStretch,Converter={StaticResource AlbumImageStretchConverter}}"
     VerticalAlignment="Center"/>
 							</Grid>
 						</Border>

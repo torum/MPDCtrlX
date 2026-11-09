@@ -176,7 +176,7 @@
 								<TransitioningContentControl Content="{Binding AlbumArtBitmapSource, Mode=OneWay}" IsVisible="{Binding AlbumArtBitmapSource, Converter={x:Static ObjectConverters.IsNotNull}}">
 									<TransitioningContentControl.ContentTemplate>
 										<DataTemplate DataType="Bitmap">
-											<Image Margin="0" Source="{Binding}" Stretch="Uniform" VerticalAlignment="Center"/>
+											<Image Margin="0" Source="{Binding}" Stretch="{Binding $parent[TransitioningContentControl].((vm:MainViewModel)DataContext).IsUseUniformAlbumImageStretch,Converter={StaticResource AlbumImageStretchConverter}}" VerticalAlignment="Center"/>
 										</DataTemplate>
 									</TransitioningContentControl.ContentTemplate>
 									<TransitioningContentControl.PageTransition>
