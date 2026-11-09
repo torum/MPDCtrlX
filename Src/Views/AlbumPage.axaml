@@ -597,7 +597,7 @@ Data="M12 15.5q1.471 0 2.486-1.014Q15.5 13.47 15.5 12t-1.014-2.485T12 8.5T9.515 
 												<TransitioningContentControl Content="{Binding AlbumImage, Mode=OneWay}"> <!--  IsVisible="{Binding AlbumImage, Converter={x:Static ObjectConverters.IsNotNull}}" -->
 													<TransitioningContentControl.ContentTemplate>
 														<DataTemplate DataType="Bitmap">
-															<Image Margin="0" Source="{Binding}" Stretch="UniformToFill" VerticalAlignment="Center">
+															<Image Margin="0" Source="{Binding}" Stretch="{Binding $parent[ListBox].((vm:MainViewModel)DataContext).IsUseUniformAlbumImageStretch,Converter={StaticResource AlbumImageStretchConverter}}" VerticalAlignment="Center">
 																<!--
 																<Image.Transitions>
 																	<Transitions>

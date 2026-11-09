@@ -337,6 +337,20 @@ internal sealed class ConfigurationService : IConfigurationService
                         config.IsMPRISIntegrationEnabled = false;
                     }
                 }
+
+                hoge = opts.Attribute("IsUseUniformAlbumImageStretch");
+                if (hoge is not null)
+                {
+                    if (hoge.Value == "True")
+                    {
+                        config.IsUseUniformAlbumImageStretch = true;
+
+                    }
+                    else
+                    {
+                        config.IsUseUniformAlbumImageStretch = false;
+                    }
+                }
             }
 
             #endregion
@@ -1572,6 +1586,11 @@ internal sealed class ConfigurationService : IConfigurationService
         //
         attrs = doc.CreateAttribute("IsMPRISIntegrationEnabled");
         attrs.Value = config.IsMPRISIntegrationEnabled ? "True" : "False";
+        opts.SetAttributeNode(attrs);
+
+        //
+        attrs = doc.CreateAttribute("IsUseUniformAlbumImageStretch");
+        attrs.Value = config.IsUseUniformAlbumImageStretch ? "True" : "False";
         opts.SetAttributeNode(attrs);
 
         /// 

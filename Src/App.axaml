@@ -12,6 +12,7 @@
 		<ResourceDictionary>
 
 			<common:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+			<common:AlbumImageStretchConverter x:Key="AlbumImageStretchConverter" />
 
 		</ResourceDictionary>
 	</Application.Resources>

@@ -745,4 +745,7 @@ SOFTWARE.</value>
   <data name="Settings_Opts_IsMPRISIntegrationEnabled" xml:space="preserve">
     <value>MPRIS 連携を有効にする</value>
   </data>
+  <data name="Settings_Opts_IsUseUniformAlbumImageStretch" xml:space="preserve">
+    <value>アルバムカバーが正方形ではないときクロップしない。</value>
+  </data>
 </root>

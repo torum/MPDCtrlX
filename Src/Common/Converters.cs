@@ -22,3 +22,13 @@ public class BoolToFontWeightConverter : IValueConverter
     }
 }
 
+
+
+public sealed class AlbumImageStretchConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is true ? Stretch.Uniform : Stretch.UniformToFill;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is Stretch.Uniform;
+}

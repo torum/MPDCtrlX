@@ -752,4 +752,7 @@ SOFTWARE.</value>
   <data name="Settings_Opts_IsMPRISIntegrationEnabled" xml:space="preserve">
     <value>Enable MPRIS integration</value>
   </data>
+  <data name="Settings_Opts_IsUseUniformAlbumImageStretch" xml:space="preserve">
+    <value>Do not crop when Album image is not square.</value>
+  </data>
 </root>

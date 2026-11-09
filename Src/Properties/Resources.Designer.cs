@@ -1555,6 +1555,15 @@ namespace MPDCtrlX.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do not crop when Album image is not square..
+        /// </summary>
+        public static string Settings_Opts_IsUseUniformAlbumImageStretch {
+            get {
+                return ResourceManager.GetString("Settings_Opts_IsUseUniformAlbumImageStretch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Music Player Daemon.
         /// </summary>
         public static string Settings_Opts_MPD {

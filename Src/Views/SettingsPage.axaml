@@ -196,6 +196,10 @@
 							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_IsMPRISIntegrationEnabled}" IsChecked="{Binding IsMPRISIntegrationEnabled}" Margin="0"></CheckBox>
 						</ui:FASettingsExpanderItem>
 
+						<ui:FASettingsExpanderItem>
+							<CheckBox Content="{x:Static prop:Resources.Settings_Opts_IsUseUniformAlbumImageStretch}" IsChecked="{Binding IsUseUniformAlbumImageStretch}" Margin="0"></CheckBox>
+						</ui:FASettingsExpanderItem>
+
 					</ui:FASettingsExpander>
 
 					<!-- Local storage -->

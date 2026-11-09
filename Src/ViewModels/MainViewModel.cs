@@ -147,6 +147,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         IsDownloadAlbumArtEmbeddedUsingReadPicture = _configurationService.CurrentConfiguration.IsDownloadAlbumArtEmbeddedUsingReadPicture;
         IsForceSetVolumeExplicitly = _configurationService.CurrentConfiguration.IsForceSetVolumeExplicitly;
         IsMPRISIntegrationEnabled = _configurationService.CurrentConfiguration.IsMPRISIntegrationEnabled;
+        IsUseUniformAlbumImageStretch = _configurationService.CurrentConfiguration.IsUseUniformAlbumImageStretch;
 
         #endregion
 
@@ -3420,6 +3421,18 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
+    public bool IsUseUniformAlbumImageStretch
+    {
+        get;
+        set
+        {
+            if (field == value)
+                return;
+            field = value;
+            OnPropertyChanged();
+        }
+    }
+
     #endregion
 
     #region == Profile settings ==
@@ -4133,6 +4146,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
         config.IsDownloadAlbumArtEmbeddedUsingReadPicture = IsDownloadAlbumArtEmbeddedUsingReadPicture;
         config.IsForceSetVolumeExplicitly = IsForceSetVolumeExplicitly;
         config.IsMPRISIntegrationEnabled = IsMPRISIntegrationEnabled;
+        config.IsUseUniformAlbumImageStretch = IsUseUniformAlbumImageStretch;
 
         config.IsNavigationViewMenuOpen = IsNavigationViewMenuOpen;
     }
