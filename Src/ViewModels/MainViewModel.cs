@@ -6242,9 +6242,9 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
                             strAlbum = PathSanitizer.SanitizeFilename(strAlbum);
                         }
 
-                        string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+                        string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist, strAlbum) + ".bmp";
 
-                        string fileTempPath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".tmp";
+                        string fileTempPath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist, strAlbum) + ".tmp";
                         if (File.Exists(fileTempPath))
                         {
                             album.IsImageLoading = false;
@@ -6475,7 +6475,7 @@ internal sealed partial class MainViewModel : ObservableObject, IDisposable
             }
 
             string strDirPath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist);
-            string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+            string filePath = System.IO.Path.Combine(AlbumCacheFolderPath, strArtist, strAlbum) + ".bmp";
             try
             {
                 Directory.CreateDirectory(strDirPath);

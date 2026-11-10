@@ -197,7 +197,7 @@ internal sealed class MprisPathMethodHandler(MprisPlayerController player, IMpcS
             }
 
             string strDirPath = System.IO.Path.Combine(App.AlbumCoverCacheFolder, strArtist);
-            string filePath = System.IO.Path.Combine(App.AlbumCoverCacheFolder, System.IO.Path.Combine(strArtist, strAlbum)) + ".bmp";
+            string filePath = System.IO.Path.Combine(App.AlbumCoverCacheFolder, strArtist, strAlbum) + ".bmp";
             if (File.Exists(filePath))
             {
                 _albumArtUri = new Uri(System.IO.Path.GetFullPath(filePath)).AbsoluteUri;

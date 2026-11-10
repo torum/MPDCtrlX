@@ -22,12 +22,12 @@ namespace MPDCtrlX
 
         // Config file path.(/home/<User>/.config/)
         private static readonly string _envDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        public static string AppDataFolder { get; } = System.IO.Path.Combine((System.IO.Path.Combine(_envDataFolder, AppDeveloper)), AppName);
+        public static string AppDataFolder { get; } = System.IO.Path.Combine(_envDataFolder, AppDeveloper, AppName);
         public static string AppConfigFilePath { get; } = System.IO.Path.Combine(AppDataFolder, AppName + ".config");
 
         // Data folder.(/home/<User>/.local/share/)
         private static readonly string _envAppLocalFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData); // Use Local.
-        private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envAppLocalFolder, AppDeveloper)), AppName);
+        private static readonly string _envAppLocalAppFolder = System.IO.Path.Combine(_envAppLocalFolder, AppDeveloper, AppName);
 
         // Cache folder.(/home/<User>/.cache/ <- needs special handling because env does not support .cache)
         private readonly string _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
@@ -46,7 +46,7 @@ namespace MPDCtrlX
                     ? xdgCache
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
                 //_envCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
-                _envCacheAppFolder = System.IO.Path.Combine((System.IO.Path.Combine(_envCacheFolder, AppDeveloper)), AppName);
+                _envCacheAppFolder = System.IO.Path.Combine(_envCacheFolder, AppDeveloper, AppName);
                 AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
 
                 if (System.IO.Directory.Exists(oldCachePath) && (!System.IO.Directory.Exists(AlbumCoverCacheFolder)))
@@ -68,7 +68,7 @@ namespace MPDCtrlX
             {
                 // Use Local for Windows and other. 
                 _envCacheFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);  //System.IO.Path.GetTempPath();
-                _envCacheAppFolder = System.IO.Path.Combine(System.IO.Path.Combine(_envCacheFolder, AppDeveloper), AppName);
+                _envCacheAppFolder = System.IO.Path.Combine(_envCacheFolder, AppDeveloper, AppName);
                 AlbumCoverCacheFolder = System.IO.Path.Combine(_envCacheAppFolder, "AlbumCoverCache");
             }
 
