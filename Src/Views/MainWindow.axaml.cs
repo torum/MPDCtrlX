@@ -448,13 +448,8 @@ internal sealed partial class MainWindow : Window
 
         if (e.InvokedItemContainer.DataContext is NodeMenu node)
         {
-            if (node is NodeMenuPlaylistItem && RootFrame.Content is PlaylistItemPage page)
-            {
-                // Clear the content so that the page is animated when navigating to the same page with a different parameter.
-                RootFrame.Content = null;
-            }
-
-            if (_navigationService.NavigateTo(node.Tag, null))
+            object? navigationParameter = node is NodeMenuPlaylistItem ? node.Name : null;
+            if (_navigationService.NavigateTo(node.Tag, navigationParameter))
             {
                 //Debug.WriteLine($"NavigationView_ItemInvoked: Navigated to {node.GetType().FullName}");
             }
@@ -488,9 +483,40 @@ internal sealed partial class MainWindow : Window
             return;
         }
 
-        //Debug.WriteLine($"RootFrame_Navigated: Navigated to {pageType.FullName}");
+        if (e.NavigationMode != FluentAvalonia.UI.Navigation.FANavigationMode.Back)
+        {
+            return;
+        }
 
-        //_mainViewModel.SetSelectedNodeMenu(pageType.FullName);
+        NodeMenu? selectedNode = null;
+        if (pageType == typeof(PlaylistItemPage) && e.Parameter is string playlistName)
+        {
+            selectedNode = FlattenMenu(this._mainViewModel.MainMenuItems)
+                .OfType<NodeMenuPlaylistItem>()
+                .FirstOrDefault(item => string.Equals(item.Name, playlistName, StringComparison.OrdinalIgnoreCase));
+        }
+        else if (pageType != typeof(SettingsPage))
+        {
+            selectedNode = FlattenMenu(this._mainViewModel.MainMenuItems)
+                .OfType<NodeMenu>()
+                .FirstOrDefault(item => item.Tag == e.SourcePageType.FullName);
+        }
+
+        this.NavigateViewControl.SelectedItem = selectedNode;
+    }
+
+    // Search, Albums, Artists and Files are nested under Library, so the whole tree must be searched.
+    private static IEnumerable<NodeTree> FlattenMenu(IEnumerable<NodeTree> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            yield return node;
+
+            foreach (var child in FlattenMenu(node.Children))
+            {
+                yield return child;
+            }
+        }
     }
 
     public async void OnGoToSettingsPage(object? sender, System.EventArgs e)

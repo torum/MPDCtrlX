@@ -8,6 +8,7 @@
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Features>runtime-async=on</Features>
 		<IsAotCompatible>true</IsAotCompatible>
 
 		<ApplicationIcon>MPDCtrlX.ico</ApplicationIcon>

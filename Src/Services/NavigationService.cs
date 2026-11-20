@@ -12,9 +12,12 @@ public class NavigationService : INavigationService
 {
     private FluentAvalonia.UI.Controls.FAFrame? _frame;
 
+    private object? _currentParameter;
+
     public void Initialize(FluentAvalonia.UI.Controls.FAFrame frame)
     {
         _frame = frame;
+        _frame.Navigated += (_, e) => _currentParameter = e.Parameter;
     }
 
     public bool NavigateTo(object? selectedPage, object? parameter)
@@ -37,7 +40,8 @@ public class NavigationService : INavigationService
 
         Type? pageType = ResolvePageType(tag);
 
-        if (pageType is not null && _frame.CurrentSourcePageType != pageType)
+        if (pageType is not null
+            && (_frame.CurrentSourcePageType != pageType || !Equals(_currentParameter, parameter)))
         {
             return _frame.Navigate(pageType, parameter);
         }
