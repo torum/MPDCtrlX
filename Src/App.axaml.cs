@@ -42,7 +42,7 @@ namespace MPDCtrlX
                 var oldCachePath = AlbumCoverCacheFolder;
                 // /home/<User>/.cache/
                 var xdgCache = Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-                _envCacheFolder = !string.IsNullOrEmpty(xdgCache)
+                _envCacheFolder = !string.IsNullOrEmpty(xdgCache) && Path.IsPathRooted(xdgCache)
                     ? xdgCache
                     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
                 //_envCacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".cache");
