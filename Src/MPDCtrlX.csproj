@@ -90,18 +90,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="12.1.6" />
-		<PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
-		<PackageReference Include="Avalonia.Wayland" Version="12.1.6" />
+		<PackageReference Include="Avalonia" Version="12.2.0" />
+		<PackageReference Include="Avalonia.Desktop" Version="12.2.0" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.2.0" />
+		<PackageReference Include="Avalonia.Wayland" Version="12.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Egolds.Xaml.Behaviors.Interactions.Animated" Version="11.4.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-		<PackageReference Include="SkiaSharp" Version="4.155.0" />
+		<PackageReference Include="SkiaSharp" Version="4.157.0" />
 		<!-- SkiaSharp.NativeAssets.Linux must match with SkiaSharp package ver -->
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.155.0" />
-		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="4.155.0" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="4.155.0" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="4.157.0" />
+		<PackageReference Include="SkiaSharp.NativeAssets.macOS" Version="4.157.0" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="4.157.0" />
 		<PackageReference Include="Tmds.DBus.Protocol" Version="0.95.2" />
 		<PackageReference Include="Xaml.Behaviors.Interactions" Version="12.1.5" />
 		<PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
