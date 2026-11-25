@@ -18,7 +18,7 @@ jobs:
       APP_NAME: "MPDCtrlX"
       DISPLAY_NAME: "MPDCtrlX"
       BINARY_NAME: "MPDCtrlX" 
-      DOTNET_VERSION: "10.0.x"       
+      DOTNET_VERSION: "11.0.x"       
 
     steps:
     - name: Checkout Code
@@ -41,7 +41,7 @@ jobs:
           -c Release \
           -r linux-x64 \
           --self-contained true \
-          -f net10.0 \
+          -f net11.0 \
           -p:IncludeNativeLibrariesForSelfExtract=true \
           -o ./publish_output
 
