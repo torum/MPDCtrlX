@@ -1,6 +1,6 @@
 # Build, publish and package for Linux
 
-MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r linux-x64 -f net10.0 -p:PublishAot=true --self-contained true
+MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r linux-x64 -f net11.0 -p:PublishAot=true --self-contained true
 
 # Grab published binaries
 
@@ -27,6 +27,6 @@ MPDCtrlX/Src$ sudo apt install ./MPDCtrlX_1.1.0.0_amd64.deb
 =======================
 For Windows:
 
-MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r win-x64 -f net10.0 -p:PublishAot=true --self-contained true
+MPDCtrlX/Src$ dotnet publish MPDCtrlX.csproj -c Release -r win-x64 -f net11.0 -p:PublishAot=true --self-contained true
 
 
