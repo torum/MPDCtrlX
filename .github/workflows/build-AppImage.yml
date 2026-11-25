@@ -18,7 +18,7 @@ jobs:
       APP_NAME: "MPDCtrlX"
       DISPLAY_NAME: "MPDCtrlX"
       BINARY_NAME: "MPDCtrlX" 
-      DOTNET_VERSION: "10.0.x"       
+      DOTNET_VERSION: "11.0.x"       
 
     steps:
     - name: Checkout Code
